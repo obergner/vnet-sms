@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>vnet.sms.parent</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>org.maven.ide.eclipse.maven2Builder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>org.maven.ide.eclipse.maven2Nature</nature>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>poms/common/pom.xml</name>
+			<type>1</type>
+			<locationURI>VNET_SMS_HOME/common/pom.xml</locationURI>
+		</link>
+		<link>
+			<name>poms/gateway/pom.xml</name>
+			<type>1</type>
+			<locationURI>VNET_SMS_HOME/gateway/pom.xml</locationURI>
+		</link>
+	</linkedResources>
+	<variableList>
+		<variable>
+			<name>SRC_HOME</name>
+			<value>file:/Users/obergner/dev/work/whatevermobile/src</value>
+		</variable>
+		<variable>
+			<name>VNET_SMS_HOME</name>
+			<value>$%7BSRC_HOME%7D/vnet.sms</value>
+		</variable>
+	</variableList>
+</projectDescription>

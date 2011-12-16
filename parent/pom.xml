@@ -1,0 +1,954 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>vnet.sms</groupId>
+	<artifactId>parent</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<name>SMS :: Parent</name>
+	<url></url>
+
+	<!-- =================================================== -->
+	<!-- Global properties -->
+	<!-- =================================================== -->
+
+	<properties>
+		<!-- Make the build platform independent: http://maven.apache.org/general.html#encoding-warning -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<!-- javac settings -->
+		<compiler.source>1.6</compiler.source>
+		<compiler.target>1.6</compiler.target>
+		<compiler.compilerVersion>1.6</compiler.compilerVersion>
+		<compiler.verbose>true</compiler.verbose>
+		<compiler.debug>true</compiler.debug>
+		<compiler.showWarnings>true</compiler.showWarnings>
+		<compiler.showDeprecation>true</compiler.showDeprecation>
+		<!-- ######################################################### -->
+		<!-- Dependency versions -->
+		<!-- ######################################################### -->
+		<!-- Our own modules' versions -->
+		<module.common.version>1.0.0-SNAPSHOT</module.common.version>
+		<module.common-message-library.version>1.0.0-SNAPSHOT</module.common-message-library.version>
+		<module.gateway.version>1.0.0-SNAPSHOT</module.gateway.version>
+		<module.gateway-netty-support.version>1.0.0-SNAPSHOT</module.gateway-netty-support.version>
+		<module.gateway-netty-test-support.version>1.0.0-SNAPSHOT</module.gateway-netty-test-support.version>
+		<!-- Standard javax apis -->
+		<deps.jta.version>1.1</deps.jta.version>
+		<deps.jms.version>1.1</deps.jms.version>
+		<deps.jsr250-api.version>1.0</deps.jsr250-api.version>
+		<deps.javax-inject.version>1</deps.javax-inject.version>
+		<!-- Proprietary -->
+		<deps.slf4j.version>1.6.4</deps.slf4j.version>
+		<deps.logback.version>1.0.0</deps.logback.version>
+		<deps.spring.version>3.1.0.RELEASE</deps.spring.version>
+		<deps.camel.version>2.8.3</deps.camel.version>
+		<deps.netty.version>3.2.7.Final</deps.netty.version>
+		<deps.osgi.version>4.1.0</deps.osgi.version>
+		<deps.google-guava.version>10.0.1</deps.google-guava.version>
+		<deps.spring-security.version>3.0.5.RELEASE</deps.spring-security.version>
+		<!-- Testing -->
+		<deps.junit.version>4.10</deps.junit.version>
+		<deps.arquillian.version>1.0.0.Alpha4</deps.arquillian.version>
+		<deps.easymock.version>3.1</deps.easymock.version>
+		<!-- ######################################################### -->
+		<!-- Build plugin versions -->
+		<!-- ######################################################### -->
+		<plugins.compiler.version>2.3.2</plugins.compiler.version>
+		<plugins.clean.version>2.4.1</plugins.clean.version>
+		<plugins.deploy.version>2.7</plugins.deploy.version>
+		<plugins.install.version>2.3.1</plugins.install.version>
+		<plugins.resources.version>2.5</plugins.resources.version>
+		<plugins.surefire.version>2.11</plugins.surefire.version>
+		<plugins.build-helper.version>1.7</plugins.build-helper.version>
+		<plugins.failsafe.version>2.11</plugins.failsafe.version>
+		<plugins.jar.version>2.3.2</plugins.jar.version>
+		<plugins.dependency.version>2.4</plugins.dependency.version>
+		<plugins.plugin.version>2.9</plugins.plugin.version>
+		<plugins.source.version>2.1.2</plugins.source.version>
+		<plugins.cobertura.version>2.5.1</plugins.cobertura.version>
+		<plugins.license.version>1.8.0</plugins.license.version>
+		<plugins.assembly.version>2.2.2</plugins.assembly.version>
+		<!-- ######################################################### -->
+		<!-- Reporting plugin versions -->
+		<!-- ######################################################### -->
+		<plugins.site.version>3.0</plugins.site.version>
+		<plugins.javadoc.version>2.8</plugins.javadoc.version>
+		<plugins.surefire-reports.version>2.11</plugins.surefire-reports.version>
+		<plugins.pmd.version>2.6</plugins.pmd.version>
+		<plugins.project-info-reports.version>2.4</plugins.project-info-reports.version>
+	</properties>
+
+	<!-- =================================================== -->
+	<!-- Developers section -->
+	<!-- =================================================== -->
+
+	<developers>
+		<developer>
+			<id>obergner</id>
+			<name>Olaf Bergner</name>
+			<email>olaf.bergner AT gmx.de</email>
+			<roles>
+				<role>Project Admin</role>
+				<role>Developer</role>
+			</roles>
+			<timezone>0</timezone>
+		</developer>
+	</developers>
+
+	<!-- =================================================== -->
+	<!-- SCM section -->
+	<!-- =================================================== -->
+
+	<!-- <scm> <connection></connection> <developerConnection></developerConnection> 
+		<tag></tag> <url></url> </scm> -->
+
+	<!-- =================================================== -->
+	<!-- Distribution management -->
+	<!-- =================================================== -->
+
+	<distributionManagement>
+		<site>
+			<id>vnet.sms.website</id>
+			<url></url>
+		</site>
+		<repository>
+			<id>vnet.sms.localDistributionRepository</id>
+			<name>SMS Local Distribution Repository</name>
+			<url></url>
+		</repository>
+	</distributionManagement>
+
+	<!-- =================================================== -->
+	<!-- Continuous integration management -->
+	<!-- =================================================== -->
+
+	<ciManagement>
+		<system>hudson</system>
+		<url></url>
+	</ciManagement>
+
+	<!-- =================================================== -->
+	<!-- Additional repositories -->
+	<!-- =================================================== -->
+
+	<!-- TODO: Remove this as soon as 3.1.0.GA is out -->
+	<repositories>
+		<repository>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>org.springsource.milestoneRepository</id>
+			<name>Spring Framework Milestone Repository</name>
+			<url>http://maven.springframework.org/milestone</url>
+		</repository>
+	</repositories>
+
+	<!-- =================================================== -->
+	<!-- Project Dependencies -->
+	<!-- =================================================== -->
+
+	<dependencyManagement>
+		<dependencies>
+			<!-- =========================================== -->
+			<!-- Application modules -->
+			<!-- =========================================== -->
+			<dependency>
+				<groupId>vnet.sms</groupId>
+				<artifactId>common</artifactId>
+				<version>${module.common.version}</version>
+				<type>pom</type>
+			</dependency>
+			<dependency>
+				<groupId>vnet.sms.common</groupId>
+				<artifactId>message-library</artifactId>
+				<version>${module.common-message-library.version}</version>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>vnet.sms</groupId>
+				<artifactId>gateway</artifactId>
+				<version>${module.gateway.version}</version>
+				<type>pom</type>
+			</dependency>
+			<dependency>
+				<groupId>vnet.sms.gateway</groupId>
+				<artifactId>netty-gateway-support</artifactId>
+				<version>${module.gateway-netty-support.version}</version>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>vnet.sms.gateway</groupId>
+				<artifactId>netty-test-support</artifactId>
+				<version>${module.gateway-netty-test-support.version}</version>
+				<type>jar</type>
+			</dependency>
+			<!-- =========================================== -->
+			<!-- Standard Javax APIs -->
+			<!-- =========================================== -->
+			<!-- JSR 250 Annotations: @Resource etc -->
+			<dependency>
+				<groupId>javax.annotation</groupId>
+				<artifactId>jsr250-api</artifactId>
+				<version>${deps.jsr250-api.version}</version>
+				<type>jar</type>
+			</dependency>
+			<!-- Javax Transaction API -->
+			<dependency>
+				<groupId>javax.transaction</groupId>
+				<artifactId>jta</artifactId>
+				<version>${deps.jta.version}</version>
+				<type>jar</type>
+			</dependency>
+			<!-- Javax JMS API -->
+			<dependency>
+				<groupId>javax.jms</groupId>
+				<artifactId>jms</artifactId>
+				<version>${deps.jms.version}</version>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>javax.inject</groupId>
+				<artifactId>javax.inject</artifactId>
+				<version>${deps.javax-inject.version}</version>
+				<type>jar</type>
+			</dependency>
+			<!-- =========================================== -->
+			<!-- Proprietary -->
+			<!-- =========================================== -->
+			<!-- Apache -->
+			<dependency>
+				<groupId>commons-lang</groupId>
+				<artifactId>commons-lang</artifactId>
+				<version>2.6</version>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>commons-configuration</groupId>
+				<artifactId>commons-configuration</artifactId>
+				<version>1.6</version>
+				<type>jar</type>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>commons-beanutils</groupId>
+						<artifactId>commons-beanutils</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<!-- Logback -->
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-core</artifactId>
+				<version>${deps.logback.version}</version>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-classic</artifactId>
+				<version>${deps.logback.version}</version>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>org.fusesource.commonman</groupId>
+				<artifactId>commons-management</artifactId>
+				<version>1.0</version>
+				<type>jar</type>
+			</dependency>
+			<!-- Apache Camel -->
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-core</artifactId>
+				<version>${deps.camel.version}</version>
+				<type>jar</type>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging-api</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.osgi</groupId>
+				<artifactId>org.osgi.core</artifactId>
+				<version>${deps.osgi.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-jms</artifactId>
+				<version>${deps.camel.version}</version>
+				<type>jar</type>
+				<exclusions>
+					<!-- We use the standard javax.jms-1.1 -->
+					<exclusion>
+						<groupId>org.apache.geronimo.specs</groupId>
+						<artifactId>geronimo-jms_1.1_spec</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-spring</artifactId>
+				<version>${deps.camel.version}</version>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-netty</artifactId>
+				<version>${deps.camel.version}</version>
+				<type>jar</type>
+				<exclusions>
+					<exclusion>
+						<groupId>org.apache.servicemix.bundles</groupId>
+						<artifactId>org.apache.servicemix.bundles.netty
+                        </artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-test</artifactId>
+				<version>${deps.camel.version}</version>
+				<type>jar</type>
+			</dependency>
+			<!-- ActiveMQ -->
+			<dependency>
+				<groupId>org.apache.activemq</groupId>
+				<artifactId>activemq-core</artifactId>
+				<version>5.5.0</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging-api</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.activemq</groupId>
+				<artifactId>activemq-camel</artifactId>
+				<version>5.5.0</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging-api</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.xbean</groupId>
+				<artifactId>xbean-spring</artifactId>
+				<version>3.5</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<!-- JBoss Netty -->
+			<dependency>
+				<groupId>org.jboss.netty</groupId>
+				<artifactId>netty</artifactId>
+				<version>${deps.netty.version}</version>
+				<scope>provided</scope>
+				<type>jar</type>
+			</dependency>
+			<!-- Google -->
+			<dependency>
+				<groupId>com.google.guava</groupId>
+				<artifactId>guava</artifactId>
+				<version>${deps.google-guava.version}</version>
+				<type>jar</type>
+			</dependency>
+			<!-- SLF4J -->
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>${deps.slf4j.version}</version>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>jcl-over-slf4j</artifactId>
+				<version>${deps.slf4j.version}</version>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-log4j12</artifactId>
+				<version>${deps.slf4j.version}</version>
+				<type>jar</type>
+				<optional>true</optional>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>log4j-over-slf4j</artifactId>
+				<version>${deps.slf4j.version}</version>
+				<type>jar</type>
+				<optional>true</optional>
+			</dependency>
+			<!-- Spring -->
+			<dependency>
+				<groupId>aopalliance</groupId>
+				<artifactId>aopalliance</artifactId>
+				<version>1.0</version>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-core</artifactId>
+				<version>${deps.spring.version}</version>
+				<type>jar</type>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-beans</artifactId>
+				<version>${deps.spring.version}</version>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context</artifactId>
+				<version>${deps.spring.version}</version>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-aop</artifactId>
+				<version>${deps.spring.version}</version>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-tx</artifactId>
+				<version>${deps.spring.version}</version>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-jms</artifactId>
+				<version>${deps.spring.version}</version>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-asm</artifactId>
+				<version>${deps.spring.version}</version>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-expression</artifactId>
+				<version>${deps.spring.version}</version>
+				<type>jar</type>
+			</dependency>
+			<!-- Spring Security -->
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-core</artifactId>
+				<version>${deps.spring-security.version}</version>
+				<type>jar</type>
+			</dependency>
+			<!-- =========================================== -->
+			<!-- Test dependencies -->
+			<!-- =========================================== -->
+			<!-- JUnit -->
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>${deps.junit.version}</version>
+				<scope>test</scope>
+				<type>jar</type>
+			</dependency>
+			<!-- Easymock -->
+			<dependency>
+				<groupId>org.easymock</groupId>
+				<artifactId>easymock</artifactId>
+				<version>${deps.easymock.version}</version>
+				<scope>test</scope>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-test</artifactId>
+				<version>${deps.spring.version}</version>
+				<type>jar</type>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<!-- shared dependencies across modules -->
+	<dependencies>
+		<!-- =========================================== -->
+		<!-- Provided -->
+		<!-- =========================================== -->
+		<!-- =========================================== -->
+		<!-- Compile -->
+		<!-- =========================================== -->
+		<dependency>
+			<groupId>javax.annotation</groupId>
+			<artifactId>jsr250-api</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.inject</groupId>
+			<artifactId>javax.inject</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<!-- =========================================== -->
+		<!-- Runtime -->
+		<!-- =========================================== -->
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<!-- =========================================== -->
+		<!-- Test -->
+		<!-- =========================================== -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.easymock</groupId>
+			<artifactId>easymock</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<!-- =================================================== -->
+	<!-- Project Plugins -->
+	<!-- =================================================== -->
+
+	<build>
+		<defaultGoal>install</defaultGoal>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-clean-plugin</artifactId>
+					<version>${plugins.clean.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>${plugins.resources.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>${plugins.compiler.version}</version>
+					<configuration>
+						<source>${compiler.source}</source>
+						<target>${compiler.target}</target>
+						<compilerVersion>${compiler.compilerVersion}
+                        </compilerVersion>
+						<fork>true</fork>
+						<verbose>${compiler.verbose}</verbose>
+						<debug>${compiler.debug}</debug>
+						<showWarnings>
+							${compiler.showWarnings}
+                        </showWarnings>
+						<showDeprecation>
+							${compiler.showDeprecation}
+                        </showDeprecation>
+					</configuration>
+				</plugin>
+				<plugin>
+					<!-- | Because of a bug that sometimes causes wrong classpath ordering, 
+						| we have to use a maven-surefire-plugin version >= 2.3.1. | See | SUREFIRE-61 -->
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>${plugins.surefire.version}</version>
+					<inherited>true</inherited>
+					<configuration>
+						<!-- Don't fork VM in order to be able to debug test cases -->
+						<!-- forkMode>never</forkMode -->
+						<forkMode>once</forkMode>
+						<!-- We need maven to properly set the "java.class.path" system property 
+							since ApacheDS' ResourceMap.getResources( pattern ) inspects this system 
+							property to extract the list of schema files to extract out of the various 
+							ApacheDS jars. See: http://maven.apache.org/plugins/maven-surefire-plugin/examples/class-loading.html -->
+						<useManifestOnlyJar>false</useManifestOnlyJar>
+						<systemPropertyVariables>
+							<workingDirectory>${project.build.directory}/apacheds-work</workingDirectory>
+						</systemPropertyVariables>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>build-helper-maven-plugin</artifactId>
+					<version>${plugins.build-helper.version}</version>
+					<executions>
+						<execution>
+							<id>add-test-source</id>
+							<phase>generate-test-sources</phase>
+							<goals>
+								<goal>add-test-source</goal>
+							</goals>
+							<configuration>
+								<sources>
+									<source>${basedir}/src/itest/java</source>
+								</sources>
+							</configuration>
+						</execution>
+						<execution>
+							<id>add-resource</id>
+							<phase>generate-test-resources</phase>
+							<goals>
+								<goal>add-test-resource</goal>
+							</goals>
+							<configuration>
+								<resources>
+									<resource>
+										<directory>${basedir}/src/itest/resources</directory>
+									</resource>
+								</resources>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-failsafe-plugin</artifactId>
+					<version>${plugins.failsafe.version}</version>
+					<inherited>true</inherited>
+					<configuration>
+						<testSourceDirectory>${basedir}/src/itest/java</testSourceDirectory>
+						<forkMode>once</forkMode>
+						<!-- We need maven to properly set the "java.class.path" system property 
+							since ApacheDS' ResourceMap.getResources( pattern ) inspects this system 
+							property to extract the list of schema files to extract out of the various 
+							ApacheDS jars. See: http://maven.apache.org/plugins/maven-surefire-plugin/examples/class-loading.html -->
+						<useManifestOnlyJar>false</useManifestOnlyJar>
+						<systemPropertyVariables>
+							<workingDirectory>${project.build.directory}/apacheds-work</workingDirectory>
+						</systemPropertyVariables>
+					</configuration>
+					<executions>
+						<execution>
+							<id>run-integration-tests</id>
+							<phase>integration-test</phase>
+							<goals>
+								<goal>integration-test</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>verify</id>
+							<phase>verify</phase>
+							<goals>
+								<goal>verify</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>cobertura-maven-plugin</artifactId>
+					<version>${plugins.cobertura.version}</version>
+					<configuration>
+						<aggregate>true</aggregate>
+						<formats>
+							<format>html</format>
+							<format>xml</format>
+						</formats>
+						<instrumentation>
+							<includes>
+								<include>**/*.class</include>
+							</includes>
+							<excludes>
+								<exclude>**/*Test.class</exclude>
+							</excludes>
+						</instrumentation>
+					</configuration>
+					<executions>
+						<execution>
+							<id>cobertura-clean</id>
+							<phase>pre-site</phase>
+							<goals>
+								<goal>clean</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>cobertura-cobertura</id>
+							<phase>site</phase>
+							<goals>
+								<goal>cobertura</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-plugin-plugin</artifactId>
+					<version>${plugins.plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>${plugins.jar.version}</version>
+					<configuration>
+						<archive>
+							<index>true</index>
+							<manifest>
+								<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+								<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+							</manifest>
+						</archive>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-source-plugin</artifactId>
+					<version>${plugins.source.version}</version>
+					<executions>
+						<execution>
+							<id>create-source-jar</id>
+							<phase>package</phase>
+							<goals>
+								<goal>jar</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>create-test-source-jar</id>
+							<phase>package</phase>
+							<goals>
+								<goal>test-jar</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-dependency-plugin</artifactId>
+					<version>${plugins.dependency.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<version>${plugins.assembly.version}</version>
+					<configuration>
+						<descriptors>
+							<descriptor>src/main/assembly/distribution.xml
+                            </descriptor>
+						</descriptors>
+					</configuration>
+					<executions>
+						<execution>
+							<id>assemble-distribution</id>
+							<phase>package</phase>
+							<goals>
+								<goal>single</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-install-plugin</artifactId>
+					<version>${plugins.install.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-deploy-plugin</artifactId>
+					<version>${plugins.deploy.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-site-plugin</artifactId>
+					<version>${plugins.site.version}</version>
+				</plugin>
+				<!-- allows the route to be ran via 'mvn camel:run' -->
+				<plugin>
+					<groupId>org.apache.camel</groupId>
+					<artifactId>camel-maven-plugin</artifactId>
+					<version>${deps.camel.version}</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-plugin-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-install-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+	<!-- =================================================== -->
+	<!-- Project Reporting -->
+	<!-- =================================================== -->
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-report-plugin</artifactId>
+				<version>${plugins.surefire-reports.version}</version>
+				<configuration>
+					<aggregate>true</aggregate>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>${plugins.cobertura.version}</version>
+				<configuration>
+					<aggregate>true</aggregate>
+					<formats>
+						<format>html</format>
+						<format>xml</format>
+					</formats>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>${plugins.javadoc.version}</version>
+				<configuration>
+					<linksource>true</linksource>
+					<show>package</show>
+				</configuration>
+				<reportSets>
+					<reportSet>
+						<id>per-module</id>
+						<reports>
+							<report>javadoc</report>
+						</reports>
+					</reportSet>
+					<reportSet>
+						<id>aggregate</id>
+						<reports>
+							<report>aggregate</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<version>${plugins.pmd.version}</version>
+				<configuration>
+					<aggregate>true</aggregate>
+					<targetJdk>${compiler.source}</targetJdk>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin
+                </artifactId>
+				<version>${plugins.project-info-reports.version}
+                </version>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>index</report>
+							<report>dependencies</report>
+							<report>project-team</report>
+							<report>cim</report>
+							<report>license</report>
+							<report>scm</report>
+							<report>plugin-management</report>
+							<report>plugins</report>
+							<report>summary</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+		</plugins>
+	</reporting>
+
+	<!-- =================================================== -->
+	<!-- Project modules -->
+	<!-- =================================================== -->
+
+	<modules>
+		<module>../gateway</module>
+		<module>../common</module>
+	</modules>
+
+</project>

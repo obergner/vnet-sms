@@ -1,0 +1,3 @@
+# Ignore .local directory containing launch configurations
+.local/
+

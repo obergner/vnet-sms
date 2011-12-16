@@ -1,0 +1,85 @@
+/**
+ * 
+ */
+package vnet.sms.gateway.nettysupport;
+
+import java.io.Serializable;
+
+import org.jboss.netty.channel.UpstreamMessageEvent;
+
+import vnet.sms.common.messages.Message;
+
+/**
+ * @author obergner
+ * 
+ */
+public class UpstreamWindowedMessageEvent<ID extends Serializable, M extends Message>
+        extends UpstreamMessageEvent implements WindowedMessageEvent<ID, M> {
+
+	private final ID	messageReference;
+
+	protected UpstreamWindowedMessageEvent(final ID messageReference,
+	        final UpstreamMessageEvent upstreamMessageEvent, final M message) {
+		super(upstreamMessageEvent.getChannel(), message, upstreamMessageEvent
+		        .getRemoteAddress());
+		this.messageReference = messageReference;
+	}
+
+	/**
+	 * @see vnet.sms.gateway.nettysupport.WindowedMessageEvent#getMessageReference()
+	 */
+	@Override
+	public ID getMessageReference() {
+		return this.messageReference;
+	}
+
+	/**
+	 * @see vnet.sms.gateway.nettysupport.WindowedMessageEvent#getMessage()
+	 */
+	@Override
+	public M getMessage() {
+		return (M) super.getMessage();
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime
+		        * result
+		        + ((this.messageReference == null) ? 0 : this.messageReference
+		                .hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final UpstreamWindowedMessageEvent<? extends Serializable, ? extends Message> other = (UpstreamWindowedMessageEvent<? extends Serializable, ? extends Message>) obj;
+		if (this.messageReference == null) {
+			if (other.messageReference != null) {
+				return false;
+			}
+		} else if (!this.messageReference.equals(other.messageReference)) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + "@" + hashCode()
+		        + " [messageReference: " + this.messageReference + "|message: "
+		        + getMessage() + "|channel: " + getChannel()
+		        + "|remoteAddress: " + getRemoteAddress() + "]";
+	}
+
+}
