@@ -17,6 +17,7 @@
 	<properties>
 		<!-- Make the build platform independent: http://maven.apache.org/general.html#encoding-warning -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<!-- javac settings -->
 		<compiler.source>1.6</compiler.source>
 		<compiler.target>1.6</compiler.target>
