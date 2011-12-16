@@ -118,10 +118,16 @@
 			<url>https://github.com/obergner/vnet-sms</url>
 		</site>
 		<repository>
-			<id>artifactory.vhost.net</id>
+			<id>vhost.net.artifactoryReleases</id>
 			<name>artifactory.vhost.net-releases</name>
 			<url>http://artifactory.vhost.net:8081/artifactory/libs-release-local</url>
 		</repository>
+		<snapshotRepository>
+			<id>vhost.net.artifactorySnapshots</id>
+			<name>artifactory.vhost.net-snapshots</name>
+			<url>http://artifactory.vhost.net:8081/artifactory/libs-snapshot-local</url>
+		</snapshotRepository>
+
 	</distributionManagement>
 
 	<!-- =================================================== -->
