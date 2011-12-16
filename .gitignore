@@ -1,3 +1,5 @@
 # Ignore .local directory containing launch configurations
 .local/
 
+# Ignore maven build directory 'target'
+target/

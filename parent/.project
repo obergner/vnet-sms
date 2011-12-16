@@ -39,7 +39,7 @@
 		</variable>
 		<variable>
 			<name>VNET_SMS_HOME</name>
-			<value>$%7BSRC_HOME%7D/vnet.sms</value>
+			<value>$%7BSRC_HOME%7D/vnet-sms</value>
 		</variable>
 	</variableList>
 </projectDescription>

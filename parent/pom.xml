@@ -101,8 +101,12 @@
 	<!-- SCM section -->
 	<!-- =================================================== -->
 
-	<!-- <scm> <connection></connection> <developerConnection></developerConnection> 
-		<tag></tag> <url></url> </scm> -->
+	<scm>
+		<connection>scm:git:https://github.com/obergner/vnet-sms.git</connection>
+		<developerConnection>scm:git:git://github.com/obergner/vnet-sms.git</developerConnection>
+		<tag></tag>
+		<url></url>
+	</scm>
 
 	<!-- =================================================== -->
 	<!-- Distribution management -->
@@ -111,12 +115,12 @@
 	<distributionManagement>
 		<site>
 			<id>vnet.sms.website</id>
-			<url></url>
+			<url>https://github.com/obergner/vnet-sms</url>
 		</site>
 		<repository>
-			<id>vnet.sms.localDistributionRepository</id>
-			<name>SMS Local Distribution Repository</name>
-			<url></url>
+			<id>artifactory.vhost.net</id>
+			<name>artifactory.vhost.net-releases</name>
+			<url>http://artifactory.vhost.net:8081/artifactory/libs-release-local</url>
 		</repository>
 	</distributionManagement>
 
@@ -126,7 +130,7 @@
 
 	<ciManagement>
 		<system>hudson</system>
-		<url></url>
+		<url>http://jenkins.vhost.net:8080</url>
 	</ciManagement>
 
 	<!-- =================================================== -->
