@@ -57,6 +57,11 @@
 		<!-- *************************************************************** -->
 		<!-- Test -->
 		<!-- *************************************************************** -->
+		<dependency>
+			<groupId>vnet.sms.gateway</groupId>
+			<artifactId>netty-test-support</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 </project>

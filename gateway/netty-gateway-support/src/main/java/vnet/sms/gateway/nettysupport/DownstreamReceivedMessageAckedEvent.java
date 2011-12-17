@@ -11,7 +11,6 @@ import java.net.SocketAddress;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.Channels;
-import org.jboss.netty.channel.DownstreamMessageEvent;
 
 import vnet.sms.common.messages.Acknowledgement;
 import vnet.sms.common.messages.Message;
@@ -20,22 +19,14 @@ import vnet.sms.common.messages.Message;
  * @author obergner
  * 
  */
-public class DownstreamReceivedMessageAckedEvent<ID extends Serializable, M extends Message>
+public abstract class DownstreamReceivedMessageAckedEvent<ID extends Serializable, M extends Message>
         extends DownstreamWindowedMessageEvent<ID, M> implements
         ReceivedMessageAckedEvent<ID, M> {
 
 	private final Acknowledgement	acknowledgement;
 
 	protected DownstreamReceivedMessageAckedEvent(final ID messageReference,
-	        final DownstreamMessageEvent downstreamMessageEvent,
-	        final M message, final Acknowledgement acknowledgement) {
-		this(messageReference, downstreamMessageEvent.getChannel(),
-		        downstreamMessageEvent.getFuture(), message,
-		        downstreamMessageEvent.getRemoteAddress(), acknowledgement);
-	}
-
-	protected DownstreamReceivedMessageAckedEvent(final ID messageReference,
-	        final Channel channel, final Object message,
+	        final Channel channel, final M message,
 	        final SocketAddress remoteAddress,
 	        final Acknowledgement acknowledgement) {
 		this(messageReference, channel, Channels.future(channel, false),
@@ -47,7 +38,11 @@ public class DownstreamReceivedMessageAckedEvent<ID extends Serializable, M exte
 	        final Object message, final SocketAddress remoteAddress,
 	        final Acknowledgement acknowledgement) {
 		super(messageReference, channel, future, message, remoteAddress);
+		notNull(messageReference,
+		        "Argument 'messageReference' must not be null");
 		notNull(acknowledgement, "Argument 'acknowledgement' must not be null");
+		notNull(channel, "Argument 'channel' must not be null");
+		notNull(message, "Argument 'message' must not be null");
 		this.acknowledgement = acknowledgement;
 	}
 
@@ -68,4 +63,12 @@ public class DownstreamReceivedMessageAckedEvent<ID extends Serializable, M exte
 		return this.acknowledgement.is(Acknowledgement.Status.ACK);
 	}
 
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + "@" + this.hashCode()
+		        + " [messageReference: " + getMessageReference() + "|message: "
+		        + getMessage() + "|acknowledgement: " + this.acknowledgement
+		        + "|channel: " + getChannel() + "|future: " + getFuture()
+		        + "|remoteAddress: " + getRemoteAddress() + "]";
+	}
 }

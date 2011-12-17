@@ -98,5 +98,4 @@ public class DownstreamWindowedMessageEvent<ID extends Serializable, M extends M
 		        + getMessage() + "|channel: " + getChannel()
 		        + "|remoteAddress: " + getRemoteAddress() + "]";
 	}
-
 }

@@ -5,48 +5,52 @@ import static org.junit.Assert.assertNotNull;
 
 import java.net.InetSocketAddress;
 
-import org.jboss.netty.handler.codec.embedder.DecoderEmbedder;
+import org.jboss.netty.channel.ChannelEvent;
+import org.jboss.netty.channel.MessageEvent;
 import org.junit.Test;
 
 import vnet.sms.common.messages.LoginRequest;
-import vnet.sms.common.messages.Message;
 import vnet.sms.gateway.nettysupport.test.ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler;
 import vnet.sms.gateway.nettysupport.window.incoming.IncomingWindowStore;
+import vnet.sms.gateway.nettytest.ChannelEventFilter;
+import vnet.sms.gateway.nettytest.ChannelPipelineEmbedder;
+import vnet.sms.gateway.nettytest.DefaultChannelPipelineEmbedder;
 
 public class WindowingChannelHandlerTest {
 
 	@Test
-	public final void assertThatWindowedChannelHandlerCorrectlyPropagatesLoginRequest() {
+	public final void assertThatWindowedChannelHandlerCorrectlyPropagatesLoginRequest()
+	        throws Throwable {
 		final WindowingChannelHandler<Integer> objectUnderTest = new WindowingChannelHandler<Integer>(
 		        new IncomingWindowStore<Integer>(
 		                "assertThatWindowedChannelHandlerCorrectlyPropagatesLoginRequest",
 		                100, 1000), null);
 
-		final DecoderEmbedder<Message> embeddedPipeline = new DecoderEmbedder<Message>(
+		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        objectUnderTest);
 
 		embeddedPipeline
-		        .offer(new LoginRequest(
+		        .receive(new LoginRequest(
 		                "assertThatWindowedChannelHandlerCorrectlyPropagatesLoginRequest",
 		                "secret", new InetSocketAddress(1),
 		                new InetSocketAddress(1)));
-		final Message propagatedMessage = embeddedPipeline.poll();
+		final MessageEvent propagatedMessageEvent = embeddedPipeline
+		        .nextReceivedMessageEvent();
 
 		assertNotNull("WindowingChannelHandler did not propagate LoginRequest",
-		        propagatedMessage);
+		        propagatedMessageEvent);
 		assertEquals(
 		        "WindowingChannelHandler converted LoginRequest to unexpected output",
-		        LoginRequest.class, propagatedMessage.getClass());
+		        LoginRequest.class, propagatedMessageEvent.getMessage()
+		                .getClass());
 	}
 
 	@Test
-	public final void assertThatWindowedChannelHandlerIssuesNoWindowForIncomingMessageAvailableEventIfNoWindowIsAvailable() {
-		// FIXME: We need a test framework for Netty ChannelHandlers that
-		// propagates events and not their payload (messages) to the product
-		// queue
+	public final void assertThatWindowedChannelHandlerIssuesNoWindowForIncomingMessageAvailableEventIfNoWindowIsAvailable()
+	        throws Throwable {
 		final LoginRequest loginRequest = new LoginRequest(
-		        "assertThatWindowedChannelHandlerCorrectlyPropagatesLoginRequest",
+		        "assertThatWindowedChannelHandlerIssuesNoWindowForIncomingMessageEventIfNoWindowIsAvailable",
 		        "secret", new InetSocketAddress(1), new InetSocketAddress(1));
 
 		final WindowingChannelHandler<Integer> objectUnderTest = new WindowingChannelHandler<Integer>(
@@ -54,20 +58,24 @@ public class WindowingChannelHandlerTest {
 		                "assertThatWindowedChannelHandlerIssuesNoWindowForIncomingMessageAvailableEventIfNoWindowIsAvailable",
 		                1, 1), null);
 
-		final DecoderEmbedder<Message> embeddedPipeline = new DecoderEmbedder<Message>(
+		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        objectUnderTest);
 
-		embeddedPipeline.offer(loginRequest);
-		embeddedPipeline.poll();
-		embeddedPipeline.offer(loginRequest);
+		embeddedPipeline.receive(loginRequest);
+		embeddedPipeline.nextReceivedMessageEvent();
+		embeddedPipeline.receive(loginRequest);
 
-		final Message propagatedMessage = embeddedPipeline.poll();
+		final ChannelEvent propagatedMessageEvent = embeddedPipeline
+		        .nextUpstreamChannelEvent(ChannelEventFilter.FILTERS
+		                .ofType(NoWindowForIncomingMessageAvailableEvent.class));
 
-		assertNotNull("WindowingChannelHandler did not propagate LoginRequest",
-		        propagatedMessage);
+		assertNotNull(
+		        "WindowingChannelHandler did not propagate error event when rejecting incoming message due to no window available",
+		        propagatedMessageEvent);
 		assertEquals(
-		        "WindowingChannelHandler converted LoginRequest to unexpected output",
-		        LoginRequest.class, propagatedMessage.getClass());
+		        "WindowingChannelHandler propagated unexpected event when rejecting incoming message due to no window available",
+		        NoWindowForIncomingMessageAvailableEvent.class,
+		        propagatedMessageEvent.getClass());
 	}
 }

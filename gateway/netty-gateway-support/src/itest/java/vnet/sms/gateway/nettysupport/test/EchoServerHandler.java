@@ -21,9 +21,9 @@ import org.slf4j.LoggerFactory;
  */
 public class EchoServerHandler extends SimpleChannelUpstreamHandler {
 
-	private final Logger log = LoggerFactory.getLogger(getClass());
+	private final Logger	   log	= LoggerFactory.getLogger(getClass());
 
-	private final ChannelGroup allChannels;
+	private final ChannelGroup	allChannels;
 
 	public EchoServerHandler(final ChannelGroup allChannels) {
 		this.allChannels = allChannels;
@@ -31,30 +31,30 @@ public class EchoServerHandler extends SimpleChannelUpstreamHandler {
 
 	@Override
 	public void channelOpen(final ChannelHandlerContext ctx,
-			final ChannelStateEvent e) throws Exception {
+	        final ChannelStateEvent e) throws Exception {
 		this.allChannels.add(e.getChannel());
 		ctx.sendUpstream(e);
 	}
 
 	@Override
 	public void messageReceived(final ChannelHandlerContext ctx,
-			final MessageEvent e) throws Exception {
+	        final MessageEvent e) throws Exception {
 		final Object message = e.getMessage();
 		this.log.debug("Received echo message [{}]", message);
 		final ChannelFuture messageHasBeenEchoed = Channels.write(
-				e.getChannel(), message);
+		        e.getChannel(), message);
 		messageHasBeenEchoed.addListener(new ChannelFutureListener() {
 			@Override
 			public void operationComplete(final ChannelFuture future)
-					throws Exception {
+			        throws Exception {
 				if (!future.isSuccess()) {
 					EchoServerHandler.this.log.error("Failed to echo message ["
-							+ message + "]: " + future.getCause().getMessage(),
-							future.getCause());
+					        + message + "]: " + future.getCause().getMessage(),
+					        future.getCause());
 					future.getChannel().close();
 				} else {
 					EchoServerHandler.this.log.debug("Echoed message [{}]",
-							message);
+					        message);
 				}
 			}
 		});
@@ -62,9 +62,9 @@ public class EchoServerHandler extends SimpleChannelUpstreamHandler {
 
 	@Override
 	public void exceptionCaught(final ChannelHandlerContext ctx,
-			final ExceptionEvent e) throws Exception {
+	        final ExceptionEvent e) throws Exception {
 		this.log.error("Caught exception from downstream: " + e.getCause(),
-				e.getCause());
+		        e.getCause());
 		e.getChannel().close();
 	}
 }

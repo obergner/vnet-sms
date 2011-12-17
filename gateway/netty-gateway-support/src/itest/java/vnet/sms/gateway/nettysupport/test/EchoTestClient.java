@@ -24,13 +24,14 @@ import org.slf4j.LoggerFactory;
  */
 public class EchoTestClient {
 
-	private final Logger log = LoggerFactory.getLogger(getClass());
+	private final Logger	                 log	             = LoggerFactory
+	                                                                     .getLogger(getClass());
 
-	private final DelegatingResponseListener responseListener = new DelegatingResponseListener();
+	private final DelegatingResponseListener	responseListener	= new DelegatingResponseListener();
 
 	private static class DelegatingResponseListener implements ResponseListener {
 
-		private ResponseListener delegate;
+		private ResponseListener	delegate;
 
 		void setDelegate(final ResponseListener delegate) {
 			this.delegate = delegate;
@@ -44,13 +45,13 @@ public class EchoTestClient {
 		}
 	}
 
-	private final String host;
+	private final String	host;
 
-	private final int port;
+	private final int	    port;
 
-	private ClientBootstrap bootstrap;
+	private ClientBootstrap	bootstrap;
 
-	private Channel serverConnection;
+	private Channel	        serverConnection;
 
 	public EchoTestClient(final String host, final int port) {
 		this.host = host;
@@ -59,28 +60,28 @@ public class EchoTestClient {
 
 	public void start() throws Exception {
 		this.log.info("Starting echo client {} [host = {}|port = {}] ...",
-				new Object[] { this, this.host, this.port });
+		        new Object[] { this, this.host, this.port });
 
 		setUp();
 
 		connect();
 
 		this.log.info("Echo client {} [host = {}|port = {}] started",
-				new Object[] { this, this.host, this.port });
+		        new Object[] { this, this.host, this.port });
 	}
 
 	private void setUp() {
 		// Configure the client.
 		this.bootstrap = new ClientBootstrap(new NioClientSocketChannelFactory(
-				Executors.newCachedThreadPool(),
-				Executors.newCachedThreadPool()));
+		        Executors.newCachedThreadPool(),
+		        Executors.newCachedThreadPool()));
 		// Set up the event pipeline factory.
 		this.bootstrap.setPipelineFactory(new ChannelPipelineFactory() {
 			@Override
 			public ChannelPipeline getPipeline() throws Exception {
 				return Channels.pipeline(new StringEncoder(),
-						new StringDecoder(), new EchoTestClientResponseHandler(
-								EchoTestClient.this.responseListener));
+				        new StringDecoder(), new EchoTestClientResponseHandler(
+				                EchoTestClient.this.responseListener));
 			}
 		});
 	}
@@ -88,14 +89,14 @@ public class EchoTestClient {
 	private void connect() throws RuntimeException {
 		// Start the connection attempt.
 		final ChannelFuture channelHasBeenConnected = this.bootstrap
-				.connect(new InetSocketAddress(this.host, this.port));
+		        .connect(new InetSocketAddress(this.host, this.port));
 		// Wait until the connection attempt succeeds or fails.
 		this.serverConnection = channelHasBeenConnected.awaitUninterruptibly()
-				.getChannel();
+		        .getChannel();
 		if (!channelHasBeenConnected.isSuccess()) {
 			this.log.error("Connection attempt failed: "
-					+ channelHasBeenConnected.getCause().getMessage(),
-					channelHasBeenConnected.getCause());
+			        + channelHasBeenConnected.getCause().getMessage(),
+			        channelHasBeenConnected.getCause());
 			this.bootstrap.releaseExternalResources();
 
 			throw new RuntimeException(channelHasBeenConnected.getCause());
@@ -103,7 +104,7 @@ public class EchoTestClient {
 	}
 
 	public void sendRequest(final String request,
-			final ResponseListener responseListener) throws Exception {
+	        final ResponseListener responseListener) throws Exception {
 		this.log.debug("Sending request [{}] ...", request);
 		this.responseListener.setDelegate(responseListener);
 
@@ -115,15 +116,15 @@ public class EchoTestClient {
 
 	public void stop() throws Exception {
 		this.log.info("Stopping echo client {} [host = {}|port = {}] ...",
-				new Object[] { this, this.host, this.port });
+		        new Object[] { this, this.host, this.port });
 
 		final ChannelFuture channelHasBeenClosed = this.serverConnection
-				.close();
+		        .close();
 		channelHasBeenClosed.awaitUninterruptibly();
 
 		// Shut down executor threads to exit.
 		this.bootstrap.releaseExternalResources();
 		this.log.info("Echo client {} [host = {}|port = {}] stopped",
-				new Object[] { this, this.host, this.port });
+		        new Object[] { this, this.host, this.port });
 	}
 }
