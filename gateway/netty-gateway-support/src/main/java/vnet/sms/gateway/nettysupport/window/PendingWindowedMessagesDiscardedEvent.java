@@ -1,7 +1,7 @@
 /**
  * 
  */
-package vnet.sms.gateway.nettysupport.window.incoming;
+package vnet.sms.gateway.nettysupport.window;
 
 import static org.jboss.netty.channel.Channels.succeededFuture;
 

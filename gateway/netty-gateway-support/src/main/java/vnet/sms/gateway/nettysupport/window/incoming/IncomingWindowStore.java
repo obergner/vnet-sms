@@ -5,12 +5,12 @@ import static org.apache.commons.lang.Validate.notEmpty;
 import static org.apache.commons.lang.Validate.notNull;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
-
-import org.jboss.netty.channel.ChannelHandlerContext;
 
 import vnet.sms.common.messages.Message;
 import vnet.sms.gateway.nettysupport.WindowedMessageEvent;
@@ -136,15 +136,13 @@ public class IncomingWindowStore<ID extends Serializable> implements
 		}
 	}
 
-	public void shutDown(final ChannelHandlerContext ctx) {
+	public Map<ID, Message> shutDown() {
 		if (this.shutDown) {
-			return;
+			return Collections.emptyMap();
 		}
 		this.shutDown = true; // Volatile write
 
-		final PendingWindowedMessagesDiscardedEvent<ID> pendingMessagesDiscarded = new PendingWindowedMessagesDiscardedEvent<ID>(
-		        ctx.getChannel(), this.messageReferenceToMessage);
-		ctx.sendUpstream(pendingMessagesDiscarded);
+		return Collections.unmodifiableMap(this.messageReferenceToMessage);
 	}
 
 	@Override

@@ -7,6 +7,7 @@ import static org.apache.commons.lang.Validate.notNull;
 
 import java.io.Serializable;
 import java.lang.management.ManagementFactory;
+import java.util.Map;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -93,6 +94,17 @@ public class WindowingChannelHandler<ID extends Serializable> extends
 	public void channelDisconnected(final ChannelHandlerContext ctx,
 	        final ChannelStateEvent e) throws Exception {
 		super.channelDisconnected(ctx, e);
+
+		final Map<ID, Message> pendingMessages = this.incomingWindowStore
+		        .shutDown();
+		if (!pendingMessages.isEmpty()) {
+			this.log.warn(
+			        "Channel {} has been disconnected while {} still await acknowledgement - these messages will be DISCARDED",
+			        ctx.getChannel(), pendingMessages.size());
+			final PendingWindowedMessagesDiscardedEvent<ID> pendingMessagesDiscarded = new PendingWindowedMessagesDiscardedEvent<ID>(
+			        ctx.getChannel(), pendingMessages);
+			ctx.sendUpstream(pendingMessagesDiscarded);
+		}
 
 		this.mbeanServer.unregisterMBean(new ObjectName(
 		        this.incomingWindowStore.getObjectName()));
