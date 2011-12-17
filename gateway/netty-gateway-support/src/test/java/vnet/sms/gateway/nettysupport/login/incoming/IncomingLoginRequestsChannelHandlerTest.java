@@ -2,6 +2,7 @@ package vnet.sms.gateway.nettysupport.login.incoming;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.net.InetSocketAddress;
 
@@ -26,7 +27,7 @@ public class IncomingLoginRequestsChannelHandlerTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public final void assertThatConstructorRejectsNullAuthenticationManager() {
-		new IncomingLoginRequestsChannelHandler<Long>(null);
+		new IncomingLoginRequestsChannelHandler<Long>(null, 10);
 	}
 
 	@Test
@@ -43,7 +44,7 @@ public class IncomingLoginRequestsChannelHandlerTest {
 			}
 		};
 		final IncomingLoginRequestsChannelHandler<Integer> objectUnderTest = new IncomingLoginRequestsChannelHandler<Integer>(
-		        acceptAll);
+		        acceptAll, 10);
 
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
@@ -66,6 +67,7 @@ public class IncomingLoginRequestsChannelHandlerTest {
 	@Test
 	public final void assertThatLoginChannelHandlerSendsLoginRequestRejectedEventDownstreamIfLoginThrowsBadCredentialsException()
 	        throws Throwable {
+		final int negativeResponseDelayMillis = 5;
 		final AuthenticationManager rejectAll = new AuthenticationManager() {
 			@Override
 			public Authentication authenticate(
@@ -75,7 +77,7 @@ public class IncomingLoginRequestsChannelHandlerTest {
 			}
 		};
 		final IncomingLoginRequestsChannelHandler<Integer> objectUnderTest = new IncomingLoginRequestsChannelHandler<Integer>(
-		        rejectAll);
+		        rejectAll, negativeResponseDelayMillis);
 
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
@@ -85,6 +87,7 @@ public class IncomingLoginRequestsChannelHandlerTest {
 		                "assertThatLoginChannelHandlerSendsLoginRequestRejectedEventDownstreamIfLoginThrowsBadCredentialsException",
 		                "secret", new InetSocketAddress(0),
 		                new InetSocketAddress(0)));
+		Thread.sleep(negativeResponseDelayMillis + 100);
 		final MessageEvent sentReply = embeddedPipeline.nextSentMessageEvent();
 
 		assertNotNull(
@@ -93,6 +96,39 @@ public class IncomingLoginRequestsChannelHandlerTest {
 		assertEquals(
 		        "IncomingLoginRequestsChannelHandler sent unexpected reply after rejected login",
 		        LoginRequestRejectedEvent.class, sentReply.getClass());
+	}
+
+	@Test
+	public final void assertThatLoginChannelHandlerDelaysResponseForConfiguredNumberOfMillisecondsIfLoginRequestFails()
+	        throws Throwable {
+		final int negativeResponseDelayMillis = 500;
+		final AuthenticationManager rejectAll = new AuthenticationManager() {
+			@Override
+			public Authentication authenticate(
+			        final Authentication authentication)
+			        throws AuthenticationException {
+				throw new BadCredentialsException("Bad credentials");
+			}
+		};
+		final IncomingLoginRequestsChannelHandler<Integer> objectUnderTest = new IncomingLoginRequestsChannelHandler<Integer>(
+		        rejectAll, negativeResponseDelayMillis);
+
+		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
+		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
+		        objectUnderTest);
+		embeddedPipeline
+		        .receive(new LoginRequest(
+		                "assertThatLoginChannelHandlerDelaysResponseForConfiguredNumberOfMillisecondsIfLoginRequestFails",
+		                "secret", new InetSocketAddress(0),
+		                new InetSocketAddress(0)));
+
+		assertNull(
+		        "IncomingLoginRequestsChannelHandler did NOT delay response to failed login attempt",
+		        embeddedPipeline.nextSentMessageEvent());
+		Thread.sleep(negativeResponseDelayMillis + 200);
+		assertNotNull(
+		        "IncomingLoginRequestsChannelHandler did not send a response to failed login attempt after delay period has elapsed",
+		        embeddedPipeline.nextSentMessageEvent());
 	}
 
 	@Test
@@ -107,7 +143,7 @@ public class IncomingLoginRequestsChannelHandlerTest {
 			}
 		};
 		final IncomingLoginRequestsChannelHandler<Integer> objectUnderTest = new IncomingLoginRequestsChannelHandler<Integer>(
-		        rejectAll);
+		        rejectAll, 10);
 
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
@@ -139,7 +175,7 @@ public class IncomingLoginRequestsChannelHandlerTest {
 			}
 		};
 		final IncomingLoginRequestsChannelHandler<Integer> objectUnderTest = new IncomingLoginRequestsChannelHandler<Integer>(
-		        acceptAll);
+		        acceptAll, 10);
 
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),

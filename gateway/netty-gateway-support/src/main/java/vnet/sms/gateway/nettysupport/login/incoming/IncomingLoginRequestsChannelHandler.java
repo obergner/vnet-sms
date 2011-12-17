@@ -6,9 +6,15 @@ package vnet.sms.gateway.nettysupport.login.incoming;
 import static org.apache.commons.lang.Validate.notNull;
 
 import java.io.Serializable;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.jboss.netty.channel.ChannelHandlerContext;
+import org.jboss.netty.channel.ChannelStateEvent;
+import org.jboss.netty.util.HashedWheelTimer;
+import org.jboss.netty.util.Timeout;
+import org.jboss.netty.util.Timer;
+import org.jboss.netty.util.TimerTask;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,13 +36,19 @@ public class IncomingLoginRequestsChannelHandler<ID extends Serializable>
 
 	private final AuthenticationManager	          authenticationManager;
 
-	private final AtomicReference<Authentication>	authenticatedClient	= new AtomicReference<Authentication>();
+	private final AtomicReference<Authentication>	authenticatedClient	   = new AtomicReference<Authentication>();
+
+	private final int	                          failedLoginResponseDelayMillis;
+
+	private final Timer	                          failedLoginResponseTimer	= new HashedWheelTimer();
 
 	public IncomingLoginRequestsChannelHandler(
-	        final AuthenticationManager authenticationManager) {
+	        final AuthenticationManager authenticationManager,
+	        final int failedLoginResponseDelayMillis) {
 		notNull(authenticationManager,
 		        "Argument 'authenticationManager' must not be null");
 		this.authenticationManager = authenticationManager;
+		this.failedLoginResponseDelayMillis = failedLoginResponseDelayMillis;
 	}
 
 	@Override
@@ -89,8 +101,38 @@ public class IncomingLoginRequestsChannelHandler<ID extends Serializable>
 
 	private void processFailedAuthentication(final ChannelHandlerContext ctx,
 	        final LoginRequestReceivedEvent<ID> e) {
-		getLog().warn("Authentication using credentials from {} failed", e);
-		ctx.sendDownstream(LoginRequestRejectedEvent.reject(e));
+		getLog().warn(
+		        "Authentication using credentials from {} failed - will delay negative response for [{}] milliseconds to prevent DoS attacks",
+		        e, this.failedLoginResponseDelayMillis);
+		this.failedLoginResponseTimer.newTimeout(
+		        this.new DelayFailedLoginResponse(ctx, e),
+		        this.failedLoginResponseDelayMillis, TimeUnit.MILLISECONDS);
+	}
+
+	private final class DelayFailedLoginResponse implements TimerTask {
+
+		private final ChannelHandlerContext		    ctx;
+
+		private final LoginRequestReceivedEvent<ID>	rejectedLogin;
+
+		DelayFailedLoginResponse(final ChannelHandlerContext ctx,
+		        final LoginRequestReceivedEvent<ID> rejectedLogin) {
+			this.ctx = ctx;
+			this.rejectedLogin = rejectedLogin;
+		}
+
+		@Override
+		public void run(final Timeout timeout) throws Exception {
+			if (timeout.isCancelled() || !this.ctx.getChannel().isOpen()) {
+				return;
+			}
+			getLog().warn(
+			        "Sending response to failed login request {} after delay of {} milliseconds",
+			        this.rejectedLogin.getMessage(),
+			        IncomingLoginRequestsChannelHandler.this.failedLoginResponseDelayMillis);
+			this.ctx.sendDownstream(LoginRequestRejectedEvent
+			        .reject(this.rejectedLogin));
+		}
 	}
 
 	private Authentication authenticate(
@@ -127,5 +169,14 @@ public class IncomingLoginRequestsChannelHandler<ID extends Serializable>
 
 	private boolean isCurrentChannelAuthenticated() {
 		return this.authenticatedClient.get() != null;
+	}
+
+	@Override
+	public void channelDisconnected(final ChannelHandlerContext ctx,
+	        final ChannelStateEvent e) throws Exception {
+		getLog().info(
+		        "Channel {} has been disconnected - stopping timer for delaying failed login responses");
+		this.failedLoginResponseTimer.stop();
+		super.channelDisconnected(ctx, e);
 	}
 }
