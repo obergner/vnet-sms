@@ -33,8 +33,10 @@
 		<module.common.version>1.0.0-SNAPSHOT</module.common.version>
 		<module.common-message-library.version>1.0.0-SNAPSHOT</module.common-message-library.version>
 		<module.gateway.version>1.0.0-SNAPSHOT</module.gateway.version>
-		<module.gateway-netty-support.version>1.0.0-SNAPSHOT</module.gateway-netty-support.version>
-		<module.gateway-netty-test-support.version>1.0.0-SNAPSHOT</module.gateway-netty-test-support.version>
+		<module.gateway.netty-gateway-support.version>1.0.0-SNAPSHOT</module.gateway.netty-gateway-support.version>
+		<module.gateway.netty-test-support.version>1.0.0-SNAPSHOT</module.gateway.netty-test-support.version>
+		<module.gateway.transports.version>1.0.0-SNAPSHOT</module.gateway.transports.version>
+		<module.gateway.transports.serialization-transport.version>1.0.0-SNAPSHOT</module.gateway.transports.serialization-transport.version>
 		<!-- Standard javax apis -->
 		<deps.jta.version>1.1</deps.jta.version>
 		<deps.jms.version>1.1</deps.jms.version>
@@ -186,14 +188,26 @@
 			<dependency>
 				<groupId>vnet.sms.gateway</groupId>
 				<artifactId>netty-gateway-support</artifactId>
-				<version>${module.gateway-netty-support.version}</version>
+				<version>${module.gateway.netty-gateway-support.version}</version>
 				<type>jar</type>
 			</dependency>
 			<dependency>
 				<groupId>vnet.sms.gateway</groupId>
 				<artifactId>netty-test-support</artifactId>
-				<version>${module.gateway-netty-test-support.version}</version>
+				<version>${module.gateway.netty-test-support.version}</version>
 				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>vnet.sms.gateway</groupId>
+				<artifactId>transports</artifactId>
+				<version>${module.gateway.transports.version}</version>
+				<type>pom</type>
+			</dependency>
+			<dependency>
+				<groupId>vnet.sms.gateway.transports</groupId>
+				<artifactId>serialization-transport</artifactId>
+				<version>${module.gateway.transports.serialization-transport.version}</version>
+				<type>pom</type>
 			</dependency>
 			<!-- =========================================== -->
 			<!-- Standard Javax APIs -->

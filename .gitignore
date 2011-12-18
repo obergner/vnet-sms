@@ -3,3 +3,7 @@
 
 # Ignore maven build directory 'target'
 target/
+
+# Ignore eclipse' pseudo 'poms' directory
+poms/
+
