@@ -23,7 +23,7 @@
 		<relativePath>../</relativePath>
 	</parent>
 
-	<groupId>vnet.sms.transports</groupId>
+	<groupId>vnet.sms.gateway.transports</groupId>
 	<artifactId>serialization-transport</artifactId>
 	<packaging>jar</packaging>
 	<name>SMS :: Gateway :: Transports :: Serialization</name>
