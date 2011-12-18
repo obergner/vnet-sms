@@ -17,7 +17,7 @@ import vnet.sms.common.messages.Message;
  * @author obergner
  * 
  */
-public abstract class WindowedUpstreamChannelHandler<ID extends Serializable>
+public abstract class UpstreamWindowedChannelHandler<ID extends Serializable>
         extends SimpleChannelUpstreamHandler {
 
 	private final Logger	log	= LoggerFactory.getLogger(getClass());
@@ -53,27 +53,27 @@ public abstract class WindowedUpstreamChannelHandler<ID extends Serializable>
 		getLog().debug("Finished processing windowed message event {}", e);
 	}
 
-	public void loginRequestReceived(final ChannelHandlerContext ctx,
+	protected void loginRequestReceived(final ChannelHandlerContext ctx,
 	        final LoginRequestReceivedEvent<ID> e) {
 		ctx.sendUpstream(e);
 	}
 
-	public void loginResponseReceived(final ChannelHandlerContext ctx,
+	protected void loginResponseReceived(final ChannelHandlerContext ctx,
 	        final LoginResponseReceivedEvent<ID> e) {
 		ctx.sendUpstream(e);
 	}
 
-	public void pingRequestReceived(final ChannelHandlerContext ctx,
+	protected void pingRequestReceived(final ChannelHandlerContext ctx,
 	        final PingRequestReceivedEvent<ID> e) {
 		ctx.sendUpstream(e);
 	}
 
-	public void pingResponseReceived(final ChannelHandlerContext ctx,
+	protected void pingResponseReceived(final ChannelHandlerContext ctx,
 	        final PingResponseReceivedEvent<ID> e) {
 		ctx.sendUpstream(e);
 	}
 
-	public void smsReceived(final ChannelHandlerContext ctx,
+	protected void smsReceived(final ChannelHandlerContext ctx,
 	        final SmsReceivedEvent<ID> e) {
 		ctx.sendUpstream(e);
 	}

@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelEvent;
@@ -24,6 +25,8 @@ import vnet.sms.common.messages.Message;
 public class PendingWindowedMessagesDiscardedEvent<ID extends Serializable>
         implements ChannelEvent {
 
+	private final UUID	           id;
+
 	private final Channel	       channel;
 
 	private final Map<ID, Message>	discardedMessages	= new HashMap<ID, Message>();
@@ -32,9 +35,14 @@ public class PendingWindowedMessagesDiscardedEvent<ID extends Serializable>
 
 	PendingWindowedMessagesDiscardedEvent(final Channel channel,
 	        final Map<ID, Message> discardedMessages) {
+		this.id = UUID.randomUUID();
 		this.channel = channel;
 		this.discardedMessages.putAll(discardedMessages);
 		this.creationTimestamp = System.currentTimeMillis();
+	}
+
+	public UUID getId() {
+		return this.id;
 	}
 
 	/**

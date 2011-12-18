@@ -9,7 +9,7 @@ import java.io.Serializable;
  * @author obergner
  * 
  */
-public interface WindowIdGenerator<ID extends Serializable> {
+public interface MessageReferenceGenerator<ID extends Serializable> {
 
-	ID nextWindowId();
+	ID nextMessageReference();
 }

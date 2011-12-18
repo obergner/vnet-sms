@@ -24,15 +24,15 @@ import vnet.sms.common.messages.Message;
 import vnet.sms.gateway.nettysupport.LoginRequestAcceptedEvent;
 import vnet.sms.gateway.nettysupport.LoginRequestReceivedEvent;
 import vnet.sms.gateway.nettysupport.LoginRequestRejectedEvent;
+import vnet.sms.gateway.nettysupport.UpstreamWindowedChannelHandler;
 import vnet.sms.gateway.nettysupport.WindowedMessageEvent;
-import vnet.sms.gateway.nettysupport.WindowedUpstreamChannelHandler;
 
 /**
  * @author obergner
  * 
  */
 public class IncomingLoginRequestsChannelHandler<ID extends Serializable>
-        extends WindowedUpstreamChannelHandler<ID> {
+        extends UpstreamWindowedChannelHandler<ID> {
 
 	private final AuthenticationManager	          authenticationManager;
 
