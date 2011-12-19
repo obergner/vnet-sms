@@ -1,7 +1,7 @@
 /**
  * 
  */
-package vnet.sms.transports.serialization;
+package vnet.sms.gateway.transports.serialization;
 
 import static org.apache.commons.lang.Validate.notNull;
 

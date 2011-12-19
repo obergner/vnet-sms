@@ -1,4 +1,4 @@
-package vnet.sms.transports.serialization.outgoing;
+package vnet.sms.gateway.transports.serialization.outgoing;
 
 import vnet.sms.gateway.nettysupport.LoginRequestAcceptedEvent;
 import vnet.sms.gateway.nettysupport.LoginRequestRejectedEvent;
@@ -6,7 +6,7 @@ import vnet.sms.gateway.nettysupport.SendPingRequestEvent;
 import vnet.sms.gateway.nettysupport.login.incoming.NonLoginMessageReceivedOnUnauthenticatedChannelEvent;
 import vnet.sms.gateway.nettysupport.monitor.ChannelMonitorRegistry;
 import vnet.sms.gateway.nettysupport.transport.outgoing.TransportProtocolAdaptingDownstreamChannelHandler;
-import vnet.sms.transports.serialization.ReferenceableMessageContainer;
+import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;
 
 public class SerializationTransportProtocolAdaptingDownstreamChannelHandler
         extends

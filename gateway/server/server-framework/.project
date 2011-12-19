@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>vnet.sms.gateway.transports.serialization-transport</name>
+	<name>vnet.sms.gateway.server.server-framework</name>
 	<comment></comment>
 	<projects>
 	</projects>

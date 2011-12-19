@@ -1,4 +1,4 @@
-package vnet.sms.transports.serialization.outgoing;
+package vnet.sms.gateway.transports.serialization.outgoing;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -17,6 +17,7 @@ import vnet.sms.gateway.nettysupport.WindowedMessageEvent;
 import vnet.sms.gateway.nettysupport.monitor.TestChannelMonitorRegistry;
 import vnet.sms.gateway.nettytest.ChannelPipelineEmbedder;
 import vnet.sms.gateway.nettytest.DefaultChannelPipelineEmbedder;
+import vnet.sms.gateway.transports.serialization.outgoing.SerializationTransportProtocolAdaptingDownstreamChannelHandler;
 
 public class TransportProtocolAdaptingDownstreamChannelHandlerTest {
 
