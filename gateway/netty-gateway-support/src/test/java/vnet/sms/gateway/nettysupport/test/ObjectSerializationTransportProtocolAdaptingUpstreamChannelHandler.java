@@ -8,6 +8,9 @@ import vnet.sms.common.messages.Message;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.PingResponse;
 import vnet.sms.common.messages.Sms;
+import vnet.sms.gateway.nettysupport.monitor.ChannelMonitor;
+import vnet.sms.gateway.nettysupport.monitor.ChannelMonitorRegistry;
+import vnet.sms.gateway.nettysupport.monitor.TestChannelMonitorRegistry;
 import vnet.sms.gateway.nettysupport.transport.incoming.TransportProtocolAdaptingUpstreamChannelHandler;
 
 public class ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler
@@ -15,6 +18,20 @@ public class ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler
         TransportProtocolAdaptingUpstreamChannelHandler<Integer, Message> {
 
 	private final AtomicInteger	nextWindowId	= new AtomicInteger(1);
+
+	public ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler() {
+		this(new TestChannelMonitorRegistry());
+	}
+
+	public ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(
+	        final ChannelMonitor.Callback channelMetricsListener) {
+		this(new TestChannelMonitorRegistry(channelMetricsListener));
+	}
+
+	public ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(
+	        final ChannelMonitorRegistry channelMetricsRegistry) {
+		super(channelMetricsRegistry);
+	}
 
 	@Override
 	protected Integer extractWindowId(final Message pdu) {

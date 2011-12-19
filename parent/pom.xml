@@ -51,6 +51,7 @@
 		<deps.osgi.version>4.1.0</deps.osgi.version>
 		<deps.google-guava.version>10.0.1</deps.google-guava.version>
 		<deps.spring-security.version>3.0.5.RELEASE</deps.spring-security.version>
+		<deps.yammer-metrics.version>2.0.0-BETA18</deps.yammer-metrics.version>
 		<!-- Testing -->
 		<deps.junit.version>4.10</deps.junit.version>
 		<deps.arquillian.version>1.0.0.Alpha4</deps.arquillian.version>
@@ -486,6 +487,13 @@
 				<groupId>org.springframework.security</groupId>
 				<artifactId>spring-security-core</artifactId>
 				<version>${deps.spring-security.version}</version>
+				<type>jar</type>
+			</dependency>
+			<!-- Yammer Metrics for gathering runtime statistics -->
+			<dependency>
+				<groupId>com.yammer.metrics</groupId>
+				<artifactId>metrics-core</artifactId>
+				<version>${deps.yammer-metrics.version}</version>
 				<type>jar</type>
 			</dependency>
 			<!-- =========================================== -->

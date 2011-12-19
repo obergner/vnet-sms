@@ -3,9 +3,13 @@
  */
 package vnet.sms.gateway.nettysupport.transport.outgoing;
 
+import static org.apache.commons.lang.Validate.notNull;
+
 import java.io.Serializable;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.jboss.netty.channel.ChannelHandlerContext;
+import org.jboss.netty.channel.ChannelStateEvent;
 import org.jboss.netty.channel.DownstreamMessageEvent;
 
 import vnet.sms.gateway.nettysupport.DownstreamWindowedChannelHandler;
@@ -13,6 +17,8 @@ import vnet.sms.gateway.nettysupport.LoginRequestAcceptedEvent;
 import vnet.sms.gateway.nettysupport.LoginRequestRejectedEvent;
 import vnet.sms.gateway.nettysupport.SendPingRequestEvent;
 import vnet.sms.gateway.nettysupport.login.incoming.NonLoginMessageReceivedOnUnauthenticatedChannelEvent;
+import vnet.sms.gateway.nettysupport.monitor.ChannelMonitor;
+import vnet.sms.gateway.nettysupport.monitor.ChannelMonitorRegistry;
 
 /**
  * @author obergner
@@ -21,7 +27,18 @@ import vnet.sms.gateway.nettysupport.login.incoming.NonLoginMessageReceivedOnUna
 public abstract class TransportProtocolAdaptingDownstreamChannelHandler<ID extends Serializable, TP>
         extends DownstreamWindowedChannelHandler<ID> {
 
-	public static final String	NAME	= "vnet.sms.gateway:outgoing-transport-protocol-adapter-handler";
+	public static final String	                           NAME	            = "vnet.sms.gateway:outgoing-transport-protocol-adapter-handler";
+
+	private final AtomicReference<ChannelMonitor.Callback>	monitorCallback	= new AtomicReference<ChannelMonitor.Callback>(
+	                                                                                ChannelMonitor.Callback.NULL);
+
+	private final ChannelMonitorRegistry	               monitorRegistry;
+
+	public TransportProtocolAdaptingDownstreamChannelHandler(
+	        final ChannelMonitorRegistry monitorRegistry) {
+		notNull(monitorRegistry, "Argument 'monitorRegistry' must not be null");
+		this.monitorRegistry = monitorRegistry;
+	}
 
 	@Override
 	protected void writePingRequestRequested(final ChannelHandlerContext ctx,
@@ -29,6 +46,7 @@ public abstract class TransportProtocolAdaptingDownstreamChannelHandler<ID exten
 		final TP pdu = convertSendPingRequestEventToPdu(e);
 		ctx.sendDownstream(new DownstreamMessageEvent(ctx.getChannel(), e
 		        .getFuture(), pdu, e.getRemoteAddress()));
+		getMonitorCallback().sendPingRequest();
 	}
 
 	@Override
@@ -38,6 +56,7 @@ public abstract class TransportProtocolAdaptingDownstreamChannelHandler<ID exten
 		final TP pdu = convertLoginRequestAcceptedEventToPdu(e);
 		ctx.sendDownstream(new DownstreamMessageEvent(ctx.getChannel(), e
 		        .getFuture(), pdu, e.getRemoteAddress()));
+		getMonitorCallback().sendLoginRequestAccepted();
 	}
 
 	@Override
@@ -47,6 +66,7 @@ public abstract class TransportProtocolAdaptingDownstreamChannelHandler<ID exten
 		final TP pdu = convertLoginRequestRejectedEventToPdu(e);
 		ctx.sendDownstream(new DownstreamMessageEvent(ctx.getChannel(), e
 		        .getFuture(), pdu, e.getRemoteAddress()));
+		getMonitorCallback().sendLoginRequestRejected();
 	}
 
 	@Override
@@ -56,6 +76,23 @@ public abstract class TransportProtocolAdaptingDownstreamChannelHandler<ID exten
 		final TP pdu = convertNonLoginMessageReceivedOnUnauthenticatedChannelEventToPdu(e);
 		ctx.sendDownstream(new DownstreamMessageEvent(ctx.getChannel(), e
 		        .getFuture(), pdu, e.getRemoteAddress()));
+	}
+
+	private ChannelMonitor.Callback getMonitorCallback() {
+		return this.monitorCallback.get();
+	}
+
+	@Override
+	public void connectRequested(final ChannelHandlerContext ctx,
+	        final ChannelStateEvent e) throws Exception {
+		// TODO: Is connectRequested(..) the right place/time to install a
+		// channel monitor?
+		if (!this.monitorCallback.compareAndSet(ChannelMonitor.Callback.NULL,
+		        this.monitorRegistry.registerChannel(ctx.getChannel()))) {
+			throw new IllegalStateException(
+			        "Cannot register a ChannelMonitorCallback for this ChannelHandler more than once");
+		}
+		super.connectRequested(ctx, e);
 	}
 
 	protected abstract TP convertSendPingRequestEventToPdu(

@@ -14,12 +14,14 @@ import org.junit.Test;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.gateway.nettysupport.SendPingRequestEvent;
 import vnet.sms.gateway.nettysupport.WindowedMessageEvent;
+import vnet.sms.gateway.nettysupport.monitor.TestChannelMonitorRegistry;
 import vnet.sms.gateway.nettytest.ChannelPipelineEmbedder;
 import vnet.sms.gateway.nettytest.DefaultChannelPipelineEmbedder;
 
 public class TransportProtocolAdaptingDownstreamChannelHandlerTest {
 
-	private final SerializationTransportProtocolAdaptingDownstreamChannelHandler	objectUnderTest	= new SerializationTransportProtocolAdaptingDownstreamChannelHandler();
+	private final SerializationTransportProtocolAdaptingDownstreamChannelHandler	objectUnderTest	= new SerializationTransportProtocolAdaptingDownstreamChannelHandler(
+	                                                                                                        new TestChannelMonitorRegistry());
 
 	@Test
 	public final void assertThatTransportProtocolAdapterCorrectlyConvertsPingRequestToPdu()

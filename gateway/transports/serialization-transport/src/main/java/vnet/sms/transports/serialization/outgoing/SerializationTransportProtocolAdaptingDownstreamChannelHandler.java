@@ -4,12 +4,18 @@ import vnet.sms.gateway.nettysupport.LoginRequestAcceptedEvent;
 import vnet.sms.gateway.nettysupport.LoginRequestRejectedEvent;
 import vnet.sms.gateway.nettysupport.SendPingRequestEvent;
 import vnet.sms.gateway.nettysupport.login.incoming.NonLoginMessageReceivedOnUnauthenticatedChannelEvent;
+import vnet.sms.gateway.nettysupport.monitor.ChannelMonitorRegistry;
 import vnet.sms.gateway.nettysupport.transport.outgoing.TransportProtocolAdaptingDownstreamChannelHandler;
 import vnet.sms.transports.serialization.ReferenceableMessageContainer;
 
 public class SerializationTransportProtocolAdaptingDownstreamChannelHandler
         extends
         TransportProtocolAdaptingDownstreamChannelHandler<Integer, ReferenceableMessageContainer> {
+
+	public SerializationTransportProtocolAdaptingDownstreamChannelHandler(
+	        final ChannelMonitorRegistry metricsRegistry) {
+		super(metricsRegistry);
+	}
 
 	@Override
 	protected ReferenceableMessageContainer convertSendPingRequestEventToPdu(
