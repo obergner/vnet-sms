@@ -69,6 +69,8 @@ public class ChannelMonitor {
 
 	private final HistogramMetric	      numberOfSentBytes;
 
+	private final HistogramMetric	      numberOfSentPdus;
+
 	private final HistogramMetric	      numberOfSentPingRequests;
 
 	private final HistogramMetric	      numberOfSentPingResponses;
@@ -103,6 +105,8 @@ public class ChannelMonitor {
 		// Outgoing metrics
 		this.numberOfSentBytes = Metrics.newHistogram(Channel.class,
 		        "sent-bytes", channel.getId().toString());
+		this.numberOfSentPdus = Metrics.newHistogram(Channel.class,
+		        "sent-pdus", channel.getId().toString());
 		this.numberOfAcceptedLoginRequests = Metrics.newHistogram(
 		        Channel.class, "accepted-login-requests", channel.getId()
 		                .toString());
@@ -137,6 +141,10 @@ public class ChannelMonitor {
 
 	public HistogramMetric getNumberOfSentBytes() {
 		return this.numberOfSentBytes;
+	}
+
+	public HistogramMetric getNumberOfSentPdus() {
+		return this.numberOfSentPdus;
 	}
 
 	public HistogramMetric getNumberOfSentPingRequests() {
@@ -200,10 +208,9 @@ public class ChannelMonitor {
 
 	@Override
 	public String toString() {
-		return "ChannelMonitor@" + this.hashCode() + " [channel: "
-		        + this.channel + "|numberOfReceivedPdus: "
-		        + this.numberOfReceivedBytes + "|numberOfReceivedPdus: "
-		        + this.numberOfReceivedPdus
+		return "ChannelMonitor@" + hashCode() + " [channel: " + this.channel
+		        + "|numberOfReceivedBytes: " + this.numberOfReceivedBytes
+		        + "|numberOfReceivedPdus: " + this.numberOfReceivedPdus
 		        + "|numberOfReceivedLoginRequests: "
 		        + this.numberOfReceivedLoginRequests
 		        + "|numberOfReceivedLoginResponses: "
@@ -216,7 +223,8 @@ public class ChannelMonitor {
 		        + this.numberOfAcceptedLoginRequests
 		        + "|numberOfRejectedLoginRequests: "
 		        + this.numberOfRejectedLoginRequests + "|numberOfSentBytes: "
-		        + this.numberOfSentBytes + "|numberOfSentPingRequests: "
+		        + this.numberOfSentBytes + "|numberOfSentPdus: "
+		        + this.numberOfSentPdus + "|numberOfSentPingRequests: "
 		        + this.numberOfSentPingRequests
 		        + "|numberOfSentPingResponses: "
 		        + this.numberOfSentPingResponses + "]";
@@ -286,7 +294,7 @@ public class ChannelMonitor {
 
 		@Override
 		public void sendPdu() {
-			// TODO Auto-generated method stub
+			ChannelMonitor.this.numberOfSentPdus.update(1);
 		}
 
 		@Override

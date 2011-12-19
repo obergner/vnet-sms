@@ -1,7 +1,7 @@
 /**
  * 
  */
-package vnet.sms.gateway.nettysupport.monitor.incoming;
+package vnet.sms.gateway.nettysupport.monitor.outgoing;
 
 import static org.apache.commons.lang.Validate.notNull;
 
@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ChannelStateEvent;
 import org.jboss.netty.channel.MessageEvent;
-import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
+import org.jboss.netty.channel.SimpleChannelHandler;
 
 import vnet.sms.gateway.nettysupport.monitor.ChannelMonitor;
 import vnet.sms.gateway.nettysupport.monitor.ChannelMonitorRegistry;
@@ -19,10 +19,10 @@ import vnet.sms.gateway.nettysupport.monitor.ChannelMonitorRegistry;
  * @author obergner
  * 
  */
-public class IncomingPdusCountingChannelHandler<TP> extends
-        SimpleChannelUpstreamHandler {
+public class OutgoingPdusCountingChannelHandler<TP> extends
+        SimpleChannelHandler {
 
-	public static final String	                           NAME	            = "vnet.sms.gateway:incoming-pdus-counting-handler";
+	public static final String	                           NAME	            = "vnet.sms.gateway:outgoing-pdus-counting-handler";
 
 	private final AtomicReference<ChannelMonitor.Callback>	monitorCallback	= new AtomicReference<ChannelMonitor.Callback>(
 	                                                                                ChannelMonitor.Callback.NULL);
@@ -31,7 +31,7 @@ public class IncomingPdusCountingChannelHandler<TP> extends
 
 	private final Class<TP>	                               pduType;
 
-	public IncomingPdusCountingChannelHandler(
+	public OutgoingPdusCountingChannelHandler(
 	        final ChannelMonitorRegistry monitorRegistry,
 	        final Class<TP> pduType) {
 		notNull(monitorRegistry, "Argument 'monitorRegistry' must not be null");
@@ -41,7 +41,7 @@ public class IncomingPdusCountingChannelHandler<TP> extends
 	}
 
 	@Override
-	public void messageReceived(final ChannelHandlerContext ctx,
+	public void writeRequested(final ChannelHandlerContext ctx,
 	        final MessageEvent e) throws Exception {
 		if (!this.pduType.isInstance(e.getMessage())) {
 			throw new IllegalStateException(
@@ -49,12 +49,12 @@ public class IncomingPdusCountingChannelHandler<TP> extends
 			                + this.pduType.getName()
 			                + ", but got: "
 			                + e.getMessage()
-			                + ". Did you remember to insert this channel handler AFTER any decoders but BEFORE any transport protocol converters?");
+			                + ". Did you remember to insert this channel handler AFTER any transport protocol converters but BEFORE any encoders?");
 		}
 
-		getMonitorCallback().pduReceived();
+		getMonitorCallback().sendPdu();
 
-		super.messageReceived(ctx, e);
+		super.writeRequested(ctx, e);
 	}
 
 	private ChannelMonitor.Callback getMonitorCallback() {
@@ -69,6 +69,6 @@ public class IncomingPdusCountingChannelHandler<TP> extends
 			throw new IllegalStateException(
 			        "Cannot register a ChannelMonitorCallback for this ChannelHandler more than once");
 		}
-		super.channelConnected(ctx, e);
+		super.connectRequested(ctx, e);
 	}
 }
