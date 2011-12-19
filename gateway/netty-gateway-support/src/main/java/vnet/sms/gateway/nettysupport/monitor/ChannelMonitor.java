@@ -51,6 +51,8 @@ public class ChannelMonitor {
 
 	private final HistogramMetric	      numberOfReceivedBytes;
 
+	private final HistogramMetric	      numberOfReceivedPdus;
+
 	private final HistogramMetric	      numberOfReceivedLoginRequests;
 
 	private final HistogramMetric	      numberOfReceivedLoginResponses;
@@ -83,6 +85,8 @@ public class ChannelMonitor {
 		// Incoming metrics
 		this.numberOfReceivedBytes = Metrics.newHistogram(Channel.class,
 		        "received-bytes", channel.getId().toString());
+		this.numberOfReceivedPdus = Metrics.newHistogram(Channel.class,
+		        "received-pdus", channel.getId().toString());
 		this.numberOfReceivedLoginRequests = Metrics.newHistogram(
 		        Channel.class, "received-login-requests", channel.getId()
 		                .toString());
@@ -113,6 +117,34 @@ public class ChannelMonitor {
 
 	public ChannelMonitor.Callback getCallback() {
 		return this.listener;
+	}
+
+	public HistogramMetric getNumberOfReceivedBytes() {
+		return this.numberOfReceivedBytes;
+	}
+
+	public HistogramMetric getNumberOfReceivedPdus() {
+		return this.numberOfReceivedPdus;
+	}
+
+	public HistogramMetric getNumberOfAcceptedLoginRequests() {
+		return this.numberOfAcceptedLoginRequests;
+	}
+
+	public HistogramMetric getNumberOfRejectedLoginRequests() {
+		return this.numberOfRejectedLoginRequests;
+	}
+
+	public HistogramMetric getNumberOfSentBytes() {
+		return this.numberOfSentBytes;
+	}
+
+	public HistogramMetric getNumberOfSentPingRequests() {
+		return this.numberOfSentPingRequests;
+	}
+
+	public HistogramMetric getNumberOfSentPingResponses() {
+		return this.numberOfSentPingResponses;
 	}
 
 	public HistogramMetric getNumberOfReceivedLoginRequests() {
@@ -169,8 +201,10 @@ public class ChannelMonitor {
 	@Override
 	public String toString() {
 		return "ChannelMonitor@" + this.hashCode() + " [channel: "
-		        + this.channel + "|numberOfSentBytes: "
-		        + this.numberOfReceivedBytes + "|numberOfSentBytes: "
+		        + this.channel + "|numberOfReceivedPdus: "
+		        + this.numberOfReceivedBytes + "|numberOfReceivedPdus: "
+		        + this.numberOfReceivedPdus
+		        + "|numberOfReceivedLoginRequests: "
 		        + this.numberOfReceivedLoginRequests
 		        + "|numberOfReceivedLoginResponses: "
 		        + this.numberOfReceivedLoginResponses
@@ -181,8 +215,9 @@ public class ChannelMonitor {
 		        + this.numberOfReceivedSms + "|numberOfAcceptedLoginRequests: "
 		        + this.numberOfAcceptedLoginRequests
 		        + "|numberOfRejectedLoginRequests: "
-		        + this.numberOfRejectedLoginRequests
-		        + "|numberOfSentPingRequests: " + this.numberOfSentPingRequests
+		        + this.numberOfRejectedLoginRequests + "|numberOfSentBytes: "
+		        + this.numberOfSentBytes + "|numberOfSentPingRequests: "
+		        + this.numberOfSentPingRequests
 		        + "|numberOfSentPingResponses: "
 		        + this.numberOfSentPingResponses + "]";
 	}
@@ -196,7 +231,7 @@ public class ChannelMonitor {
 
 		@Override
 		public void pduReceived() {
-			// TODO Auto-generated method stub
+			ChannelMonitor.this.numberOfReceivedPdus.update(1);
 		}
 
 		@Override
