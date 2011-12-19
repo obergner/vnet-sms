@@ -45,6 +45,7 @@
 		<module>netty-test-support</module>
 		<module>netty-gateway-support</module>
 		<module>transports</module>
+		<module>server</module>
 	</modules>
 
 </project>
