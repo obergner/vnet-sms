@@ -20,7 +20,7 @@ public class ChannelMonitor {
 
 		Callback	NULL	= new DefaultChannelMonitorCallback();
 
-		void bytesREceived(long numberOfBytes);
+		void bytesReceived(long numberOfBytes);
 
 		void pduReceived();
 
@@ -48,6 +48,8 @@ public class ChannelMonitor {
 
 		void sendBytes(long numberOfBytes);
 	}
+
+	private final HistogramMetric	      numberOfReceivedBytes;
 
 	private final HistogramMetric	      numberOfReceivedLoginRequests;
 
@@ -77,6 +79,8 @@ public class ChannelMonitor {
 		this.channel = channel;
 		this.listener = this.new Listener();
 		// Incoming metrics
+		this.numberOfReceivedBytes = Metrics.newHistogram(Channel.class,
+		        "received-bytes", channel.getId().toString());
 		this.numberOfReceivedLoginRequests = Metrics.newHistogram(
 		        Channel.class, "received-login-requests", channel.getId()
 		                .toString());
@@ -161,22 +165,29 @@ public class ChannelMonitor {
 	@Override
 	public String toString() {
 		return "ChannelMonitor@" + this.hashCode() + " [channel: "
-		        + this.channel + "|numberOfReceivedSms: "
-		        + this.numberOfReceivedSms + "|numberOfReceivedLoginRequests: "
+		        + this.channel + "|numberOfReceivedBytes: "
+		        + this.numberOfReceivedBytes + "|numberOfReceivedBytes: "
 		        + this.numberOfReceivedLoginRequests
 		        + "|numberOfReceivedLoginResponses: "
 		        + this.numberOfReceivedLoginResponses
 		        + "|numberOfReceivedPingRequests: "
 		        + this.numberOfReceivedPingRequests
 		        + "|numberOfReceivedPingResponses: "
-		        + this.numberOfReceivedPingResponses + "]";
+		        + this.numberOfReceivedPingResponses + "|numberOfReceivedSms: "
+		        + this.numberOfReceivedSms + "|numberOfAcceptedLoginRequests: "
+		        + this.numberOfAcceptedLoginRequests
+		        + "|numberOfRejectedLoginRequests: "
+		        + this.numberOfRejectedLoginRequests
+		        + "|numberOfSentPingRequests: " + this.numberOfSentPingRequests
+		        + "|numberOfSentPingResponses: "
+		        + this.numberOfSentPingResponses + "]";
 	}
 
 	private class Listener implements ChannelMonitor.Callback {
 
 		@Override
-		public void bytesREceived(final long numberOfBytes) {
-			// TODO
+		public void bytesReceived(final long numberOfBytes) {
+			ChannelMonitor.this.numberOfReceivedBytes.update(numberOfBytes);
 		}
 
 		@Override

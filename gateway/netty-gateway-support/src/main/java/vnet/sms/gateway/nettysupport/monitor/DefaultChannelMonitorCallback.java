@@ -10,10 +10,10 @@ package vnet.sms.gateway.nettysupport.monitor;
 public class DefaultChannelMonitorCallback implements ChannelMonitor.Callback {
 
 	/**
-	 * @see vnet.sms.gateway.nettysupport.monitor.ChannelMonitorCallback#bytesREceived(long)
+	 * @see vnet.sms.gateway.nettysupport.monitor.ChannelMonitorCallback#bytesReceived(long)
 	 */
 	@Override
-	public void bytesREceived(final long numberOfBytes) {
+	public void bytesReceived(final long numberOfBytes) {
 	}
 
 	/**
