@@ -65,6 +65,8 @@ public class ChannelMonitor {
 
 	private final HistogramMetric	      numberOfRejectedLoginRequests;
 
+	private final HistogramMetric	      numberOfSentBytes;
+
 	private final HistogramMetric	      numberOfSentPingRequests;
 
 	private final HistogramMetric	      numberOfSentPingResponses;
@@ -95,6 +97,8 @@ public class ChannelMonitor {
 		this.numberOfReceivedSms = Metrics.newHistogram(Channel.class,
 		        "received-sms", channel.getId().toString());
 		// Outgoing metrics
+		this.numberOfSentBytes = Metrics.newHistogram(Channel.class,
+		        "sent-bytes", channel.getId().toString());
 		this.numberOfAcceptedLoginRequests = Metrics.newHistogram(
 		        Channel.class, "accepted-login-requests", channel.getId()
 		                .toString());
@@ -165,8 +169,8 @@ public class ChannelMonitor {
 	@Override
 	public String toString() {
 		return "ChannelMonitor@" + this.hashCode() + " [channel: "
-		        + this.channel + "|numberOfReceivedBytes: "
-		        + this.numberOfReceivedBytes + "|numberOfReceivedBytes: "
+		        + this.channel + "|numberOfSentBytes: "
+		        + this.numberOfReceivedBytes + "|numberOfSentBytes: "
 		        + this.numberOfReceivedLoginRequests
 		        + "|numberOfReceivedLoginResponses: "
 		        + this.numberOfReceivedLoginResponses
@@ -252,7 +256,7 @@ public class ChannelMonitor {
 
 		@Override
 		public void sendBytes(final long numberOfBytes) {
-			// TODO Auto-generated method stub
+			ChannelMonitor.this.numberOfSentBytes.update(numberOfBytes);
 		}
 	}
 }

@@ -12,10 +12,10 @@ import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ChannelStateEvent;
 import org.jboss.netty.channel.DownstreamMessageEvent;
 
-import vnet.sms.gateway.nettysupport.DownstreamWindowedChannelHandler;
 import vnet.sms.gateway.nettysupport.LoginRequestAcceptedEvent;
 import vnet.sms.gateway.nettysupport.LoginRequestRejectedEvent;
 import vnet.sms.gateway.nettysupport.SendPingRequestEvent;
+import vnet.sms.gateway.nettysupport.WindowedChannelHandler;
 import vnet.sms.gateway.nettysupport.login.incoming.NonLoginMessageReceivedOnUnauthenticatedChannelEvent;
 import vnet.sms.gateway.nettysupport.monitor.ChannelMonitor;
 import vnet.sms.gateway.nettysupport.monitor.ChannelMonitorRegistry;
@@ -25,7 +25,7 @@ import vnet.sms.gateway.nettysupport.monitor.ChannelMonitorRegistry;
  * 
  */
 public abstract class TransportProtocolAdaptingDownstreamChannelHandler<ID extends Serializable, TP>
-        extends DownstreamWindowedChannelHandler<ID> {
+        extends WindowedChannelHandler<ID> {
 
 	public static final String	                           NAME	            = "vnet.sms.gateway:outgoing-transport-protocol-adapter-handler";
 
@@ -83,10 +83,8 @@ public abstract class TransportProtocolAdaptingDownstreamChannelHandler<ID exten
 	}
 
 	@Override
-	public void connectRequested(final ChannelHandlerContext ctx,
+	public void channelConnected(final ChannelHandlerContext ctx,
 	        final ChannelStateEvent e) throws Exception {
-		// TODO: Is connectRequested(..) the right place/time to install a
-		// channel monitor?
 		if (!this.monitorCallback.compareAndSet(ChannelMonitor.Callback.NULL,
 		        this.monitorRegistry.registerChannel(ctx.getChannel()))) {
 			throw new IllegalStateException(
