@@ -27,6 +27,8 @@ import vnet.sms.gateway.nettysupport.WindowedMessageEvent;
 public abstract class TransportProtocolAdaptingUpstreamChannelHandler<ID extends Serializable, TP>
         extends SimpleChannelUpstreamHandler {
 
+	public static final String	NAME	= "vnet.sms.gateway:incoming-transport-protocol-adapter-handler";
+
 	public enum PduType {
 
 		UNKNOWN,

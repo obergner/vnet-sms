@@ -34,6 +34,8 @@ import vnet.sms.gateway.nettysupport.WindowedMessageEvent;
 public class IncomingLoginRequestsChannelHandler<ID extends Serializable>
         extends UpstreamWindowedChannelHandler<ID> {
 
+	public static final String	                  NAME	                   = "vnet.sms.gateway:incoming-login-handler";
+
 	private final AuthenticationManager	          authenticationManager;
 
 	private final AtomicReference<Authentication>	authenticatedClient	   = new AtomicReference<Authentication>();

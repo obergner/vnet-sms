@@ -31,8 +31,10 @@ import vnet.sms.gateway.nettysupport.window.incoming.IncomingWindowStore;
 public class WindowingChannelHandler<ID extends Serializable> extends
         SimpleChannelHandler {
 
+	public static final String	          NAME	= "vnet.sms.gateway:incoming-outgoing-windowing-handler";
+
 	private final Logger	              log	= LoggerFactory
-	                                                  .getLogger(getClass());
+	                                                   .getLogger(getClass());
 
 	private final IncomingWindowStore<ID>	incomingWindowStore;
 

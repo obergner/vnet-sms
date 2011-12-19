@@ -21,6 +21,8 @@ import vnet.sms.gateway.nettysupport.login.incoming.NonLoginMessageReceivedOnUna
 public abstract class TransportProtocolAdaptingDownstreamChannelHandler<ID extends Serializable, TP>
         extends DownstreamWindowedChannelHandler<ID> {
 
+	public static final String	NAME	= "vnet.sms.gateway:outgoing-transport-protocol-adapter-handler";
+
 	@Override
 	protected void writePingRequestRequested(final ChannelHandlerContext ctx,
 	        final SendPingRequestEvent<ID> e) {

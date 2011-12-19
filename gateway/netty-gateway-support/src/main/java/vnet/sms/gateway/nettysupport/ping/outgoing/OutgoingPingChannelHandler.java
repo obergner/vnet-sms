@@ -29,6 +29,8 @@ import vnet.sms.gateway.nettysupport.window.spi.MessageReferenceGenerator;
 public class OutgoingPingChannelHandler<ID extends Serializable> extends
         UpstreamWindowedChannelHandler<ID> {
 
+	public static final String	                NAME	                 = "vnet.sms.gateway:outgoing-ping-handler";
+
 	private final int	                        pingIntervalSeconds;
 
 	private final int	                        pingResponseTimeoutMillis;
