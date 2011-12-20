@@ -26,13 +26,13 @@ public final class NoPingResponseReceivedWithinTimeoutEvent implements
 
 	private final int	        pingIntervalSeconds;
 
-	private final int	        pingResponseTimeoutMillis;
+	private final long	        pingResponseTimeoutMillis;
 
 	private final long	        creationTimestamp	= System
 	                                                      .currentTimeMillis();
 
 	public NoPingResponseReceivedWithinTimeoutEvent(final Channel channel,
-	        final int pingIntervalSeconds, final int pingResponseTimeoutMillis) {
+	        final int pingIntervalSeconds, final long pingResponseTimeoutMillis) {
 		this.channel = channel;
 		this.future = Channels.future(channel, false);
 		this.pingIntervalSeconds = pingIntervalSeconds;
@@ -47,7 +47,7 @@ public final class NoPingResponseReceivedWithinTimeoutEvent implements
 		return this.pingIntervalSeconds;
 	}
 
-	public int getPingResponseTimeoutMillis() {
+	public long getPingResponseTimeoutMillis() {
 		return this.pingResponseTimeoutMillis;
 	}
 

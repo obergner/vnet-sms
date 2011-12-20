@@ -33,7 +33,7 @@ public class OutgoingPingChannelHandler<ID extends Serializable> extends
 
 	private final int	                        pingIntervalSeconds;
 
-	private final int	                        pingResponseTimeoutMillis;
+	private final long	                        pingResponseTimeoutMillis;
 
 	private final MessageReferenceGenerator<ID>	windowIdGenerator;
 
@@ -44,7 +44,7 @@ public class OutgoingPingChannelHandler<ID extends Serializable> extends
 	private volatile PingSender	                pingSender;
 
 	public OutgoingPingChannelHandler(final int pingIntervalSeconds,
-	        final int pingResponseTimeoutMillis,
+	        final long pingResponseTimeoutMillis,
 	        final MessageReferenceGenerator<ID> windowIdGenerator) {
 		notNull(windowIdGenerator,
 		        "Argument 'windowIdGenerator' must not be null");
@@ -57,7 +57,7 @@ public class OutgoingPingChannelHandler<ID extends Serializable> extends
 		return this.pingIntervalSeconds;
 	}
 
-	public int getPingResponseTimeoutMillis() {
+	public long getPingResponseTimeoutMillis() {
 		return this.pingResponseTimeoutMillis;
 	}
 

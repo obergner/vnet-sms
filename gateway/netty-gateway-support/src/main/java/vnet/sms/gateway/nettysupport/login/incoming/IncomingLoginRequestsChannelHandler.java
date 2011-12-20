@@ -40,13 +40,13 @@ public class IncomingLoginRequestsChannelHandler<ID extends Serializable>
 
 	private final AtomicReference<Authentication>	authenticatedClient	   = new AtomicReference<Authentication>();
 
-	private final int	                          failedLoginResponseDelayMillis;
+	private final long	                          failedLoginResponseDelayMillis;
 
 	private final Timer	                          failedLoginResponseTimer	= new HashedWheelTimer();
 
 	public IncomingLoginRequestsChannelHandler(
 	        final AuthenticationManager authenticationManager,
-	        final int failedLoginResponseDelayMillis) {
+	        final long failedLoginResponseDelayMillis) {
 		notNull(authenticationManager,
 		        "Argument 'authenticationManager' must not be null");
 		this.authenticationManager = authenticationManager;
