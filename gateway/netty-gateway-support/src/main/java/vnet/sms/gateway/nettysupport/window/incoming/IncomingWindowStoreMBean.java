@@ -6,8 +6,6 @@ package vnet.sms.gateway.nettysupport.window.incoming;
  */
 public interface IncomingWindowStoreMBean {
 
-	String getOwnerUid();
-
 	int getMaximumCapacity();
 
 	int getCurrentMessageCount();

@@ -16,6 +16,7 @@
 package vnet.sms.gateway.nettytest;
 
 import java.net.SocketAddress;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jboss.netty.channel.AbstractChannel;
 import org.jboss.netty.channel.ChannelConfig;
@@ -25,16 +26,17 @@ import org.jboss.netty.channel.DefaultChannelConfig;
 
 class EmbeddedChannel extends AbstractChannel {
 
-	private static final Integer	DUMMY_ID	= Integer.valueOf(0);
+	private static final AtomicInteger	UNIQUE_ID	 = new AtomicInteger(0);
 
-	private final ChannelConfig	 config;
+	private final ChannelConfig	       config;
 
-	private final SocketAddress	 localAddress	= new EmbeddedSocketAddress();
+	private final SocketAddress	       localAddress	 = new EmbeddedSocketAddress();
 
-	private final SocketAddress	 remoteAddress	= new EmbeddedSocketAddress();
+	private final SocketAddress	       remoteAddress	= new EmbeddedSocketAddress();
 
 	EmbeddedChannel(final ChannelPipeline pipeline, final ChannelSink sink) {
-		super(DUMMY_ID, null, NullChannelFactory.INSTANCE, pipeline, sink);
+		super(UNIQUE_ID.getAndIncrement(), null, NullChannelFactory.INSTANCE,
+		        pipeline, sink);
 		this.config = new DefaultChannelConfig();
 	}
 

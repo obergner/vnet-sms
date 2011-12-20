@@ -19,22 +19,11 @@ import vnet.sms.gateway.nettysupport.PingRequestReceivedEvent;
 
 public class IncomingWindowStoreTest {
 
-	@Test(expected = IllegalArgumentException.class)
-	public final void assertThatConstructorRejectsNullOwnerUid() {
-		new IncomingWindowStore<Long>(null, 1, 1);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public final void assertThatConstructorRejectsEmptyOwnerUid() {
-		new IncomingWindowStore<Long>("", 1, 1);
-	}
-
 	@Test
 	public final void assertThatGetCurrentMessageCountReturnsNumberOfCurrentlyStoredMessages()
 	        throws IllegalArgumentException, InterruptedException {
 		final int expectedNumberOfMessages = 234;
 		final IncomingWindowStore<Integer> objectUnderTest = new IncomingWindowStore<Integer>(
-		        "assertThatGetCurrentMessageCountReturnsNumberOfCurrentlyStoredMessages",
 		        10000, 10);
 
 		final Channel mockChannel = createNiceMock(Channel.class);
@@ -60,7 +49,6 @@ public class IncomingWindowStoreTest {
 	        throws IllegalArgumentException, InterruptedException {
 		final int windowStoreCapacity = 234;
 		final IncomingWindowStore<Integer> objectUnderTest = new IncomingWindowStore<Integer>(
-		        "assertThatTryAcquireWindowSucceedsIfAWindowIsAvailable",
 		        windowStoreCapacity, 10);
 
 		final Channel mockChannel = createNiceMock(Channel.class);
@@ -93,7 +81,6 @@ public class IncomingWindowStoreTest {
 	        throws IllegalArgumentException, InterruptedException {
 		final int windowStoreCapacity = 234;
 		final IncomingWindowStore<Integer> objectUnderTest = new IncomingWindowStore<Integer>(
-		        "assertThatTryAcquireWindowFailsIfNoWindowIsAvailable",
 		        windowStoreCapacity, 10);
 
 		final Channel mockChannel = createNiceMock(Channel.class);
@@ -127,7 +114,6 @@ public class IncomingWindowStoreTest {
 		final int windowStoreCapacity = 234;
 		final int waitTimeMillis = 500;
 		final IncomingWindowStore<Integer> objectUnderTest = new IncomingWindowStore<Integer>(
-		        "assertThatTryAcquireWindowWaitsConfiguredTimespanForAWindowToBecomeAvailable",
 		        windowStoreCapacity, waitTimeMillis);
 
 		final Channel mockChannel = createNiceMock(Channel.class);
@@ -162,7 +148,7 @@ public class IncomingWindowStoreTest {
 		final Integer freedWindowId = Integer.valueOf(23);
 		final int windowStoreCapacity = 234;
 		final IncomingWindowStore<Integer> objectUnderTest = new IncomingWindowStore<Integer>(
-		        "assertThatReleaseWindowFreesAWindow", windowStoreCapacity, 10);
+		        windowStoreCapacity, 10);
 
 		final Channel mockChannel = createNiceMock(Channel.class);
 		replay(mockChannel);
@@ -196,7 +182,6 @@ public class IncomingWindowStoreTest {
 	        throws IllegalArgumentException, InterruptedException {
 		final int windowStoreCapacity = 234;
 		final IncomingWindowStore<Integer> objectUnderTest = new IncomingWindowStore<Integer>(
-		        "assertThatShutdownReturnsPendingMessages",
 		        windowStoreCapacity, 10);
 
 		final Channel mockChannel = createNiceMock(Channel.class);

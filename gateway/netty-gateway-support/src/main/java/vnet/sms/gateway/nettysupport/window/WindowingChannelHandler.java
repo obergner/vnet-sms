@@ -82,12 +82,14 @@ public class WindowingChannelHandler<ID extends Serializable> extends
 	@Override
 	public void channelConnected(final ChannelHandlerContext ctx,
 	        final ChannelStateEvent e) throws Exception {
+		final ObjectName windowStoreObjectName = this.incomingWindowStore
+		        .objectNameFor(ctx.getChannel());
 		this.mbeanServer.registerMBean(this.incomingWindowStore,
-		        new ObjectName(this.incomingWindowStore.getObjectName()));
+		        windowStoreObjectName);
 		this.log.info(
 		        "Registered {} with MBeanServer {} using ObjectName [{}]",
 		        new Object[] { this.incomingWindowStore, this.mbeanServer,
-		                this.incomingWindowStore.getObjectName() });
+		                windowStoreObjectName });
 
 		super.channelConnected(ctx, e);
 	}
@@ -108,8 +110,8 @@ public class WindowingChannelHandler<ID extends Serializable> extends
 			ctx.sendUpstream(pendingMessagesDiscarded);
 		}
 
-		this.mbeanServer.unregisterMBean(new ObjectName(
-		        this.incomingWindowStore.getObjectName()));
+		this.mbeanServer.unregisterMBean(this.incomingWindowStore
+		        .objectNameFor(ctx.getChannel()));
 		this.log.info("Removed {} from MBeanServer {}",
 		        this.incomingWindowStore, this.mbeanServer);
 	}

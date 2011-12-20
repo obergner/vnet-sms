@@ -90,7 +90,7 @@ public abstract class TransportProtocolAdaptingDownstreamChannelHandler<ID exten
 			throw new IllegalStateException(
 			        "Cannot register a ChannelMonitorCallback for this ChannelHandler more than once");
 		}
-		super.connectRequested(ctx, e);
+		super.channelConnected(ctx, e);
 	}
 
 	protected abstract TP convertSendPingRequestEventToPdu(

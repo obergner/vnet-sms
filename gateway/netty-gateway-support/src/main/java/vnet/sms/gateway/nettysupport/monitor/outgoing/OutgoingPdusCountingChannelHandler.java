@@ -69,6 +69,6 @@ public class OutgoingPdusCountingChannelHandler<TP> extends
 			throw new IllegalStateException(
 			        "Cannot register a ChannelMonitorCallback for this ChannelHandler more than once");
 		}
-		super.connectRequested(ctx, e);
+		super.channelConnected(ctx, e);
 	}
 }

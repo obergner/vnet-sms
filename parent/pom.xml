@@ -210,7 +210,7 @@
 				<groupId>vnet.sms.gateway.transports</groupId>
 				<artifactId>serialization-transport</artifactId>
 				<version>${module.gateway.transports.serialization-transport.version}</version>
-				<type>pom</type>
+				<type>jar</type>
 			</dependency>
 			<dependency>
 				<groupId>vnet.sms.gateway</groupId>

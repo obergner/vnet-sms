@@ -58,6 +58,11 @@
 			<artifactId>netty-test-support</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>vnet.sms.gateway.transports</groupId>
+			<artifactId>serialization-transport</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 </project>

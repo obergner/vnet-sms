@@ -56,8 +56,7 @@ public class IncomingWindowStoreConcurrentTest {
 		}
 
 		final IncomingWindowStore<Long> objectUnderTest = new IncomingWindowStore<Long>(
-		        "assertThatStoreMessageFillsWindowStoreToCapacity", capacity,
-		        waitTimeMillis);
+		        capacity, waitTimeMillis);
 
 		final int numberOfTasks = 100;
 		final Set<MessageStoreTask> messageStoreTasks = new HashSet<MessageStoreTask>(
@@ -170,7 +169,6 @@ public class IncomingWindowStoreConcurrentTest {
 			}
 
 			final IncomingWindowStore<Long> objectUnderTest = new IncomingWindowStore<Long>(
-			        "assertThatStoreMessageFillsWindowStoreToCapacity",
 			        capacity, waitTimeMillis);
 
 			final int numberOfTasks = 100;

@@ -22,9 +22,7 @@ public class WindowingChannelHandlerTest {
 	public final void assertThatWindowedChannelHandlerCorrectlyPropagatesLoginRequest()
 	        throws Throwable {
 		final WindowingChannelHandler<Integer> objectUnderTest = new WindowingChannelHandler<Integer>(
-		        new IncomingWindowStore<Integer>(
-		                "assertThatWindowedChannelHandlerCorrectlyPropagatesLoginRequest",
-		                100, 1000), null);
+		        new IncomingWindowStore<Integer>(100, 1000), null);
 
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
@@ -54,9 +52,7 @@ public class WindowingChannelHandlerTest {
 		        "secret", new InetSocketAddress(1), new InetSocketAddress(1));
 
 		final WindowingChannelHandler<Integer> objectUnderTest = new WindowingChannelHandler<Integer>(
-		        new IncomingWindowStore<Integer>(
-		                "assertThatWindowedChannelHandlerIssuesNoWindowForIncomingMessageAvailableEventIfNoWindowIsAvailable",
-		                1, 1), null);
+		        new IncomingWindowStore<Integer>(1, 1), null);
 
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),

@@ -1,5 +1,6 @@
 package vnet.sms.gateway.transports.serialization.outgoing;
 
+import vnet.sms.common.messages.LoginResponse;
 import vnet.sms.gateway.nettysupport.LoginRequestAcceptedEvent;
 import vnet.sms.gateway.nettysupport.LoginRequestRejectedEvent;
 import vnet.sms.gateway.nettysupport.SendPingRequestEvent;
@@ -28,14 +29,14 @@ public class SerializationTransportProtocolAdaptingDownstreamChannelHandler
 	protected ReferenceableMessageContainer convertLoginRequestAcceptedEventToPdu(
 	        final LoginRequestAcceptedEvent<Integer> e) {
 		return ReferenceableMessageContainer.wrap(e.getMessageReference(),
-		        e.getMessage());
+		        LoginResponse.accept(e.getMessage()));
 	}
 
 	@Override
 	protected ReferenceableMessageContainer convertLoginRequestRejectedEventToPdu(
 	        final LoginRequestRejectedEvent<Integer> e) {
 		return ReferenceableMessageContainer.wrap(e.getMessageReference(),
-		        e.getMessage());
+		        LoginResponse.reject(e.getMessage()));
 	}
 
 	@Override

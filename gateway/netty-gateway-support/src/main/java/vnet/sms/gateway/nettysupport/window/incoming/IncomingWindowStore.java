@@ -1,7 +1,6 @@
 package vnet.sms.gateway.nettysupport.window.incoming;
 
 import static org.apache.commons.lang.Validate.isTrue;
-import static org.apache.commons.lang.Validate.notEmpty;
 import static org.apache.commons.lang.Validate.notNull;
 
 import java.io.Serializable;
@@ -11,6 +10,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
+
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+
+import org.jboss.netty.channel.Channel;
 
 import vnet.sms.common.messages.Message;
 import vnet.sms.gateway.nettysupport.WindowedMessageEvent;
@@ -22,8 +26,6 @@ import vnet.sms.gateway.nettysupport.WindowedMessageEvent;
 public class IncomingWindowStore<ID extends Serializable> implements
         IncomingWindowStoreMBean {
 
-	private final String	                 ownerUid;
-
 	private final int	                     maximumCapacity;
 
 	private final long	                     waitTimeMillis;
@@ -34,12 +36,8 @@ public class IncomingWindowStore<ID extends Serializable> implements
 
 	private volatile boolean	             shutDown	= false;
 
-	public IncomingWindowStore(final String ownerUid,
-	        final int maximumCapacity, final long waitTimeMillis) {
-		notEmpty(ownerUid,
-		        "Argument 'ownerUid' must be neither null nor empty. Got: "
-		                + ownerUid);
-		this.ownerUid = ownerUid;
+	public IncomingWindowStore(final int maximumCapacity,
+	        final long waitTimeMillis) {
 		this.maximumCapacity = maximumCapacity;
 		this.availableWindows = new Semaphore(maximumCapacity);
 		this.waitTimeMillis = waitTimeMillis;
@@ -47,16 +45,11 @@ public class IncomingWindowStore<ID extends Serializable> implements
 		        maximumCapacity);
 	}
 
-	/**
-	 * @see vnet.sms.gateway.nettysupport.window.incoming.IncomingWindowStoreMBean#getOwnerUid()
-	 */
-	@Override
-	public final String getOwnerUid() {
-		return this.ownerUid;
-	}
-
-	public final String getObjectName() {
-		return "vnet.sms:service=IncomingWindowStore,owner=" + this.ownerUid;
+	public final ObjectName objectNameFor(final Channel channel)
+	        throws MalformedObjectNameException {
+		return new ObjectName(
+		        "vnet.sms:service=IncomingWindowStore,owner=channel-"
+		                + channel.getId());
 	}
 
 	/**
@@ -147,9 +140,8 @@ public class IncomingWindowStore<ID extends Serializable> implements
 
 	@Override
 	public String toString() {
-		return "IncomingWindowStore@" + hashCode() + "[ownerUid = "
-		        + this.ownerUid + "|maximumCapacity = " + this.maximumCapacity
-		        + "|messageReferenceToMessage = "
+		return "IncomingWindowStore@" + hashCode() + "[maximumCapacity = "
+		        + this.maximumCapacity + "|messageReferenceToMessage = "
 		        + this.messageReferenceToMessage + "|shutDown = "
 		        + this.shutDown + "]";
 	}

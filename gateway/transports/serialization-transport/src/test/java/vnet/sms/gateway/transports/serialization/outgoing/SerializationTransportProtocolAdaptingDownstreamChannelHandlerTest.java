@@ -17,9 +17,9 @@ import vnet.sms.gateway.nettysupport.WindowedMessageEvent;
 import vnet.sms.gateway.nettysupport.monitor.TestChannelMonitorRegistry;
 import vnet.sms.gateway.nettytest.ChannelPipelineEmbedder;
 import vnet.sms.gateway.nettytest.DefaultChannelPipelineEmbedder;
-import vnet.sms.gateway.transports.serialization.outgoing.SerializationTransportProtocolAdaptingDownstreamChannelHandler;
+import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;
 
-public class TransportProtocolAdaptingDownstreamChannelHandlerTest {
+public class SerializationTransportProtocolAdaptingDownstreamChannelHandlerTest {
 
 	private final SerializationTransportProtocolAdaptingDownstreamChannelHandler	objectUnderTest	= new SerializationTransportProtocolAdaptingDownstreamChannelHandler(
 	                                                                                                        new TestChannelMonitorRegistry());
@@ -42,6 +42,16 @@ public class TransportProtocolAdaptingDownstreamChannelHandlerTest {
 		assertEquals(
 		        "TransportProtocolAdaptingDownstreamChannelHandler did not wrap converted PingRequest in DownstreamMessageEvent",
 		        DownstreamMessageEvent.class, convertedMessageEvent.getClass());
+		assertEquals(
+		        "TransportProtocolAdaptingDownstreamChannelHandler did not convert PingRequest to ReferenceableMessageContainer",
+		        ReferenceableMessageContainer.class, convertedMessageEvent
+		                .getMessage().getClass());
+		assertEquals(
+		        "TransportProtocolAdaptingDownstreamChannelHandler did not convert put converted PingRequest in ReferenceableMessageContainer",
+		        PingRequest.class,
+		        ReferenceableMessageContainer.class
+		                .cast(convertedMessageEvent.getMessage()).getMessage()
+		                .getClass());
 	}
 
 	private static class MessageEventWrappingDownstreamChannelHandler extends

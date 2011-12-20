@@ -22,7 +22,6 @@ import vnet.sms.gateway.nettysupport.monitor.TestChannelMonitorRegistry;
 import vnet.sms.gateway.nettytest.ChannelPipelineEmbedder;
 import vnet.sms.gateway.nettytest.DefaultChannelPipelineEmbedder;
 import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;
-import vnet.sms.gateway.transports.serialization.incoming.SerializationTransportProtocolAdaptingUpstreamChannelHandler;
 
 public class SerializationTransportProtocolAdaptingUpstreamChannelHandlerTest {
 
