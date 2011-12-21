@@ -6,7 +6,6 @@ package vnet.sms.gateway.nettysupport.login.incoming;
 import static org.apache.commons.lang.Validate.isTrue;
 
 import java.io.Serializable;
-import java.net.SocketAddress;
 
 import org.jboss.netty.channel.Channel;
 
@@ -29,14 +28,11 @@ public final class NonLoginMessageReceivedOnUnauthenticatedChannelEvent<ID exten
 		        "Argument 'nonLoginRequest' must not be a LoginRequest");
 		return new NonLoginMessageReceivedOnUnauthenticatedChannelEvent<ID, M>(
 		        nonLoginRequest.getMessageReference(),
-		        nonLoginRequest.getChannel(), nonLoginRequest.getMessage(),
-		        nonLoginRequest.getRemoteAddress());
+		        nonLoginRequest.getChannel(), nonLoginRequest.getMessage());
 	}
 
 	private NonLoginMessageReceivedOnUnauthenticatedChannelEvent(
-	        final ID messageReference, final Channel channel, final M message,
-	        final SocketAddress remoteAddress) {
-		super(messageReference, channel, message, remoteAddress,
-		        Acknowledgement.nack());
+	        final ID messageReference, final Channel channel, final M message) {
+		super(messageReference, channel, message, Acknowledgement.nack());
 	}
 }

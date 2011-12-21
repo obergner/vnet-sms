@@ -104,9 +104,8 @@ public class SerializationTransportProtocolAdaptingUpstreamChannelHandlerTest {
 		        this.objectUnderTest);
 
 		embeddedPipeline.receive(ReferenceableMessageContainer.wrap(1,
-		        PingResponse.respondTo(new PingRequest(
-		                new InetSocketAddress(1), new InetSocketAddress(1)),
-		                new InetSocketAddress(1), new InetSocketAddress(1))));
+		        PingResponse.accept(new PingRequest(new InetSocketAddress(2),
+		                new InetSocketAddress(3)))));
 		final MessageEvent convertedPduEvent = embeddedPipeline
 		        .nextReceivedMessageEvent();
 
@@ -124,11 +123,9 @@ public class SerializationTransportProtocolAdaptingUpstreamChannelHandlerTest {
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        this.objectUnderTest);
 
-		embeddedPipeline
-		        .receive(ReferenceableMessageContainer
-		                .wrap(1,
-		                        new Sms(
-		                                "assertThatTransportProtocolAdapterCorrectlyConvertsPduToSms")));
+		embeddedPipeline.receive(ReferenceableMessageContainer.wrap(1, new Sms(
+		        "assertThatTransportProtocolAdapterCorrectlyConvertsPduToSms",
+		        new InetSocketAddress(1), new InetSocketAddress(2))));
 		final MessageEvent convertedPduEvent = embeddedPipeline
 		        .nextReceivedMessageEvent();
 

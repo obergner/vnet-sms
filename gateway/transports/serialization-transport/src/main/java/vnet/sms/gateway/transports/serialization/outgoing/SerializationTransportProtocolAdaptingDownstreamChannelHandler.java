@@ -1,6 +1,9 @@
 package vnet.sms.gateway.transports.serialization.outgoing;
 
 import vnet.sms.common.messages.LoginResponse;
+import vnet.sms.common.messages.Message;
+import vnet.sms.common.messages.PingRequest;
+import vnet.sms.common.messages.PingResponse;
 import vnet.sms.gateway.nettysupport.LoginRequestAcceptedEvent;
 import vnet.sms.gateway.nettysupport.LoginRequestRejectedEvent;
 import vnet.sms.gateway.nettysupport.SendPingRequestEvent;
@@ -42,7 +45,17 @@ public class SerializationTransportProtocolAdaptingDownstreamChannelHandler
 	@Override
 	protected ReferenceableMessageContainer convertNonLoginMessageReceivedOnUnauthenticatedChannelEventToPdu(
 	        final NonLoginMessageReceivedOnUnauthenticatedChannelEvent<Integer, ?> e) {
-		return ReferenceableMessageContainer.wrap(e.getMessageReference(),
-		        e.getMessage());
+		final Message rejectedMessage = e.getMessage();
+		final Message nack;
+		if (rejectedMessage instanceof PingRequest) {
+			final PingRequest rejectedPing = PingRequest.class
+			        .cast(rejectedMessage);
+			nack = PingResponse.reject(rejectedPing);
+		} else {
+			throw new IllegalStateException(
+			        "Currently, we only support rejecting PingRequests as non-login messages");
+		}
+		return ReferenceableMessageContainer
+		        .wrap(e.getMessageReference(), nack);
 	}
 }

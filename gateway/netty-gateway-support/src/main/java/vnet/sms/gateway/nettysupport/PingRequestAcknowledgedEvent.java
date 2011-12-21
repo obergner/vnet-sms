@@ -6,7 +6,6 @@ package vnet.sms.gateway.nettysupport;
 import static org.apache.commons.lang.Validate.notNull;
 
 import java.io.Serializable;
-import java.net.SocketAddress;
 
 import org.jboss.netty.channel.Channel;
 
@@ -27,14 +26,11 @@ public class PingRequestAcknowledgedEvent<ID extends Serializable> extends
 		return new PingRequestAcknowledgedEvent<ID>(
 		        pingRequestReceived.getMessageReference(),
 		        pingRequestReceived.getChannel(),
-		        pingRequestReceived.getMessage(),
-		        pingRequestReceived.getRemoteAddress());
+		        pingRequestReceived.getMessage());
 	}
 
 	private PingRequestAcknowledgedEvent(final ID messageReference,
-	        final Channel channel, final PingRequest message,
-	        final SocketAddress remoteAddress) {
-		super(messageReference, channel, message, remoteAddress,
-		        Acknowledgement.ack());
+	        final Channel channel, final PingRequest message) {
+		super(messageReference, channel, message, Acknowledgement.ack());
 	}
 }

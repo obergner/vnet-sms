@@ -31,7 +31,6 @@ public class LoginRequestRejectedEvent<ID extends Serializable> extends
 
 	private LoginRequestRejectedEvent(final ID messageReference,
 	        final Channel channel, final LoginRequest message) {
-		super(messageReference, channel, message, channel.getRemoteAddress(),
-		        Acknowledgement.nack());
+		super(messageReference, channel, message, Acknowledgement.nack());
 	}
 }

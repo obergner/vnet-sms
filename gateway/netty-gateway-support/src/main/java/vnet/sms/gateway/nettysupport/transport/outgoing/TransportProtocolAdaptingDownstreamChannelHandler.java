@@ -44,6 +44,7 @@ public abstract class TransportProtocolAdaptingDownstreamChannelHandler<ID exten
 	protected void writePingRequestRequested(final ChannelHandlerContext ctx,
 	        final SendPingRequestEvent<ID> e) {
 		final TP pdu = convertSendPingRequestEventToPdu(e);
+		getLog().trace("{} converted to {}", e, pdu);
 		ctx.sendDownstream(new DownstreamMessageEvent(ctx.getChannel(), e
 		        .getFuture(), pdu, e.getRemoteAddress()));
 		getMonitorCallback().sendPingRequest();
@@ -54,6 +55,7 @@ public abstract class TransportProtocolAdaptingDownstreamChannelHandler<ID exten
 	        final ChannelHandlerContext ctx,
 	        final LoginRequestAcceptedEvent<ID> e) {
 		final TP pdu = convertLoginRequestAcceptedEventToPdu(e);
+		getLog().trace("{} converted to {}", e, pdu);
 		ctx.sendDownstream(new DownstreamMessageEvent(ctx.getChannel(), e
 		        .getFuture(), pdu, e.getRemoteAddress()));
 		getMonitorCallback().sendLoginRequestAccepted();
@@ -64,6 +66,7 @@ public abstract class TransportProtocolAdaptingDownstreamChannelHandler<ID exten
 	        final ChannelHandlerContext ctx,
 	        final LoginRequestRejectedEvent<ID> e) {
 		final TP pdu = convertLoginRequestRejectedEventToPdu(e);
+		getLog().trace("{} converted to {}", e, pdu);
 		ctx.sendDownstream(new DownstreamMessageEvent(ctx.getChannel(), e
 		        .getFuture(), pdu, e.getRemoteAddress()));
 		getMonitorCallback().sendLoginRequestRejected();
@@ -74,6 +77,7 @@ public abstract class TransportProtocolAdaptingDownstreamChannelHandler<ID exten
 	        final ChannelHandlerContext ctx,
 	        final NonLoginMessageReceivedOnUnauthenticatedChannelEvent<ID, ?> e) {
 		final TP pdu = convertNonLoginMessageReceivedOnUnauthenticatedChannelEventToPdu(e);
+		getLog().trace("{} converted to {}", e, pdu);
 		ctx.sendDownstream(new DownstreamMessageEvent(ctx.getChannel(), e
 		        .getFuture(), pdu, e.getRemoteAddress()));
 	}

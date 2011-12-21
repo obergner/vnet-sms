@@ -68,7 +68,7 @@ public abstract class TransportProtocolAdaptingUpstreamChannelHandler<ID extends
 	public void messageReceived(final ChannelHandlerContext ctx,
 	        final MessageEvent e) throws Exception {
 		final Object pdu = e.getMessage();
-		getLog().trace("Attempting to convert PDU [{}] to message ...", pdu);
+		getLog().trace("Attempting to convert PDU {} to message ...", pdu);
 		final ID extractedWindowId;
 		final Message convertedPdu;
 		switch (typeOf(pdu)) {
@@ -102,7 +102,7 @@ public abstract class TransportProtocolAdaptingUpstreamChannelHandler<ID extends
 			throw new IllegalStateException("Unsupported message type: "
 			        + pdu.getClass());
 		}
-		getLog().trace("PDU [{}] converted to [{}]", pdu, convertedPdu);
+		getLog().trace("PDU {} converted to {}", pdu, convertedPdu);
 
 		final WindowedMessageEvent<ID, ? extends Message> windowedMessageEvent = UpstreamMessageEventToWindowedMessageEventConverter.INSTANCE
 		        .convert(extractedWindowId, (UpstreamMessageEvent) e,

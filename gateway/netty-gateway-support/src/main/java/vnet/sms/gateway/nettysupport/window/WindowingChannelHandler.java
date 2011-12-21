@@ -64,14 +64,14 @@ public class WindowingChannelHandler<ID extends Serializable> extends
 	public void windowedMessageReceived(final ChannelHandlerContext ctx,
 	        final WindowedMessageEvent<ID, ? extends Message> e)
 	        throws IllegalArgumentException, InterruptedException {
-		this.log.trace("Processing WindowedMessageEvent {}", e);
+		this.log.trace("Processing {} ...", e);
 		if (this.incomingWindowStore.tryAcquireWindow(e)) {
-			this.log.trace("Acquired free window for WindowedMessageEvent {}",
-			        e);
+			this.log.trace("Acquired free window for {}", e);
 			ctx.sendUpstream(e);
 		} else {
 			this.log.warn(
-			        "No free window for WindowedMessageEvent {} available", e);
+			        "No free window for {} available after waiting for {} milliseconds",
+			        e, this.incomingWindowStore.getWaitTimeMillis());
 			ctx.sendUpstream(new NoWindowForIncomingMessageAvailableEvent(
 			        (UpstreamMessageEvent) e, this.incomingWindowStore
 			                .getMaximumCapacity(), this.incomingWindowStore
@@ -103,7 +103,7 @@ public class WindowingChannelHandler<ID extends Serializable> extends
 		        .shutDown();
 		if (!pendingMessages.isEmpty()) {
 			this.log.warn(
-			        "Channel {} has been disconnected while {} still await acknowledgement - these messages will be DISCARDED",
+			        "Channel {} has been disconnected while {} messages still await acknowledgement - these messages will be DISCARDED",
 			        ctx.getChannel(), pendingMessages.size());
 			final PendingWindowedMessagesDiscardedEvent<ID> pendingMessagesDiscarded = new PendingWindowedMessagesDiscardedEvent<ID>(
 			        ctx.getChannel(), pendingMessages);

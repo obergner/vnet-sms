@@ -172,8 +172,7 @@ public class OutgoingPingChannelHandler<ID extends Serializable> extends
 			return new SendPingRequestEvent<ID>(
 			        OutgoingPingChannelHandler.this.windowIdGenerator
 			                .nextMessageReference(),
-			        this.ctx.getChannel(), pingRequest, this.ctx.getChannel()
-			                .getRemoteAddress());
+			        this.ctx.getChannel(), pingRequest);
 		}
 
 		boolean cancelPingResponseTimeout() {

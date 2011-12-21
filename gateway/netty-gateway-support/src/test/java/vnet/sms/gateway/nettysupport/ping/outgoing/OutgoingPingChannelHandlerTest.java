@@ -103,10 +103,8 @@ public class OutgoingPingChannelHandlerTest {
 		        "OutgoingPingChannelHandler did not send any message after channel has been connected and ping interval elapsed",
 		        pingRequestCandidate);
 
-		embeddedPipeline.receive(PingResponse.respondTo(
-		        (PingRequest) pingRequestCandidate.getMessage(),
-		        pingRequestCandidate.getRemoteAddress(), pingRequestCandidate
-		                .getChannel().getLocalAddress()));
+		embeddedPipeline.receive(PingResponse
+		        .accept((PingRequest) pingRequestCandidate.getMessage()));
 
 		Thread.sleep(pingTimeoutMillis + 100);
 		final ChannelEvent noPingResponseReceived = embeddedPipeline

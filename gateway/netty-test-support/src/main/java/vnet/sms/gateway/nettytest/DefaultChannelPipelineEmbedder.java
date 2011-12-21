@@ -78,6 +78,7 @@ public class DefaultChannelPipelineEmbedder implements ChannelPipelineEmbedder {
 	        final ChannelPipelineFactory channelPipelineFactory)
 	        throws Exception {
 		this.pipeline = channelPipelineFactory.getPipeline();
+		configurePipeline(this.pipeline);
 		this.channel = new EmbeddedChannel(this.pipeline, this.sink);
 		fireInitialEvents();
 	}
@@ -129,6 +130,13 @@ public class DefaultChannelPipelineEmbedder implements ChannelPipelineEmbedder {
 		this.pipeline.addLast("EXCEPTIONS-RECORDER",
 		        new ExceptionRecordingUpstreamChannelHandler());
 		this.pipeline.addLast("SENT-MESSAGES-RECORDER",
+		        new ReceivedMessagesRecordingUpstreamChannelHandler());
+	}
+
+	private void configurePipeline(final ChannelPipeline pipe) {
+		pipe.addLast("EXCEPTIONS-RECORDER",
+		        new ExceptionRecordingUpstreamChannelHandler());
+		pipe.addLast("SENT-MESSAGES-RECORDER",
 		        new ReceivedMessagesRecordingUpstreamChannelHandler());
 	}
 

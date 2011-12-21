@@ -37,6 +37,7 @@ package vnet.sms.common.messages;
 import static org.apache.commons.lang.Validate.notNull;
 
 import java.io.UnsupportedEncodingException;
+import java.net.SocketAddress;
 import java.util.Random;
 
 import vnet.sms.common.messages.util.SmsPduUtil;
@@ -69,7 +70,9 @@ public class Sms extends Message {
 	 * @param dcs
 	 *            The data coding scheme
 	 */
-	public Sms(final String msg, final DataCodingScheme dcs) {
+	public Sms(final String msg, final DataCodingScheme dcs,
+	        final SocketAddress sender, final SocketAddress receiver) {
+		super(sender, receiver);
 		notNull(msg, "Argument 'msg' must not be null");
 		notNull(dcs, "Argument 'dcs' must not be null");
 		setText(msg, dcs);
@@ -96,9 +99,10 @@ public class Sms extends Message {
 	 * @param messageClass
 	 *            The messageclass
 	 */
-	public Sms(final String msg, final int alphabet, final int messageClass) {
+	public Sms(final String msg, final int alphabet, final int messageClass,
+	        final SocketAddress sender, final SocketAddress receiver) {
 		this(msg, DataCodingScheme.getGeneralDataCodingDcs(alphabet,
-		        messageClass));
+		        messageClass), sender, receiver);
 	}
 
 	/**
@@ -107,9 +111,10 @@ public class Sms extends Message {
 	 * @param msg
 	 *            The message
 	 */
-	public Sms(final String msg) {
+	public Sms(final String msg, final SocketAddress sender,
+	        final SocketAddress receiver) {
 		this(msg, DataCodingScheme.ALPHABET_GSM,
-		        DataCodingScheme.MSG_CLASS_UNKNOWN);
+		        DataCodingScheme.MSG_CLASS_UNKNOWN, sender, receiver);
 	}
 
 	/**

@@ -143,9 +143,8 @@ public class TransportProtocolAdaptingUpstreamChannelHandlerTest {
 		final DecoderEmbedder<Message> embeddedPipeline = new DecoderEmbedder<Message>(
 		        this.objectUnderTest);
 
-		embeddedPipeline.offer(PingResponse.respondTo(new PingRequest(
-		        new InetSocketAddress(1), new InetSocketAddress(1)),
-		        new InetSocketAddress(1), new InetSocketAddress(1)));
+		embeddedPipeline.offer(PingResponse.accept(new PingRequest(
+		        new InetSocketAddress(1), new InetSocketAddress(1))));
 		final Message convertedPdu = embeddedPipeline.poll();
 
 		assertNotNull(
@@ -162,7 +161,8 @@ public class TransportProtocolAdaptingUpstreamChannelHandlerTest {
 		        this.objectUnderTest);
 
 		embeddedPipeline.offer(new Sms(
-		        "assertThatTransportProtocolAdapterCorrectlyConvertsPduToSms"));
+		        "assertThatTransportProtocolAdapterCorrectlyConvertsPduToSms",
+		        new InetSocketAddress(0), new InetSocketAddress(1)));
 		final Message convertedPdu = embeddedPipeline.poll();
 
 		assertNotNull(
@@ -233,9 +233,8 @@ public class TransportProtocolAdaptingUpstreamChannelHandlerTest {
 		final DecoderEmbedder<Message> embeddedPipeline = new DecoderEmbedder<Message>(
 		        this.objectUnderTest);
 
-		embeddedPipeline.offer(PingResponse.respondTo(new PingRequest(
-		        new InetSocketAddress(1), new InetSocketAddress(1)),
-		        new InetSocketAddress(1), new InetSocketAddress(1)));
+		embeddedPipeline.offer(PingResponse.accept(new PingRequest(
+		        new InetSocketAddress(1), new InetSocketAddress(1))));
 
 		assertEquals(
 		        "TransportProtocolAdaptingUpstreamChannelHandler did not correctly count number of received ping responses",
@@ -248,7 +247,8 @@ public class TransportProtocolAdaptingUpstreamChannelHandlerTest {
 		        this.objectUnderTest);
 
 		embeddedPipeline.offer(new Sms(
-		        "assertThatTransportProtocolAdapterCorrectlyConvertsPduToSms"));
+		        "assertThatTransportProtocolAdapterCorrectlyConvertsPduToSms",
+		        new InetSocketAddress(0), new InetSocketAddress(1)));
 
 		assertEquals(
 		        "TransportProtocolAdaptingUpstreamChannelHandler did not correctly count number of received sms",

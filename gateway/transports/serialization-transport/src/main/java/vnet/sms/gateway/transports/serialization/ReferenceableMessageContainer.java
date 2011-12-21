@@ -41,6 +41,17 @@ public final class ReferenceableMessageContainer implements Serializable {
 		return this.message;
 	}
 
+	public <M extends Message> M getMessage(final Class<M> expectedType)
+	        throws IllegalArgumentException {
+		if (!expectedType.isInstance(this.message)) {
+			throw new IllegalArgumentException(
+			        "Contained message is not of expected type "
+			                + expectedType.getName() + " but of type "
+			                + this.message.getClass().getName());
+		}
+		return expectedType.cast(this.message);
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

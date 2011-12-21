@@ -15,6 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
+import org.jboss.netty.channel.ChannelEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.handler.codec.base64.Base64Decoder;
 import org.jboss.netty.handler.codec.base64.Base64Encoder;
@@ -37,7 +38,9 @@ import vnet.sms.common.messages.Message;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.PingResponse;
 import vnet.sms.gateway.nettysupport.monitor.ChannelMonitorRegistry;
+import vnet.sms.gateway.nettysupport.window.NoWindowForIncomingMessageAvailableEvent;
 import vnet.sms.gateway.nettysupport.window.spi.MessageReferenceGenerator;
+import vnet.sms.gateway.nettytest.ChannelEventFilter;
 import vnet.sms.gateway.nettytest.ChannelPipelineEmbedder;
 import vnet.sms.gateway.nettytest.DefaultChannelPipelineEmbedder;
 import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;
@@ -408,6 +411,43 @@ public class GatewayServerChannelPipelineFactoryTest {
 	}
 
 	@Test
+	public final void assertThatTheProducedPipelineRejectsNonLoginMessagesOnAnUnauthenticatedChannel()
+	        throws Throwable {
+		final int availableIncomingWindows = 10;
+		final long incomingWindowWaitTimeMillis = 1000L;
+		final long failedLoginResponseMillis = 200L;
+		final int pingIntervalSeconds = 100;
+		final long pingResponseTimeoutMillis = 2000L;
+		final ChannelMonitorRegistry channelMonitorRegistry = new ChannelMonitorRegistry();
+		final AuthenticationManager authenticationManager = new DenyAllAuthenticationManager();
+
+		final GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer> objectUnderTest = newObjectUnderTest(
+		        availableIncomingWindows, incomingWindowWaitTimeMillis,
+		        failedLoginResponseMillis, pingIntervalSeconds,
+		        pingResponseTimeoutMillis, channelMonitorRegistry,
+		        authenticationManager);
+		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
+		        objectUnderTest);
+
+		final PingRequest nonLoginRequest = new PingRequest(
+		        new InetSocketAddress(1), new InetSocketAddress(2));
+		embeddedPipeline.receive(serialize(1, nonLoginRequest));
+		final MessageEvent encodedPingResponse = embeddedPipeline
+		        .nextSentMessageEvent();
+
+		assertNotNull(
+		        "Expected channel pipeline to send (failed) PingResponse to client when receiving a PingRequest on an unauthenticated channel, yet it sent NO message in reply",
+		        encodedPingResponse);
+		final Message decodedPingResponse = deserialize(encodedPingResponse);
+		assertEquals(
+		        "Expected channel pipeline to send (failed) PingResponse to client after failed login, yet it sent a different reply",
+		        PingResponse.class, decodedPingResponse.getClass());
+		assertFalse(
+		        "Expected channel pipeline to send FAILED PingResponse to client after failed login, yet it sent a SUCCESSFUL PingResponse",
+		        PingResponse.class.cast(decodedPingResponse).pingSucceeded());
+	}
+
+	@Test
 	public final void assertThatTheProducedPipelineSendsFirstPingRequestToClientAfterPingIntervalHasElapsed()
 	        throws Throwable {
 		final int availableIncomingWindows = 10;
@@ -451,7 +491,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		final int pingIntervalSeconds = 1;
 		final long pingResponseTimeoutMillis = 10000L;
 		final ChannelMonitorRegistry channelMonitorRegistry = new ChannelMonitorRegistry();
-		final AuthenticationManager authenticationManager = new DenyAllAuthenticationManager();
+		final AuthenticationManager authenticationManager = new AcceptAllAuthenticationManager();
 
 		final GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer> objectUnderTest = newObjectUnderTest(
 		        availableIncomingWindows, incomingWindowWaitTimeMillis,
@@ -462,33 +502,92 @@ public class GatewayServerChannelPipelineFactoryTest {
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        objectUnderTest);
 
+		// First, authenticate channel since otherwise we won't accept a
+		// PingResponse
+		final LoginRequest successfulLoginRequest = new LoginRequest(
+		        "assertThatTheProducedPipelineContinuesSendingPingRequestsAfterReceivingPingResponse",
+		        "whatever", new InetSocketAddress(1), new InetSocketAddress(2));
+		embeddedPipeline.receive(serialize(1, successfulLoginRequest));
+		// Consume LoginResponse - we don't care about it
+		embeddedPipeline.nextSentMessageEvent();
+
 		Thread.sleep(pingIntervalSeconds * 1000L + 100L);
-		final MessageEvent expectedInitialPingRequst = embeddedPipeline
+		final MessageEvent expectedInitialPingRequest = embeddedPipeline
 		        .nextSentMessageEvent();
 		assertNotNull(
 		        "Expected channel pipeline to send PingRequest to client "
 		                + pingIntervalSeconds
 		                + " seconds after the channel had been connected, yet it sent NO message",
-		        expectedInitialPingRequst);
-		final PingRequest decodedPingRequest = PingRequest.class
-		        .cast(deserialize(expectedInitialPingRequst));
+		        expectedInitialPingRequest);
+		final Message decodedPingRequest = deserialize(expectedInitialPingRequest);
 		assertEquals(
-		        "Expected channel pipeline to send LoginResponse to client after failed login, yet it sent a different reply",
+		        "Expected channel pipeline to send PingRequest to client after ping interval has expired, yet it sent a different message",
 		        PingRequest.class, decodedPingRequest.getClass());
 
-		embeddedPipeline.receive(serialize(
-		        1,
-		        PingResponse.respondTo(decodedPingRequest,
-		                decodedPingRequest.getReceiver(),
-		                decodedPingRequest.getSender())));
+		embeddedPipeline
+		        .receive(serialize(2, PingResponse.accept(PingRequest.class
+		                .cast(decodedPingRequest))));
 
 		Thread.sleep(pingIntervalSeconds * 1000L + 100L);
-		final MessageEvent expectedSecondPingRequst = embeddedPipeline
+		final MessageEvent expectedSecondPingRequest = embeddedPipeline
 		        .nextSentMessageEvent();
 		assertNotNull(
 		        "Expected channel pipeline to send PingRequest to client "
 		                + pingIntervalSeconds
 		                + " seconds after receiving a PingResponse, yet it sent NO message",
-		        expectedSecondPingRequst);
+		        expectedSecondPingRequest);
+	}
+
+	@Test
+	public final void assertThatTheProducedPipelineIssuesNoWindowForIncomingMessageAvailableEventIfNoWindowIsAvailable()
+	        throws Throwable {
+		final int availableIncomingWindows = 10;
+		final long incomingWindowWaitTimeMillis = 1000L;
+		final long failedLoginResponseMillis = 400L;
+		final int pingIntervalSeconds = 1;
+		final long pingResponseTimeoutMillis = 10000L;
+		final ChannelMonitorRegistry channelMonitorRegistry = new ChannelMonitorRegistry();
+		final AuthenticationManager authenticationManager = new AcceptAllAuthenticationManager();
+
+		final GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer> objectUnderTest = newObjectUnderTest(
+		        availableIncomingWindows, incomingWindowWaitTimeMillis,
+		        failedLoginResponseMillis, pingIntervalSeconds,
+		        pingResponseTimeoutMillis, channelMonitorRegistry,
+		        authenticationManager);
+		// Will fire "channel connected" and thus register our
+		// IncomingWindowStore
+		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
+		        objectUnderTest);
+
+		// First, authenticate channel since otherwise we won't accept any
+		// incoming messages
+		final LoginRequest successfulLoginRequest = new LoginRequest(
+		        "assertThatTheProducedPipelineIssuesNoWindowForIncomingMessageAvailableEventIfNoWindowIsAvailable",
+		        "whatever", new InetSocketAddress(1), new InetSocketAddress(2));
+		embeddedPipeline.receive(serialize(1, successfulLoginRequest));
+		// Discard LoginResponse - we don't care
+		embeddedPipeline.nextSentMessageEvent();
+
+		// We already consumed one window for our LoginRequest - remember that
+		// we don't support freeing windows yet
+		for (int i = 0; i < availableIncomingWindows - 1; i++) {
+			embeddedPipeline.receive(serialize(i + 2, new PingRequest(
+			        new InetSocketAddress(1), new InetSocketAddress(2))));
+		}
+
+		embeddedPipeline.receive(serialize(12, new PingRequest(
+		        new InetSocketAddress(5), new InetSocketAddress(6))));
+
+		final ChannelEvent propagatedMessageEvent = embeddedPipeline
+		        .nextUpstreamChannelEvent(ChannelEventFilter.FILTERS
+		                .ofType(NoWindowForIncomingMessageAvailableEvent.class));
+
+		assertNotNull(
+		        "Expected channel pipeline to propagate error event when rejecting incoming message due to no window available",
+		        propagatedMessageEvent);
+		assertEquals(
+		        "Channel pipeline propagated unexpected event when rejecting incoming message due to no window available",
+		        NoWindowForIncomingMessageAvailableEvent.class,
+		        propagatedMessageEvent.getClass());
 	}
 }

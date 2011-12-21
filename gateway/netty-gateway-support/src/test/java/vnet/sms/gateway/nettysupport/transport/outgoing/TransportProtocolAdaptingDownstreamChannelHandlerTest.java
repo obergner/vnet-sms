@@ -31,7 +31,7 @@ public class TransportProtocolAdaptingDownstreamChannelHandlerTest {
 		        new MessageEventWrappingDownstreamChannelHandler());
 
 		embeddedPipeline.send(new PingRequest(new InetSocketAddress(1),
-		        new InetSocketAddress(1)));
+		        new InetSocketAddress(2)));
 		final MessageEvent convertedMessageEvent = embeddedPipeline
 		        .nextSentMessageEvent();
 
@@ -56,8 +56,7 @@ public class TransportProtocolAdaptingDownstreamChannelHandlerTest {
 			final Object message = e.getMessage();
 			if (message instanceof PingRequest) {
 				result = new SendPingRequestEvent<Integer>(Integer.valueOf(1),
-				        e.getChannel(), (PingRequest) message,
-				        e.getRemoteAddress());
+				        e.getChannel(), (PingRequest) message);
 			} else {
 				throw new IllegalArgumentException("Unsupported message type: "
 				        + message);

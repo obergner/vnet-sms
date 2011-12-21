@@ -31,7 +31,6 @@ public class LoginRequestAcceptedEvent<ID extends Serializable> extends
 
 	private LoginRequestAcceptedEvent(final ID messageReference,
 	        final Channel channel, final LoginRequest message) {
-		super(messageReference, channel, message, channel.getRemoteAddress(),
-		        Acknowledgement.ack());
+		super(messageReference, channel, message, Acknowledgement.ack());
 	}
 }

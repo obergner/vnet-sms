@@ -27,6 +27,7 @@ public class LoginResponse extends Message {
 
 	private LoginResponse(final Acknowledgement ack,
 	        final LoginRequest loginRequest) {
+		super(loginRequest.getReceiver(), loginRequest.getSender());
 		notNull(ack, "Argument 'ack' must not be null");
 		notNull(loginRequest, "Argument 'loginRequest' must not be null");
 		this.ack = ack;

@@ -6,7 +6,6 @@ package vnet.sms.gateway.nettysupport;
 import static org.apache.commons.lang.Validate.notNull;
 
 import java.io.Serializable;
-import java.net.SocketAddress;
 
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFuture;
@@ -26,14 +25,13 @@ public class DownstreamWindowedMessageEvent<ID extends Serializable, M extends M
 	protected DownstreamWindowedMessageEvent(final ID messageReference,
 	        final DownstreamMessageEvent downstreamMessageEvent, final M message) {
 		this(messageReference, downstreamMessageEvent.getChannel(),
-		        downstreamMessageEvent.getFuture(), message,
-		        downstreamMessageEvent.getRemoteAddress());
+		        downstreamMessageEvent.getFuture(), message);
 	}
 
 	protected DownstreamWindowedMessageEvent(final ID messageReference,
 	        final Channel channel, final ChannelFuture future,
-	        final Object message, final SocketAddress remoteAddress) {
-		super(channel, future, message, remoteAddress);
+	        final Object message) {
+		super(channel, future, message, ((M) message).getReceiver());
 		notNull(messageReference,
 		        "Argument 'messageReference' must not be null");
 		notNull(channel, "Argument 'channel' must not be null");

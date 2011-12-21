@@ -5,8 +5,6 @@ package vnet.sms.common.messages;
 
 import static org.apache.commons.lang.Validate.notNull;
 
-import java.net.SocketAddress;
-
 /**
  * @author obergner
  * 
@@ -15,33 +13,33 @@ public class PingResponse extends Message {
 
 	private static final long	serialVersionUID	= 8968135952963388189L;
 
-	public static PingResponse respondTo(final PingRequest pingRequest,
-	        final SocketAddress sender, final SocketAddress receiver) {
-		return new PingResponse(sender, receiver, pingRequest);
+	public static PingResponse accept(final PingRequest pingRequest) {
+		return new PingResponse(Acknowledgement.ack(), pingRequest);
 	}
 
-	private final SocketAddress	sender;
+	public static PingResponse reject(final PingRequest pingRequest) {
+		return new PingResponse(Acknowledgement.nack(), pingRequest);
+	}
 
-	private final SocketAddress	receiver;
+	private final Acknowledgement	ack;
 
-	private final PingRequest	pingRequest;
+	private final PingRequest	  pingRequest;
 
-	private PingResponse(final SocketAddress sender,
-	        final SocketAddress receiver, final PingRequest pingRequest) {
-		notNull(sender, "Argument 'sender' must not be null");
-		notNull(receiver, "Argument 'receiver' must not be null");
+	private PingResponse(final Acknowledgement ack,
+	        final PingRequest pingRequest) {
+		super(pingRequest.getReceiver(), pingRequest.getSender());
+		notNull(ack, "Argument 'ack' must not be null");
 		notNull(pingRequest, "Argument 'pingRequest' must not be null");
-		this.sender = sender;
-		this.receiver = receiver;
+		this.ack = ack;
 		this.pingRequest = pingRequest;
 	}
 
-	public SocketAddress getSender() {
-		return this.sender;
+	public Acknowledgement getAck() {
+		return this.ack;
 	}
 
-	public SocketAddress getReceiver() {
-		return this.receiver;
+	public boolean pingSucceeded() {
+		return this.ack.is(Acknowledgement.Status.ACK);
 	}
 
 	public PingRequest getPingRequest() {
@@ -50,10 +48,8 @@ public class PingResponse extends Message {
 
 	@Override
 	public String toString() {
-		return "PingResponse@" + hashCode() + " [ID: " + getId()
-		        + "|creationTimestamp: " + getCreationTimestamp() + "|sender: "
-		        + this.sender + "|receiver: " + this.receiver
-		        + "|pingRequest: " + this.pingRequest + "]";
+		return "PingResponse@" + this.hashCode() + " [ack: " + this.ack
+		        + "|pingRequest: " + this.pingRequest + "|sender: "
+		        + getSender() + "|receiver: " + getReceiver() + "]";
 	}
-
 }
