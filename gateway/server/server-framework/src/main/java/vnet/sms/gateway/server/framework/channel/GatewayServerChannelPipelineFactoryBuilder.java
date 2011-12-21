@@ -32,6 +32,8 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 	private final Logger	                                          log	= LoggerFactory
 	                                                                              .getLogger(getClass());
 
+	private String	                                                  gatewayServerInstanceId;
+
 	private Class<TP>	                                              pduType;
 
 	private FrameDecoder	                                          frameDecoder;
@@ -108,7 +110,8 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 		}
 
 		this.producedPipelineFactory = new GatewayServerChannelPipelineFactory<ID, TP>(
-		        this.pduType, this.frameDecoder, this.decoder, this.encoder,
+		        this.gatewayServerInstanceId, this.pduType, this.frameDecoder,
+		        this.decoder, this.encoder,
 		        this.upstreamTransportProtocolAdapter,
 		        this.downstreamTransportProtocolAdapter,
 		        this.channelMonitorRegistry, this.availableIncomingWindows,
@@ -120,6 +123,15 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 		this.log.info(
 		        "Finished building GatewayServerChannelPipelineFactory instance {}",
 		        this.producedPipelineFactory);
+	}
+
+	/**
+	 * @param gatewayServerInstanceId
+	 *            the gatewayServerInstanceId to set
+	 */
+	public final void setGatewayServerInstanceId(
+	        final String gatewayServerInstanceId) {
+		this.gatewayServerInstanceId = gatewayServerInstanceId;
 	}
 
 	/**

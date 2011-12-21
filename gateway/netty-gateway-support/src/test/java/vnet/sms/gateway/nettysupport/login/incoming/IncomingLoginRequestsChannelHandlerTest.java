@@ -22,6 +22,7 @@ import vnet.sms.gateway.nettysupport.PingRequestReceivedEvent;
 import vnet.sms.gateway.nettysupport.test.ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler;
 import vnet.sms.gateway.nettytest.ChannelPipelineEmbedder;
 import vnet.sms.gateway.nettytest.DefaultChannelPipelineEmbedder;
+import vnet.sms.gateway.nettytest.MessageEventFilter;
 
 public class IncomingLoginRequestsChannelHandlerTest {
 
@@ -188,7 +189,8 @@ public class IncomingLoginRequestsChannelHandlerTest {
 		embeddedPipeline.receive(new PingRequest(new InetSocketAddress(0),
 		        new InetSocketAddress(0)));
 		final MessageEvent propagatedMessage = embeddedPipeline
-		        .nextReceivedMessageEvent();
+		        .nextReceivedMessageEvent(MessageEventFilter.FILTERS
+		                .ofType(PingRequestReceivedEvent.class));
 
 		assertNotNull(
 		        "IncomingLoginRequestsChannelHandler did not propagate non-login message received on authenticated channel",

@@ -55,6 +55,8 @@ public class GatewayServerChannelPipelineFactoryBuilderTest {
 	        throws Exception {
 		final GatewayServerChannelPipelineFactoryBuilder<Integer, ReferenceableMessageContainer> objectUnderTest = new GatewayServerChannelPipelineFactoryBuilder<Integer, ReferenceableMessageContainer>();
 		objectUnderTest
+		        .setGatewayServerInstanceId("assertThatAfterPropertiesSetProperlyConstructsAGatewayServerChannelPipelineFactoryIfBuilderIsCorrectlyConfigured");
+		objectUnderTest
 		        .setAuthenticationManager(createNiceMock(AuthenticationManager.class));
 		objectUnderTest.setAvailableIncomingWindows(10);
 		objectUnderTest

@@ -53,6 +53,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 	public final void assertThatConstructorRejectsNullPduType() {
 		final ChannelMonitorRegistry channelMonitorRegistry = new ChannelMonitorRegistry();
 		new GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer>(
+		        "assertThatConstructorRejectsNullPduType",
 		        null,
 		        new DelimiterBasedFrameDecoder(0, ChannelBuffers.EMPTY_BUFFER),
 		        new Base64Decoder(),
@@ -93,6 +94,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 	public final void assertThatConstructorRejectsNullFrameDecoder() {
 		final ChannelMonitorRegistry channelMonitorRegistry = new ChannelMonitorRegistry();
 		new GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer>(
+		        "assertThatConstructorRejectsNullFrameDecoder",
 		        ReferenceableMessageContainer.class,
 		        null,
 		        new Base64Decoder(),
@@ -110,6 +112,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 	public final void assertThatConstructorRejectsNullEncoder() {
 		final ChannelMonitorRegistry channelMonitorRegistry = new ChannelMonitorRegistry();
 		new GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer>(
+		        "assertThatConstructorRejectsNullEncoder",
 		        ReferenceableMessageContainer.class,
 		        new DelimiterBasedFrameDecoder(0, ChannelBuffers.EMPTY_BUFFER),
 		        new Base64Decoder(),
@@ -127,6 +130,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 	public final void assertThatConstructorRejectsNullTransportProtocolAdpatingUpstreamChannelHandler() {
 		final ChannelMonitorRegistry channelMonitorRegistry = new ChannelMonitorRegistry();
 		new GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer>(
+		        "assertThatConstructorRejectsNullTransportProtocolAdpatingUpstreamChannelHandler",
 		        ReferenceableMessageContainer.class,
 		        new DelimiterBasedFrameDecoder(0, ChannelBuffers.EMPTY_BUFFER),
 		        new Base64Decoder(),
@@ -143,6 +147,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 	public final void assertThatConstructorRejectsNullTransportProtocolAdaptingDownstreamChannelHandler() {
 		final ChannelMonitorRegistry channelMonitorRegistry = new ChannelMonitorRegistry();
 		new GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer>(
+		        "assertThatConstructorRejectsNullTransportProtocolAdaptingDownstreamChannelHandler",
 		        ReferenceableMessageContainer.class,
 		        new DelimiterBasedFrameDecoder(0, ChannelBuffers.EMPTY_BUFFER),
 		        new Base64Decoder(),
@@ -158,6 +163,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 	public final void assertThatConstructorRejectsNullChannelMonitorRegistry() {
 		final ChannelMonitorRegistry channelMonitorRegistry = new ChannelMonitorRegistry();
 		new GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer>(
+		        "assertThatConstructorRejectsNullChannelMonitorRegistry",
 		        ReferenceableMessageContainer.class,
 		        new DelimiterBasedFrameDecoder(0, ChannelBuffers.EMPTY_BUFFER),
 		        new Base64Decoder(),
@@ -175,6 +181,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 	public final void assertThatConstructorRejectsNullAuthenticationManager() {
 		final ChannelMonitorRegistry channelMonitorRegistry = new ChannelMonitorRegistry();
 		new GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer>(
+		        "assertThatConstructorRejectsNullAuthenticationManager",
 		        ReferenceableMessageContainer.class,
 		        new DelimiterBasedFrameDecoder(0, ChannelBuffers.EMPTY_BUFFER),
 		        new Base64Decoder(),
@@ -192,6 +199,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 	public final void assertThatConstructorRejectsNullMessageReferenceGenerator() {
 		final ChannelMonitorRegistry channelMonitorRegistry = new ChannelMonitorRegistry();
 		new GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer>(
+		        "assertThatConstructorRejectsNullMessageReferenceGenerator",
 		        ReferenceableMessageContainer.class,
 		        new DelimiterBasedFrameDecoder(0, ChannelBuffers.EMPTY_BUFFER),
 		        new Base64Decoder(),
@@ -208,6 +216,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 	public final void assertThatConstructorRejectsNullMBeanServer() {
 		final ChannelMonitorRegistry channelMonitorRegistry = new ChannelMonitorRegistry();
 		new GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer>(
+		        "assertThatConstructorRejectsNullMBeanServer",
 		        ReferenceableMessageContainer.class,
 		        new DelimiterBasedFrameDecoder(0, ChannelBuffers.EMPTY_BUFFER),
 		        new Base64Decoder(),
@@ -267,6 +276,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 	        final ChannelMonitorRegistry channelMonitorRegistry,
 	        final AuthenticationManager authenticationManager) {
 		return new GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer>(
+		        "newObjectUnderTest",
 		        ReferenceableMessageContainer.class,
 		        new ObjectDecoder(ClassResolvers.cacheDisabled(null)),
 		        null,

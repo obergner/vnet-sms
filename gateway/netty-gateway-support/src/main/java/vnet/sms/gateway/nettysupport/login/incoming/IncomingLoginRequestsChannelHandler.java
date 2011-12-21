@@ -83,6 +83,10 @@ public class IncomingLoginRequestsChannelHandler<ID extends Serializable>
 		} else {
 			processFailedAuthentication(ctx, e);
 		}
+
+		// Send LoginRequest further upstream - it might be needed for auditing,
+		// logging, metrics ...
+		ctx.sendUpstream(e);
 	}
 
 	private void processSuccessfulAuthentication(

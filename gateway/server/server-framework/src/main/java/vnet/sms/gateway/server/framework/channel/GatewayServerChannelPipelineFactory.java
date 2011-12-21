@@ -3,6 +3,7 @@
  */
 package vnet.sms.gateway.server.framework.channel;
 
+import static org.apache.commons.lang.Validate.notEmpty;
 import static org.apache.commons.lang.Validate.notNull;
 
 import java.io.Serializable;
@@ -12,6 +13,8 @@ import javax.management.MBeanServer;
 import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.ChannelPipelineFactory;
 import org.jboss.netty.channel.Channels;
+import org.jboss.netty.channel.group.ChannelGroup;
+import org.jboss.netty.channel.group.DefaultChannelGroup;
 import org.jboss.netty.handler.codec.frame.FrameDecoder;
 import org.jboss.netty.handler.codec.oneone.OneToOneDecoder;
 import org.jboss.netty.handler.codec.oneone.OneToOneEncoder;
@@ -26,6 +29,9 @@ import vnet.sms.gateway.nettysupport.monitor.incoming.IncomingPdusCountingChanne
 import vnet.sms.gateway.nettysupport.monitor.outgoing.OutgoingBytesCountingChannelHandler;
 import vnet.sms.gateway.nettysupport.monitor.outgoing.OutgoingPdusCountingChannelHandler;
 import vnet.sms.gateway.nettysupport.ping.outgoing.OutgoingPingChannelHandler;
+import vnet.sms.gateway.nettysupport.publish.incoming.IncomingMessagesListener;
+import vnet.sms.gateway.nettysupport.publish.incoming.IncomingMessagesPublishingChannelHandler;
+import vnet.sms.gateway.nettysupport.shutdown.ConnectedChannelsTrackingChannelHandler;
 import vnet.sms.gateway.nettysupport.transport.incoming.TransportProtocolAdaptingUpstreamChannelHandler;
 import vnet.sms.gateway.nettysupport.transport.outgoing.TransportProtocolAdaptingDownstreamChannelHandler;
 import vnet.sms.gateway.nettysupport.window.WindowingChannelHandler;
@@ -70,7 +76,12 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 
 	private final MBeanServer	                                            mbeanServer;
 
+	private final ConnectedChannelsTrackingChannelHandler	                connectedChannelsTracker;
+
+	private final IncomingMessagesPublishingChannelHandler<ID>	            incomingMessagesPublisher	= new IncomingMessagesPublishingChannelHandler<ID>();
+
 	public GatewayServerChannelPipelineFactory(
+	        final String gatewayServerInstanceId,
 	        final Class<TP> pduType,
 	        final FrameDecoder frameDecoder,
 	        final OneToOneDecoder decoder,
@@ -85,6 +96,8 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 	        final MessageReferenceGenerator<ID> windowIdGenerator,
 	        final int pingIntervalSeconds,
 	        final long pingResponseTimeoutMillis, final MBeanServer mbeanServer) {
+		notEmpty(gatewayServerInstanceId,
+		        "Argument 'gatewayServerInstanceId' must neither be null nor empty");
 		notNull(pduType, "Argument 'pduType' must not be null");
 		notNull(frameDecoder, "Argument 'frameDecoder' must not be null");
 		notNull(encoder, "Argument 'encoder' must not be null");
@@ -114,6 +127,10 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 		this.pingIntervalSeconds = pingIntervalSeconds;
 		this.pingResponseTimeoutMillis = pingResponseTimeoutMillis;
 		this.mbeanServer = mbeanServer;
+		this.connectedChannelsTracker = new ConnectedChannelsTrackingChannelHandler(
+		        new DefaultChannelGroup("vnet.sms.gateway:server="
+		                + gatewayServerInstanceId
+		                + ",type=all-connected-channels"));
 	}
 
 	/**
@@ -122,6 +139,10 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 	@Override
 	public ChannelPipeline getPipeline() throws Exception {
 		final ChannelPipeline pipeline = Channels.pipeline();
+
+		// Track open channels
+		pipeline.addLast(ConnectedChannelsTrackingChannelHandler.NAME,
+		        this.connectedChannelsTracker);
 
 		// Monitor number of incoming bytes ...
 		pipeline.addLast(IncomingBytesCountingChannelHandler.NAME,
@@ -176,7 +197,23 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 		        new OutgoingPingChannelHandler<ID>(this.pingIntervalSeconds,
 		                this.pingResponseTimeoutMillis, this.windowIdGenerator));
 
+		// Publish incoming messages to interested parties
+		pipeline.addLast(IncomingMessagesPublishingChannelHandler.NAME,
+		        this.incomingMessagesPublisher);
+
 		return pipeline;
+	}
+
+	public void addListener(final IncomingMessagesListener<ID> listener) {
+		this.incomingMessagesPublisher.addListener(listener);
+	}
+
+	public void removeListener(final IncomingMessagesListener<ID> listener) {
+		this.incomingMessagesPublisher.removeListener(listener);
+	}
+
+	public void clearListeners() {
+		this.incomingMessagesPublisher.clearListeners();
 	}
 
 	/**
@@ -220,5 +257,9 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 	        + "before we consider the ping as failed and close this channel.")
 	public long getPingResponseTimeoutMillis() {
 		return this.pingResponseTimeoutMillis;
+	}
+
+	public ChannelGroup getAllConnectedChannels() {
+		return this.connectedChannelsTracker.getAllConnectedChannels();
 	}
 }
