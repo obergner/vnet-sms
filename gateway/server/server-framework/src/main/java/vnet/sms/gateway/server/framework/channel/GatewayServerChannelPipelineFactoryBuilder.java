@@ -3,13 +3,12 @@
  */
 package vnet.sms.gateway.server.framework.channel;
 
+import static org.apache.commons.lang.Validate.notNull;
+
 import java.io.Serializable;
 
 import javax.management.MBeanServer;
 
-import org.jboss.netty.handler.codec.frame.FrameDecoder;
-import org.jboss.netty.handler.codec.oneone.OneToOneDecoder;
-import org.jboss.netty.handler.codec.oneone.OneToOneEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
@@ -17,9 +16,8 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.authentication.AuthenticationManager;
 
 import vnet.sms.gateway.nettysupport.monitor.ChannelMonitorRegistry;
-import vnet.sms.gateway.nettysupport.transport.incoming.TransportProtocolAdaptingUpstreamChannelHandler;
-import vnet.sms.gateway.nettysupport.transport.outgoing.TransportProtocolAdaptingDownstreamChannelHandler;
 import vnet.sms.gateway.nettysupport.window.spi.MessageReferenceGenerator;
+import vnet.sms.gateway.server.framework.spi.TransportProtocolPlugin;
 
 /**
  * @author obergner
@@ -27,44 +25,36 @@ import vnet.sms.gateway.nettysupport.window.spi.MessageReferenceGenerator;
  */
 public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable, TP>
         implements FactoryBean<GatewayServerChannelPipelineFactory<ID, TP>>,
-        InitializingBean {
+        InitializingBean, TransportProtocolExtensionPoint<ID, TP> {
 
-	private final Logger	                                          log	= LoggerFactory
-	                                                                              .getLogger(getClass());
+	private final Logger	                            log	= LoggerFactory
+	                                                                .getLogger(getClass());
 
-	private String	                                                  gatewayServerInstanceId;
+	private String	                                    gatewayServerInstanceId;
 
-	private Class<TP>	                                              pduType;
+	private Class<TP>	                                pduType;
 
-	private FrameDecoder	                                          frameDecoder;
+	private TransportProtocolPlugin<ID, TP>	            transportProtocolPlugin;
 
-	private OneToOneDecoder	                                          decoder;
+	private ChannelMonitorRegistry	                    channelMonitorRegistry;
 
-	private OneToOneEncoder	                                          encoder;
+	private int	                                        availableIncomingWindows;
 
-	private TransportProtocolAdaptingUpstreamChannelHandler<ID, TP>	  upstreamTransportProtocolAdapter;
+	private long	                                    incomingWindowWaitTimeMillis;
 
-	private TransportProtocolAdaptingDownstreamChannelHandler<ID, TP>	downstreamTransportProtocolAdapter;
+	private AuthenticationManager	                    authenticationManager;
 
-	private ChannelMonitorRegistry	                                  channelMonitorRegistry;
+	private long	                                    failedLoginResponseDelayMillis;
 
-	private int	                                                      availableIncomingWindows;
+	private MessageReferenceGenerator<ID>	            windowIdGenerator;
 
-	private long	                                                  incomingWindowWaitTimeMillis;
+	private int	                                        pingIntervalSeconds;
 
-	private AuthenticationManager	                                  authenticationManager;
+	private long	                                    pingResponseTimeoutMillis;
 
-	private long	                                                  failedLoginResponseDelayMillis;
+	private MBeanServer	                                mbeanServer;
 
-	private MessageReferenceGenerator<ID>	                          windowIdGenerator;
-
-	private int	                                                      pingIntervalSeconds;
-
-	private long	                                                  pingResponseTimeoutMillis;
-
-	private MBeanServer	                                              mbeanServer;
-
-	private GatewayServerChannelPipelineFactory<ID, TP>	              producedPipelineFactory;
+	private GatewayServerChannelPipelineFactory<ID, TP>	producedPipelineFactory;
 
 	/**
 	 * @see org.springframework.beans.factory.FactoryBean#getObject()
@@ -110,10 +100,14 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 		}
 
 		this.producedPipelineFactory = new GatewayServerChannelPipelineFactory<ID, TP>(
-		        this.gatewayServerInstanceId, this.pduType, this.frameDecoder,
-		        this.decoder, this.encoder,
-		        this.upstreamTransportProtocolAdapter,
-		        this.downstreamTransportProtocolAdapter,
+		        this.gatewayServerInstanceId, this.pduType,
+		        this.transportProtocolPlugin.getFrameDecoder(),
+		        this.transportProtocolPlugin.getDecoder(),
+		        this.transportProtocolPlugin.getEncoder(),
+		        this.transportProtocolPlugin
+		                .getPduToWindowedMessageEventConverter(),
+		        this.transportProtocolPlugin
+		                .getWindowedMessageEventToPduConverter(),
 		        this.channelMonitorRegistry, this.availableIncomingWindows,
 		        this.incomingWindowWaitTimeMillis, this.authenticationManager,
 		        this.failedLoginResponseDelayMillis, this.windowIdGenerator,
@@ -123,6 +117,12 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 		this.log.info(
 		        "Finished building GatewayServerChannelPipelineFactory instance {}",
 		        this.producedPipelineFactory);
+	}
+
+	@Override
+	public void plugin(final TransportProtocolPlugin<ID, TP> plugin) {
+		notNull(plugin, "Argument 'plugin' may not be null");
+		this.transportProtocolPlugin = plugin;
 	}
 
 	/**
@@ -140,48 +140,6 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 	 */
 	public final void setPduType(final Class<TP> pduType) {
 		this.pduType = pduType;
-	}
-
-	/**
-	 * @param frameDecoder
-	 *            the frameDecoder to set
-	 */
-	public final void setFrameDecoder(final FrameDecoder frameDecoder) {
-		this.frameDecoder = frameDecoder;
-	}
-
-	/**
-	 * @param decoder
-	 *            the decoder to set
-	 */
-	public final void setDecoder(final OneToOneDecoder decoder) {
-		this.decoder = decoder;
-	}
-
-	/**
-	 * @param encoder
-	 *            the encoder to set
-	 */
-	public final void setEncoder(final OneToOneEncoder encoder) {
-		this.encoder = encoder;
-	}
-
-	/**
-	 * @param upstreamTransportProtocolAdapter
-	 *            the upstreamTransportProtocolAdapter to set
-	 */
-	public final void setUpstreamTransportProtocolAdapter(
-	        final TransportProtocolAdaptingUpstreamChannelHandler<ID, TP> upstreamTransportProtocolAdapter) {
-		this.upstreamTransportProtocolAdapter = upstreamTransportProtocolAdapter;
-	}
-
-	/**
-	 * @param downstreamTransportProtocolAdapter
-	 *            the downstreamTransportProtocolAdapter to set
-	 */
-	public final void setDownstreamTransportProtocolAdapter(
-	        final TransportProtocolAdaptingDownstreamChannelHandler<ID, TP> downstreamTransportProtocolAdapter) {
-		this.downstreamTransportProtocolAdapter = downstreamTransportProtocolAdapter;
 	}
 
 	/**

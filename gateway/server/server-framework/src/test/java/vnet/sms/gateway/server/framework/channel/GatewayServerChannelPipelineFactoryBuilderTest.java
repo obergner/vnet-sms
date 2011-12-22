@@ -15,6 +15,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import vnet.sms.common.messages.Message;
 import vnet.sms.gateway.nettysupport.monitor.ChannelMonitorRegistry;
 import vnet.sms.gateway.nettysupport.window.spi.MessageReferenceGenerator;
+import vnet.sms.gateway.server.framework.spi.DefaultTransportProtocolPlugin;
+import vnet.sms.gateway.server.framework.spi.TransportProtocolPlugin;
 import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;
 import vnet.sms.gateway.transports.serialization.incoming.SerializationTransportProtocolAdaptingUpstreamChannelHandler;
 import vnet.sms.gateway.transports.serialization.outgoing.SerializationTransportProtocolAdaptingDownstreamChannelHandler;
@@ -53,7 +55,16 @@ public class GatewayServerChannelPipelineFactoryBuilderTest {
 	@Test
 	public final void assertThatAfterPropertiesSetProperlyConstructsAGatewayServerChannelPipelineFactoryIfBuilderIsCorrectlyConfigured()
 	        throws Exception {
+		final TransportProtocolPlugin<Integer, ReferenceableMessageContainer> transportProtocolPlugin = new DefaultTransportProtocolPlugin<Integer, ReferenceableMessageContainer>(
+		        new ObjectDecoder(ClassResolvers.cacheDisabled(null)),
+		        null,
+		        new ObjectEncoder(),
+		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(
+		                createNiceMock(ChannelMonitorRegistry.class)),
+		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(
+		                createNiceMock(ChannelMonitorRegistry.class)));
 		final GatewayServerChannelPipelineFactoryBuilder<Integer, ReferenceableMessageContainer> objectUnderTest = new GatewayServerChannelPipelineFactoryBuilder<Integer, ReferenceableMessageContainer>();
+		objectUnderTest.plugin(transportProtocolPlugin);
 		objectUnderTest
 		        .setGatewayServerInstanceId("assertThatAfterPropertiesSetProperlyConstructsAGatewayServerChannelPipelineFactoryIfBuilderIsCorrectlyConfigured");
 		objectUnderTest
@@ -61,23 +72,13 @@ public class GatewayServerChannelPipelineFactoryBuilderTest {
 		objectUnderTest.setAvailableIncomingWindows(10);
 		objectUnderTest
 		        .setChannelMonitorRegistry(createNiceMock(ChannelMonitorRegistry.class));
-		objectUnderTest.setDecoder(null);
-		objectUnderTest
-		        .setDownstreamTransportProtocolAdapter(new SerializationTransportProtocolAdaptingDownstreamChannelHandler(
-		                createNiceMock(ChannelMonitorRegistry.class)));
-		objectUnderTest.setEncoder(new ObjectEncoder());
 		objectUnderTest.setFailedLoginResponseDelayMillis(2000L);
-		objectUnderTest.setFrameDecoder(new ObjectDecoder(ClassResolvers
-		        .cacheDisabled(null)));
 		objectUnderTest.setIncomingWindowWaitTimeMillis(1000L);
 		objectUnderTest.setMbeanServer(ManagementFactory
 		        .getPlatformMBeanServer());
 		objectUnderTest.setPduType(ReferenceableMessageContainer.class);
 		objectUnderTest.setPingIntervalSeconds(2);
 		objectUnderTest.setPingResponseTimeoutMillis(3000L);
-		objectUnderTest
-		        .setUpstreamTransportProtocolAdapter(new SerializationTransportProtocolAdaptingUpstreamChannelHandler(
-		                createNiceMock(ChannelMonitorRegistry.class)));
 		objectUnderTest
 		        .setWindowIdGenerator(createNiceMock(MessageReferenceGenerator.class));
 		objectUnderTest.afterPropertiesSet();
