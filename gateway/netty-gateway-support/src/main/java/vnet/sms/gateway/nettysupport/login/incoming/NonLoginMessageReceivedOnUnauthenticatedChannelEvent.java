@@ -12,8 +12,8 @@ import org.jboss.netty.channel.Channel;
 import vnet.sms.common.messages.Acknowledgement;
 import vnet.sms.common.messages.LoginRequest;
 import vnet.sms.common.messages.Message;
-import vnet.sms.gateway.nettysupport.DownstreamReceivedMessageAckedEvent;
-import vnet.sms.gateway.nettysupport.WindowedMessageEvent;
+import vnet.sms.common.wme.DownstreamReceivedMessageAckedEvent;
+import vnet.sms.common.wme.WindowedMessageEvent;
 
 /**
  * @author obergner
@@ -33,6 +33,9 @@ public final class NonLoginMessageReceivedOnUnauthenticatedChannelEvent<ID exten
 
 	private NonLoginMessageReceivedOnUnauthenticatedChannelEvent(
 	        final ID messageReference, final Channel channel, final M message) {
-		super(messageReference, channel, message, Acknowledgement.nack());
+		super(
+		        messageReference,
+		        WindowedMessageEvent.Type.NON_LOGIN_MESSAGE_RECEIVED_ON_UNAUTHENTICATED_CHANNEL,
+		        channel, message, Acknowledgement.nack());
 	}
 }

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package vnet.sms.gateway.nettysupport;
+package vnet.sms.common.wme;
 
 import static org.apache.commons.lang.Validate.notNull;
 
@@ -17,19 +17,22 @@ import vnet.sms.common.messages.Message;
  * @author obergner
  * 
  */
-public class DownstreamWindowedMessageEvent<ID extends Serializable, M extends Message>
+public abstract class DownstreamWindowedMessageEvent<ID extends Serializable, M extends Message>
         extends DownstreamMessageEvent implements WindowedMessageEvent<ID, M> {
 
 	private final ID	messageReference;
 
+	private final Type	type;
+
 	protected DownstreamWindowedMessageEvent(final ID messageReference,
+	        final Type type,
 	        final DownstreamMessageEvent downstreamMessageEvent, final M message) {
-		this(messageReference, downstreamMessageEvent.getChannel(),
+		this(messageReference, type, downstreamMessageEvent.getChannel(),
 		        downstreamMessageEvent.getFuture(), message);
 	}
 
 	protected DownstreamWindowedMessageEvent(final ID messageReference,
-	        final Channel channel, final ChannelFuture future,
+	        final Type type, final Channel channel, final ChannelFuture future,
 	        final Object message) {
 		super(channel, future, message, ((M) message).getReceiver());
 		notNull(messageReference,
@@ -38,10 +41,11 @@ public class DownstreamWindowedMessageEvent<ID extends Serializable, M extends M
 		notNull(future, "Argument 'future' must not be null");
 		notNull(message, "Argument 'message' must not be null");
 		this.messageReference = messageReference;
+		this.type = type;
 	}
 
 	/**
-	 * @see vnet.sms.gateway.nettysupport.WindowedMessageEvent#getMessageReference()
+	 * @see vnet.sms.common.wme.WindowedMessageEvent#getMessageReference()
 	 */
 	@Override
 	public ID getMessageReference() {
@@ -49,7 +53,15 @@ public class DownstreamWindowedMessageEvent<ID extends Serializable, M extends M
 	}
 
 	/**
-	 * @see vnet.sms.gateway.nettysupport.WindowedMessageEvent#getMessage()
+	 * @see vnet.sms.common.wme.WindowedMessageEvent#getType()
+	 */
+	@Override
+	public Type getType() {
+		return this.type;
+	}
+
+	/**
+	 * @see vnet.sms.common.wme.WindowedMessageEvent#getMessage()
 	 */
 	@Override
 	public M getMessage() {

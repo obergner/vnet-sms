@@ -1,7 +1,7 @@
 /**
  * 
  */
-package vnet.sms.gateway.nettysupport;
+package vnet.sms.common.wme;
 
 import java.io.Serializable;
 
@@ -18,6 +18,7 @@ public class SmsReceivedEvent<ID extends Serializable> extends
 
 	public SmsReceivedEvent(final ID messageReference,
 	        final UpstreamMessageEvent upstreamMessageEvent, final Sms sms) {
-		super(messageReference, upstreamMessageEvent, sms);
+		super(messageReference, WindowedMessageEvent.Type.SMS_RECEIVED,
+		        upstreamMessageEvent, sms);
 	}
 }

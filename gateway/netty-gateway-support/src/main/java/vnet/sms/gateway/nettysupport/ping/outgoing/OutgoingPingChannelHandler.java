@@ -17,8 +17,8 @@ import org.jboss.netty.util.Timer;
 import org.jboss.netty.util.TimerTask;
 
 import vnet.sms.common.messages.PingRequest;
-import vnet.sms.gateway.nettysupport.PingResponseReceivedEvent;
-import vnet.sms.gateway.nettysupport.SendPingRequestEvent;
+import vnet.sms.common.wme.PingResponseReceivedEvent;
+import vnet.sms.common.wme.SendPingRequestEvent;
 import vnet.sms.gateway.nettysupport.UpstreamWindowedChannelHandler;
 import vnet.sms.gateway.nettysupport.window.spi.MessageReferenceGenerator;
 

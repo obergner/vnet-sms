@@ -21,11 +21,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 
 import vnet.sms.common.messages.Message;
-import vnet.sms.gateway.nettysupport.LoginRequestAcceptedEvent;
-import vnet.sms.gateway.nettysupport.LoginRequestReceivedEvent;
-import vnet.sms.gateway.nettysupport.LoginRequestRejectedEvent;
+import vnet.sms.common.wme.LoginRequestAcceptedEvent;
+import vnet.sms.common.wme.LoginRequestReceivedEvent;
+import vnet.sms.common.wme.LoginRequestRejectedEvent;
+import vnet.sms.common.wme.WindowedMessageEvent;
 import vnet.sms.gateway.nettysupport.UpstreamWindowedChannelHandler;
-import vnet.sms.gateway.nettysupport.WindowedMessageEvent;
 
 /**
  * @author obergner

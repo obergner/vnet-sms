@@ -1,7 +1,7 @@
 /**
  * 
  */
-package vnet.sms.gateway.nettysupport;
+package vnet.sms.common.wme;
 
 import static org.apache.commons.lang.Validate.notNull;
 
@@ -25,16 +25,16 @@ public abstract class DownstreamReceivedMessageAckedEvent<ID extends Serializabl
 	private final Acknowledgement	acknowledgement;
 
 	protected DownstreamReceivedMessageAckedEvent(final ID messageReference,
-	        final Channel channel, final M message,
+	        final Type type, final Channel channel, final M message,
 	        final Acknowledgement acknowledgement) {
-		this(messageReference, channel, Channels.future(channel, false),
+		this(messageReference, type, channel, Channels.future(channel, false),
 		        message, acknowledgement);
 	}
 
 	private DownstreamReceivedMessageAckedEvent(final ID messageReference,
-	        final Channel channel, final ChannelFuture future,
+	        final Type type, final Channel channel, final ChannelFuture future,
 	        final Object message, final Acknowledgement acknowledgement) {
-		super(messageReference, channel, future, message);
+		super(messageReference, type, channel, future, message);
 		notNull(messageReference,
 		        "Argument 'messageReference' must not be null");
 		notNull(acknowledgement, "Argument 'acknowledgement' must not be null");
@@ -44,8 +44,7 @@ public abstract class DownstreamReceivedMessageAckedEvent<ID extends Serializabl
 	}
 
 	/**
-	 * @see vnet.sms.gateway.nettysupport.ReceivedMessageAckedEvent#getAcknowledgement
-	 *      ()
+	 * @see vnet.sms.common.wme.ReceivedMessageAckedEvent#getAcknowledgement ()
 	 */
 	@Override
 	public Acknowledgement getAcknowledgement() {
@@ -53,7 +52,7 @@ public abstract class DownstreamReceivedMessageAckedEvent<ID extends Serializabl
 	}
 
 	/**
-	 * @see vnet.sms.gateway.nettysupport.ReceivedMessageAckedEvent#isAccepted()
+	 * @see vnet.sms.common.wme.ReceivedMessageAckedEvent#isAccepted()
 	 */
 	@Override
 	public boolean isAccepted() {

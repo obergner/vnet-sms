@@ -25,7 +25,7 @@ import org.junit.Test;
 
 import vnet.sms.common.messages.Message;
 import vnet.sms.common.messages.Sms;
-import vnet.sms.gateway.nettysupport.SmsReceivedEvent;
+import vnet.sms.common.wme.SmsReceivedEvent;
 
 /**
  * @author obergner

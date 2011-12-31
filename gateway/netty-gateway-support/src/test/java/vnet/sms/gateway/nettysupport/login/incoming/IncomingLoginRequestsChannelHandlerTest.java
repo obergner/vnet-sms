@@ -16,9 +16,9 @@ import org.springframework.security.core.AuthenticationException;
 
 import vnet.sms.common.messages.LoginRequest;
 import vnet.sms.common.messages.PingRequest;
-import vnet.sms.gateway.nettysupport.LoginRequestAcceptedEvent;
-import vnet.sms.gateway.nettysupport.LoginRequestRejectedEvent;
-import vnet.sms.gateway.nettysupport.PingRequestReceivedEvent;
+import vnet.sms.common.wme.LoginRequestAcceptedEvent;
+import vnet.sms.common.wme.LoginRequestRejectedEvent;
+import vnet.sms.common.wme.PingRequestReceivedEvent;
 import vnet.sms.gateway.nettysupport.test.ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler;
 import vnet.sms.gateway.nettytest.ChannelPipelineEmbedder;
 import vnet.sms.gateway.nettytest.DefaultChannelPipelineEmbedder;

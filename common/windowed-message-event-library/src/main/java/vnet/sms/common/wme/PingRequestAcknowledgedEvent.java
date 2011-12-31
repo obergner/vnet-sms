@@ -1,7 +1,7 @@
 /**
  * 
  */
-package vnet.sms.gateway.nettysupport;
+package vnet.sms.common.wme;
 
 import static org.apache.commons.lang.Validate.notNull;
 
@@ -31,6 +31,8 @@ public class PingRequestAcknowledgedEvent<ID extends Serializable> extends
 
 	private PingRequestAcknowledgedEvent(final ID messageReference,
 	        final Channel channel, final PingRequest message) {
-		super(messageReference, channel, message, Acknowledgement.ack());
+		super(messageReference,
+		        WindowedMessageEvent.Type.PING_REQUEST_ACKNOWLEDGED, channel,
+		        message, Acknowledgement.ack());
 	}
 }

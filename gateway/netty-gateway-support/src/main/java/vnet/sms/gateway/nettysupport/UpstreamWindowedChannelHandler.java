@@ -12,6 +12,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import vnet.sms.common.messages.Message;
+import vnet.sms.common.wme.LoginRequestReceivedEvent;
+import vnet.sms.common.wme.LoginResponseReceivedEvent;
+import vnet.sms.common.wme.PingRequestReceivedEvent;
+import vnet.sms.common.wme.PingResponseReceivedEvent;
+import vnet.sms.common.wme.SmsReceivedEvent;
+import vnet.sms.common.wme.WindowedMessageEvent;
 
 /**
  * @author obergner

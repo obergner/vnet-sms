@@ -17,7 +17,7 @@ import javax.management.ObjectName;
 import org.jboss.netty.channel.Channel;
 
 import vnet.sms.common.messages.Message;
-import vnet.sms.gateway.nettysupport.WindowedMessageEvent;
+import vnet.sms.common.wme.WindowedMessageEvent;
 
 /**
  * @author obergner

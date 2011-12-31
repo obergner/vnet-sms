@@ -31,7 +31,8 @@
 		<!-- ######################################################### -->
 		<!-- Our own modules' versions -->
 		<module.common.version>1.0.0-SNAPSHOT</module.common.version>
-		<module.common-message-library.version>1.0.0-SNAPSHOT</module.common-message-library.version>
+		<module.common.message-library.version>1.0.0-SNAPSHOT</module.common.message-library.version>
+		<module.common.windowed-message-event-library.version>1.0.0-SNAPSHOT</module.common.windowed-message-event-library.version>
 		<module.gateway.version>1.0.0-SNAPSHOT</module.gateway.version>
 		<module.gateway.netty-gateway-support.version>1.0.0-SNAPSHOT</module.gateway.netty-gateway-support.version>
 		<module.gateway.netty-test-support.version>1.0.0-SNAPSHOT</module.gateway.netty-test-support.version>
@@ -51,13 +52,14 @@
 		<deps.camel.version>2.8.3</deps.camel.version>
 		<deps.netty.version>3.2.7.Final</deps.netty.version>
 		<deps.osgi.version>4.1.0</deps.osgi.version>
-		<deps.google-guava.version>10.0.1</deps.google-guava.version>
-		<deps.spring-security.version>3.0.5.RELEASE</deps.spring-security.version>
+		<deps.google-guava.version>11.0</deps.google-guava.version>
+		<deps.spring-security.version>3.1.0.RELEASE</deps.spring-security.version>
 		<deps.yammer-metrics.version>2.0.0-BETA18</deps.yammer-metrics.version>
 		<!-- Testing -->
 		<deps.junit.version>4.10</deps.junit.version>
 		<deps.arquillian.version>1.0.0.Alpha4</deps.arquillian.version>
 		<deps.easymock.version>3.1</deps.easymock.version>
+		<deps.mockrunner.version>0.3.1</deps.mockrunner.version>
 		<!-- ######################################################### -->
 		<!-- Build plugin versions -->
 		<!-- ######################################################### -->
@@ -73,6 +75,7 @@
 		<plugins.dependency.version>2.4</plugins.dependency.version>
 		<plugins.plugin.version>2.9</plugins.plugin.version>
 		<plugins.source.version>2.1.2</plugins.source.version>
+		<plugins.jxr.version>2.3</plugins.jxr.version>
 		<plugins.cobertura.version>2.5.1</plugins.cobertura.version>
 		<plugins.license.version>1.8.0</plugins.license.version>
 		<plugins.assembly.version>2.2.2</plugins.assembly.version>
@@ -179,7 +182,13 @@
 			<dependency>
 				<groupId>vnet.sms.common</groupId>
 				<artifactId>message-library</artifactId>
-				<version>${module.common-message-library.version}</version>
+				<version>${module.common.message-library.version}</version>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>vnet.sms.common</groupId>
+				<artifactId>windowed-message-event-library</artifactId>
+				<version>${module.common.windowed-message-event-library.version}</version>
 				<type>jar</type>
 			</dependency>
 			<dependency>
@@ -248,6 +257,7 @@
 				<version>${deps.jms.version}</version>
 				<type>jar</type>
 			</dependency>
+			<!-- CDI API -->
 			<dependency>
 				<groupId>javax.inject</groupId>
 				<artifactId>javax.inject</artifactId>
@@ -529,10 +539,19 @@
 				<scope>test</scope>
 				<type>jar</type>
 			</dependency>
+			<!-- Spring Test -->
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-test</artifactId>
 				<version>${deps.spring.version}</version>
+				<type>jar</type>
+			</dependency>
+			<!-- Mockrunner: mock JMS server -->
+			<dependency>
+				<groupId>com.mockrunner</groupId>
+				<artifactId>mockrunner</artifactId>
+				<version>${deps.mockrunner.version}</version>
+				<scope>test</scope>
 				<type>jar</type>
 			</dependency>
 		</dependencies>
@@ -572,6 +591,11 @@
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
 			<scope>runtime</scope>
 		</dependency>
 		<!-- =========================================== -->
@@ -954,6 +978,11 @@
 						</reports>
 					</reportSet>
 				</reportSets>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+				<version>${plugins.jxr.version}</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

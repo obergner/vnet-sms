@@ -21,7 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import vnet.sms.common.messages.Message;
-import vnet.sms.gateway.nettysupport.WindowedMessageEvent;
+import vnet.sms.common.wme.WindowedMessageEvent;
 import vnet.sms.gateway.nettysupport.window.incoming.IncomingWindowStore;
 
 /**

@@ -1,9 +1,9 @@
 package vnet.sms.gateway.nettysupport.test;
 
 import vnet.sms.common.messages.Message;
-import vnet.sms.gateway.nettysupport.LoginRequestAcceptedEvent;
-import vnet.sms.gateway.nettysupport.LoginRequestRejectedEvent;
-import vnet.sms.gateway.nettysupport.SendPingRequestEvent;
+import vnet.sms.common.wme.LoginRequestAcceptedEvent;
+import vnet.sms.common.wme.LoginRequestRejectedEvent;
+import vnet.sms.common.wme.SendPingRequestEvent;
 import vnet.sms.gateway.nettysupport.login.incoming.NonLoginMessageReceivedOnUnauthenticatedChannelEvent;
 import vnet.sms.gateway.nettysupport.monitor.ChannelMonitor;
 import vnet.sms.gateway.nettysupport.monitor.ChannelMonitorRegistry;

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package vnet.sms.gateway.nettysupport;
+package vnet.sms.common.wme;
 
 import java.io.Serializable;
 
@@ -19,6 +19,8 @@ public class PingRequestReceivedEvent<ID extends Serializable> extends
 	public PingRequestReceivedEvent(final ID messageReference,
 	        final UpstreamMessageEvent upstreamMessageEvent,
 	        final PingRequest pingRequest) {
-		super(messageReference, upstreamMessageEvent, pingRequest);
+		super(messageReference,
+		        WindowedMessageEvent.Type.PING_REQUEST_RECEIVED,
+		        upstreamMessageEvent, pingRequest);
 	}
 }

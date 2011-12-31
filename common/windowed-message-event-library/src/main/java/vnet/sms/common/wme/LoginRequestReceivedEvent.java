@@ -1,7 +1,7 @@
 /**
  * 
  */
-package vnet.sms.gateway.nettysupport;
+package vnet.sms.common.wme;
 
 import java.io.Serializable;
 
@@ -19,6 +19,8 @@ public class LoginRequestReceivedEvent<ID extends Serializable> extends
 	public LoginRequestReceivedEvent(final ID messageReference,
 	        final UpstreamMessageEvent upstreamMessageEvent,
 	        final LoginRequest loginRequest) {
-		super(messageReference, upstreamMessageEvent, loginRequest);
+		super(messageReference,
+		        WindowedMessageEvent.Type.LOGIN_REQUEST_RECEIVED,
+		        upstreamMessageEvent, loginRequest);
 	}
 }

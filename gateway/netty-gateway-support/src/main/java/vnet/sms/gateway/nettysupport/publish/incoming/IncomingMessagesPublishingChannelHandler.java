@@ -12,11 +12,11 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import org.jboss.netty.channel.ChannelHandler;
 import org.jboss.netty.channel.ChannelHandlerContext;
 
-import vnet.sms.gateway.nettysupport.LoginRequestReceivedEvent;
-import vnet.sms.gateway.nettysupport.LoginResponseReceivedEvent;
-import vnet.sms.gateway.nettysupport.PingRequestReceivedEvent;
-import vnet.sms.gateway.nettysupport.PingResponseReceivedEvent;
-import vnet.sms.gateway.nettysupport.SmsReceivedEvent;
+import vnet.sms.common.wme.LoginRequestReceivedEvent;
+import vnet.sms.common.wme.LoginResponseReceivedEvent;
+import vnet.sms.common.wme.PingRequestReceivedEvent;
+import vnet.sms.common.wme.PingResponseReceivedEvent;
+import vnet.sms.common.wme.SmsReceivedEvent;
 import vnet.sms.gateway.nettysupport.UpstreamWindowedChannelHandler;
 
 /**
@@ -50,7 +50,7 @@ public class IncomingMessagesPublishingChannelHandler<ID extends Serializable>
 
 	/**
 	 * @see vnet.sms.gateway.nettysupport.UpstreamWindowedChannelHandler#loginRequestReceived(org.jboss.netty.channel.ChannelHandlerContext,
-	 *      vnet.sms.gateway.nettysupport.LoginRequestReceivedEvent)
+	 *      vnet.sms.common.wme.LoginRequestReceivedEvent)
 	 */
 	@Override
 	protected void loginRequestReceived(final ChannelHandlerContext ctx,
@@ -65,7 +65,7 @@ public class IncomingMessagesPublishingChannelHandler<ID extends Serializable>
 
 	/**
 	 * @see vnet.sms.gateway.nettysupport.UpstreamWindowedChannelHandler#loginResponseReceived(org.jboss.netty.channel.ChannelHandlerContext,
-	 *      vnet.sms.gateway.nettysupport.LoginResponseReceivedEvent)
+	 *      vnet.sms.common.wme.LoginResponseReceivedEvent)
 	 */
 	@Override
 	protected void loginResponseReceived(final ChannelHandlerContext ctx,
@@ -80,7 +80,7 @@ public class IncomingMessagesPublishingChannelHandler<ID extends Serializable>
 
 	/**
 	 * @see vnet.sms.gateway.nettysupport.UpstreamWindowedChannelHandler#pingRequestReceived(org.jboss.netty.channel.ChannelHandlerContext,
-	 *      vnet.sms.gateway.nettysupport.PingRequestReceivedEvent)
+	 *      vnet.sms.common.wme.PingRequestReceivedEvent)
 	 */
 	@Override
 	protected void pingRequestReceived(final ChannelHandlerContext ctx,
@@ -95,7 +95,7 @@ public class IncomingMessagesPublishingChannelHandler<ID extends Serializable>
 
 	/**
 	 * @see vnet.sms.gateway.nettysupport.UpstreamWindowedChannelHandler#pingResponseReceived(org.jboss.netty.channel.ChannelHandlerContext,
-	 *      vnet.sms.gateway.nettysupport.PingResponseReceivedEvent)
+	 *      vnet.sms.common.wme.PingResponseReceivedEvent)
 	 */
 	@Override
 	protected void pingResponseReceived(final ChannelHandlerContext ctx,
@@ -110,7 +110,7 @@ public class IncomingMessagesPublishingChannelHandler<ID extends Serializable>
 
 	/**
 	 * @see vnet.sms.gateway.nettysupport.UpstreamWindowedChannelHandler#smsReceived(org.jboss.netty.channel.ChannelHandlerContext,
-	 *      vnet.sms.gateway.nettysupport.SmsReceivedEvent)
+	 *      vnet.sms.common.wme.SmsReceivedEvent)
 	 */
 	@Override
 	protected void smsReceived(final ChannelHandlerContext ctx,

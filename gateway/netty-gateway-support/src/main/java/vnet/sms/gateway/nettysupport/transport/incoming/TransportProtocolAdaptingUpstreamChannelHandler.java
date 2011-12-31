@@ -22,7 +22,7 @@ import vnet.sms.common.messages.Message;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.PingResponse;
 import vnet.sms.common.messages.Sms;
-import vnet.sms.gateway.nettysupport.WindowedMessageEvent;
+import vnet.sms.common.wme.WindowedMessageEvent;
 import vnet.sms.gateway.nettysupport.monitor.ChannelMonitor;
 import vnet.sms.gateway.nettysupport.monitor.ChannelMonitorRegistry;
 

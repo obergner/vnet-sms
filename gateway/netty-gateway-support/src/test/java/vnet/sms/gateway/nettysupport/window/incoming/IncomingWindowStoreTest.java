@@ -15,7 +15,7 @@ import org.junit.Test;
 
 import vnet.sms.common.messages.Message;
 import vnet.sms.common.messages.PingRequest;
-import vnet.sms.gateway.nettysupport.PingRequestReceivedEvent;
+import vnet.sms.common.wme.PingRequestReceivedEvent;
 
 public class IncomingWindowStoreTest {
 

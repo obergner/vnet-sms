@@ -43,6 +43,7 @@
 
 	<modules>
 		<module>message-library</module>
+		<module>windowed-message-event-library</module>
 	</modules>
 
 </project>

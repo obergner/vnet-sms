@@ -15,12 +15,12 @@ import vnet.sms.common.messages.Message;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.PingResponse;
 import vnet.sms.common.messages.Sms;
-import vnet.sms.gateway.nettysupport.LoginRequestReceivedEvent;
-import vnet.sms.gateway.nettysupport.LoginResponseReceivedEvent;
-import vnet.sms.gateway.nettysupport.PingRequestReceivedEvent;
-import vnet.sms.gateway.nettysupport.PingResponseReceivedEvent;
-import vnet.sms.gateway.nettysupport.SmsReceivedEvent;
-import vnet.sms.gateway.nettysupport.WindowedMessageEvent;
+import vnet.sms.common.wme.LoginRequestReceivedEvent;
+import vnet.sms.common.wme.LoginResponseReceivedEvent;
+import vnet.sms.common.wme.PingRequestReceivedEvent;
+import vnet.sms.common.wme.PingResponseReceivedEvent;
+import vnet.sms.common.wme.SmsReceivedEvent;
+import vnet.sms.common.wme.WindowedMessageEvent;
 
 /**
  * @author obergner

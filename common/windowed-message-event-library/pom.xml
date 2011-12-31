@@ -17,17 +17,17 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>vnet.sms.gateway</groupId>
-		<artifactId>server</artifactId>
+		<groupId>vnet.sms</groupId>
+		<artifactId>common</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 		<relativePath>../</relativePath>
 	</parent>
 
-	<groupId>vnet.sms.gateway.server</groupId>
-	<artifactId>server-framework</artifactId>
+	<groupId>vnet.sms.common</groupId>
+	<artifactId>windowed-message-event-library</artifactId>
 	<packaging>jar</packaging>
-	<name>SMS :: Gateway :: Server :: Framework</name>
-	<description>A transport protocol-agnostic framework for implementing gateway servers</description>
+	<name>SMS :: Common :: Windowed Message Event Library</name>
+	<description>Types of message events carrying a message reference</description>
 
 	<properties>
 	</properties>
@@ -36,6 +36,18 @@
 		<!-- *************************************************************** -->
 		<!-- Compile -->
 		<!-- *************************************************************** -->
+		<dependency>
+			<groupId>vnet.sms.common</groupId>
+			<artifactId>message-library</artifactId>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.netty</groupId>
+			<artifactId>netty</artifactId>
+			<scope>compile</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>javax.jms</groupId>
 			<artifactId>jms</artifactId>
@@ -46,39 +58,12 @@
 			<artifactId>spring-jms</artifactId>
 			<scope>compile</scope>
 		</dependency>
-
-		<dependency>
-			<groupId>vnet.sms.gateway</groupId>
-			<artifactId>netty-gateway-support</artifactId>
-			<scope>compile</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.jboss.netty</groupId>
-			<artifactId>netty</artifactId>
-			<scope>compile</scope>
-		</dependency>
 		<!-- *************************************************************** -->
 		<!-- Runtime -->
 		<!-- *************************************************************** -->
 		<!-- *************************************************************** -->
 		<!-- Test -->
 		<!-- *************************************************************** -->
-		<dependency>
-			<groupId>vnet.sms.gateway</groupId>
-			<artifactId>netty-test-support</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>vnet.sms.gateway.transports</groupId>
-			<artifactId>serialization-transport</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.mockrunner</groupId>
-			<artifactId>mockrunner</artifactId>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
 
 </project>

@@ -12,7 +12,7 @@ import org.junit.Test;
 
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.PingResponse;
-import vnet.sms.gateway.nettysupport.SendPingRequestEvent;
+import vnet.sms.common.wme.SendPingRequestEvent;
 import vnet.sms.gateway.nettysupport.test.ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler;
 import vnet.sms.gateway.nettysupport.window.spi.MessageReferenceGenerator;
 import vnet.sms.gateway.nettytest.ChannelEventFilter;
