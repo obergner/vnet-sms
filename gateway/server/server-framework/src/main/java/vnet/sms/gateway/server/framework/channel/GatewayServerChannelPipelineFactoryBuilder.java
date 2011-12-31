@@ -17,6 +17,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 
 import vnet.sms.gateway.nettysupport.monitor.ChannelMonitorRegistry;
 import vnet.sms.gateway.nettysupport.window.spi.MessageReferenceGenerator;
+import vnet.sms.gateway.server.framework.TransportProtocolExtensionPoint;
+import vnet.sms.gateway.server.framework.jmsbridge.MessageForwardingJmsBridge;
 import vnet.sms.gateway.server.framework.spi.TransportProtocolPlugin;
 
 /**
@@ -55,6 +57,8 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 	private MBeanServer	                                mbeanServer;
 
 	private GatewayServerChannelPipelineFactory<ID, TP>	producedPipelineFactory;
+
+	private MessageForwardingJmsBridge<ID>	            messageForwardingJmsBridge;
 
 	/**
 	 * @see org.springframework.beans.factory.FactoryBean#getObject()
@@ -108,7 +112,8 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 		                .getPduToWindowedMessageEventConverter(),
 		        this.transportProtocolPlugin
 		                .getWindowedMessageEventToPduConverter(),
-		        this.channelMonitorRegistry, this.availableIncomingWindows,
+		        this.channelMonitorRegistry, this.messageForwardingJmsBridge,
+		        this.availableIncomingWindows,
 		        this.incomingWindowWaitTimeMillis, this.authenticationManager,
 		        this.failedLoginResponseDelayMillis, this.windowIdGenerator,
 		        this.pingIntervalSeconds, this.pingResponseTimeoutMillis,
@@ -149,6 +154,15 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 	public final void setChannelMonitorRegistry(
 	        final ChannelMonitorRegistry channelMonitorRegistry) {
 		this.channelMonitorRegistry = channelMonitorRegistry;
+	}
+
+	/**
+	 * @param messageForwardingJmsBridge
+	 *            the messageForwardingJmsBridge to set
+	 */
+	public final void setMessageForwardingJmsBridge(
+	        final MessageForwardingJmsBridge<ID> messageForwardingJmsBridge) {
+		this.messageForwardingJmsBridge = messageForwardingJmsBridge;
 	}
 
 	/**

@@ -37,6 +37,7 @@ import vnet.sms.gateway.nettysupport.transport.outgoing.TransportProtocolAdaptin
 import vnet.sms.gateway.nettysupport.window.WindowingChannelHandler;
 import vnet.sms.gateway.nettysupport.window.incoming.IncomingWindowStore;
 import vnet.sms.gateway.nettysupport.window.spi.MessageReferenceGenerator;
+import vnet.sms.gateway.server.framework.jmsbridge.MessageForwardingJmsBridge;
 
 /**
  * @author obergner
@@ -45,6 +46,16 @@ import vnet.sms.gateway.nettysupport.window.spi.MessageReferenceGenerator;
 @ManagedResource(objectName = "vnet.sms.gateway:service=ChannelPipelineFactory,type=Server", description = "Netty ChannelPipelineFactory for attaching a pipeline of channel handlers to each newly connected channel")
 public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
         implements ChannelPipelineFactory {
+
+	private final int	                                                    availableIncomingWindows;
+
+	private final long	                                                    incomingWindowWaitTimeMillis;
+
+	private final long	                                                    failedLoginResponseDelayMillis;
+
+	private final int	                                                    pingIntervalSeconds;
+
+	private final long	                                                    pingResponseTimeoutMillis;
 
 	private final Class<TP>	                                                pduType;
 
@@ -60,19 +71,9 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 
 	private final ChannelMonitorRegistry	                                channelMonitorRegistry;
 
-	private final int	                                                    availableIncomingWindows;
-
-	private final long	                                                    incomingWindowWaitTimeMillis;
-
 	private final AuthenticationManager	                                    authenticationManager;
 
-	private final long	                                                    failedLoginResponseDelayMillis;
-
 	private final MessageReferenceGenerator<ID>	                            windowIdGenerator;
-
-	private final int	                                                    pingIntervalSeconds;
-
-	private final long	                                                    pingResponseTimeoutMillis;
 
 	private final MBeanServer	                                            mbeanServer;
 
@@ -89,6 +90,7 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 	        final TransportProtocolAdaptingUpstreamChannelHandler<ID, TP> upstreamTransportProtocolAdapter,
 	        final TransportProtocolAdaptingDownstreamChannelHandler<ID, TP> downstreamTransportProtocolAdapter,
 	        final ChannelMonitorRegistry channelMonitorRegistry,
+	        final MessageForwardingJmsBridge<ID> messageForwardingJmsBridge,
 	        final int availableIncomingWindows,
 	        final long incomingWindowWaitTimeMillis,
 	        final AuthenticationManager authenticationManager,
@@ -107,6 +109,8 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 		        "Argument 'downstreamTransportProtocolAdapter' must not be null");
 		notNull(channelMonitorRegistry,
 		        "Argument 'channelMonitorRegistry' must not be null");
+		notNull(messageForwardingJmsBridge,
+		        "Argument 'messageForwardingJmsBridge' must not be null");
 		notNull(authenticationManager,
 		        "Argument 'authenticationManager' must not be null");
 		notNull(windowIdGenerator,
@@ -131,6 +135,7 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 		        new DefaultChannelGroup("vnet.sms.gateway:server="
 		                + gatewayServerInstanceId
 		                + ",type=all-connected-channels"));
+		this.incomingMessagesPublisher.addListener(messageForwardingJmsBridge);
 	}
 
 	/**
@@ -261,5 +266,9 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 
 	public ChannelGroup getAllConnectedChannels() {
 		return this.connectedChannelsTracker.getAllConnectedChannels();
+	}
+
+	public ChannelMonitorRegistry getChannelMonitorRegistry() {
+		return this.channelMonitorRegistry;
 	}
 }

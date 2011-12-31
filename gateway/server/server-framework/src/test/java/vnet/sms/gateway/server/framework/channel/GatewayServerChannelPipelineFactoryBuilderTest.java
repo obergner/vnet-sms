@@ -15,6 +15,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import vnet.sms.common.messages.Message;
 import vnet.sms.gateway.nettysupport.monitor.ChannelMonitorRegistry;
 import vnet.sms.gateway.nettysupport.window.spi.MessageReferenceGenerator;
+import vnet.sms.gateway.server.framework.jmsbridge.MessageForwardingJmsBridge;
 import vnet.sms.gateway.server.framework.spi.DefaultTransportProtocolPlugin;
 import vnet.sms.gateway.server.framework.spi.TransportProtocolPlugin;
 import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;
@@ -72,6 +73,8 @@ public class GatewayServerChannelPipelineFactoryBuilderTest {
 		objectUnderTest.setAvailableIncomingWindows(10);
 		objectUnderTest
 		        .setChannelMonitorRegistry(createNiceMock(ChannelMonitorRegistry.class));
+		objectUnderTest
+		        .setMessageForwardingJmsBridge(createNiceMock(MessageForwardingJmsBridge.class));
 		objectUnderTest.setFailedLoginResponseDelayMillis(2000L);
 		objectUnderTest.setIncomingWindowWaitTimeMillis(1000L);
 		objectUnderTest.setMbeanServer(ManagementFactory

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package vnet.sms.gateway.server.framework.channel;
+package vnet.sms.gateway.server.framework;
 
 import java.io.Serializable;
 

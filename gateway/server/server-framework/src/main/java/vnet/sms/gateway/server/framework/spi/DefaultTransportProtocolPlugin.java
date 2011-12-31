@@ -100,7 +100,7 @@ public class DefaultTransportProtocolPlugin<ID extends Serializable, TP>
 	@Override
 	public String toString() {
 		return "DefaultTransportProtocolPlugin@" + hashCode()
-		        + " [frameDecoder: " + this.frameDecoder + "|decoder: "
+		        + "[frameDecoder: " + this.frameDecoder + "|decoder: "
 		        + this.decoder + "|encoder: " + this.encoder
 		        + "|pduToWindowedMessageEventConverter: "
 		        + this.pduToWindowedMessageEventConverter
