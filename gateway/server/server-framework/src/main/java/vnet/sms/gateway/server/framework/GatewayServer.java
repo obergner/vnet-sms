@@ -65,6 +65,23 @@ class GatewayServer<ID extends Serializable, TP> {
 		        "Argument 'workerExecutor' may be neither null nor empty");
 	}
 
+	GatewayServer(
+	        final String instanceId,
+	        final String host,
+	        final int listenPort,
+	        final GatewayServerChannelPipelineFactory<ID, TP> channelPipelineFactory,
+	        final Executor bossExecutor, final Executor workerExecutor) {
+		this(
+		        instanceId,
+		        new InetSocketAddress(host, listenPort),
+		        new NioServerSocketChannelFactory(bossExecutor, workerExecutor),
+		        channelPipelineFactory);
+		notNull(bossExecutor,
+		        "Argument 'bossExecutor' may be neither null nor empty");
+		notNull(workerExecutor,
+		        "Argument 'workerExecutor' may be neither null nor empty");
+	}
+
 	/**
 	 * Exposed for testing purposes.
 	 * 
@@ -148,13 +165,15 @@ class GatewayServer<ID extends Serializable, TP> {
 			if (!GatewayServer.this.currentState.compareAndSet(
 			        GatewayServer.this.stopped, GatewayServer.this.starting)) {
 				GatewayServer.this.log
-				        .warn("{} is not in state INITIAL - ignoring attempt to start",
+				        .warn("{} is not in state STOPPED - ignoring attempt to start",
 				                GatewayServer.this);
 				return;
 			}
 
 			final ServerBootstrap bootstrap = new ServerBootstrap(
 			        GatewayServer.this.channelFactory);
+			bootstrap
+			        .setPipelineFactory(GatewayServer.this.channelPipelineFactory);
 			bootstrap.bind(GatewayServer.this.localAddress);
 
 			if (!GatewayServer.this.currentState.compareAndSet(
@@ -167,8 +186,10 @@ class GatewayServer<ID extends Serializable, TP> {
 			}
 
 			final long end = System.currentTimeMillis();
-			GatewayServer.this.log.info("{} started in [] ms", this, end
-			        - start);
+			GatewayServer.this.log.info(
+			        "{} started in [{}] ms - listening on {}", new Object[] {
+			                GatewayServer.this, end - start,
+			                GatewayServer.this.localAddress });
 		}
 
 		@Override
@@ -213,7 +234,7 @@ class GatewayServer<ID extends Serializable, TP> {
 	private final class Running extends State {
 
 		Running() {
-			super("Running");
+			super("RUNNING");
 		}
 
 		@Override
@@ -257,8 +278,8 @@ class GatewayServer<ID extends Serializable, TP> {
 			}
 
 			final long end = System.currentTimeMillis();
-			GatewayServer.this.log.info("{} stopped in [] ms", this, end
-			        - start);
+			GatewayServer.this.log.info("{} stopped in [{}] ms",
+			        GatewayServer.this, end - start);
 		}
 
 		@Override

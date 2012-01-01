@@ -109,7 +109,8 @@ public class OutgoingPingChannelHandler<ID extends Serializable> extends
 	public void channelDisconnected(final ChannelHandlerContext ctx,
 	        final ChannelStateEvent e) throws Exception {
 		getLog().info(
-		        "Channel {} has been disconnected - will stop ping sender task");
+		        "Channel {} has been disconnected - will stop ping sender task",
+		        e.getChannel());
 		shutdownTimers();
 		super.channelDisconnected(ctx, e);
 	}
@@ -124,9 +125,9 @@ public class OutgoingPingChannelHandler<ID extends Serializable> extends
 	public void exceptionCaught(final ChannelHandlerContext ctx,
 	        final ExceptionEvent e) throws Exception {
 		getLog().error(
-		        "Received exception ['{}'] on channel {} - will stop ping sender task. This channel handler needs to be shut down as soon as possible.");
+		        "Received exception ['{}'] on channel {} - will stop ping sender task. This channel handler needs to be shut down as soon as possible.",
+		        e.getCause().getMessage(), e.getChannel());
 		shutdownTimers();
-
 		super.exceptionCaught(ctx, e);
 	}
 
@@ -206,7 +207,8 @@ public class OutgoingPingChannelHandler<ID extends Serializable> extends
 				return;
 			}
 			getLog().warn(
-			        "Did not receive response to ping request after timeout of [{}] milliseconds - will issue a request to close this channel");
+			        "Did not receive response to ping request after timeout of [{}] milliseconds - will issue a request to close this channel",
+			        OutgoingPingChannelHandler.this.pingResponseTimeoutMillis);
 			this.ctx.sendUpstream(new NoPingResponseReceivedWithinTimeoutEvent(
 			        this.ctx.getChannel(),
 			        OutgoingPingChannelHandler.this.pingIntervalSeconds,

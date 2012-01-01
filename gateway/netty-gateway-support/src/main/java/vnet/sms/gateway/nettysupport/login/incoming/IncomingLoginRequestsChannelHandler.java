@@ -181,7 +181,8 @@ public class IncomingLoginRequestsChannelHandler<ID extends Serializable>
 	public void channelDisconnected(final ChannelHandlerContext ctx,
 	        final ChannelStateEvent e) throws Exception {
 		getLog().info(
-		        "Channel {} has been disconnected - stopping timer for delaying failed login responses");
+		        "Channel {} has been disconnected - stopping timer for delaying failed login responses",
+		        e.getChannel());
 		this.failedLoginResponseTimer.stop();
 		super.channelDisconnected(ctx, e);
 	}
