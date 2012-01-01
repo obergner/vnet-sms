@@ -5,6 +5,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.net.InetSocketAddress;
 
@@ -196,7 +197,7 @@ public class MessageForwardingJmsBridgeTest {
 	}
 
 	@Test
-	public final void assertThatPingRequestReceivedForwardsPingRequestToJmsQueue()
+	public final void assertThatPingRequestReceivedDoesNotForwardPingRequestToJmsQueue()
 	        throws JMSException {
 		final DestinationManager destinationManager = new DestinationManager();
 		destinationManager.createQueue(DEFAULT_QUEUE_NAME);
@@ -235,16 +236,13 @@ public class MessageForwardingJmsBridgeTest {
 		final ObjectMessage forwardedMessage = ObjectMessage.class
 		        .cast(jmsTemplate.receive());
 
-		assertNotNull(
-		        "MessageForwardingJmsBridge did not forward PingRequest to JMS queue",
+		assertNull(
+		        "MessageForwardingJmsBridge DID forward PingRequest to JMS queue - it shouldn't have done so",
 		        forwardedMessage);
-		assertEquals(
-		        "MessageForwardingJmsBridge did not forward PingRequest but rather a different message",
-		        message, forwardedMessage.getObject());
 	}
 
 	@Test
-	public final void assertThatPingResponseReceivedForwardsPingResponseToJmsQueue()
+	public final void assertThatPingResponseReceivedDoesNotForwardPingResponseToJmsQueue()
 	        throws JMSException {
 		final DestinationManager destinationManager = new DestinationManager();
 		destinationManager.createQueue(DEFAULT_QUEUE_NAME);
@@ -284,11 +282,8 @@ public class MessageForwardingJmsBridgeTest {
 		final ObjectMessage forwardedMessage = ObjectMessage.class
 		        .cast(jmsTemplate.receive());
 
-		assertNotNull(
-		        "MessageForwardingJmsBridge did not forward PingResponse to JMS queue",
+		assertNull(
+		        "MessageForwardingJmsBridge DID forward PingResponse to JMS queue - it shouldn't have done so",
 		        forwardedMessage);
-		assertEquals(
-		        "MessageForwardingJmsBridge did not forward PingResponse but rather a different message",
-		        message, forwardedMessage.getObject());
 	}
 }

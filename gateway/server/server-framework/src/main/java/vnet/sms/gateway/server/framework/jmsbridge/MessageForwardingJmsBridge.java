@@ -80,7 +80,7 @@ public class MessageForwardingJmsBridge<ID extends java.io.Serializable>
 	@Override
 	public void pingRequestReceived(
 	        final PingRequestReceivedEvent<ID> pingRequestReceived) {
-		doForward(pingRequestReceived);
+		// Ignore
 	}
 
 	/**
@@ -89,6 +89,6 @@ public class MessageForwardingJmsBridge<ID extends java.io.Serializable>
 	@Override
 	public void pingResponseReceived(
 	        final PingResponseReceivedEvent<ID> pingResponseReceived) {
-		doForward(pingResponseReceived);
+		// Ignore
 	}
 }

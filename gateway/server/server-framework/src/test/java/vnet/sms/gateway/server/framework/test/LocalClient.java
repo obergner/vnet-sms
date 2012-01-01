@@ -19,7 +19,10 @@ import org.jboss.netty.handler.codec.serialization.ObjectDecoder;
 import org.jboss.netty.handler.codec.serialization.ObjectEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.BadCredentialsException;
 
+import vnet.sms.common.messages.LoginRequest;
+import vnet.sms.common.messages.LoginResponse;
 import vnet.sms.common.messages.Message;
 import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;
 
@@ -137,6 +140,25 @@ public class LocalClient {
 
 	public void listen(final MessageListener messageListener) {
 		installMessageListener(messageListener);
+	}
+
+	public void login(final int messageReference, final String username,
+	        final String password) throws Throwable {
+		final LoginRequest loginRequest = new LoginRequest(username, password,
+		        this.serverConnection.getLocalAddress(), this.serverAddress);
+		final ReferenceableMessageContainer loginResponseContainer = sendMessageAndWaitForResponse(
+		        messageReference, loginRequest);
+		final Message response = loginResponseContainer.getMessage();
+		if (!(response instanceof LoginResponse)) {
+			throw new RuntimeException("Unexpected response to " + loginRequest
+			        + ": " + response);
+		}
+		final LoginResponse loginResponse = LoginResponse.class.cast(response);
+		if (!loginResponse.loginSucceeded()) {
+			throw new BadCredentialsException(
+			        "Failed to login using username = " + username
+			                + " and password = " + password);
+		}
 	}
 
 	public void disconnect() throws Throwable {
