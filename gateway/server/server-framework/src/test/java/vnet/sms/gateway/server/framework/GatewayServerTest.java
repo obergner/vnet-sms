@@ -28,6 +28,7 @@ import vnet.sms.common.messages.LoginRequest;
 import vnet.sms.common.messages.LoginResponse;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.PingResponse;
+import vnet.sms.common.messages.Sms;
 import vnet.sms.common.wme.jmsbridge.WindowedMessageEventToJmsMessageConverter;
 import vnet.sms.gateway.nettysupport.monitor.ChannelMonitorRegistry;
 import vnet.sms.gateway.server.framework.channel.GatewayServerChannelPipelineFactory;
@@ -648,5 +649,56 @@ public class GatewayServerTest {
 		assertNull(
 		        "GatewayServer should NOT have forwarded PingRequest passed in to JMS server, yet it did",
 		        forwardedMessage);
+	}
+
+	@Test
+	public final void assertThatGatewayServerFowardsReceivedSmsToJmsServer()
+	        throws Throwable {
+		final LocalAddress serverAddress = new LocalAddress("test:server:10");
+		final LocalAddress clientAddress = new LocalAddress("test:client:10");
+
+		final int availableIncomingWindows = 1000;
+		final long incomingWindowWaitTimeMillis = 1L;
+		final long failedLoginResponseMillis = 100L;
+		final int pingIntervalSeconds = 1;
+		final long pingResponseTimeoutMillis = 200000L;
+		final AuthenticationManager authenticationManager = new AcceptAllAuthenticationManager();
+		final JmsTemplate jmsTemplate = newJmsTemplate();
+		final GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer> channelPipelineFactory = newGatewayServerChannelPipelineFactory(
+		        availableIncomingWindows, incomingWindowWaitTimeMillis,
+		        failedLoginResponseMillis, pingIntervalSeconds,
+		        pingResponseTimeoutMillis, authenticationManager, jmsTemplate);
+
+		final GatewayServer<Integer, ReferenceableMessageContainer> objectUnderTest = new GatewayServer<Integer, ReferenceableMessageContainer>(
+		        "assertThatGatewayServerFowardsReceivedSmsToJmsServer",
+		        serverAddress, new DefaultLocalServerChannelFactory(),
+		        channelPipelineFactory);
+		objectUnderTest.start();
+
+		final LocalClient client = new LocalClient(serverAddress);
+		// Should start ping timeout
+		client.connect();
+
+		// Login. Otherwise, our LoginResponse will be discarded
+		client.login(1, "assertThatGatewayServerFowardsReceivedSmsToJmsServer",
+		        "whatever");
+		// Discard forwarded LoginRequest
+		jmsTemplate.receive();
+
+		final Sms sms = new Sms(
+		        "assertThatGatewayServerFowardsReceivedSmsToJmsServer",
+		        clientAddress, serverAddress);
+		client.sendMessage(2, sms);
+		client.disconnect();
+		final ObjectMessage forwardedMessage = (ObjectMessage) jmsTemplate
+		        .receive();
+		objectUnderTest.stop();
+
+		assertNotNull(
+		        "GatewayServer should have forwarded SMS passed in to JMS server",
+		        forwardedMessage);
+		assertEquals(
+		        "GatewayServer should have forwarded SMS passed in to JMS server",
+		        sms, forwardedMessage.getObject());
 	}
 }
