@@ -22,15 +22,13 @@ import vnet.sms.common.wme.LoginRequestReceivedEvent;
 import vnet.sms.common.wme.LoginRequestRejectedEvent;
 import vnet.sms.common.wme.SendPingRequestEvent;
 import vnet.sms.common.wme.WindowedMessageEvent;
-import vnet.sms.gateway.nettysupport.monitor.TestChannelMonitorRegistry;
 import vnet.sms.gateway.nettytest.ChannelPipelineEmbedder;
 import vnet.sms.gateway.nettytest.DefaultChannelPipelineEmbedder;
 import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;
 
 public class SerializationTransportProtocolAdaptingDownstreamChannelHandlerTest {
 
-	private final SerializationTransportProtocolAdaptingDownstreamChannelHandler	objectUnderTest	= new SerializationTransportProtocolAdaptingDownstreamChannelHandler(
-	                                                                                                        new TestChannelMonitorRegistry());
+	private final SerializationTransportProtocolAdaptingDownstreamChannelHandler	objectUnderTest	= new SerializationTransportProtocolAdaptingDownstreamChannelHandler();
 
 	@Test
 	public final void assertThatTransportProtocolAdapterCorrectlyConvertsPingRequestToPdu()
@@ -45,17 +43,17 @@ public class SerializationTransportProtocolAdaptingDownstreamChannelHandlerTest 
 		        .nextSentMessageEvent();
 
 		assertNotNull(
-		        "TransportProtocolAdaptingDownstreamChannelHandler converted PingRequest to null output",
+		        "OutgoingMessagesMonitoringChannelHandler converted PingRequest to null output",
 		        convertedMessageEvent);
 		assertEquals(
-		        "TransportProtocolAdaptingDownstreamChannelHandler did not wrap converted PingRequest in DownstreamMessageEvent",
+		        "OutgoingMessagesMonitoringChannelHandler did not wrap converted PingRequest in DownstreamMessageEvent",
 		        DownstreamMessageEvent.class, convertedMessageEvent.getClass());
 		assertEquals(
-		        "TransportProtocolAdaptingDownstreamChannelHandler did not convert PingRequest to ReferenceableMessageContainer",
+		        "OutgoingMessagesMonitoringChannelHandler did not convert PingRequest to ReferenceableMessageContainer",
 		        ReferenceableMessageContainer.class, convertedMessageEvent
 		                .getMessage().getClass());
 		assertEquals(
-		        "TransportProtocolAdaptingDownstreamChannelHandler did not put converted PingRequest in ReferenceableMessageContainer",
+		        "OutgoingMessagesMonitoringChannelHandler did not put converted PingRequest in ReferenceableMessageContainer",
 		        PingRequest.class,
 		        ReferenceableMessageContainer.class
 		                .cast(convertedMessageEvent.getMessage()).getMessage()
@@ -104,16 +102,16 @@ public class SerializationTransportProtocolAdaptingDownstreamChannelHandlerTest 
 		                        acceptedLoginRequest)));
 
 		assertNotNull(
-		        "TransportProtocolAdaptingDownstreamChannelHandler converted accepted LoginRequest to null output",
+		        "OutgoingMessagesMonitoringChannelHandler converted accepted LoginRequest to null output",
 		        convertedMessageContainer);
 		assertEquals(
-		        "TransportProtocolAdaptingDownstreamChannelHandler did not convert accepted LoginRequest to LoginResponse",
+		        "OutgoingMessagesMonitoringChannelHandler did not convert accepted LoginRequest to LoginResponse",
 		        LoginResponse.class, convertedMessageContainer.getMessage()
 		                .getClass());
 		final LoginResponse loginResponse = convertedMessageContainer
 		        .getMessage(LoginResponse.class);
 		assertTrue(
-		        "TransportProtocolAdaptingDownstreamChannelHandler did not convert accepted LoginRequest to SUCCESSFUL LoginResponse",
+		        "OutgoingMessagesMonitoringChannelHandler did not convert accepted LoginRequest to SUCCESSFUL LoginResponse",
 		        loginResponse.loginSucceeded());
 	}
 
@@ -137,16 +135,16 @@ public class SerializationTransportProtocolAdaptingDownstreamChannelHandlerTest 
 		                        rejectedLoginRequest)));
 
 		assertNotNull(
-		        "TransportProtocolAdaptingDownstreamChannelHandler converted rejected LoginRequest to null output",
+		        "OutgoingMessagesMonitoringChannelHandler converted rejected LoginRequest to null output",
 		        convertedMessageContainer);
 		assertEquals(
-		        "TransportProtocolAdaptingDownstreamChannelHandler did not convert rejected LoginRequest to LoginResponse",
+		        "OutgoingMessagesMonitoringChannelHandler did not convert rejected LoginRequest to LoginResponse",
 		        LoginResponse.class, convertedMessageContainer.getMessage()
 		                .getClass());
 		final LoginResponse loginResponse = convertedMessageContainer
 		        .getMessage(LoginResponse.class);
 		assertFalse(
-		        "TransportProtocolAdaptingDownstreamChannelHandler did not convert rejected LoginRequest to FAILED LoginResponse",
+		        "OutgoingMessagesMonitoringChannelHandler did not convert rejected LoginRequest to FAILED LoginResponse",
 		        loginResponse.loginSucceeded());
 	}
 }

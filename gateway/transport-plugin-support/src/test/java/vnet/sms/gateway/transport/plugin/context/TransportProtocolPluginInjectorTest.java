@@ -1,6 +1,5 @@
-package vnet.sms.gateway.server.framework.context;
+package vnet.sms.gateway.transport.plugin.context;
 
-import static org.easymock.EasyMock.createNiceMock;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 
@@ -12,10 +11,9 @@ import org.jboss.netty.handler.codec.serialization.ObjectEncoder;
 import org.junit.Test;
 import org.springframework.context.support.StaticApplicationContext;
 
-import vnet.sms.gateway.nettysupport.monitor.ChannelMonitorRegistry;
-import vnet.sms.gateway.server.framework.TransportProtocolExtensionPoint;
-import vnet.sms.gateway.server.framework.spi.DefaultTransportProtocolPlugin;
-import vnet.sms.gateway.server.framework.spi.TransportProtocolPlugin;
+import vnet.sms.gateway.transport.plugin.TransportProtocolExtensionPoint;
+import vnet.sms.gateway.transport.spi.DefaultTransportProtocolPlugin;
+import vnet.sms.gateway.transport.spi.TransportProtocolPlugin;
 import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;
 import vnet.sms.gateway.transports.serialization.incoming.SerializationTransportProtocolAdaptingUpstreamChannelHandler;
 import vnet.sms.gateway.transports.serialization.outgoing.SerializationTransportProtocolAdaptingDownstreamChannelHandler;
@@ -108,10 +106,8 @@ public class TransportProtocolPluginInjectorTest {
 			        new ObjectDecoder(ClassResolvers.cacheDisabled(null)),
 			        null,
 			        new ObjectEncoder(),
-			        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(
-			                createNiceMock(ChannelMonitorRegistry.class)),
-			        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(
-			                createNiceMock(ChannelMonitorRegistry.class)));
+			        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(),
+			        new SerializationTransportProtocolAdaptingDownstreamChannelHandler());
 		}
 	}
 

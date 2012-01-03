@@ -1,11 +1,11 @@
 /**
  * 
  */
-package vnet.sms.gateway.server.framework;
+package vnet.sms.gateway.transport.plugin;
 
 import java.io.Serializable;
 
-import vnet.sms.gateway.server.framework.spi.TransportProtocolPlugin;
+import vnet.sms.gateway.transport.spi.TransportProtocolPlugin;
 
 /**
  * @author obergner

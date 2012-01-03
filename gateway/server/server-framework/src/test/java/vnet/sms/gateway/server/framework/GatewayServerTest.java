@@ -146,10 +146,9 @@ public class GatewayServerTest {
 		        new ObjectDecoder(ClassResolvers.cacheDisabled(null)),
 		        null,
 		        new ObjectEncoder(),
-		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(
-		                channelMonitorRegistry),
-		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(
-		                channelMonitorRegistry), channelMonitorRegistry,
+		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(),
+		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(),
+		        channelMonitorRegistry,
 		        new MessageForwardingJmsBridge<Integer>(jmsTemplate),
 		        availableIncomingWindows, incomingWindowWaitTimeMillis,
 		        authenticationManager, failedLoginResponseMillis,

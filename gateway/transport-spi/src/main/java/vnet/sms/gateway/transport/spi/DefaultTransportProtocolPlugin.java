@@ -1,7 +1,7 @@
 /**
  * 
  */
-package vnet.sms.gateway.server.framework.spi;
+package vnet.sms.gateway.transport.spi;
 
 import static org.apache.commons.lang.Validate.notNull;
 

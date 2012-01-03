@@ -36,10 +36,10 @@ public class TransportProtocolAdaptingDownstreamChannelHandlerTest {
 		        .nextSentMessageEvent();
 
 		assertNotNull(
-		        "TransportProtocolAdaptingDownstreamChannelHandler converted PingRequest to null output",
+		        "OutgoingMessagesMonitoringChannelHandler converted PingRequest to null output",
 		        convertedMessageEvent);
 		assertEquals(
-		        "TransportProtocolAdaptingDownstreamChannelHandler did not wrap converted PingRequest in DownstreamMessageEvent",
+		        "OutgoingMessagesMonitoringChannelHandler did not wrap converted PingRequest in DownstreamMessageEvent",
 		        DownstreamMessageEvent.class, convertedMessageEvent.getClass());
 	}
 

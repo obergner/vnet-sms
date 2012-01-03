@@ -16,8 +16,8 @@ import vnet.sms.common.messages.Message;
 import vnet.sms.gateway.nettysupport.monitor.ChannelMonitorRegistry;
 import vnet.sms.gateway.nettysupport.window.spi.MessageReferenceGenerator;
 import vnet.sms.gateway.server.framework.jmsbridge.MessageForwardingJmsBridge;
-import vnet.sms.gateway.server.framework.spi.DefaultTransportProtocolPlugin;
-import vnet.sms.gateway.server.framework.spi.TransportProtocolPlugin;
+import vnet.sms.gateway.transport.spi.DefaultTransportProtocolPlugin;
+import vnet.sms.gateway.transport.spi.TransportProtocolPlugin;
 import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;
 import vnet.sms.gateway.transports.serialization.incoming.SerializationTransportProtocolAdaptingUpstreamChannelHandler;
 import vnet.sms.gateway.transports.serialization.outgoing.SerializationTransportProtocolAdaptingDownstreamChannelHandler;
@@ -60,10 +60,8 @@ public class GatewayServerChannelPipelineFactoryBuilderTest {
 		        new ObjectDecoder(ClassResolvers.cacheDisabled(null)),
 		        null,
 		        new ObjectEncoder(),
-		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(
-		                createNiceMock(ChannelMonitorRegistry.class)),
-		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(
-		                createNiceMock(ChannelMonitorRegistry.class)));
+		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(),
+		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler());
 		final GatewayServerChannelPipelineFactoryBuilder<Integer, ReferenceableMessageContainer> objectUnderTest = new GatewayServerChannelPipelineFactoryBuilder<Integer, ReferenceableMessageContainer>();
 		objectUnderTest.plugin(transportProtocolPlugin);
 		objectUnderTest

@@ -44,6 +44,8 @@
 	<modules>
 		<module>netty-test-support</module>
 		<module>netty-gateway-support</module>
+		<module>transport-spi</module>
+		<module>transport-plugin-support</module>
 		<module>transports</module>
 		<module>server</module>
 	</modules>

@@ -17,9 +17,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 
 import vnet.sms.gateway.nettysupport.monitor.ChannelMonitorRegistry;
 import vnet.sms.gateway.nettysupport.window.spi.MessageReferenceGenerator;
-import vnet.sms.gateway.server.framework.TransportProtocolExtensionPoint;
 import vnet.sms.gateway.server.framework.jmsbridge.MessageForwardingJmsBridge;
-import vnet.sms.gateway.server.framework.spi.TransportProtocolPlugin;
+import vnet.sms.gateway.transport.plugin.TransportProtocolExtensionPoint;
+import vnet.sms.gateway.transport.spi.TransportProtocolPlugin;
 
 /**
  * @author obergner

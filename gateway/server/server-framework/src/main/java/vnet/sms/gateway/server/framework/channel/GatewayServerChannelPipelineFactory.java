@@ -25,8 +25,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import vnet.sms.gateway.nettysupport.login.incoming.IncomingLoginRequestsChannelHandler;
 import vnet.sms.gateway.nettysupport.monitor.ChannelMonitorRegistry;
 import vnet.sms.gateway.nettysupport.monitor.incoming.IncomingBytesCountingChannelHandler;
+import vnet.sms.gateway.nettysupport.monitor.incoming.IncomingMessagesMonitoringChannelHandler;
 import vnet.sms.gateway.nettysupport.monitor.incoming.IncomingPdusCountingChannelHandler;
 import vnet.sms.gateway.nettysupport.monitor.outgoing.OutgoingBytesCountingChannelHandler;
+import vnet.sms.gateway.nettysupport.monitor.outgoing.OutgoingMessagesMonitoringChannelHandler;
 import vnet.sms.gateway.nettysupport.monitor.outgoing.OutgoingPdusCountingChannelHandler;
 import vnet.sms.gateway.nettysupport.ping.outgoing.OutgoingPingChannelHandler;
 import vnet.sms.gateway.nettysupport.publish.incoming.IncomingMessagesListener;
@@ -182,6 +184,14 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 		pipeline.addLast(
 		        TransportProtocolAdaptingDownstreamChannelHandler.NAME,
 		        this.downstreamTransportProtocolAdapter);
+
+		// Monitor incoming and outgoing messages
+		pipeline.addLast(IncomingMessagesMonitoringChannelHandler.NAME,
+		        new IncomingMessagesMonitoringChannelHandler<ID>(
+		                this.channelMonitorRegistry));
+		pipeline.addLast(OutgoingMessagesMonitoringChannelHandler.NAME,
+		        new OutgoingMessagesMonitoringChannelHandler<ID>(
+		                this.channelMonitorRegistry));
 
 		// Windowing channel handler
 		pipeline.addLast(WindowingChannelHandler.NAME,

@@ -56,10 +56,9 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new DelimiterBasedFrameDecoder(0, ChannelBuffers.EMPTY_BUFFER),
 		        new Base64Decoder(),
 		        new Base64Encoder(),
-		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(
-		                channelMonitorRegistry),
-		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(
-		                channelMonitorRegistry), channelMonitorRegistry,
+		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(),
+		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(),
+		        channelMonitorRegistry,
 		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
 		        1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
@@ -76,10 +75,9 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        null,
 		        new Base64Decoder(),
 		        new Base64Encoder(),
-		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(
-		                channelMonitorRegistry),
-		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(
-		                channelMonitorRegistry), channelMonitorRegistry,
+		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(),
+		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(),
+		        channelMonitorRegistry,
 		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
 		        1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
@@ -96,10 +94,9 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new DelimiterBasedFrameDecoder(0, ChannelBuffers.EMPTY_BUFFER),
 		        new Base64Decoder(),
 		        null,
-		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(
-		                channelMonitorRegistry),
-		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(
-		                channelMonitorRegistry), channelMonitorRegistry,
+		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(),
+		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(),
+		        channelMonitorRegistry,
 		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
 		        1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
@@ -117,8 +114,8 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new Base64Decoder(),
 		        new Base64Encoder(),
 		        null,
-		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(
-		                channelMonitorRegistry), channelMonitorRegistry,
+		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(),
+		        channelMonitorRegistry,
 		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
 		        1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
@@ -135,8 +132,8 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new DelimiterBasedFrameDecoder(0, ChannelBuffers.EMPTY_BUFFER),
 		        new Base64Decoder(),
 		        new Base64Encoder(),
-		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(
-		                channelMonitorRegistry), null, channelMonitorRegistry,
+		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(),
+		        null, channelMonitorRegistry,
 		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
 		        1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
@@ -153,11 +150,9 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new DelimiterBasedFrameDecoder(0, ChannelBuffers.EMPTY_BUFFER),
 		        new Base64Decoder(),
 		        new Base64Encoder(),
-		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(
-		                channelMonitorRegistry),
-		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(
-		                channelMonitorRegistry), null,
-		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
+		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(),
+		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(),
+		        null, new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
 		        1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
 		        ManagementFactory.getPlatformMBeanServer());
@@ -173,10 +168,9 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new DelimiterBasedFrameDecoder(0, ChannelBuffers.EMPTY_BUFFER),
 		        new Base64Decoder(),
 		        new Base64Encoder(),
-		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(
-		                channelMonitorRegistry),
-		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(
-		                channelMonitorRegistry), channelMonitorRegistry,
+		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(),
+		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(),
+		        channelMonitorRegistry,
 		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
 		        1000L, null, 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
@@ -193,10 +187,9 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new DelimiterBasedFrameDecoder(0, ChannelBuffers.EMPTY_BUFFER),
 		        new Base64Decoder(),
 		        new Base64Encoder(),
-		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(
-		                channelMonitorRegistry),
-		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(
-		                channelMonitorRegistry), channelMonitorRegistry,
+		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(),
+		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(),
+		        channelMonitorRegistry,
 		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
 		        1000L, new AcceptAllAuthenticationManager(), 1000L, null, 2,
 		        2000L, ManagementFactory.getPlatformMBeanServer());
@@ -212,10 +205,9 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new DelimiterBasedFrameDecoder(0, ChannelBuffers.EMPTY_BUFFER),
 		        new Base64Decoder(),
 		        new Base64Encoder(),
-		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(
-		                channelMonitorRegistry),
-		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(
-		                channelMonitorRegistry), channelMonitorRegistry,
+		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(),
+		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(),
+		        channelMonitorRegistry,
 		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
 		        1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L, null);
@@ -279,10 +271,9 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new ObjectDecoder(ClassResolvers.cacheDisabled(null)),
 		        null,
 		        new ObjectEncoder(),
-		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(
-		                channelMonitorRegistry),
-		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(
-		                channelMonitorRegistry), channelMonitorRegistry,
+		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(),
+		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(),
+		        channelMonitorRegistry,
 		        new MessageForwardingJmsBridge<Integer>(jmsTemplate),
 		        availableIncomingWindows, incomingWindowWaitTimeMillis,
 		        authenticationManager, failedLoginResponseMillis,

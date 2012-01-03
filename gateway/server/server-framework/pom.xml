@@ -48,14 +48,24 @@
 		</dependency>
 
 		<dependency>
-			<groupId>vnet.sms.gateway</groupId>
-			<artifactId>netty-gateway-support</artifactId>
+			<groupId>org.jboss.netty</groupId>
+			<artifactId>netty</artifactId>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
-			<groupId>org.jboss.netty</groupId>
-			<artifactId>netty</artifactId>
+			<groupId>vnet.sms.gateway</groupId>
+			<artifactId>netty-gateway-support</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>vnet.sms.gateway</groupId>
+			<artifactId>transport-spi</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>vnet.sms.gateway</groupId>
+			<artifactId>transport-plugin-support</artifactId>
 			<scope>compile</scope>
 		</dependency>
 		<!-- *************************************************************** -->

@@ -18,15 +18,13 @@ import vnet.sms.common.wme.LoginResponseReceivedEvent;
 import vnet.sms.common.wme.PingRequestReceivedEvent;
 import vnet.sms.common.wme.PingResponseReceivedEvent;
 import vnet.sms.common.wme.SmsReceivedEvent;
-import vnet.sms.gateway.nettysupport.monitor.TestChannelMonitorRegistry;
 import vnet.sms.gateway.nettytest.ChannelPipelineEmbedder;
 import vnet.sms.gateway.nettytest.DefaultChannelPipelineEmbedder;
 import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;
 
 public class SerializationTransportProtocolAdaptingUpstreamChannelHandlerTest {
 
-	private final SerializationTransportProtocolAdaptingUpstreamChannelHandler	objectUnderTest	= new SerializationTransportProtocolAdaptingUpstreamChannelHandler(
-	                                                                                                    new TestChannelMonitorRegistry());
+	private final SerializationTransportProtocolAdaptingUpstreamChannelHandler	objectUnderTest	= new SerializationTransportProtocolAdaptingUpstreamChannelHandler();
 
 	@Test
 	public final void assertThatTransportProtocolAdapterCorrectlyConvertsPduToLoginRequest()

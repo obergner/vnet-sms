@@ -36,6 +36,8 @@
 		<module.gateway.version>1.0.0-SNAPSHOT</module.gateway.version>
 		<module.gateway.netty-gateway-support.version>1.0.0-SNAPSHOT</module.gateway.netty-gateway-support.version>
 		<module.gateway.netty-test-support.version>1.0.0-SNAPSHOT</module.gateway.netty-test-support.version>
+		<module.gateway.transport-spi.version>1.0.0-SNAPSHOT</module.gateway.transport-spi.version>
+		<module.gateway.transport-plugin-support.version>1.0.0-SNAPSHOT</module.gateway.transport-plugin-support.version>
 		<module.gateway.transports.version>1.0.0-SNAPSHOT</module.gateway.transports.version>
 		<module.gateway.transports.serialization-transport.version>1.0.0-SNAPSHOT</module.gateway.transports.serialization-transport.version>
 		<module.gateway.server.version>1.0.0-SNAPSHOT</module.gateway.server.version>
@@ -207,6 +209,18 @@
 				<groupId>vnet.sms.gateway</groupId>
 				<artifactId>netty-test-support</artifactId>
 				<version>${module.gateway.netty-test-support.version}</version>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>vnet.sms.gateway</groupId>
+				<artifactId>transport-spi</artifactId>
+				<version>${module.gateway.transport-spi.version}</version>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>vnet.sms.gateway</groupId>
+				<artifactId>transport-plugin-support</artifactId>
+				<version>${module.gateway.transport-plugin-support.version}</version>
 				<type>jar</type>
 			</dependency>
 			<dependency>

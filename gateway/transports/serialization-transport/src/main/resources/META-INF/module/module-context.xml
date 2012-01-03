@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<bean
+		id="vnet.sms.gateway.transports.serialization-transport.serializationTransportPlugin"
+		class="vnet.sms.gateway.transport.spi.DefaultTransportProtocolPlugin">
+		<constructor-arg index="0"
+			ref="vnet.sms.gateway.transports.serialization-transport.objectFrameDecoder" />
+		<constructor-arg index="1">
+			<null />
+		</constructor-arg>
+		<constructor-arg index="2"
+			ref="vnet.sms.gateway.transports.serialization-transport.objectEncoder" />
+		<constructor-arg index="3"
+			ref="vnet.sms.gateway.transports.serialization-transport.upstreamTransportProtocolAdapter" />
+		<constructor-arg index="4"
+			ref="vnet.sms.gateway.transports.serialization-transport.downstreamTransportProtocolAdapter" />
+	</bean>
+
+	<bean
+		id="vnet.sms.gateway.transports.serialization-transport.objectFrameDecoder"
+		class="org.jboss.netty.handler.codec.serialization.ObjectDecoder" />
+
+	<bean
+		id="vnet.sms.gateway.transports.serialization-transport.objectEncoder"
+		class="org.jboss.netty.handler.codec.serialization.ObjectEncoder" />
+
+	<bean
+		id="vnet.sms.gateway.transports.serialization-transport.upstreamTransportProtocolAdapter"
+		class="vnet.sms.gateway.transports.serialization.incoming.SerializationTransportProtocolAdaptingUpstreamChannelHandler" />
+
+	<bean
+		id="vnet.sms.gateway.transports.serialization-transport.downstreamTransportProtocolAdapter"
+		class="vnet.sms.gateway.transports.serialization.outgoing.SerializationTransportProtocolAdaptingDownstreamChannelHandler" />
+
+</beans>

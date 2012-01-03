@@ -1,7 +1,7 @@
 /**
  * 
  */
-package vnet.sms.gateway.server.framework.context;
+package vnet.sms.gateway.transport.plugin.context;
 
 import static org.apache.commons.lang.Validate.notNull;
 
@@ -14,8 +14,8 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import vnet.sms.gateway.server.framework.TransportProtocolExtensionPoint;
-import vnet.sms.gateway.server.framework.spi.TransportProtocolPlugin;
+import vnet.sms.gateway.transport.plugin.TransportProtocolExtensionPoint;
+import vnet.sms.gateway.transport.spi.TransportProtocolPlugin;
 
 /**
  * @author obergner

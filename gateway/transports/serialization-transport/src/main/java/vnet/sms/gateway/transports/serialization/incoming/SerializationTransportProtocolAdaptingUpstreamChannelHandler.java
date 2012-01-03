@@ -9,7 +9,6 @@ import vnet.sms.common.messages.Message;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.PingResponse;
 import vnet.sms.common.messages.Sms;
-import vnet.sms.gateway.nettysupport.monitor.ChannelMonitorRegistry;
 import vnet.sms.gateway.nettysupport.transport.incoming.TransportProtocolAdaptingUpstreamChannelHandler;
 import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;
 
@@ -20,11 +19,6 @@ import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;
 public class SerializationTransportProtocolAdaptingUpstreamChannelHandler
         extends
         TransportProtocolAdaptingUpstreamChannelHandler<Integer, ReferenceableMessageContainer> {
-
-	public SerializationTransportProtocolAdaptingUpstreamChannelHandler(
-	        final ChannelMonitorRegistry metricsRegistry) {
-		super(metricsRegistry);
-	}
 
 	/**
 	 * @see vnet.sms.gateway.nettysupport.transport.incoming.TransportProtocolAdaptingUpstreamChannelHandler#typeOf(java.lang.Object)
