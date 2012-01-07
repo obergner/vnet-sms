@@ -57,11 +57,13 @@ public class GatewayServerChannelPipelineFactoryBuilderTest {
 	public final void assertThatAfterPropertiesSetProperlyConstructsAGatewayServerChannelPipelineFactoryIfBuilderIsCorrectlyConfigured()
 	        throws Exception {
 		final TransportProtocolPlugin<Integer, ReferenceableMessageContainer> transportProtocolPlugin = new DefaultTransportProtocolPlugin<Integer, ReferenceableMessageContainer>(
+		        ReferenceableMessageContainer.class,
 		        new ObjectDecoder(ClassResolvers.cacheDisabled(null)),
 		        null,
 		        new ObjectEncoder(),
 		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(),
-		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler());
+		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(),
+		        createNiceMock(MessageReferenceGenerator.class));
 		final GatewayServerChannelPipelineFactoryBuilder<Integer, ReferenceableMessageContainer> objectUnderTest = new GatewayServerChannelPipelineFactoryBuilder<Integer, ReferenceableMessageContainer>();
 		objectUnderTest.plugin(transportProtocolPlugin);
 		objectUnderTest

@@ -54,15 +54,8 @@ class GatewayServer<ID extends Serializable, TP> {
 	        final int listenPort,
 	        final GatewayServerChannelPipelineFactory<ID, TP> channelPipelineFactory,
 	        final Executor bossExecutor, final Executor workerExecutor) {
-		this(
-		        instanceId,
-		        new InetSocketAddress(listenPort),
-		        new NioServerSocketChannelFactory(bossExecutor, workerExecutor),
-		        channelPipelineFactory);
-		notNull(bossExecutor,
-		        "Argument 'bossExecutor' may be neither null nor empty");
-		notNull(workerExecutor,
-		        "Argument 'workerExecutor' may be neither null nor empty");
+		this(instanceId, "127.0.0.1", listenPort, channelPipelineFactory,
+		        bossExecutor, workerExecutor);
 	}
 
 	GatewayServer(
@@ -76,10 +69,6 @@ class GatewayServer<ID extends Serializable, TP> {
 		        new InetSocketAddress(host, listenPort),
 		        new NioServerSocketChannelFactory(bossExecutor, workerExecutor),
 		        channelPipelineFactory);
-		notNull(bossExecutor,
-		        "Argument 'bossExecutor' may be neither null nor empty");
-		notNull(workerExecutor,
-		        "Argument 'workerExecutor' may be neither null nor empty");
 	}
 
 	/**
@@ -98,11 +87,9 @@ class GatewayServer<ID extends Serializable, TP> {
 		notEmpty(instanceId,
 		        "Argument 'instanceId' may be neither null nor empty");
 		notNull(channelPipelineFactory,
-		        "Argument 'channelPipelineFactory' may be neither null nor empty");
-		notNull(localAddress,
-		        "Argument 'localAddress' may be neither null nor empty");
-		notNull(channelFactory,
-		        "Argument 'channelFactory' may be neither null nor empty");
+		        "Argument 'channelPipelineFactory' must not be null");
+		notNull(localAddress, "Argument 'localAddress' must not be null");
+		notNull(channelFactory, "Argument 'channelFactory' must not be null");
 		this.instanceId = instanceId;
 		this.localAddress = localAddress;
 		this.channelFactory = channelFactory;
@@ -123,6 +110,14 @@ class GatewayServer<ID extends Serializable, TP> {
 
 	State getCurrentState() {
 		return this.currentState.get();
+	}
+
+	String getInstanceId() {
+		return this.instanceId;
+	}
+
+	SocketAddress getLocalAddress() {
+		return this.localAddress;
 	}
 
 	@Override

@@ -11,12 +11,15 @@ import org.jboss.netty.handler.codec.oneone.OneToOneEncoder;
 
 import vnet.sms.gateway.nettysupport.transport.incoming.TransportProtocolAdaptingUpstreamChannelHandler;
 import vnet.sms.gateway.nettysupport.transport.outgoing.TransportProtocolAdaptingDownstreamChannelHandler;
+import vnet.sms.gateway.nettysupport.window.spi.MessageReferenceGenerator;
 
 /**
  * @author obergner
  * 
  */
 public interface TransportProtocolPlugin<ID extends Serializable, TP> {
+
+	Class<TP> getPduType();
 
 	FrameDecoder getFrameDecoder();
 
@@ -27,4 +30,6 @@ public interface TransportProtocolPlugin<ID extends Serializable, TP> {
 	TransportProtocolAdaptingUpstreamChannelHandler<ID, TP> getPduToWindowedMessageEventConverter();
 
 	TransportProtocolAdaptingDownstreamChannelHandler<ID, TP> getWindowedMessageEventToPduConverter();
+
+	MessageReferenceGenerator<ID> getMessageReferenceGenerator();
 }

@@ -14,6 +14,7 @@ import org.springframework.context.support.StaticApplicationContext;
 import vnet.sms.gateway.transport.plugin.TransportProtocolExtensionPoint;
 import vnet.sms.gateway.transport.spi.DefaultTransportProtocolPlugin;
 import vnet.sms.gateway.transport.spi.TransportProtocolPlugin;
+import vnet.sms.gateway.transports.serialization.MonotonicallyIncreasingMessageReferenceGenerator;
 import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;
 import vnet.sms.gateway.transports.serialization.incoming.SerializationTransportProtocolAdaptingUpstreamChannelHandler;
 import vnet.sms.gateway.transports.serialization.outgoing.SerializationTransportProtocolAdaptingDownstreamChannelHandler;
@@ -103,11 +104,13 @@ public class TransportProtocolPluginInjectorTest {
 
 		TestTransportProtocolPlugin() {
 			super(
+			        ReferenceableMessageContainer.class,
 			        new ObjectDecoder(ClassResolvers.cacheDisabled(null)),
 			        null,
 			        new ObjectEncoder(),
 			        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(),
-			        new SerializationTransportProtocolAdaptingDownstreamChannelHandler());
+			        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(),
+			        new MonotonicallyIncreasingMessageReferenceGenerator());
 		}
 	}
 
