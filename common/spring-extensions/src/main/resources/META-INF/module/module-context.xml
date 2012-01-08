@@ -6,8 +6,7 @@
        http://www.springframework.org/schema/beans 
        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 
-	<bean
-		id="vnet.sms.gateway.transports.transport-plugin-support.transportProtocolPluginInjector"
-		class="vnet.sms.gateway.transport.plugin.context.TransportProtocolPluginInjector" />
+	<bean id="vnet.sms.common.spring-extensions.mbeanExportOperationsInjector"
+		class="vnet.sms.common.spring.jmx.support.MBeanExportOperationsInjector" />
 
 </beans>
