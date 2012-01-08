@@ -6,11 +6,7 @@ package vnet.sms.gateway.nettysupport.window;
 import static org.apache.commons.lang.Validate.notNull;
 
 import java.io.Serializable;
-import java.lang.management.ManagementFactory;
 import java.util.Map;
-
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
 
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ChannelStateEvent;
@@ -38,16 +34,11 @@ public class WindowingChannelHandler<ID extends Serializable> extends
 
 	private final IncomingWindowStore<ID>	incomingWindowStore;
 
-	private final MBeanServer	          mbeanServer;
-
 	public WindowingChannelHandler(
-	        final IncomingWindowStore<ID> incomingWindowStore,
-	        final MBeanServer mbeanServer) {
+	        final IncomingWindowStore<ID> incomingWindowStore) {
 		notNull(incomingWindowStore,
 		        "Argument 'incomingWindowStore' cannot be null");
 		this.incomingWindowStore = incomingWindowStore;
-		this.mbeanServer = mbeanServer != null ? mbeanServer
-		        : ManagementFactory.getPlatformMBeanServer();
 	}
 
 	@Override
@@ -82,15 +73,7 @@ public class WindowingChannelHandler<ID extends Serializable> extends
 	@Override
 	public void channelConnected(final ChannelHandlerContext ctx,
 	        final ChannelStateEvent e) throws Exception {
-		final ObjectName windowStoreObjectName = this.incomingWindowStore
-		        .objectNameFor(ctx.getChannel());
-		this.mbeanServer.registerMBean(this.incomingWindowStore,
-		        windowStoreObjectName);
-		this.log.info(
-		        "Registered {} with MBeanServer {} using ObjectName [{}]",
-		        new Object[] { this.incomingWindowStore, this.mbeanServer,
-		                windowStoreObjectName });
-
+		this.incomingWindowStore.attachTo(e.getChannel());
 		super.channelConnected(ctx, e);
 	}
 
@@ -109,10 +92,5 @@ public class WindowingChannelHandler<ID extends Serializable> extends
 			        ctx.getChannel(), pendingMessages);
 			ctx.sendUpstream(pendingMessagesDiscarded);
 		}
-
-		this.mbeanServer.unregisterMBean(this.incomingWindowStore
-		        .objectNameFor(ctx.getChannel()));
-		this.log.info("Removed {} from MBeanServer {}",
-		        this.incomingWindowStore, this.mbeanServer);
 	}
 }

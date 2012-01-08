@@ -3,11 +3,13 @@ package vnet.sms.gateway.nettysupport.window;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.lang.management.ManagementFactory;
 import java.net.InetSocketAddress;
 
 import org.jboss.netty.channel.ChannelEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.junit.Test;
+import org.springframework.jmx.export.MBeanExporter;
 
 import vnet.sms.common.messages.LoginRequest;
 import vnet.sms.gateway.nettysupport.test.ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler;
@@ -21,8 +23,10 @@ public class WindowingChannelHandlerTest {
 	@Test
 	public final void assertThatWindowedChannelHandlerCorrectlyPropagatesLoginRequest()
 	        throws Throwable {
+		final MBeanExporter mbeanExporter = new MBeanExporter();
+		mbeanExporter.setServer(ManagementFactory.getPlatformMBeanServer());
 		final WindowingChannelHandler<Integer> objectUnderTest = new WindowingChannelHandler<Integer>(
-		        new IncomingWindowStore<Integer>(100, 1000), null);
+		        new IncomingWindowStore<Integer>(100, 1000, mbeanExporter));
 
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
@@ -51,8 +55,10 @@ public class WindowingChannelHandlerTest {
 		        "assertThatWindowedChannelHandlerIssuesNoWindowForIncomingMessageEventIfNoWindowIsAvailable",
 		        "secret", new InetSocketAddress(1), new InetSocketAddress(1));
 
+		final MBeanExporter mbeanExporter = new MBeanExporter();
+		mbeanExporter.setServer(ManagementFactory.getPlatformMBeanServer());
 		final WindowingChannelHandler<Integer> objectUnderTest = new WindowingChannelHandler<Integer>(
-		        new IncomingWindowStore<Integer>(1, 1), null);
+		        new IncomingWindowStore<Integer>(1, 1, mbeanExporter));
 
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),

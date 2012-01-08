@@ -8,8 +8,6 @@ import static org.apache.commons.lang.Validate.notNull;
 
 import java.io.Serializable;
 
-import javax.management.MBeanServer;
-
 import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.ChannelPipelineFactory;
 import org.jboss.netty.channel.Channels;
@@ -18,6 +16,7 @@ import org.jboss.netty.channel.group.DefaultChannelGroup;
 import org.jboss.netty.handler.codec.frame.FrameDecoder;
 import org.jboss.netty.handler.codec.oneone.OneToOneDecoder;
 import org.jboss.netty.handler.codec.oneone.OneToOneEncoder;
+import org.springframework.jmx.export.MBeanExportOperations;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -77,7 +76,7 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 
 	private final MessageReferenceGenerator<ID>	                            windowIdGenerator;
 
-	private final MBeanServer	                                            mbeanServer;
+	private final MBeanExportOperations	                                    mbeanExporter;
 
 	private final ConnectedChannelsTrackingChannelHandler	                connectedChannelsTracker;
 
@@ -99,7 +98,8 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 	        final long failedLoginResponseDelayMillis,
 	        final MessageReferenceGenerator<ID> windowIdGenerator,
 	        final int pingIntervalSeconds,
-	        final long pingResponseTimeoutMillis, final MBeanServer mbeanServer) {
+	        final long pingResponseTimeoutMillis,
+	        final MBeanExportOperations mbeanExporter) {
 		notEmpty(gatewayServerInstanceId,
 		        "Argument 'gatewayServerInstanceId' must neither be null nor empty");
 		notNull(pduType, "Argument 'pduType' must not be null");
@@ -117,7 +117,7 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 		        "Argument 'authenticationManager' must not be null");
 		notNull(windowIdGenerator,
 		        "Argument 'windowIdGenerator' must not be null");
-		notNull(mbeanServer, "Argument 'mbeanServer' must not be null");
+		notNull(mbeanExporter, "Argument 'mbeanExporter' must not be null");
 		this.pduType = pduType;
 		this.frameDecoder = frameDecoder;
 		this.decoder = decoder;
@@ -132,7 +132,7 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 		this.windowIdGenerator = windowIdGenerator;
 		this.pingIntervalSeconds = pingIntervalSeconds;
 		this.pingResponseTimeoutMillis = pingResponseTimeoutMillis;
-		this.mbeanServer = mbeanServer;
+		this.mbeanExporter = mbeanExporter;
 		this.connectedChannelsTracker = new ConnectedChannelsTrackingChannelHandler(
 		        new DefaultChannelGroup("vnet.sms.gateway:server="
 		                + gatewayServerInstanceId
@@ -198,8 +198,8 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 		        new WindowingChannelHandler<Serializable>(
 		                new IncomingWindowStore<Serializable>(
 		                        this.availableIncomingWindows,
-		                        this.incomingWindowWaitTimeMillis),
-		                this.mbeanServer));
+		                        this.incomingWindowWaitTimeMillis,
+		                        this.mbeanExporter)));
 
 		// Login channel handler
 		pipeline.addLast(IncomingLoginRequestsChannelHandler.NAME,

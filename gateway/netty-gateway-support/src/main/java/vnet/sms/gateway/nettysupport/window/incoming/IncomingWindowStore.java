@@ -15,6 +15,13 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
 import org.jboss.netty.channel.Channel;
+import org.jboss.netty.channel.ChannelFuture;
+import org.jboss.netty.channel.ChannelFutureListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.jmx.export.MBeanExportOperations;
+import org.springframework.jmx.export.annotation.ManagedAttribute;
+import org.springframework.jmx.export.annotation.ManagedResource;
 
 import vnet.sms.common.messages.Message;
 import vnet.sms.common.wme.WindowedMessageEvent;
@@ -23,12 +30,17 @@ import vnet.sms.common.wme.WindowedMessageEvent;
  * @author obergner
  * 
  */
-public class IncomingWindowStore<ID extends Serializable> implements
-        IncomingWindowStoreMBean {
+@ManagedResource(description = "Buffers incoming messages until a predefined limit is reached.")
+public class IncomingWindowStore<ID extends Serializable> {
+
+	private final Logger	                 log	  = LoggerFactory
+	                                                          .getLogger(getClass());
 
 	private final int	                     maximumCapacity;
 
 	private final long	                     waitTimeMillis;
+
+	private final MBeanExportOperations	     mbeanExporter;
 
 	private final ConcurrentMap<ID, Message>	messageReferenceToMessage;
 
@@ -37,29 +49,26 @@ public class IncomingWindowStore<ID extends Serializable> implements
 	private volatile boolean	             shutDown	= false;
 
 	public IncomingWindowStore(final int maximumCapacity,
-	        final long waitTimeMillis) {
+	        final long waitTimeMillis, final MBeanExportOperations mbeanExporter) {
+		notNull(mbeanExporter, "Argument 'mbeanExporter' must not be null");
 		this.maximumCapacity = maximumCapacity;
 		this.availableWindows = new Semaphore(maximumCapacity);
 		this.waitTimeMillis = waitTimeMillis;
+		this.mbeanExporter = mbeanExporter;
 		this.messageReferenceToMessage = new ConcurrentHashMap<ID, Message>(
 		        maximumCapacity);
-	}
-
-	public final ObjectName objectNameFor(final Channel channel)
-	        throws MalformedObjectNameException {
-		return new ObjectName(
-		        "vnet.sms:service=IncomingWindowStore,owner=channel-"
-		                + channel.getId());
 	}
 
 	/**
 	 * @see vnet.sms.gateway.nettysupport.window.incoming.IncomingWindowStoreMBean#getMaximumCapacity()
 	 */
-	@Override
+	@ManagedAttribute(description = "The maximum number of messages this store will buffer")
 	public final int getMaximumCapacity() {
 		return this.maximumCapacity;
 	}
 
+	@ManagedAttribute(description = "When trying to acquire a free window/slot for an incoming message we will "
+	        + "wait for at most this number of milliseconds for a window to become available")
 	public long getWaitTimeMillis() {
 		return this.waitTimeMillis;
 	}
@@ -67,9 +76,43 @@ public class IncomingWindowStore<ID extends Serializable> implements
 	/**
 	 * @see vnet.sms.gateway.nettysupport.window.incoming.IncomingWindowStoreMBean#getCurrentMessageCount()
 	 */
-	@Override
+	@ManagedAttribute(description = "Number of messages currently stored")
 	public final int getCurrentMessageCount() {
 		return this.messageReferenceToMessage.size();
+	}
+
+	public void attachTo(final Channel channel)
+	        throws MalformedObjectNameException {
+		notNull(channel, "Argument 'channel' must not be null");
+
+		final ObjectName objectName = objectNameFor(channel);
+		this.mbeanExporter.registerManagedResource(this, objectName);
+		this.log.info("Registered {} with MBeanServer using ObjectName [{}]",
+		        new Object[] { this, objectName });
+
+		channel.getCloseFuture().addListener(new ChannelFutureListener() {
+			@Override
+			public void operationComplete(final ChannelFuture future)
+			        throws Exception {
+				detachFrom(future.getChannel());
+			}
+		});
+	}
+
+	private final ObjectName objectNameFor(final Channel channel)
+	        throws MalformedObjectNameException {
+		return new ObjectName(
+		        "vnet.sms:service=IncomingWindowStore,owner=channel-"
+		                + channel.getId());
+	}
+
+	private void detachFrom(final Channel channel)
+	        throws MalformedObjectNameException {
+		notNull(channel, "Argument 'channel' must not be null");
+		final ObjectName objectName = objectNameFor(channel);
+		this.mbeanExporter.unregisterManagedResource(objectName);
+		this.log.info("Unregistered {} from MBeanServer using ObjectName [{}]",
+		        new Object[] { this, objectName });
 	}
 
 	public boolean tryAcquireWindow(

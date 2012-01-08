@@ -3,8 +3,6 @@ package vnet.sms.gateway.server.framework;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.lang.management.ManagementFactory;
-
 import org.jboss.netty.channel.local.DefaultLocalServerChannelFactory;
 import org.jboss.netty.channel.local.LocalAddress;
 import org.jboss.netty.handler.codec.serialization.ClassResolvers;
@@ -12,6 +10,7 @@ import org.jboss.netty.handler.codec.serialization.ObjectDecoder;
 import org.jboss.netty.handler.codec.serialization.ObjectEncoder;
 import org.junit.Test;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jmx.export.MBeanExporter;
 import org.springframework.security.authentication.AuthenticationManager;
 
 import vnet.sms.common.wme.jmsbridge.WindowedMessageEventToJmsMessageConverter;
@@ -101,7 +100,7 @@ public class GatewayServerControllerTest {
 		        authenticationManager, failedLoginResponseMillis,
 		        new SerialIntegersMessageReferenceGenerator(),
 		        pingIntervalSeconds, pingResponseTimeoutMillis,
-		        ManagementFactory.getPlatformMBeanServer());
+		        new MBeanExporter());
 	}
 
 	@Test

@@ -7,14 +7,14 @@ import static org.apache.commons.lang.Validate.notNull;
 
 import java.io.Serializable;
 
-import javax.management.MBeanServer;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.jmx.export.MBeanExportOperations;
 import org.springframework.security.authentication.AuthenticationManager;
 
+import vnet.sms.common.spring.jmx.MBeanExportOperationsAware;
 import vnet.sms.gateway.nettysupport.monitor.ChannelMonitorRegistry;
 import vnet.sms.gateway.server.framework.jmsbridge.MessageForwardingJmsBridge;
 import vnet.sms.gateway.transport.plugin.TransportProtocolExtensionPoint;
@@ -27,7 +27,8 @@ import vnet.sms.gateway.transport.spi.TransportProtocolPlugin;
  */
 public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable, TP>
         implements FactoryBean<GatewayServerChannelPipelineFactory<ID, TP>>,
-        InitializingBean, TransportProtocolExtensionPoint<ID, TP> {
+        InitializingBean, TransportProtocolExtensionPoint<ID, TP>,
+        MBeanExportOperationsAware {
 
 	private final Logger	                            log	= LoggerFactory
 	                                                                .getLogger(getClass());
@@ -50,7 +51,7 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 
 	private long	                                    pingResponseTimeoutMillis;
 
-	private MBeanServer	                                mbeanServer;
+	private MBeanExportOperations	                    mbeanExporter;
 
 	private GatewayServerChannelPipelineFactory<ID, TP>	producedPipelineFactory;
 
@@ -110,7 +111,7 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 		        this.failedLoginResponseDelayMillis,
 		        this.transportProtocolPlugin.getMessageReferenceGenerator(),
 		        this.pingIntervalSeconds, this.pingResponseTimeoutMillis,
-		        this.mbeanServer);
+		        this.mbeanExporter);
 
 		this.log.info(
 		        "Finished building GatewayServerChannelPipelineFactory instance {}",
@@ -136,6 +137,14 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 	public void plugin(final TransportProtocolPlugin<ID, TP> plugin) {
 		notNull(plugin, "Argument 'plugin' may not be null");
 		this.transportProtocolPlugin = plugin;
+	}
+
+	@Override
+	public void setMBeanExportOperations(
+	        final MBeanExportOperations mbeanExportOperations) {
+		notNull(mbeanExportOperations,
+		        "Argument 'mbeanExportOperations' must not be null");
+		this.mbeanExporter = mbeanExportOperations;
 	}
 
 	/**
@@ -216,13 +225,5 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 	public final void setPingResponseTimeoutMillis(
 	        final long pingResponseTimeoutMillis) {
 		this.pingResponseTimeoutMillis = pingResponseTimeoutMillis;
-	}
-
-	/**
-	 * @param mbeanServer
-	 *            the mbeanServer to set
-	 */
-	public final void setMbeanServer(final MBeanServer mbeanServer) {
-		this.mbeanServer = mbeanServer;
 	}
 }

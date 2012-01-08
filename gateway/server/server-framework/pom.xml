@@ -54,6 +54,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>vnet.sms.common</groupId>
+			<artifactId>spring-extensions</artifactId>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>vnet.sms.gateway</groupId>
 			<artifactId>netty-gateway-support</artifactId>
 			<scope>compile</scope>

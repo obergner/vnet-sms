@@ -23,6 +23,7 @@ import org.jboss.netty.handler.codec.serialization.ObjectDecoder;
 import org.jboss.netty.handler.codec.serialization.ObjectEncoder;
 import org.junit.Test;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jmx.export.MBeanExporter;
 import org.springframework.security.authentication.AuthenticationManager;
 
 import vnet.sms.common.messages.LoginRequest;
@@ -62,7 +63,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
 		        1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
-		        ManagementFactory.getPlatformMBeanServer());
+		        new MBeanExporter());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -81,7 +82,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
 		        1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
-		        ManagementFactory.getPlatformMBeanServer());
+		        new MBeanExporter());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -100,7 +101,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
 		        1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
-		        ManagementFactory.getPlatformMBeanServer());
+		        new MBeanExporter());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -119,7 +120,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
 		        1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
-		        ManagementFactory.getPlatformMBeanServer());
+		        new MBeanExporter());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -137,7 +138,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
 		        1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
-		        ManagementFactory.getPlatformMBeanServer());
+		        new MBeanExporter());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -155,7 +156,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        null, new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
 		        1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
-		        ManagementFactory.getPlatformMBeanServer());
+		        new MBeanExporter());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -174,7 +175,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
 		        1000L, null, 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
-		        ManagementFactory.getPlatformMBeanServer());
+		        new MBeanExporter());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -192,7 +193,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        channelMonitorRegistry,
 		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
 		        1000L, new AcceptAllAuthenticationManager(), 1000L, null, 2,
-		        2000L, ManagementFactory.getPlatformMBeanServer());
+		        2000L, new MBeanExporter());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -265,6 +266,8 @@ public class GatewayServerChannelPipelineFactoryTest {
 		expect(jmsTemplate.getDefaultDestinationName()).andReturn(
 		        "queue.test.defaultDestination");
 		replay(jmsTemplate);
+		final MBeanExporter mbeanExporter = new MBeanExporter();
+		mbeanExporter.setServer(ManagementFactory.getPlatformMBeanServer());
 		return new GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer>(
 		        "newObjectUnderTest",
 		        ReferenceableMessageContainer.class,
@@ -278,8 +281,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        availableIncomingWindows, incomingWindowWaitTimeMillis,
 		        authenticationManager, failedLoginResponseMillis,
 		        new SerialIntegersMessageReferenceGenerator(),
-		        pingIntervalSeconds, pingResponseTimeoutMillis,
-		        ManagementFactory.getPlatformMBeanServer());
+		        pingIntervalSeconds, pingResponseTimeoutMillis, mbeanExporter);
 	}
 
 	@Test

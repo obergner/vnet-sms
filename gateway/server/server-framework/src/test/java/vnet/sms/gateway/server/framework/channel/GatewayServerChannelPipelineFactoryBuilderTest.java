@@ -4,12 +4,11 @@ import static org.easymock.EasyMock.createNiceMock;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.lang.management.ManagementFactory;
-
 import org.jboss.netty.handler.codec.serialization.ClassResolvers;
 import org.jboss.netty.handler.codec.serialization.ObjectDecoder;
 import org.jboss.netty.handler.codec.serialization.ObjectEncoder;
 import org.junit.Test;
+import org.springframework.jmx.export.MBeanExporter;
 import org.springframework.security.authentication.AuthenticationManager;
 
 import vnet.sms.common.messages.Message;
@@ -77,8 +76,7 @@ public class GatewayServerChannelPipelineFactoryBuilderTest {
 		        .setMessageForwardingJmsBridge(createNiceMock(MessageForwardingJmsBridge.class));
 		objectUnderTest.setFailedLoginResponseDelayMillis(2000L);
 		objectUnderTest.setIncomingWindowWaitTimeMillis(1000L);
-		objectUnderTest.setMbeanServer(ManagementFactory
-		        .getPlatformMBeanServer());
+		objectUnderTest.setMBeanExportOperations(new MBeanExporter());
 		objectUnderTest.setPingIntervalSeconds(2);
 		objectUnderTest.setPingResponseTimeoutMillis(3000L);
 		objectUnderTest.afterPropertiesSet();

@@ -55,8 +55,6 @@
 			ref="vnet.sms.gateway.server.server-framework.authenticationManager" />
 		<property name="channelMonitorRegistry"
 			ref="vnet.sms.gateway.server.server-framework.channelMonitorRegistry" />
-		<property name="mbeanServer"
-			ref="vnet.sms.gateway.server.server-framework.mbeanServer" />
 		<property name="messageForwardingJmsBridge"
 			ref="vnet.sms.gateway.server.server-framework.messageForwardingJmsBridge" />
 		<property name="availableIncomingWindows" value="${gateway.server.availableIncomingWindows}" />

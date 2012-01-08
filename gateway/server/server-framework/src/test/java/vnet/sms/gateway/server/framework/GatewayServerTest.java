@@ -22,6 +22,7 @@ import org.jboss.netty.handler.codec.serialization.ObjectDecoder;
 import org.jboss.netty.handler.codec.serialization.ObjectEncoder;
 import org.junit.Test;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jmx.export.MBeanExporter;
 import org.springframework.security.authentication.AuthenticationManager;
 
 import vnet.sms.common.messages.LoginRequest;
@@ -140,6 +141,8 @@ public class GatewayServerTest {
 	        final AuthenticationManager authenticationManager,
 	        final JmsTemplate jmsTemplate) {
 		final ChannelMonitorRegistry channelMonitorRegistry = new ChannelMonitorRegistry();
+		final MBeanExporter mbeanExporter = new MBeanExporter();
+		mbeanExporter.setServer(ManagementFactory.getPlatformMBeanServer());
 		return new GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer>(
 		        "newObjectUnderTest",
 		        ReferenceableMessageContainer.class,
@@ -153,8 +156,7 @@ public class GatewayServerTest {
 		        availableIncomingWindows, incomingWindowWaitTimeMillis,
 		        authenticationManager, failedLoginResponseMillis,
 		        new SerialIntegersMessageReferenceGenerator(),
-		        pingIntervalSeconds, pingResponseTimeoutMillis,
-		        ManagementFactory.getPlatformMBeanServer());
+		        pingIntervalSeconds, pingResponseTimeoutMillis, mbeanExporter);
 	}
 
 	@Test

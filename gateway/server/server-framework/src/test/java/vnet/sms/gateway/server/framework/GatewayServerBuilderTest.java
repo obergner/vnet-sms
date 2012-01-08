@@ -5,13 +5,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.lang.management.ManagementFactory;
-
 import org.jboss.netty.handler.codec.serialization.ClassResolvers;
 import org.jboss.netty.handler.codec.serialization.ObjectDecoder;
 import org.jboss.netty.handler.codec.serialization.ObjectEncoder;
 import org.junit.Test;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jmx.export.MBeanExporter;
 
 import vnet.sms.common.wme.jmsbridge.WindowedMessageEventToJmsMessageConverter;
 import vnet.sms.gateway.nettysupport.monitor.ChannelMonitorRegistry;
@@ -130,7 +129,7 @@ public class GatewayServerBuilderTest {
 		        new MessageForwardingJmsBridge<Integer>(newJmsTemplate()), 100,
 		        10000, new DenyAllAuthenticationManager(), 10000,
 		        new SerialIntegersMessageReferenceGenerator(), 100, 20000,
-		        ManagementFactory.getPlatformMBeanServer());
+		        new MBeanExporter());
 	}
 
 	private final JmsTemplate newJmsTemplate() {

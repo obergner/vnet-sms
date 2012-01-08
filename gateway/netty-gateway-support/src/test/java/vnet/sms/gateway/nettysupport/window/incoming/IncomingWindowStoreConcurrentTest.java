@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.UpstreamMessageEvent;
 import org.junit.Test;
+import org.springframework.jmx.export.MBeanExporter;
 
 import vnet.sms.common.messages.Message;
 import vnet.sms.common.messages.Sms;
@@ -58,7 +59,7 @@ public class IncomingWindowStoreConcurrentTest {
 		}
 
 		final IncomingWindowStore<Long> objectUnderTest = new IncomingWindowStore<Long>(
-		        capacity, waitTimeMillis);
+		        capacity, waitTimeMillis, new MBeanExporter());
 
 		final int numberOfTasks = 100;
 		final Set<MessageStoreTask> messageStoreTasks = new HashSet<MessageStoreTask>(
@@ -172,7 +173,7 @@ public class IncomingWindowStoreConcurrentTest {
 			}
 
 			final IncomingWindowStore<Long> objectUnderTest = new IncomingWindowStore<Long>(
-			        capacity, waitTimeMillis);
+			        capacity, waitTimeMillis, new MBeanExporter());
 
 			final int numberOfTasks = 100;
 			final Set<MessageStoreTask> messageStoreTasks = new HashSet<MessageStoreTask>(

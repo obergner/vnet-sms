@@ -12,6 +12,7 @@ import java.util.Map;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.UpstreamMessageEvent;
 import org.junit.Test;
+import org.springframework.jmx.export.MBeanExporter;
 
 import vnet.sms.common.messages.Message;
 import vnet.sms.common.messages.PingRequest;
@@ -24,7 +25,7 @@ public class IncomingWindowStoreTest {
 	        throws IllegalArgumentException, InterruptedException {
 		final int expectedNumberOfMessages = 234;
 		final IncomingWindowStore<Integer> objectUnderTest = new IncomingWindowStore<Integer>(
-		        10000, 10);
+		        10000, 10, new MBeanExporter());
 
 		final Channel mockChannel = createNiceMock(Channel.class);
 		replay(mockChannel);
@@ -49,7 +50,7 @@ public class IncomingWindowStoreTest {
 	        throws IllegalArgumentException, InterruptedException {
 		final int windowStoreCapacity = 234;
 		final IncomingWindowStore<Integer> objectUnderTest = new IncomingWindowStore<Integer>(
-		        windowStoreCapacity, 10);
+		        windowStoreCapacity, 10, new MBeanExporter());
 
 		final Channel mockChannel = createNiceMock(Channel.class);
 		replay(mockChannel);
@@ -81,7 +82,7 @@ public class IncomingWindowStoreTest {
 	        throws IllegalArgumentException, InterruptedException {
 		final int windowStoreCapacity = 234;
 		final IncomingWindowStore<Integer> objectUnderTest = new IncomingWindowStore<Integer>(
-		        windowStoreCapacity, 10);
+		        windowStoreCapacity, 10, new MBeanExporter());
 
 		final Channel mockChannel = createNiceMock(Channel.class);
 		replay(mockChannel);
@@ -114,7 +115,7 @@ public class IncomingWindowStoreTest {
 		final int windowStoreCapacity = 234;
 		final int waitTimeMillis = 500;
 		final IncomingWindowStore<Integer> objectUnderTest = new IncomingWindowStore<Integer>(
-		        windowStoreCapacity, waitTimeMillis);
+		        windowStoreCapacity, waitTimeMillis, new MBeanExporter());
 
 		final Channel mockChannel = createNiceMock(Channel.class);
 		replay(mockChannel);
@@ -148,7 +149,7 @@ public class IncomingWindowStoreTest {
 		final Integer freedWindowId = Integer.valueOf(23);
 		final int windowStoreCapacity = 234;
 		final IncomingWindowStore<Integer> objectUnderTest = new IncomingWindowStore<Integer>(
-		        windowStoreCapacity, 10);
+		        windowStoreCapacity, 10, new MBeanExporter());
 
 		final Channel mockChannel = createNiceMock(Channel.class);
 		replay(mockChannel);
@@ -182,7 +183,7 @@ public class IncomingWindowStoreTest {
 	        throws IllegalArgumentException, InterruptedException {
 		final int windowStoreCapacity = 234;
 		final IncomingWindowStore<Integer> objectUnderTest = new IncomingWindowStore<Integer>(
-		        windowStoreCapacity, 10);
+		        windowStoreCapacity, 10, new MBeanExporter());
 
 		final Channel mockChannel = createNiceMock(Channel.class);
 		replay(mockChannel);
