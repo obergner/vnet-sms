@@ -87,7 +87,7 @@ public class TransportProtocolPluginInjectorTest {
 		final TransportProtocolPluginInjector objectUnderTest = new TransportProtocolPluginInjector();
 		objectUnderTest.setApplicationContext(appContext);
 
-		final TransportProtocolExtensionPoint<Integer, ReferenceableMessageContainer> returnedBean = (TransportProtocolExtensionPoint<Integer, ReferenceableMessageContainer>) objectUnderTest
+		objectUnderTest
 		        .postProcessBeforeInitialization(
 		                extensionPoint,
 		                "assertThatPostProcessBeforeInitializationInjectsTransportProtocolPluginIntoTransportProtocolExtensionPoint");

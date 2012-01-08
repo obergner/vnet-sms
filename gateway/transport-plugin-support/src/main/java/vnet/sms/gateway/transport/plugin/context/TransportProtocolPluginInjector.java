@@ -68,7 +68,6 @@ public class TransportProtocolPluginInjector implements BeanPostProcessor,
 	@Override
 	public Object postProcessAfterInitialization(final Object bean,
 	        final String beanName) throws BeansException {
-
 		return bean;
 	}
 
