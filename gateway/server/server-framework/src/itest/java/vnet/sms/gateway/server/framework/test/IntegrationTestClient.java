@@ -29,11 +29,6 @@ import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;
 
 public class IntegrationTestClient {
 
-	public interface MessageListener {
-
-		void messageReceived(MessageEvent e);
-	}
-
 	private final Logger	        log	= LoggerFactory.getLogger(getClass());
 
 	private final InetSocketAddress	serverAddress;
@@ -81,7 +76,7 @@ public class IntegrationTestClient {
 	}
 
 	public void sendMessage(final int messageReference, final Message message,
-	        final MessageListener responseListener) throws Throwable {
+	        final MessageEventListener responseListener) throws Throwable {
 		this.log.debug("Sending message {} to {} ...", message,
 		        this.serverAddress);
 
@@ -104,13 +99,14 @@ public class IntegrationTestClient {
 	}
 
 	private void maybeInstallMessageListener(
-	        final MessageListener messageListener) {
+	        final MessageEventListener messageListener) {
 		if (messageListener != null) {
 			installMessageListener(messageListener);
 		}
 	}
 
-	private void installMessageListener(final MessageListener messageListener) {
+	private void installMessageListener(
+	        final MessageEventListener messageListener) {
 		if (getMandatoryServerConnection().getPipeline().get(
 		        ResponseListenerChannelHandler.NAME) != null) {
 			getMandatoryServerConnection().getPipeline().remove(
@@ -125,9 +121,9 @@ public class IntegrationTestClient {
 	        final int messageReference, final Message message) throws Throwable {
 		final CountDownLatch responseReceived = new CountDownLatch(1);
 		final AtomicReference<MessageEvent> receivedResponse = new AtomicReference<MessageEvent>();
-		final MessageListener responseListener = new MessageListener() {
+		final MessageEventListener responseListener = new MessageEventListener() {
 			@Override
-			public void messageReceived(final MessageEvent e) {
+			public void messageEventReceived(final MessageEvent e) {
 				receivedResponse.set(e);
 				responseReceived.countDown();
 			}
@@ -140,8 +136,47 @@ public class IntegrationTestClient {
 		        .getMessage());
 	}
 
-	public void listen(final MessageListener messageListener) {
+	public ReferenceableMessageContainer sendMessageAndWaitForMatchingResponse(
+	        final int messageReference, final Message message,
+	        final MessageEventPredicate messageEventPredicate) throws Throwable {
+		final CountDownLatch responseReceived = new CountDownLatch(1);
+		final AtomicReference<MessageEvent> receivedResponse = new AtomicReference<MessageEvent>();
+		final MessageEventListener responseListener = new MessageEventListener() {
+			@Override
+			public void messageEventReceived(final MessageEvent e) {
+				if (messageEventPredicate.evaluate(e)) {
+					receivedResponse.set(e);
+					responseReceived.countDown();
+				}
+			}
+		};
+
+		sendMessage(messageReference, message, responseListener);
+		responseReceived.await();
+
+		return ReferenceableMessageContainer.class.cast(receivedResponse.get()
+		        .getMessage());
+	}
+
+	public void listen(final MessageEventListener messageListener) {
 		installMessageListener(messageListener);
+	}
+
+	public CountDownLatch listen(
+	        final MessageEventPredicate messageEventPredicate) {
+		final CountDownLatch matchingMessageEventReceived = new CountDownLatch(
+		        1);
+		final MessageEventListener listenForMatchingEvent = new MessageEventListener() {
+
+			@Override
+			public void messageEventReceived(final MessageEvent e) {
+				if (messageEventPredicate.evaluate(e)) {
+					matchingMessageEventReceived.countDown();
+				}
+			}
+		};
+		installMessageListener(listenForMatchingEvent);
+		return matchingMessageEventReceived;
 	}
 
 	public void login(final int messageReference, final String username,
@@ -206,11 +241,11 @@ public class IntegrationTestClient {
 	private final class ResponseListenerChannelHandler extends
 	        SimpleChannelUpstreamHandler {
 
-		public static final String		NAME	= "itest:response-listener";
+		public static final String		   NAME	= "itest:response-listener";
 
-		private final MessageListener	listener;
+		private final MessageEventListener	listener;
 
-		ResponseListenerChannelHandler(final MessageListener listener) {
+		ResponseListenerChannelHandler(final MessageEventListener listener) {
 			this.listener = listener;
 		}
 
@@ -218,7 +253,7 @@ public class IntegrationTestClient {
 		public void messageReceived(final ChannelHandlerContext ctx,
 		        final MessageEvent e) throws Exception {
 			IntegrationTestClient.this.log.info("Received response {}", e);
-			this.listener.messageReceived(e);
+			this.listener.messageEventReceived(e);
 			super.messageReceived(ctx, e);
 		}
 	}

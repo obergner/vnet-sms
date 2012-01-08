@@ -109,7 +109,7 @@ public class GatewayServerTest {
 
 		assertEquals(
 		        "start() did not promote GatewayServer into state RUNNING",
-		        "RUNNING", objectUnderTest.getCurrentState().getName());
+		        ServerStatus.RUNNING, objectUnderTest.getCurrentStatus());
 
 		objectUnderTest.stop();
 	}
@@ -174,7 +174,7 @@ public class GatewayServerTest {
 		objectUnderTest.stop();
 
 		assertEquals("stop() did not promote GatewayServer into state STOPPED",
-		        "STOPPED", objectUnderTest.getCurrentState().getName());
+		        ServerStatus.STOPPED, objectUnderTest.getCurrentStatus());
 	}
 
 	@Test
@@ -206,7 +206,7 @@ public class GatewayServerTest {
 		        new DefaultLocalServerChannelFactory(), pipelineFactory);
 
 		assertEquals("getCurrentState() did not return STOPPED after creation",
-		        "STOPPED", objectUnderTest.getCurrentState().getName());
+		        ServerStatus.STOPPED, objectUnderTest.getCurrentStatus());
 	}
 
 	@Test

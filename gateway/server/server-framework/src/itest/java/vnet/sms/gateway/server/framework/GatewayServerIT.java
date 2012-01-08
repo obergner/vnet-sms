@@ -13,7 +13,6 @@ import javax.jms.Message;
 import javax.jms.ObjectMessage;
 
 import org.jboss.netty.channel.MessageEvent;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,8 @@ import vnet.sms.common.messages.PingResponse;
 import vnet.sms.gateway.server.framework.dummy.DummyAuthenticationProvider;
 import vnet.sms.gateway.server.framework.test.ForwardingJmsMessageListener;
 import vnet.sms.gateway.server.framework.test.IntegrationTestClient;
-import vnet.sms.gateway.server.framework.test.MessagePredicate;
+import vnet.sms.gateway.server.framework.test.JmsMessagePredicate;
+import vnet.sms.gateway.server.framework.test.MessageEventPredicate;
 import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -64,7 +64,7 @@ public class GatewayServerIT {
 	        throws Exception {
 		assertEquals(
 		        "Initialization of ApplicationContext should started GatewayServer",
-		        "RUNNING", this.gatewayServer.getCurrentState().getName());
+		        ServerStatus.RUNNING, this.gatewayServer.getCurrentStatus());
 	}
 
 	@Test
@@ -128,7 +128,7 @@ public class GatewayServerIT {
 		        "whatever", new InetSocketAddress(2048), new InetSocketAddress(
 		                65000));
 
-		final MessagePredicate isExpectedLoginRequest = new MessagePredicate() {
+		final JmsMessagePredicate isExpectedLoginRequest = new JmsMessagePredicate() {
 			@Override
 			public boolean evaluate(final Message msg) {
 				try {
@@ -174,7 +174,7 @@ public class GatewayServerIT {
 		        DummyAuthenticationProvider.REJECTED_PASSWORD,
 		        new InetSocketAddress(2048), new InetSocketAddress(65000));
 
-		final MessagePredicate isExpectedLoginRequest = new MessagePredicate() {
+		final JmsMessagePredicate isExpectedLoginRequest = new JmsMessagePredicate() {
 			@Override
 			public boolean evaluate(final Message msg) {
 				try {
@@ -255,27 +255,74 @@ public class GatewayServerIT {
 		                .pingSucceeded());
 	}
 
-	@Ignore("Fails currently. FIX.")
 	@Test
 	public final void assertThatGatewayServerSendsFirstPingRequestToClientAfterPingIntervalHasElapsed()
 	        throws Throwable {
-		final CountDownLatch pingReceived = new CountDownLatch(1);
-		final IntegrationTestClient.MessageListener waitForPing = new IntegrationTestClient.MessageListener() {
-
+		final MessageEventPredicate matchesPingEvent = new MessageEventPredicate() {
 			@Override
-			public void messageReceived(final MessageEvent e) {
-				if (ReferenceableMessageContainer.class.cast(e.getMessage())
-				        .getMessage() instanceof PingRequest) {
-					pingReceived.countDown();
-				}
+			public boolean evaluate(final MessageEvent e) {
+				return ReferenceableMessageContainer.class.cast(e.getMessage())
+				        .getMessage() instanceof PingRequest;
 			}
 		};
 		this.testClient.connect();
-		this.testClient.listen(waitForPing);
+		final CountDownLatch pingReceived = this.testClient
+		        .listen(matchesPingEvent);
 		assertTrue("Expected to receive Ping after ping interval of "
 		        + this.pingIntervalSeconds + " seconds had expired",
-		        pingReceived.await(this.pingIntervalSeconds * 1000 + 100,
+		        pingReceived.await(this.pingIntervalSeconds * 1000 + 2000,
 		                TimeUnit.MILLISECONDS));
+		this.testClient.disconnect();
+	}
+
+	@Test
+	public final void assertThatGatewayServerContinuesSendingPingRequestsAfterReceivingPingResponse()
+	        throws Throwable {
+		final MessageEventPredicate matchesReceivedPingEvent = new MessageEventPredicate() {
+			@Override
+			public boolean evaluate(final MessageEvent e) {
+				return ReferenceableMessageContainer.class.cast(e.getMessage())
+				        .getMessage() instanceof PingRequest;
+			}
+		};
+		this.testClient.connect();
+		final CountDownLatch pingReceived = this.testClient
+		        .listen(matchesReceivedPingEvent);
+		assertTrue("Expected to receive Ping after ping interval of "
+		        + this.pingIntervalSeconds + " seconds had expired",
+		        pingReceived.await(this.pingIntervalSeconds * 1000 + 2000,
+		                TimeUnit.MILLISECONDS));
+		this.testClient.disconnect();
+
+		// Should start ping timeout
+		this.testClient.connect();
+
+		// Login. Otherwise, our LoginResponse will be discarded
+		this.testClient
+		        .login(1,
+		                "assertThatGatewayServerContinuesSendingPingRequestsAfterReceivingPingResponse",
+		                "whatever");
+
+		final CountDownLatch firstPingReceived = this.testClient
+		        .listen(matchesReceivedPingEvent);
+		assertTrue("Expected to receive Ping after ping interval of "
+		        + this.pingIntervalSeconds + " seconds had expired",
+		        firstPingReceived.await(this.pingIntervalSeconds * 1000 + 2000,
+		                TimeUnit.MILLISECONDS));
+
+		// Send ping response
+		final CountDownLatch secondPingReceived = this.testClient
+		        .listen(matchesReceivedPingEvent);
+		this.testClient.sendMessage(2, PingResponse.accept(new PingRequest(
+		        new InetSocketAddress(2000), new InetSocketAddress(3000))));
+
+		assertTrue(
+		        "Expected to receive  second Ping after sending PingResponse and aiting for "
+		                + this.pingIntervalSeconds + " seconds",
+		        secondPingReceived.await(
+		                this.pingIntervalSeconds * 1000 + 2000,
+		                TimeUnit.MILLISECONDS));
+
 		this.testClient.disconnect();
 	}
 }

@@ -49,7 +49,7 @@ public class LoginRequest extends Message {
 
 	@Override
 	public String toString() {
-		return "LoginRequest@" + this.hashCode() + " [ID: " + getId()
+		return "LoginRequest@" + this.hashCode() + "[ID: " + getId()
 		        + "|creationTimestamp: " + getCreationTimestamp()
 		        + "|username: " + this.username
 		        + "|password: [PROTECTED]|sender: " + getSender()

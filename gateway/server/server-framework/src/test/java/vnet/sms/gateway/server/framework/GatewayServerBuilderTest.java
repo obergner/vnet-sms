@@ -114,7 +114,7 @@ public class GatewayServerBuilderTest {
 
 		assertEquals(
 		        "destroy() should have stopped the created GatewayServer, yet it didn't",
-		        "STOPPED", product.getCurrentState().getName());
+		        ServerStatus.STOPPED, product.getCurrentStatus());
 	}
 
 	private GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer> newGatewayServerChannelPipelineFactory() {

@@ -56,7 +56,7 @@ public class GatewayServerControllerTest {
 
 		assertEquals(
 		        "start() did not promote GatewayServer into state RUNNING",
-		        "RUNNING", objectUnderTest.getCurrentState());
+		        ServerStatus.RUNNING, objectUnderTest.getCurrentStatus());
 
 		objectUnderTest.stop();
 	}
@@ -124,7 +124,7 @@ public class GatewayServerControllerTest {
 		objectUnderTest.stop();
 
 		assertEquals("stop() did not promote GatewayServer into state STOPPED",
-		        "STOPPED", objectUnderTest.getCurrentState());
+		        ServerStatus.STOPPED, objectUnderTest.getCurrentStatus());
 	}
 
 	@Test

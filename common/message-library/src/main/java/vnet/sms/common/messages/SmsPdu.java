@@ -219,8 +219,7 @@ public class SmsPdu implements Serializable {
 
 	@Override
 	public String toString() {
-		return "SmsPdu@" + this.hashCode() + " [udhElements_: "
-		        + Arrays.toString(this.udhElements_) + "|ud_: " + this.ud_
-		        + "]";
+		return "SmsPdu@" + this.hashCode() + "[udhElements: "
+		        + Arrays.toString(this.udhElements_) + "|ud: " + this.ud_ + "]";
 	}
 }

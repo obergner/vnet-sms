@@ -735,11 +735,10 @@
 						<!-- We need maven to properly set the "java.class.path" system property 
 							since ApacheDS' ResourceMap.getResources( pattern ) inspects this system 
 							property to extract the list of schema files to extract out of the various 
-							ApacheDS jars. See: http://maven.apache.org/plugins/maven-surefire-plugin/examples/class-loading.html -->
-						<useManifestOnlyJar>false</useManifestOnlyJar>
-						<systemPropertyVariables>
-							<workingDirectory>${project.build.directory}/apacheds-work</workingDirectory>
-						</systemPropertyVariables>
+							ApacheDS jars. See: http://maven.apache.org/plugins/maven-surefire-plugin/examples/class-loading.html 
+							<useManifestOnlyJar>false</useManifestOnlyJar> <systemPropertyVariables> 
+							<workingDirectory>${project.build.directory}/apacheds-work</workingDirectory> 
+							</systemPropertyVariables> -->
 					</configuration>
 				</plugin>
 				<plugin>
@@ -786,11 +785,10 @@
 						<!-- We need maven to properly set the "java.class.path" system property 
 							since ApacheDS' ResourceMap.getResources( pattern ) inspects this system 
 							property to extract the list of schema files to extract out of the various 
-							ApacheDS jars. See: http://maven.apache.org/plugins/maven-surefire-plugin/examples/class-loading.html -->
-						<useManifestOnlyJar>false</useManifestOnlyJar>
-						<systemPropertyVariables>
-							<workingDirectory>${project.build.directory}/apacheds-work</workingDirectory>
-						</systemPropertyVariables>
+							ApacheDS jars. See: http://maven.apache.org/plugins/maven-surefire-plugin/examples/class-loading.html 
+							<useManifestOnlyJar>false</useManifestOnlyJar> <systemPropertyVariables> 
+							<workingDirectory>${project.build.directory}/apacheds-work</workingDirectory> 
+							</systemPropertyVariables> -->
 					</configuration>
 					<executions>
 						<execution>

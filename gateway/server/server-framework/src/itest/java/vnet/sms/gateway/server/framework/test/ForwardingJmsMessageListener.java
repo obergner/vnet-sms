@@ -41,7 +41,7 @@ public class ForwardingJmsMessageListener implements MessageListener {
 		return this.delegate.getAndSet(new LoggingMessageListener());
 	}
 
-	public CountDownLatch waitForMessage(final MessagePredicate predicate) {
+	public CountDownLatch waitForMessage(final JmsMessagePredicate predicate) {
 		final CountDownLatch matchingMessageReceived = new CountDownLatch(1);
 		final MessageListener waitForMatchingMessage = new MessageListener() {
 

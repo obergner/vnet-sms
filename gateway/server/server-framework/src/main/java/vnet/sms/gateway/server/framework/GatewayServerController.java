@@ -51,8 +51,8 @@ public class GatewayServerController<ID extends Serializable, TP> {
 	}
 
 	@ManagedAttribute(description = "This GatewayServer's current state: stopped, starting, running or stopping")
-	public String getCurrentState() {
-		return this.gatewayServer.getCurrentState().getName();
+	public ServerStatus getCurrentStatus() {
+		return this.gatewayServer.getCurrentStatus();
 	}
 
 	@ManagedAttribute(description = "This GatewayServer's instance ID, uniquely identifying this instance among all GatewayServers")

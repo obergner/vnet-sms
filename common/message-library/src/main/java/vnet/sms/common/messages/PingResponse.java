@@ -48,7 +48,7 @@ public class PingResponse extends Message {
 
 	@Override
 	public String toString() {
-		return "PingResponse@" + this.hashCode() + " [ack: " + this.ack
+		return "PingResponse@" + this.hashCode() + "[ack: " + this.ack
 		        + "|pingRequest: " + this.pingRequest + "|sender: "
 		        + getSender() + "|receiver: " + getReceiver() + "]";
 	}

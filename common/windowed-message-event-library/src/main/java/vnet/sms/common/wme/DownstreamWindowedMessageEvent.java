@@ -104,7 +104,7 @@ public abstract class DownstreamWindowedMessageEvent<ID extends Serializable, M 
 	@Override
 	public String toString() {
 		return getClass().getSimpleName() + "@" + hashCode()
-		        + " [messageReference: " + this.messageReference + "|message: "
+		        + "[messageReference: " + this.messageReference + "|message: "
 		        + getMessage() + "|channel: " + getChannel()
 		        + "|remoteAddress: " + getRemoteAddress() + "]";
 	}

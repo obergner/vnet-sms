@@ -417,7 +417,7 @@ public class Sms extends Message {
 
 	@Override
 	public String toString() {
-		return "Sms@" + this.hashCode() + " [ID: " + this.getId()
+		return "Sms@" + this.hashCode() + "[ID: " + this.getId()
 		        + "|creationTimestamp: " + this.getCreationTimestamp()
 		        + "|text_: " + this.text_ + "|dcs_: " + this.dcs_ + "]";
 	}

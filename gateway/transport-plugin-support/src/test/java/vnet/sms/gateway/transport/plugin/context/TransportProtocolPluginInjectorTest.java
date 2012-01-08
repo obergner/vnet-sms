@@ -50,7 +50,7 @@ public class TransportProtocolPluginInjectorTest {
 	}
 
 	@Test(expected = IllegalStateException.class)
-	public final void assertThatPostProcessAfterInitializationRecognizesMissingApplicationContext() {
+	public final void assertThatPostProcessBeforeInitializationRecognizesMissingApplicationContext() {
 		final AtomicReference<TransportProtocolPlugin<Integer, ReferenceableMessageContainer>> transportProtocolPluginHolder = new AtomicReference<TransportProtocolPlugin<Integer, ReferenceableMessageContainer>>();
 		final TransportProtocolExtensionPoint<Integer, ReferenceableMessageContainer> extensionPoint = new TransportProtocolExtensionPoint<Integer, ReferenceableMessageContainer>() {
 			@Override
@@ -63,13 +63,12 @@ public class TransportProtocolPluginInjectorTest {
 		final TransportProtocolPluginInjector objectUnderTest = new TransportProtocolPluginInjector();
 
 		objectUnderTest
-		        .postProcessAfterInitialization(
-		                extensionPoint,
-		                "assertThatPostProcessAfterInitializationInjectsTransportProtocolPluginIntoTransportProtocolExtensionPoint");
+		        .postProcessBeforeInitialization(extensionPoint,
+		                "assertThatPostProcessBeforeInitializationRecognizesMissingApplicationContext");
 	}
 
 	@Test
-	public final void assertThatPostProcessAfterInitializationInjectsTransportProtocolPluginIntoTransportProtocolExtensionPoint() {
+	public final void assertThatPostProcessBeforeInitializationInjectsTransportProtocolPluginIntoTransportProtocolExtensionPoint() {
 		final AtomicReference<TransportProtocolPlugin<Integer, ReferenceableMessageContainer>> transportProtocolPluginHolder = new AtomicReference<TransportProtocolPlugin<Integer, ReferenceableMessageContainer>>();
 		final TransportProtocolExtensionPoint<Integer, ReferenceableMessageContainer> extensionPoint = new TransportProtocolExtensionPoint<Integer, ReferenceableMessageContainer>() {
 			@Override
@@ -89,12 +88,12 @@ public class TransportProtocolPluginInjectorTest {
 		objectUnderTest.setApplicationContext(appContext);
 
 		final TransportProtocolExtensionPoint<Integer, ReferenceableMessageContainer> returnedBean = (TransportProtocolExtensionPoint<Integer, ReferenceableMessageContainer>) objectUnderTest
-		        .postProcessAfterInitialization(
+		        .postProcessBeforeInitialization(
 		                extensionPoint,
-		                "assertThatPostProcessAfterInitializationInjectsTransportProtocolPluginIntoTransportProtocolExtensionPoint");
+		                "assertThatPostProcessBeforeInitializationInjectsTransportProtocolPluginIntoTransportProtocolExtensionPoint");
 
 		assertNotNull(
-		        "postProcessAfterInitialization() did NOT inject TransportProtocolPlugin into TransportProtocolExtensionPoint",
+		        "postProcessBeforeInitialization() did NOT inject TransportProtocolPlugin into TransportProtocolExtensionPoint",
 		        transportProtocolPluginHolder.get());
 	}
 

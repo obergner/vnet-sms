@@ -62,7 +62,7 @@ public abstract class DownstreamReceivedMessageAckedEvent<ID extends Serializabl
 	@Override
 	public String toString() {
 		return getClass().getSimpleName() + "@" + this.hashCode()
-		        + " [messageReference: " + getMessageReference() + "|message: "
+		        + "[messageReference: " + getMessageReference() + "|message: "
 		        + getMessage() + "|acknowledgement: " + this.acknowledgement
 		        + "|channel: " + getChannel() + "|future: " + getFuture()
 		        + "|remoteAddress: " + getRemoteAddress() + "]";

@@ -69,7 +69,7 @@ public class Acknowledgement implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Acknowledgement@" + this.hashCode() + " [status: "
-		        + this.status + "]";
+		return "Acknowledgement@" + this.hashCode() + "[status: " + this.status
+		        + "]";
 	}
 }

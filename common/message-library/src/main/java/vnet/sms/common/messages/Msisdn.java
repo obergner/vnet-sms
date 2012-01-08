@@ -228,7 +228,7 @@ public class Msisdn implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Msisdn@" + this.hashCode() + " [ton_: " + this.ton_ + "|npi_: "
-		        + this.npi_ + "|address_: " + this.address_ + "]";
+		return "Msisdn@" + this.hashCode() + "[ton: " + this.ton_ + "|npi: "
+		        + this.npi_ + "|address: " + this.address_ + "]";
 	}
 }

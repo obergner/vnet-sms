@@ -160,7 +160,7 @@ public class UdhElement implements Serializable {
 
 	@Override
 	public String toString() {
-		return "UdhElement@" + this.hashCode() + " [udhIei_: " + this.udhIei_
-		        + "|udhIeiData_: " + Arrays.toString(this.udhIeiData_) + "]";
+		return "UdhElement@" + this.hashCode() + " [udhIei: " + this.udhIei_
+		        + "|udhIeiData: " + Arrays.toString(this.udhIeiData_) + "]";
 	}
 }

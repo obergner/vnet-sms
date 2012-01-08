@@ -19,7 +19,7 @@ public class PingRequest extends Message {
 
 	@Override
 	public String toString() {
-		return "PingRequest@" + hashCode() + " [ID: " + getId()
+		return "PingRequest@" + hashCode() + "[ID: " + getId()
 		        + "|creationTimestamp: " + getCreationTimestamp() + "|sender: "
 		        + getSender() + "|receiver: " + getReceiver() + "]";
 	}

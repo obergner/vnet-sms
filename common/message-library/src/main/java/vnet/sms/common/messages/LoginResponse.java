@@ -44,7 +44,7 @@ public class LoginResponse extends Message {
 
 	@Override
 	public String toString() {
-		return "LoginResponse@" + this.hashCode() + " [ID: " + this.getId()
+		return "LoginResponse@" + this.hashCode() + "[ID: " + this.getId()
 		        + "|creationTimestamp: " + this.getCreationTimestamp()
 		        + "|ack: " + this.ack + "|loginRequest: " + this.loginRequest
 		        + "]";

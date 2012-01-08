@@ -143,8 +143,8 @@ public class UserData implements Serializable {
 
 	@Override
 	public String toString() {
-		return "UserData@" + this.hashCode() + " [data_: "
-		        + Arrays.toString(this.data_) + "|length_: " + this.length_
-		        + "|dcs_: " + this.dcs_ + "]";
+		return "UserData@" + this.hashCode() + "[data: "
+		        + Arrays.toString(this.data_) + "|length: " + this.length_
+		        + "|dcs: " + this.dcs_ + "]";
 	}
 }

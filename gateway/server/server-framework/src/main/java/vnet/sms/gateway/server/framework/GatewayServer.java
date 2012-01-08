@@ -38,15 +38,15 @@ class GatewayServer<ID extends Serializable, TP> {
 
 	private final GatewayServerChannelPipelineFactory<ID, TP>	channelPipelineFactory;
 
-	private final State	                                      stopped	   = new Stopped();
+	private final InstanceState	                              stopped	   = new Stopped();
 
-	private final State	                                      starting	   = new Starting();
+	private final InstanceState	                              starting	   = new Starting();
 
-	private final State	                                      running	   = new Running();
+	private final InstanceState	                              running	   = new Running();
 
-	private final State	                                      stopping	   = new Stopping();
+	private final InstanceState	                              stopping	   = new Stopping();
 
-	private final AtomicReference<State>	                  currentState	= new AtomicReference<State>(
+	private final AtomicReference<InstanceState>	          currentState	= new AtomicReference<InstanceState>(
 	                                                                               this.stopped);
 
 	GatewayServer(
@@ -108,8 +108,8 @@ class GatewayServer<ID extends Serializable, TP> {
 		return this.channelPipelineFactory.getChannelMonitorRegistry();
 	}
 
-	State getCurrentState() {
-		return this.currentState.get();
+	ServerStatus getCurrentStatus() {
+		return this.currentState.get().getStatus();
 	}
 
 	String getInstanceId() {
@@ -126,16 +126,16 @@ class GatewayServer<ID extends Serializable, TP> {
 		        + this.instanceId + "|localAddress: " + this.localAddress + "]";
 	}
 
-	public abstract class State {
+	public abstract class InstanceState {
 
-		private final String	name;
+		private final ServerStatus	status;
 
-		State(final String name) {
-			this.name = name;
+		InstanceState(final ServerStatus name) {
+			this.status = name;
 		}
 
-		public final String getName() {
-			return this.name;
+		public final ServerStatus getStatus() {
+			return this.status;
 		}
 
 		abstract void start() throws Exception;
@@ -146,10 +146,10 @@ class GatewayServer<ID extends Serializable, TP> {
 		public abstract String toString();
 	}
 
-	private final class Stopped extends State {
+	private final class Stopped extends InstanceState {
 
 		Stopped() {
-			super("STOPPED");
+			super(ServerStatus.STOPPED);
 		}
 
 		@Override
@@ -196,14 +196,14 @@ class GatewayServer<ID extends Serializable, TP> {
 
 		@Override
 		public String toString() {
-			return "Stopped@" + hashCode() + "[name: " + getName() + "]";
+			return "Stopped@" + hashCode() + "[status: " + getStatus() + "]";
 		}
 	}
 
-	private final class Starting extends State {
+	private final class Starting extends InstanceState {
 
 		Starting() {
-			super("STARTING");
+			super(ServerStatus.STARTING);
 		}
 
 		@Override
@@ -222,14 +222,14 @@ class GatewayServer<ID extends Serializable, TP> {
 
 		@Override
 		public String toString() {
-			return "Starting@" + hashCode() + "[name: " + getName() + "]";
+			return "Starting@" + hashCode() + "[status: " + getStatus() + "]";
 		}
 	}
 
-	private final class Running extends State {
+	private final class Running extends InstanceState {
 
 		Running() {
-			super("RUNNING");
+			super(ServerStatus.RUNNING);
 		}
 
 		@Override
@@ -279,14 +279,14 @@ class GatewayServer<ID extends Serializable, TP> {
 
 		@Override
 		public String toString() {
-			return "Running@" + hashCode() + "[name: " + getName() + "]";
+			return "Running@" + hashCode() + "[status: " + getStatus() + "]";
 		}
 	}
 
-	private final class Stopping extends State {
+	private final class Stopping extends InstanceState {
 
 		Stopping() {
-			super("STOPPING");
+			super(ServerStatus.STOPPING);
 		}
 
 		@Override
@@ -305,7 +305,7 @@ class GatewayServer<ID extends Serializable, TP> {
 
 		@Override
 		public String toString() {
-			return "Stopping@" + hashCode() + "[name: " + getName() + "]";
+			return "Stopping@" + hashCode() + "[status: " + getStatus() + "]";
 		}
 	}
 }
