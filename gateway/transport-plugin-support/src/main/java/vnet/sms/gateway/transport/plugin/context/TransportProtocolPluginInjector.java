@@ -35,16 +35,6 @@ public class TransportProtocolPluginInjector implements BeanPostProcessor,
 	@Override
 	public Object postProcessBeforeInitialization(final Object bean,
 	        final String beanName) throws BeansException {
-		return bean;
-	}
-
-	/**
-	 * @see org.springframework.beans.factory.config.BeanPostProcessor#postProcessAfterInitialization(java.lang.Object,
-	 *      java.lang.String)
-	 */
-	@Override
-	public Object postProcessAfterInitialization(final Object bean,
-	        final String beanName) throws BeansException {
 		this.log.trace(
 		        "Testing if bean [name = {} | bean = {}] implements [{}] ...",
 		        new Object[] { beanName, bean,
@@ -68,6 +58,17 @@ public class TransportProtocolPluginInjector implements BeanPostProcessor,
 			        new Object[] { beanName, bean,
 			                TransportProtocolExtensionPoint.class.getName() });
 		}
+		return bean;
+	}
+
+	/**
+	 * @see org.springframework.beans.factory.config.BeanPostProcessor#postProcessAfterInitialization(java.lang.Object,
+	 *      java.lang.String)
+	 */
+	@Override
+	public Object postProcessAfterInitialization(final Object bean,
+	        final String beanName) throws BeansException {
+
 		return bean;
 	}
 

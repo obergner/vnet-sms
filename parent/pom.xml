@@ -51,12 +51,14 @@
 		<deps.slf4j.version>1.6.4</deps.slf4j.version>
 		<deps.logback.version>1.0.0</deps.logback.version>
 		<deps.spring.version>3.1.0.RELEASE</deps.spring.version>
-		<deps.camel.version>2.8.3</deps.camel.version>
+		<deps.camel.version>2.9.0</deps.camel.version>
 		<deps.netty.version>3.2.7.Final</deps.netty.version>
 		<deps.osgi.version>4.1.0</deps.osgi.version>
 		<deps.google-guava.version>11.0</deps.google-guava.version>
 		<deps.spring-security.version>3.1.0.RELEASE</deps.spring-security.version>
 		<deps.yammer-metrics.version>2.0.0-BETA18</deps.yammer-metrics.version>
+		<deps.activemq.version>5.5.1</deps.activemq.version>
+		<deps.xbean.version>2.8</deps.xbean.version>
 		<!-- Testing -->
 		<deps.junit.version>4.10</deps.junit.version>
 		<deps.arquillian.version>1.0.0.Alpha4</deps.arquillian.version>
@@ -527,12 +529,55 @@
 				<version>${deps.spring-security.version}</version>
 				<type>jar</type>
 			</dependency>
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-config</artifactId>
+				<version>${deps.spring-security.version}</version>
+				<type>jar</type>
+			</dependency>
 			<!-- Yammer Metrics for gathering runtime statistics -->
 			<dependency>
 				<groupId>com.yammer.metrics</groupId>
 				<artifactId>metrics-core</artifactId>
 				<version>${deps.yammer-metrics.version}</version>
 				<type>jar</type>
+			</dependency>
+			<!-- ActiveMQ -->
+			<dependency>
+				<groupId>org.apache.activemq</groupId>
+				<artifactId>activemq-core</artifactId>
+				<version>${deps.activemq.version}</version>
+				<type>jar</type>
+				<exclusions>
+					<exclusion>
+						<groupId>org.apache.geronimo.specs</groupId>
+						<artifactId>geronimo-jms_1.1_spec</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.activemq</groupId>
+				<artifactId>activemq-pool</artifactId>
+				<version>${deps.activemq.version}</version>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.activemq</groupId>
+				<artifactId>activemq-spring</artifactId>
+				<version>${deps.activemq.version}</version>
+				<type>jar</type>
+				<exclusions>
+					<exclusion>
+						<groupId>org.springframework.osgi</groupId>
+						<artifactId>spring-osgi-core</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<!-- Apache XBean -->
+			<dependency>
+				<groupId>org.apache.xbean</groupId>
+				<artifactId>xbean-spring-v2c</artifactId>
+				<version>${deps.xbean.version}</version>
 			</dependency>
 			<!-- =========================================== -->
 			<!-- Test dependencies -->

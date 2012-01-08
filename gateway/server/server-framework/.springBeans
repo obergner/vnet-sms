@@ -5,10 +5,43 @@
 	<configSuffixes>
 		<configSuffix><![CDATA[xml]]></configSuffix>
 	</configSuffixes>
-	<enableImports><![CDATA[false]]></enableImports>
+	<enableImports><![CDATA[true]]></enableImports>
 	<configs>
-		<config>src/main/resources/META-INF/services/gateway-server-context.xml</config>
+		<config>src/main/resources/META-INF/services/gateway-server-application-context.xml</config>
+		<config>src/main/resources/META-INF/services/gateway-server-jms-client-context.xml</config>
+		<config>src/main/resources/META-INF/services/gateway-server-authentication-manager-context.xml</config>
+		<config>src/itest/resources/META-INF/itest/itest-gateway-server-embedded-activemq-broker-context.xml</config>
+		<config>src/itest/resources/META-INF/itest/itest-serialization-transport-plugin-context.xml</config>
+		<config>src/itest/resources/META-INF/itest/itest-test-client-context.xml</config>
 	</configs>
 	<configSets>
+		<configSet>
+			<name><![CDATA[Production]]></name>
+			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
+			<incomplete>false</incomplete>
+			<configs>
+				<config>src/main/resources/META-INF/services/gateway-server-application-context.xml</config>
+				<config>src/main/resources/META-INF/services/gateway-server-jms-client-context.xml</config>
+				<config>src/main/resources/META-INF/services/gateway-server-authentication-manager-context.xml</config>
+			</configs>
+			<profiles>
+			</profiles>
+		</configSet>
+		<configSet>
+			<name><![CDATA[Integration Tests]]></name>
+			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
+			<incomplete>false</incomplete>
+			<configs>
+				<config>src/itest/resources/META-INF/itest/itest-gateway-server-embedded-activemq-broker-context.xml</config>
+				<config>src/itest/resources/META-INF/itest/itest-serialization-transport-plugin-context.xml</config>
+				<config>src/main/resources/META-INF/services/gateway-server-application-context.xml</config>
+				<config>src/main/resources/META-INF/services/gateway-server-authentication-manager-context.xml</config>
+				<config>src/main/resources/META-INF/services/gateway-server-jms-client-context.xml</config>
+				<config>src/itest/resources/META-INF/itest/itest-test-client-context.xml</config>
+			</configs>
+			<profiles>
+				<profile><![CDATA[itest]]></profile>
+			</profiles>
+		</configSet>
 	</configSets>
 </beansProjectDescription>

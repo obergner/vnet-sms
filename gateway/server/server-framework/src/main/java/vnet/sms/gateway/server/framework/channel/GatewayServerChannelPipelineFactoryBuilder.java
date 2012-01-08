@@ -16,9 +16,9 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.authentication.AuthenticationManager;
 
 import vnet.sms.gateway.nettysupport.monitor.ChannelMonitorRegistry;
-import vnet.sms.gateway.nettysupport.window.spi.MessageReferenceGenerator;
 import vnet.sms.gateway.server.framework.jmsbridge.MessageForwardingJmsBridge;
 import vnet.sms.gateway.transport.plugin.TransportProtocolExtensionPoint;
+import vnet.sms.gateway.transport.plugin.context.TransportProtocolPluginInjector;
 import vnet.sms.gateway.transport.spi.TransportProtocolPlugin;
 
 /**
@@ -34,8 +34,6 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 
 	private String	                                    gatewayServerInstanceId;
 
-	private Class<TP>	                                pduType;
-
 	private TransportProtocolPlugin<ID, TP>	            transportProtocolPlugin;
 
 	private ChannelMonitorRegistry	                    channelMonitorRegistry;
@@ -47,8 +45,6 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 	private AuthenticationManager	                    authenticationManager;
 
 	private long	                                    failedLoginResponseDelayMillis;
-
-	private MessageReferenceGenerator<ID>	            windowIdGenerator;
 
 	private int	                                        pingIntervalSeconds;
 
@@ -96,15 +92,11 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		this.log.info("Starting to build GatewayServerChannelPipelineFactory instance ...");
-		if (this.producedPipelineFactory != null) {
-			this.log.warn(
-			        "Already built GatewayServerChannelPipelineFactory instance {}",
-			        this.producedPipelineFactory);
-			return;
-		}
+		enforceCorrectUsage();
 
 		this.producedPipelineFactory = new GatewayServerChannelPipelineFactory<ID, TP>(
-		        this.gatewayServerInstanceId, this.pduType,
+		        this.gatewayServerInstanceId,
+		        this.transportProtocolPlugin.getPduType(),
 		        this.transportProtocolPlugin.getFrameDecoder(),
 		        this.transportProtocolPlugin.getDecoder(),
 		        this.transportProtocolPlugin.getEncoder(),
@@ -115,13 +107,29 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 		        this.channelMonitorRegistry, this.messageForwardingJmsBridge,
 		        this.availableIncomingWindows,
 		        this.incomingWindowWaitTimeMillis, this.authenticationManager,
-		        this.failedLoginResponseDelayMillis, this.windowIdGenerator,
+		        this.failedLoginResponseDelayMillis,
+		        this.transportProtocolPlugin.getMessageReferenceGenerator(),
 		        this.pingIntervalSeconds, this.pingResponseTimeoutMillis,
 		        this.mbeanServer);
 
 		this.log.info(
 		        "Finished building GatewayServerChannelPipelineFactory instance {}",
 		        this.producedPipelineFactory);
+	}
+
+	private void enforceCorrectUsage() throws IllegalStateException {
+		if (this.producedPipelineFactory != null) {
+			throw new IllegalStateException(
+			        "Illegal attempt to build GatewayServerChannelPipelineFactory twice");
+		}
+		if (this.transportProtocolPlugin == null) {
+			throw new IllegalStateException(
+			        "No implementation of ["
+			                + TransportProtocolPlugin.class.getName()
+			                + "] has been injected into this factory. Did you remember to register a ["
+			                + TransportProtocolPluginInjector.class.getName()
+			                + "] as a BeanPostProcessor in this ApplicationContext?");
+		}
 	}
 
 	@Override
@@ -137,14 +145,6 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 	public final void setGatewayServerInstanceId(
 	        final String gatewayServerInstanceId) {
 		this.gatewayServerInstanceId = gatewayServerInstanceId;
-	}
-
-	/**
-	 * @param pduType
-	 *            the pduType to set
-	 */
-	public final void setPduType(final Class<TP> pduType) {
-		this.pduType = pduType;
 	}
 
 	/**
@@ -199,15 +199,6 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 	public final void setFailedLoginResponseDelayMillis(
 	        final long failedLoginResponseDelayMillis) {
 		this.failedLoginResponseDelayMillis = failedLoginResponseDelayMillis;
-	}
-
-	/**
-	 * @param windowIdGenerator
-	 *            the windowIdGenerator to set
-	 */
-	public final void setWindowIdGenerator(
-	        final MessageReferenceGenerator<ID> windowIdGenerator) {
-		this.windowIdGenerator = windowIdGenerator;
 	}
 
 	/**

@@ -8,6 +8,9 @@ import static org.apache.commons.lang.Validate.notNull;
 import java.io.Serializable;
 import java.net.SocketAddress;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
@@ -31,11 +34,13 @@ public class GatewayServerController<ID extends Serializable, TP> {
 		this.gatewayServer = gatewayServer;
 	}
 
+	@PostConstruct
 	@ManagedOperation(description = "Start the GatewayServer")
 	public void start() throws Exception {
 		this.gatewayServer.start();
 	}
 
+	@PreDestroy
 	@ManagedOperation(description = "Stop the GatewayServer")
 	public void stop() throws Exception {
 		this.gatewayServer.stop();

@@ -41,7 +41,7 @@ public abstract class UpstreamWindowedChannelHandler<ID extends Serializable>
 
 	public void windowedMessageReceived(final ChannelHandlerContext ctx,
 	        final WindowedMessageEvent<ID, ? extends Message> e) {
-		getLog().debug("Processing windowed message event {} ...", e);
+		getLog().debug("Processing {} ...", e);
 		if (e instanceof LoginRequestReceivedEvent) {
 			loginRequestReceived(ctx, (LoginRequestReceivedEvent<ID>) e);
 		} else if (e instanceof LoginResponseReceivedEvent) {
@@ -56,7 +56,7 @@ public abstract class UpstreamWindowedChannelHandler<ID extends Serializable>
 			throw new IllegalStateException("Add handler for message event: "
 			        + e);
 		}
-		getLog().debug("Finished processing windowed message event {}", e);
+		getLog().debug("Finished processing {}", e);
 	}
 
 	protected void loginRequestReceived(final ChannelHandlerContext ctx,

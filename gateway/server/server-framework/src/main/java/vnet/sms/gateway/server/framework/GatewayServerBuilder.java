@@ -9,6 +9,8 @@ import static org.apache.commons.lang.Validate.notNull;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -25,6 +27,9 @@ public class GatewayServerBuilder<ID extends java.io.Serializable, TP>
         DisposableBean {
 
 	private static final String	                        DEFAULT_HOST	= "127.0.0.1";
+
+	private final Logger	                            log	           = LoggerFactory
+	                                                                           .getLogger(getClass());
 
 	private String	                                    instanceId;
 
@@ -47,6 +52,7 @@ public class GatewayServerBuilder<ID extends java.io.Serializable, TP>
 	 */
 	@Override
 	public void afterPropertiesSet() throws Exception {
+		this.log.info("Starting to build GatewayServer instance ...");
 		if (this.product != null) {
 			throw new IllegalStateException(
 			        "Illegal attempt to build GatewayServer twice");
@@ -54,6 +60,8 @@ public class GatewayServerBuilder<ID extends java.io.Serializable, TP>
 		this.product = new GatewayServer<ID, TP>(this.instanceId, this.host,
 		        this.port, this.channelPipelineFactory, this.bossExecutor,
 		        this.workerExecutor);
+		this.log.info("Finished building GatewayServer instance {}",
+		        this.product);
 	}
 
 	@Override

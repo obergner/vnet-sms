@@ -79,11 +79,8 @@ public class GatewayServerChannelPipelineFactoryBuilderTest {
 		objectUnderTest.setIncomingWindowWaitTimeMillis(1000L);
 		objectUnderTest.setMbeanServer(ManagementFactory
 		        .getPlatformMBeanServer());
-		objectUnderTest.setPduType(ReferenceableMessageContainer.class);
 		objectUnderTest.setPingIntervalSeconds(2);
 		objectUnderTest.setPingResponseTimeoutMillis(3000L);
-		objectUnderTest
-		        .setWindowIdGenerator(createNiceMock(MessageReferenceGenerator.class));
 		objectUnderTest.afterPropertiesSet();
 
 		final GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer> product = objectUnderTest

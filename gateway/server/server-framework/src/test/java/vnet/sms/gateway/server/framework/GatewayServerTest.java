@@ -200,9 +200,9 @@ public class GatewayServerTest {
 		        10, 2000, 2000, 5, 30000, new AcceptAllAuthenticationManager(),
 		        jmsTemplate);
 		final GatewayServer<Integer, ReferenceableMessageContainer> objectUnderTest = new GatewayServer<Integer, ReferenceableMessageContainer>(
-		        "assertThatStopPromotesGatewayServerToStateStopped",
+		        "assertThatGetCurrentStateInitiallyReturnsStateSTOPPED",
 		        new LocalAddress(
-		                "assertThatStopPromotesGatewayServerToStateStopped"),
+		                "assertThatGetCurrentStateInitiallyReturnsStateSTOPPED"),
 		        new DefaultLocalServerChannelFactory(), pipelineFactory);
 
 		assertEquals("getCurrentState() did not return STOPPED after creation",
@@ -235,7 +235,7 @@ public class GatewayServerTest {
 		objectUnderTest.start();
 
 		final LoginRequest successfulLoginRequest = new LoginRequest(
-		        "assertThatTheProducedPipelineRespondsWithASuccessfulLoginResponseToASuccessfulLoginRequest",
+		        "assertThatGatewayServerRespondsWithASuccessfulLoginResponseToASuccessfulLoginRequest",
 		        "whatever", clientAddress, serverAddress);
 
 		final LocalClient client = new LocalClient(serverAddress);
