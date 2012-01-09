@@ -5,142 +5,654 @@ package vnet.sms.gateway.nettysupport.monitor;
 
 import static org.apache.commons.lang.Validate.notNull;
 
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+
 import org.jboss.netty.channel.Channel;
+import org.jboss.netty.channel.ChannelFuture;
+import org.jboss.netty.channel.ChannelFutureListener;
+import org.jboss.netty.channel.ChannelHandler;
+import org.jboss.netty.channel.ChannelPipeline;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.jmx.export.MBeanExportOperations;
+import org.springframework.jmx.export.annotation.ManagedAttribute;
+import org.springframework.jmx.export.annotation.ManagedOperation;
+import org.springframework.jmx.export.annotation.ManagedOperationParameter;
+import org.springframework.jmx.export.annotation.ManagedOperationParameters;
+import org.springframework.jmx.export.annotation.ManagedResource;
 
 import com.yammer.metrics.Metrics;
+import com.yammer.metrics.core.CounterMetric;
 import com.yammer.metrics.core.HistogramMetric;
+import com.yammer.metrics.core.MeterMetric;
+import com.yammer.metrics.core.Metric;
+import com.yammer.metrics.core.MetricName;
 
 /**
  * @author obergner
  * 
  */
+@ManagedResource
 public class ManagedChannel {
 
-	private final HistogramMetric	numberOfReceivedBytes;
+	static class Factory {
 
-	private final HistogramMetric	numberOfReceivedPdus;
+		private final MBeanExportOperations	mbeanExporter;
 
-	private final HistogramMetric	numberOfReceivedLoginRequests;
+		/**
+		 * @param mbeanExporter
+		 */
+		private Factory(final MBeanExportOperations mbeanExporter) {
+			notNull(mbeanExporter, "Argument 'mbeanExporter' must not be null");
+			this.mbeanExporter = mbeanExporter;
+		}
 
-	private final HistogramMetric	numberOfReceivedLoginResponses;
+		ManagedChannel attachTo(final Channel channel) {
+			final ManagedChannel managedChannel = new ManagedChannel(channel,
+			        this.mbeanExporter);
 
-	private final HistogramMetric	numberOfReceivedPingRequests;
+			channel.getCloseFuture().addListener(new ChannelFutureListener() {
+				@Override
+				public void operationComplete(final ChannelFuture future)
+				        throws Exception {
+					managedChannel.close();
+				}
+			});
 
-	private final HistogramMetric	numberOfReceivedPingResponses;
+			managedChannel.addChannelMonitorToChannel();
 
-	private final HistogramMetric	numberOfReceivedSms;
+			this.mbeanExporter.registerManagedResource(managedChannel,
+			        managedChannel.getObjectName());
 
-	private final HistogramMetric	numberOfAcceptedLoginRequests;
+			return managedChannel;
+		}
+	}
 
-	private final HistogramMetric	numberOfRejectedLoginRequests;
+	public static ManagedChannel.Factory factory(
+	        final MBeanExportOperations mbeanExporter) {
+		return new ManagedChannel.Factory(mbeanExporter);
+	}
 
-	private final HistogramMetric	numberOfSentBytes;
+	private final Logger	            log	= LoggerFactory
+	                                                .getLogger(getClass());
 
-	private final HistogramMetric	numberOfSentPdus;
+	private final MBeanExportOperations	mbeanExporter;
 
-	private final HistogramMetric	numberOfSentPingRequests;
+	private final HistogramMetric	    numberOfReceivedBytes;
 
-	private final HistogramMetric	numberOfSentPingResponses;
+	private final CounterMetric	        totalNumberOfReceivedBytes;
 
-	private final Channel	      channel;
+	private final MeterMetric	        numberOfReceivedPdus;
 
-	private final ChannelMonitor	listener;
+	private final MeterMetric	        numberOfReceivedLoginRequests;
 
-	public ManagedChannel(final Channel channel) {
+	private final MeterMetric	        numberOfReceivedLoginResponses;
+
+	private final MeterMetric	        numberOfReceivedPingRequests;
+
+	private final MeterMetric	        numberOfReceivedPingResponses;
+
+	private final MeterMetric	        numberOfReceivedSms;
+
+	private final MeterMetric	        numberOfAcceptedLoginRequests;
+
+	private final MeterMetric	        numberOfRejectedLoginRequests;
+
+	private final HistogramMetric	    numberOfSentBytes;
+
+	private final CounterMetric	        totalNumberOfSentBytes;
+
+	private final MeterMetric	        numberOfSentPdus;
+
+	private final MeterMetric	        numberOfSentPingRequests;
+
+	private final MeterMetric	        numberOfSentPingResponses;
+
+	private final Channel	            channel;
+
+	private final ChannelMonitor	    listener;
+
+	private ManagedChannel(final Channel channel,
+	        final MBeanExportOperations mbeanExporter) {
 		notNull(channel, "Argument 'channel' must not be null");
+		notNull(mbeanExporter, "Argument 'mbeanExporter' must not be null");
 
 		this.channel = channel;
 		this.listener = this.new Listener();
+		this.mbeanExporter = mbeanExporter;
 		// Incoming metrics
 		this.numberOfReceivedBytes = Metrics.newHistogram(Channel.class,
 		        "received-bytes", channel.getId().toString());
-		this.numberOfReceivedPdus = Metrics.newHistogram(Channel.class,
-		        "received-pdus", channel.getId().toString());
-		this.numberOfReceivedLoginRequests = Metrics.newHistogram(
-		        Channel.class, "received-login-requests", channel.getId()
-		                .toString());
-		this.numberOfReceivedLoginResponses = Metrics.newHistogram(
-		        Channel.class, "received-login-responses", channel.getId()
-		                .toString());
-		this.numberOfReceivedPingRequests = Metrics.newHistogram(Channel.class,
-		        "received-ping-requests", channel.getId().toString());
-		this.numberOfReceivedPingResponses = Metrics.newHistogram(
-		        Channel.class, "received-ping-responses", channel.getId()
-		                .toString());
-		this.numberOfReceivedSms = Metrics.newHistogram(Channel.class,
-		        "received-sms", channel.getId().toString());
+		this.totalNumberOfReceivedBytes = Metrics.newCounter(Channel.class,
+		        "total-received-bytes", channel.getId().toString());
+		this.numberOfReceivedPdus = Metrics.newMeter(Channel.class,
+		        "received-pdus", channel.getId().toString(), "pdu-received",
+		        TimeUnit.SECONDS);
+		this.numberOfReceivedLoginRequests = Metrics.newMeter(Channel.class,
+		        "received-login-requests", channel.getId().toString(),
+		        "login-request-received", TimeUnit.SECONDS);
+		this.numberOfReceivedLoginResponses = Metrics.newMeter(Channel.class,
+		        "received-login-responses", channel.getId().toString(),
+		        "login-response-received", TimeUnit.SECONDS);
+		this.numberOfReceivedPingRequests = Metrics.newMeter(Channel.class,
+		        "received-ping-requests", channel.getId().toString(),
+		        "pdu-received", TimeUnit.SECONDS);
+		this.numberOfReceivedPingResponses = Metrics.newMeter(Channel.class,
+		        "received-ping-responses", channel.getId().toString(),
+		        "ping-response-received", TimeUnit.SECONDS);
+		this.numberOfReceivedSms = Metrics.newMeter(Channel.class,
+		        "received-sms", channel.getId().toString(), "pdu-received",
+		        TimeUnit.SECONDS);
 		// Outgoing metrics
 		this.numberOfSentBytes = Metrics.newHistogram(Channel.class,
 		        "sent-bytes", channel.getId().toString());
-		this.numberOfSentPdus = Metrics.newHistogram(Channel.class,
-		        "sent-pdus", channel.getId().toString());
-		this.numberOfAcceptedLoginRequests = Metrics.newHistogram(
-		        Channel.class, "accepted-login-requests", channel.getId()
-		                .toString());
-		this.numberOfRejectedLoginRequests = Metrics.newHistogram(
-		        Channel.class, "rejected-login-requests", channel.getId()
-		                .toString());
-		this.numberOfSentPingRequests = Metrics.newHistogram(Channel.class,
-		        "sent-ping-requests", channel.getId().toString());
-		this.numberOfSentPingResponses = Metrics.newHistogram(Channel.class,
-		        "sent-ping-responses", channel.getId().toString());
+		this.totalNumberOfSentBytes = Metrics.newCounter(Channel.class,
+		        "total-sent-bytes", channel.getId().toString());
+		this.numberOfSentPdus = Metrics.newMeter(Channel.class, "sent-pdus",
+		        channel.getId().toString(), "pdu-sent", TimeUnit.SECONDS);
+		this.numberOfAcceptedLoginRequests = Metrics.newMeter(Channel.class,
+		        "accepted-login-requests", channel.getId().toString(),
+		        "login-request-accepted", TimeUnit.SECONDS);
+		this.numberOfRejectedLoginRequests = Metrics.newMeter(Channel.class,
+		        "rejected-login-requests", channel.getId().toString(),
+		        "login-request-rejected", TimeUnit.SECONDS);
+		this.numberOfSentPingRequests = Metrics.newMeter(Channel.class,
+		        "sent-ping-requests", channel.getId().toString(),
+		        "ping-request-sent", TimeUnit.SECONDS);
+		this.numberOfSentPingResponses = Metrics.newMeter(Channel.class,
+		        "sent-ping-responses", channel.getId().toString(),
+		        "ping-response-sent", TimeUnit.SECONDS);
 	}
 
-	public ChannelMonitor getMonitor() {
+	private void addChannelMonitorToChannel() throws IllegalArgumentException {
+		final ChannelPipeline pipeline = this.channel.getPipeline();
+		boolean monitorEnabledChannelHandlerFound = false;
+		for (final ChannelHandler handler : pipeline.toMap().values()) {
+			if (handler instanceof MonitoredChannel) {
+				monitorEnabledChannelHandlerFound = true;
+				final MonitoredChannel monitoringHandler = MonitoredChannel.class
+				        .cast(handler);
+				monitoringHandler.addMonitor(getMonitor());
+				this.log.trace(
+				        "Added channel monitor [{}] to channel handler [{}]",
+				        getMonitor(), monitoringHandler);
+			}
+		}
+		if (!monitorEnabledChannelHandlerFound) {
+			throw new IllegalArgumentException(
+			        "The pipeline ["
+			                + pipeline
+			                + "] attached to channel ["
+			                + this.channel
+			                + "] does not contain a ChannelHandler that implements ["
+			                + MonitoredChannel.class.getName()
+			                + "]. This ManagedChannel requires its Channel to be monitoring-enabled.");
+		}
+	}
+
+	void close() {
+		Metrics.removeMetric(metricNameOf(this.numberOfAcceptedLoginRequests));
+		Metrics.removeMetric(metricNameOf(this.numberOfReceivedBytes));
+		Metrics.removeMetric(metricNameOf(this.totalNumberOfReceivedBytes));
+		Metrics.removeMetric(metricNameOf(this.numberOfReceivedLoginRequests));
+		Metrics.removeMetric(metricNameOf(this.numberOfReceivedLoginResponses));
+		Metrics.removeMetric(metricNameOf(this.numberOfReceivedPdus));
+		Metrics.removeMetric(metricNameOf(this.numberOfReceivedPingRequests));
+		Metrics.removeMetric(metricNameOf(this.numberOfReceivedPingResponses));
+		Metrics.removeMetric(metricNameOf(this.numberOfReceivedSms));
+		Metrics.removeMetric(metricNameOf(this.numberOfRejectedLoginRequests));
+		Metrics.removeMetric(metricNameOf(this.numberOfSentBytes));
+		Metrics.removeMetric(metricNameOf(this.totalNumberOfSentBytes));
+		Metrics.removeMetric(metricNameOf(this.numberOfSentPdus));
+		Metrics.removeMetric(metricNameOf(this.numberOfSentPingRequests));
+		Metrics.removeMetric(metricNameOf(this.numberOfSentPingResponses));
+
+		removeChannelMonitorFromChannel();
+
+		this.mbeanExporter.unregisterManagedResource(getObjectName());
+		this.log.debug(
+		        "Removed {} from MBeanServer as the underlying channel {} has been closed",
+		        this, this.channel);
+	}
+
+	private MetricName metricNameOf(final Metric metric) {
+		for (final Map.Entry<MetricName, Metric> namePlusMetric : Metrics
+		        .allMetrics().entrySet()) {
+			if (namePlusMetric.getValue().equals(metric)) {
+				return namePlusMetric.getKey();
+			}
+		}
+		throw new IllegalArgumentException("Metric [" + metric
+		        + "] has not been registered in MetricsRegistry ["
+		        + Metrics.defaultRegistry() + "]");
+	}
+
+	private void removeChannelMonitorFromChannel() {
+		final ChannelPipeline pipeline = this.channel.getPipeline();
+		for (final ChannelHandler handler : pipeline.toMap().values()) {
+			if (handler instanceof MonitoredChannel) {
+				final MonitoredChannel monitoringHandler = MonitoredChannel.class
+				        .cast(handler);
+				monitoringHandler.removeMonitor(getMonitor());
+				this.log.trace(
+				        "Removed channel monitor [{}] from channel handler [{}]",
+				        getMonitor(), monitoringHandler);
+			}
+		}
+	}
+
+	private ChannelMonitor getMonitor() {
 		return this.listener;
 	}
 
-	public HistogramMetric getNumberOfReceivedBytes() {
-		return this.numberOfReceivedBytes;
+	private ObjectName getObjectName() {
+		try {
+			return new ObjectName(
+			        "vnet.sms.gateway.netty-gateway-support:component=Channel,id="
+			                + this.channel.getId());
+		} catch (final MalformedObjectNameException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
-	public HistogramMetric getNumberOfReceivedPdus() {
-		return this.numberOfReceivedPdus;
+	// ------------------------------------------------------------------------
+	// number of received bytes
+	// ------------------------------------------------------------------------
+
+	@ManagedAttribute(description = "Total number of bytes received since this channel has been connected")
+	public long getTotalNumberOfReceivedBytes() {
+		return this.totalNumberOfReceivedBytes.count();
 	}
 
-	public HistogramMetric getNumberOfAcceptedLoginRequests() {
-		return this.numberOfAcceptedLoginRequests;
+	@ManagedAttribute(description = "Mean number of bytes received per frame")
+	public double getMeanNumberOfReceivedBytes() {
+		return this.numberOfReceivedBytes.mean();
 	}
 
-	public HistogramMetric getNumberOfRejectedLoginRequests() {
-		return this.numberOfRejectedLoginRequests;
+	@ManagedAttribute(description = "Maximum number of bytes received per frame")
+	public double getMaxNumberOfReceivedBytes() {
+		return this.numberOfReceivedBytes.max();
 	}
 
-	public HistogramMetric getNumberOfSentBytes() {
-		return this.numberOfSentBytes;
+	@ManagedAttribute(description = "Minimum number of bytes received per frame")
+	public double getMinNumberOfReceivedBytes() {
+		return this.numberOfReceivedBytes.min();
 	}
 
-	public HistogramMetric getNumberOfSentPdus() {
-		return this.numberOfSentPdus;
+	@ManagedAttribute(description = "Standard deviation of bytes received per frame")
+	public double getNumberOfReceivedBytesStdDev() {
+		return this.numberOfReceivedBytes.stdDev();
 	}
 
-	public HistogramMetric getNumberOfSentPingRequests() {
-		return this.numberOfSentPingRequests;
+	@ManagedOperation(description = "Compute and return percentile of number of bytes received per frame")
+	@ManagedOperationParameters({ @ManagedOperationParameter(name = "percentile", description = "The value returned from this operation will denote the upper bound "
+	        + "of bytes per frame for 'percentile' percent of all received frames") })
+	public double numberOfReceivedBytesPercentile(final double percentile) {
+		return this.numberOfReceivedBytes.percentile(percentile);
 	}
 
-	public HistogramMetric getNumberOfSentPingResponses() {
-		return this.numberOfSentPingResponses;
+	// ------------------------------------------------------------------------
+	// number of received PDUs
+	// ------------------------------------------------------------------------
+
+	@ManagedAttribute(description = "Total number of PDUs received since this channel has been connected")
+	public long getTotalNumberOfReceivedPdus() {
+		return this.numberOfReceivedPdus.count();
 	}
 
-	public HistogramMetric getNumberOfReceivedLoginRequests() {
-		return this.numberOfReceivedLoginRequests;
+	@ManagedAttribute(description = "Number of PDUs received within the last minute")
+	public double getNumberOfPdusReceivedWithinLast1Minute() {
+		return this.numberOfReceivedPdus.oneMinuteRate();
 	}
 
-	public HistogramMetric getNumberOfReceivedLoginResponses() {
-		return this.numberOfReceivedLoginResponses;
+	@ManagedAttribute(description = "Number of PDUs received within the last 5 minutes")
+	public double getNumberOfPdusReceivedWithinLast5Minutes() {
+		return this.numberOfReceivedPdus.fiveMinuteRate();
 	}
 
-	public HistogramMetric getNumberOfReceivedPingRequests() {
-		return this.numberOfReceivedPingRequests;
+	@ManagedAttribute(description = "Number of PDUs received within the last 15 minutes")
+	public double getNumberOfPdusReceivedWithinLast15Minutes() {
+		return this.numberOfReceivedPdus.fifteenMinuteRate();
 	}
 
-	public HistogramMetric getNumberOfReceivedPingResponses() {
-		return this.numberOfReceivedPingResponses;
+	@ManagedAttribute(description = "Mean number of PDUs received per second")
+	public double getMeanNumberOfPdusReceivedPerSecond() {
+		return this.numberOfReceivedPdus.meanRate();
 	}
 
-	public HistogramMetric getNumberOfReceivedSms() {
-		return this.numberOfReceivedSms;
+	// ------------------------------------------------------------------------
+	// number of accepted login requests
+	// ------------------------------------------------------------------------
+
+	@ManagedAttribute(description = "Total number of accepted/successful login requests")
+	public long getTotalNumberOfAcceptedLoginRequests() {
+		return this.numberOfAcceptedLoginRequests.count();
 	}
+
+	@ManagedAttribute(description = "Number of login requests accepted within the last minute")
+	public double getNumberOfLoginRequestsAcceptedWithinLast1Minute() {
+		return this.numberOfAcceptedLoginRequests.oneMinuteRate();
+	}
+
+	@ManagedAttribute(description = "Number of login requests accepted within the last 5 minutes")
+	public double getNumberOfLoginRequestsAcceptedWithinLast5Minutes() {
+		return this.numberOfAcceptedLoginRequests.fiveMinuteRate();
+	}
+
+	@ManagedAttribute(description = "Number of login requests accepted within the last 15 minutes")
+	public double getNumberOfLoginRequestsAcceptedWithinLast15Minutes() {
+		return this.numberOfAcceptedLoginRequests.fifteenMinuteRate();
+	}
+
+	@ManagedAttribute(description = "Number of accepted login requests per second")
+	public double getMeanNumberOfLoginRequestsAcceptedPerSecond() {
+		return this.numberOfAcceptedLoginRequests.meanRate();
+	}
+
+	// ------------------------------------------------------------------------
+	// number of rejected login requests
+	// ------------------------------------------------------------------------
+
+	@ManagedAttribute(description = "Total number of rejected/failed login requests")
+	public long getTotalNumberOfRejectedLoginRequests() {
+		return this.numberOfRejectedLoginRequests.count();
+	}
+
+	@ManagedAttribute(description = "Number of login requests rejected within the last minute")
+	public double getNumberOfLoginRequestsRejectedWithinLast1Minute() {
+		return this.numberOfRejectedLoginRequests.oneMinuteRate();
+	}
+
+	@ManagedAttribute(description = "Number of login requests rejected within the last 5 minutes")
+	public double getNumberOfLoginRequestsRejectedWithinLast5Minutes() {
+		return this.numberOfRejectedLoginRequests.fiveMinuteRate();
+	}
+
+	@ManagedAttribute(description = "Number of login requests rejected within the last 15 minutes")
+	public double getNumberOfLoginRequestsRejectedWithinLast15Minutes() {
+		return this.numberOfRejectedLoginRequests.fifteenMinuteRate();
+	}
+
+	@ManagedAttribute(description = "Number of rejected login requests per second")
+	public double getMeanNumberOfLoginRequestsRejectedPerSecond() {
+		return this.numberOfRejectedLoginRequests.meanRate();
+	}
+
+	// ------------------------------------------------------------------------
+	// number of sent bytes
+	// ------------------------------------------------------------------------
+
+	@ManagedAttribute(description = "Total number of bytes sent since this channel has been connected")
+	public long getTotalNumberOfSentBytes() {
+		return this.totalNumberOfSentBytes.count();
+	}
+
+	@ManagedAttribute(description = "Mean number of bytes sent per frame")
+	public double getMeanNumberOfSentBytes() {
+		return this.numberOfSentBytes.mean();
+	}
+
+	@ManagedAttribute(description = "Maximum number of bytes sent per frame")
+	public double getMaxNumberOfSentBytes() {
+		return this.numberOfSentBytes.max();
+	}
+
+	@ManagedAttribute(description = "Minimum number of bytes sent per frame")
+	public double getMinNumberOfSentBytes() {
+		return this.numberOfSentBytes.min();
+	}
+
+	@ManagedAttribute(description = "Standard deviation of bytes sent per frame")
+	public double getNumberOfSentBytesStdDev() {
+		return this.numberOfSentBytes.stdDev();
+	}
+
+	@ManagedOperation(description = "Compute and return percentile of number of bytes sent per frame")
+	@ManagedOperationParameters({ @ManagedOperationParameter(name = "percentile", description = "The value returned from this operation will denote the upper bound "
+	        + "of bytes per frame for 'percentile' percent of all sent frames") })
+	public double numberOfSentBytesPercentile(final double percentile) {
+		return this.numberOfSentBytes.percentile(percentile);
+	}
+
+	// ------------------------------------------------------------------------
+	// number of sent PDUs
+	// ------------------------------------------------------------------------
+
+	@ManagedAttribute(description = "Total number of sent PDUs")
+	public long getTotalNumberOfSentPdus() {
+		return this.numberOfSentPdus.count();
+	}
+
+	@ManagedAttribute(description = "Number of PDUs sent within the last minute")
+	public double getNumberOfPdusSentWithinLast1Minute() {
+		return this.numberOfSentPdus.oneMinuteRate();
+	}
+
+	@ManagedAttribute(description = "Number of PDUs sent within the last 5 minutes")
+	public double getNumberOfPdusSentWithinLast5Minutes() {
+		return this.numberOfSentPdus.fiveMinuteRate();
+	}
+
+	@ManagedAttribute(description = "Number of PDUs sent within the last 15 minutes")
+	public double getNumberOfPdusSentWithinLast15Minutes() {
+		return this.numberOfSentPdus.fifteenMinuteRate();
+	}
+
+	@ManagedAttribute(description = "Number of PDUs sent per second")
+	public double getMeanNumberOfPdusSentPerSecond() {
+		return this.numberOfSentPdus.meanRate();
+	}
+
+	// ------------------------------------------------------------------------
+	// number of sent ping requests
+	// ------------------------------------------------------------------------
+
+	@ManagedAttribute(description = "Total number of sent ping requests")
+	public long getTotalNumberOfSentPingRequests() {
+		return this.numberOfSentPingRequests.count();
+	}
+
+	@ManagedAttribute(description = "Number of ping requests sent within the last minute")
+	public double getNumberOfPingRequestsSentWithinLast1Minute() {
+		return this.numberOfSentPingRequests.oneMinuteRate();
+	}
+
+	@ManagedAttribute(description = "Number of ping requests sent within the last 5 minutes")
+	public double getNumberOfPingRequestsSentWithinLast5Minutes() {
+		return this.numberOfSentPingRequests.fiveMinuteRate();
+	}
+
+	@ManagedAttribute(description = "Number of ping requests sent within the last 15 minutes")
+	public double getNumberOfPingRequestsSentWithinLast15Minutes() {
+		return this.numberOfSentPingRequests.fifteenMinuteRate();
+	}
+
+	@ManagedAttribute(description = "Number of rejected login requests per second")
+	public double getMeanNumberOfPingRequestsSentPerSecond() {
+		return this.numberOfSentPingRequests.meanRate();
+	}
+
+	// ------------------------------------------------------------------------
+	// number of sent ping responses
+	// ------------------------------------------------------------------------
+
+	@ManagedAttribute(description = "Total number of sent ping responses")
+	public long getTotalNumberOfSentPingResponses() {
+		return this.numberOfSentPingResponses.count();
+	}
+
+	@ManagedAttribute(description = "Number of ping responses sent within the last minute")
+	public double getNumberOfPingResponsesSentWithinLast1Minute() {
+		return this.numberOfSentPingResponses.oneMinuteRate();
+	}
+
+	@ManagedAttribute(description = "Number of ping responses sent within the last 5 minutes")
+	public double getNumberOfPingResponsesSentWithinLast5Minutes() {
+		return this.numberOfSentPingResponses.fiveMinuteRate();
+	}
+
+	@ManagedAttribute(description = "Number of ping responses sent within the last 15 minutes")
+	public double getNumberOfPingResponsesSentWithinLast15Minutes() {
+		return this.numberOfSentPingResponses.fifteenMinuteRate();
+	}
+
+	@ManagedAttribute(description = "Number of ping responses sent per second")
+	public double getMeanNumberOfPingResponsesSentPerSecond() {
+		return this.numberOfSentPingResponses.meanRate();
+	}
+
+	// ------------------------------------------------------------------------
+	// number of received login requests
+	// ------------------------------------------------------------------------
+
+	@ManagedAttribute(description = "Total number of received login requests")
+	public long getTotalNumberOfReceivedLoginRequests() {
+		return this.numberOfReceivedLoginRequests.count();
+	}
+
+	@ManagedAttribute(description = "Number of login requests received within the last minute")
+	public double getNumberOfLoginRequestsReceivedWithinLast1Minute() {
+		return this.numberOfReceivedLoginRequests.oneMinuteRate();
+	}
+
+	@ManagedAttribute(description = "Number of login requests received within the last 5 minutes")
+	public double getNumberOfLoginRequestsReceivedWithinLast5Minutes() {
+		return this.numberOfReceivedLoginRequests.fiveMinuteRate();
+	}
+
+	@ManagedAttribute(description = "Number of login requests received within the last 15 minutes")
+	public double getNumberOfLoginRequestsReceivedWithinLast15Minutes() {
+		return this.numberOfReceivedLoginRequests.fifteenMinuteRate();
+	}
+
+	@ManagedAttribute(description = "Number of login requests received per second")
+	public double getMeanNumberOfLoginRequestsReceivedPerSecond() {
+		return this.numberOfReceivedLoginRequests.meanRate();
+	}
+
+	// ------------------------------------------------------------------------
+	// number of received login responses
+	// ------------------------------------------------------------------------
+
+	@ManagedAttribute(description = "Total number of received login responses")
+	public long getTotalNumberOfReceivedLoginResponses() {
+		return this.numberOfReceivedLoginResponses.count();
+	}
+
+	@ManagedAttribute(description = "Number of login responses received within the last minute")
+	public double getNumberOfLoginResponsesReceivedWithinLast1Minute() {
+		return this.numberOfReceivedLoginResponses.oneMinuteRate();
+	}
+
+	@ManagedAttribute(description = "Number of login responses received within the last 5 minutes")
+	public double getNumberOfLoginResponsesReceivedWithinLast5Minutes() {
+		return this.numberOfReceivedLoginResponses.fiveMinuteRate();
+	}
+
+	@ManagedAttribute(description = "Number of login responses received within the last 15 minutes")
+	public double getNumberOfLoginResponsesReceivedWithinLast15Minutes() {
+		return this.numberOfReceivedLoginResponses.fifteenMinuteRate();
+	}
+
+	@ManagedAttribute(description = "Number of login responses received per second")
+	public double getMeanNumberOfLoginResponsesReceivedPerSecond() {
+		return this.numberOfReceivedLoginResponses.meanRate();
+	}
+
+	// ------------------------------------------------------------------------
+	// number of received ping requests
+	// ------------------------------------------------------------------------
+
+	@ManagedAttribute(description = "Total number of received ping requests")
+	public long getTotalNumberOfReceivedPingRequests() {
+		return this.numberOfReceivedPingRequests.count();
+	}
+
+	@ManagedAttribute(description = "Number of ping requests received within the last minute")
+	public double getNumberOfPingRequestsReceivedWithinLast1Minute() {
+		return this.numberOfReceivedPingRequests.oneMinuteRate();
+	}
+
+	@ManagedAttribute(description = "Number of ping requests received within the last 5 minutes")
+	public double getNumberOfPingRequestsReceivedWithinLast5Minutes() {
+		return this.numberOfReceivedPingRequests.fiveMinuteRate();
+	}
+
+	@ManagedAttribute(description = "Number of ping requests received within the last 15 minutes")
+	public double getNumberOfPingRequestsReceivedWithinLast15Minutes() {
+		return this.numberOfReceivedPingRequests.fifteenMinuteRate();
+	}
+
+	@ManagedAttribute(description = "Number of ping requests received per second")
+	public double getMeanNumberOfPingRequestsReceivedPerSecond() {
+		return this.numberOfReceivedPingRequests.meanRate();
+	}
+
+	// ------------------------------------------------------------------------
+	// number of received ping responses
+	// ------------------------------------------------------------------------
+
+	@ManagedAttribute(description = "Total number of received ping responses")
+	public long getTotalNumberOfReceivedPingResponses() {
+		return this.numberOfReceivedPingResponses.count();
+	}
+
+	@ManagedAttribute(description = "Number of ping responses received within the last minute")
+	public double getNumberOfPingResponsesReceivedWithinLast1Minute() {
+		return this.numberOfReceivedPingResponses.oneMinuteRate();
+	}
+
+	@ManagedAttribute(description = "Number of ping responses received within the last 5 minutes")
+	public double getNumberOfPingResponsesReceivedWithinLast5Minutes() {
+		return this.numberOfReceivedPingResponses.fiveMinuteRate();
+	}
+
+	@ManagedAttribute(description = "Number of ping responses received within the last 15 minutes")
+	public double getNumberOfPingResponsesReceivedWithinLast15Minutes() {
+		return this.numberOfReceivedPingResponses.fifteenMinuteRate();
+	}
+
+	@ManagedAttribute(description = "Number of ping responses received per second")
+	public double getMeanNumberOfPingResponsesReceivedPerSecond() {
+		return this.numberOfReceivedPingResponses.meanRate();
+	}
+
+	// ------------------------------------------------------------------------
+	// number of received SMS
+	// ------------------------------------------------------------------------
+
+	@ManagedAttribute(description = "Total number of received SMS")
+	public long getTotalNumberOfReceivedSms() {
+		return this.numberOfReceivedSms.count();
+	}
+
+	@ManagedAttribute(description = "Number of SMS received within the last minute")
+	public double getNumberOfSmsReceivedWithinLast1Minute() {
+		return this.numberOfReceivedSms.oneMinuteRate();
+	}
+
+	@ManagedAttribute(description = "Number of SMS received within the last 5 minutes")
+	public double getNumberOfSmsReceivedWithinLast5Minutes() {
+		return this.numberOfReceivedSms.fiveMinuteRate();
+	}
+
+	@ManagedAttribute(description = "Number of SMS received within the last 15 minutes")
+	public double getNumberOfSmsReceivedWithinLast15Minutes() {
+		return this.numberOfReceivedSms.fifteenMinuteRate();
+	}
+
+	@ManagedAttribute(description = "Number of SMS received per second")
+	public double getMeanNumberOfSmsReceivedPerSecond() {
+		return this.numberOfReceivedSms.meanRate();
+	}
+
+	// ------------------------------------------------------------------------
+	// equals, hashCode, ...
+	// ------------------------------------------------------------------------
 
 	@Override
 	public int hashCode() {
@@ -176,25 +688,27 @@ public class ManagedChannel {
 	@Override
 	public String toString() {
 		return "ManagedChannel@" + hashCode() + "[channel: " + this.channel
-		        + "|numberOfReceivedBytes: " + this.numberOfReceivedBytes
-		        + "|numberOfReceivedPdus: " + this.numberOfReceivedPdus
+		        + "|numberOfReceivedBytes: " + getTotalNumberOfReceivedBytes()
+		        + "|numberOfReceivedPdus: " + getTotalNumberOfReceivedPdus()
 		        + "|numberOfReceivedLoginRequests: "
-		        + this.numberOfReceivedLoginRequests
+		        + getTotalNumberOfReceivedLoginRequests()
 		        + "|numberOfReceivedLoginResponses: "
-		        + this.numberOfReceivedLoginResponses
+		        + getTotalNumberOfReceivedLoginResponses()
 		        + "|numberOfReceivedPingRequests: "
-		        + this.numberOfReceivedPingRequests
+		        + getTotalNumberOfReceivedPingRequests()
 		        + "|numberOfReceivedPingResponses: "
-		        + this.numberOfReceivedPingResponses + "|numberOfReceivedSms: "
-		        + this.numberOfReceivedSms + "|numberOfAcceptedLoginRequests: "
-		        + this.numberOfAcceptedLoginRequests
+		        + getTotalNumberOfReceivedPingResponses()
+		        + "|numberOfReceivedSms: " + getTotalNumberOfReceivedSms()
+		        + "|numberOfAcceptedLoginRequests: "
+		        + getTotalNumberOfAcceptedLoginRequests()
 		        + "|numberOfRejectedLoginRequests: "
-		        + this.numberOfRejectedLoginRequests + "|numberOfSentBytes: "
-		        + this.numberOfSentBytes + "|numberOfSentPdus: "
-		        + this.numberOfSentPdus + "|numberOfSentPingRequests: "
-		        + this.numberOfSentPingRequests
+		        + getTotalNumberOfRejectedLoginRequests()
+		        + "|numberOfSentBytes: " + getTotalNumberOfSentBytes()
+		        + "|numberOfSentPdus: " + getTotalNumberOfSentPdus()
+		        + "|numberOfSentPingRequests: "
+		        + getTotalNumberOfSentPingRequests()
 		        + "|numberOfSentPingResponses: "
-		        + this.numberOfSentPingResponses + "]";
+		        + getTotalNumberOfSentPingResponses() + "]";
 	}
 
 	private class Listener implements ChannelMonitor {
@@ -202,56 +716,57 @@ public class ManagedChannel {
 		@Override
 		public void bytesReceived(final long numberOfBytes) {
 			ManagedChannel.this.numberOfReceivedBytes.update(numberOfBytes);
+			ManagedChannel.this.totalNumberOfReceivedBytes.inc(numberOfBytes);
 		}
 
 		@Override
 		public void pduReceived() {
-			ManagedChannel.this.numberOfReceivedPdus.update(1);
+			ManagedChannel.this.numberOfReceivedPdus.mark();
 		}
 
 		@Override
 		public void loginRequestReceived() {
-			ManagedChannel.this.numberOfReceivedLoginRequests.update(1);
+			ManagedChannel.this.numberOfReceivedLoginRequests.mark();
 		}
 
 		@Override
 		public void loginResponseReceived() {
-			ManagedChannel.this.numberOfReceivedLoginResponses.update(1);
+			ManagedChannel.this.numberOfReceivedLoginResponses.mark();
 		}
 
 		@Override
 		public void pingRequestReceived() {
-			ManagedChannel.this.numberOfReceivedPingRequests.update(1);
+			ManagedChannel.this.numberOfReceivedPingRequests.mark();
 		}
 
 		@Override
 		public void pingResponseReceived() {
-			ManagedChannel.this.numberOfReceivedPingResponses.update(1);
+			ManagedChannel.this.numberOfReceivedPingResponses.mark();
 		}
 
 		@Override
 		public void smsReceived() {
-			ManagedChannel.this.numberOfReceivedSms.update(1);
+			ManagedChannel.this.numberOfReceivedSms.mark();
 		}
 
 		@Override
 		public void sendLoginRequestAccepted() {
-			ManagedChannel.this.numberOfAcceptedLoginRequests.update(1);
+			ManagedChannel.this.numberOfAcceptedLoginRequests.mark();
 		}
 
 		@Override
 		public void sendLoginRequestRejected() {
-			ManagedChannel.this.numberOfRejectedLoginRequests.update(1);
+			ManagedChannel.this.numberOfRejectedLoginRequests.mark();
 		}
 
 		@Override
 		public void sendPingRequest() {
-			ManagedChannel.this.numberOfSentPingRequests.update(1);
+			ManagedChannel.this.numberOfSentPingRequests.mark();
 		}
 
 		@Override
 		public void sendPingResponse() {
-			ManagedChannel.this.numberOfSentPingResponses.update(1);
+			ManagedChannel.this.numberOfSentPingResponses.mark();
 		}
 
 		@Override
@@ -261,12 +776,13 @@ public class ManagedChannel {
 
 		@Override
 		public void sendPdu() {
-			ManagedChannel.this.numberOfSentPdus.update(1);
+			ManagedChannel.this.numberOfSentPdus.mark();
 		}
 
 		@Override
 		public void sendBytes(final long numberOfBytes) {
 			ManagedChannel.this.numberOfSentBytes.update(numberOfBytes);
+			ManagedChannel.this.totalNumberOfSentBytes.inc(numberOfBytes);
 		}
 	}
 }

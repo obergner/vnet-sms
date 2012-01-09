@@ -129,7 +129,7 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 		this.connectedChannelsTracker = new ConnectedChannelsTrackingChannelHandler(
 		        new MonitoringChannelGroup("vnet.sms.gateway:server="
 		                + gatewayServerInstanceId
-		                + ",type=all-connected-channels"));
+		                + ",type=all-connected-channels", mbeanExporter));
 		this.incomingMessagesPublisher.addListener(messageForwardingJmsBridge);
 	}
 
