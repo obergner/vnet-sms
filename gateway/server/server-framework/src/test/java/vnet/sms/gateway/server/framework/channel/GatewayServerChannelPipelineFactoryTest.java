@@ -31,7 +31,6 @@ import vnet.sms.common.messages.LoginResponse;
 import vnet.sms.common.messages.Message;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.PingResponse;
-import vnet.sms.gateway.nettysupport.monitor.ChannelMonitorRegistry;
 import vnet.sms.gateway.nettysupport.window.NoWindowForIncomingMessageAvailableEvent;
 import vnet.sms.gateway.nettytest.ChannelEventFilter;
 import vnet.sms.gateway.nettytest.ChannelPipelineEmbedder;
@@ -49,7 +48,6 @@ public class GatewayServerChannelPipelineFactoryTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public final void assertThatConstructorRejectsNullPduType() {
-		final ChannelMonitorRegistry channelMonitorRegistry = new ChannelMonitorRegistry();
 		final JmsTemplate jmsTemplate = createNiceMock(JmsTemplate.class);
 		new GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer>(
 		        "assertThatConstructorRejectsNullPduType",
@@ -59,7 +57,6 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new Base64Encoder(),
 		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(),
-		        channelMonitorRegistry,
 		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
 		        1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
@@ -68,7 +65,6 @@ public class GatewayServerChannelPipelineFactoryTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public final void assertThatConstructorRejectsNullFrameDecoder() {
-		final ChannelMonitorRegistry channelMonitorRegistry = new ChannelMonitorRegistry();
 		final JmsTemplate jmsTemplate = createNiceMock(JmsTemplate.class);
 		new GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer>(
 		        "assertThatConstructorRejectsNullFrameDecoder",
@@ -78,7 +74,6 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new Base64Encoder(),
 		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(),
-		        channelMonitorRegistry,
 		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
 		        1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
@@ -87,7 +82,6 @@ public class GatewayServerChannelPipelineFactoryTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public final void assertThatConstructorRejectsNullEncoder() {
-		final ChannelMonitorRegistry channelMonitorRegistry = new ChannelMonitorRegistry();
 		final JmsTemplate jmsTemplate = createNiceMock(JmsTemplate.class);
 		new GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer>(
 		        "assertThatConstructorRejectsNullEncoder",
@@ -97,7 +91,6 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        null,
 		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(),
-		        channelMonitorRegistry,
 		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
 		        1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
@@ -106,7 +99,6 @@ public class GatewayServerChannelPipelineFactoryTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public final void assertThatConstructorRejectsNullTransportProtocolAdpatingUpstreamChannelHandler() {
-		final ChannelMonitorRegistry channelMonitorRegistry = new ChannelMonitorRegistry();
 		final JmsTemplate jmsTemplate = createNiceMock(JmsTemplate.class);
 		new GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer>(
 		        "assertThatConstructorRejectsNullTransportProtocolAdpatingUpstreamChannelHandler",
@@ -116,7 +108,6 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new Base64Encoder(),
 		        null,
 		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(),
-		        channelMonitorRegistry,
 		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
 		        1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
@@ -125,7 +116,6 @@ public class GatewayServerChannelPipelineFactoryTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public final void assertThatConstructorRejectsNullTransportProtocolAdaptingDownstreamChannelHandler() {
-		final ChannelMonitorRegistry channelMonitorRegistry = new ChannelMonitorRegistry();
 		final JmsTemplate jmsTemplate = createNiceMock(JmsTemplate.class);
 		new GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer>(
 		        "assertThatConstructorRejectsNullTransportProtocolAdaptingDownstreamChannelHandler",
@@ -134,25 +124,6 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new Base64Decoder(),
 		        new Base64Encoder(),
 		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(),
-		        null, channelMonitorRegistry,
-		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
-		        1000L, new AcceptAllAuthenticationManager(), 1000L,
-		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
-		        new MBeanExporter());
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public final void assertThatConstructorRejectsNullChannelMonitorRegistry() {
-		final ChannelMonitorRegistry channelMonitorRegistry = new ChannelMonitorRegistry();
-		final JmsTemplate jmsTemplate = createNiceMock(JmsTemplate.class);
-		new GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer>(
-		        "assertThatConstructorRejectsNullChannelMonitorRegistry",
-		        ReferenceableMessageContainer.class,
-		        new DelimiterBasedFrameDecoder(0, ChannelBuffers.EMPTY_BUFFER),
-		        new Base64Decoder(),
-		        new Base64Encoder(),
-		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(),
-		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(),
 		        null, new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
 		        1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
@@ -161,7 +132,6 @@ public class GatewayServerChannelPipelineFactoryTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public final void assertThatConstructorRejectsNullAuthenticationManager() {
-		final ChannelMonitorRegistry channelMonitorRegistry = new ChannelMonitorRegistry();
 		final JmsTemplate jmsTemplate = createNiceMock(JmsTemplate.class);
 		new GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer>(
 		        "assertThatConstructorRejectsNullAuthenticationManager",
@@ -171,7 +141,6 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new Base64Encoder(),
 		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(),
-		        channelMonitorRegistry,
 		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
 		        1000L, null, 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
@@ -180,7 +149,6 @@ public class GatewayServerChannelPipelineFactoryTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public final void assertThatConstructorRejectsNullMessageReferenceGenerator() {
-		final ChannelMonitorRegistry channelMonitorRegistry = new ChannelMonitorRegistry();
 		final JmsTemplate jmsTemplate = createNiceMock(JmsTemplate.class);
 		new GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer>(
 		        "assertThatConstructorRejectsNullMessageReferenceGenerator",
@@ -190,7 +158,6 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new Base64Encoder(),
 		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(),
-		        channelMonitorRegistry,
 		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
 		        1000L, new AcceptAllAuthenticationManager(), 1000L, null, 2,
 		        2000L, new MBeanExporter());
@@ -198,7 +165,6 @@ public class GatewayServerChannelPipelineFactoryTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public final void assertThatConstructorRejectsNullMBeanServer() {
-		final ChannelMonitorRegistry channelMonitorRegistry = new ChannelMonitorRegistry();
 		final JmsTemplate jmsTemplate = createNiceMock(JmsTemplate.class);
 		new GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer>(
 		        "assertThatConstructorRejectsNullMBeanServer",
@@ -208,7 +174,6 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new Base64Encoder(),
 		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(),
-		        channelMonitorRegistry,
 		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
 		        1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L, null);
@@ -222,14 +187,12 @@ public class GatewayServerChannelPipelineFactoryTest {
 		final long failedLoginResponseMillis = 1000L;
 		final int pingIntervalSeconds = 100;
 		final long pingResponseTimeoutMillis = 2000L;
-		final ChannelMonitorRegistry channelMonitorRegistry = new ChannelMonitorRegistry();
 		final AuthenticationManager authenticationManager = new AcceptAllAuthenticationManager();
 
 		final GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer> objectUnderTest = newObjectUnderTest(
 		        availableIncomingWindows, incomingWindowWaitTimeMillis,
 		        failedLoginResponseMillis, pingIntervalSeconds,
-		        pingResponseTimeoutMillis, channelMonitorRegistry,
-		        authenticationManager);
+		        pingResponseTimeoutMillis, authenticationManager);
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        objectUnderTest);
 
@@ -260,7 +223,6 @@ public class GatewayServerChannelPipelineFactoryTest {
 	        final long failedLoginResponseMillis,
 	        final int pingIntervalSeconds,
 	        final long pingResponseTimeoutMillis,
-	        final ChannelMonitorRegistry channelMonitorRegistry,
 	        final AuthenticationManager authenticationManager) {
 		final JmsTemplate jmsTemplate = createNiceMock(JmsTemplate.class);
 		expect(jmsTemplate.getDefaultDestinationName()).andReturn(
@@ -276,7 +238,6 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new ObjectEncoder(),
 		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(),
-		        channelMonitorRegistry,
 		        new MessageForwardingJmsBridge<Integer>(jmsTemplate),
 		        availableIncomingWindows, incomingWindowWaitTimeMillis,
 		        authenticationManager, failedLoginResponseMillis,
@@ -292,14 +253,12 @@ public class GatewayServerChannelPipelineFactoryTest {
 		final long failedLoginResponseMillis = 200L;
 		final int pingIntervalSeconds = 100;
 		final long pingResponseTimeoutMillis = 2000L;
-		final ChannelMonitorRegistry channelMonitorRegistry = new ChannelMonitorRegistry();
 		final AuthenticationManager authenticationManager = new DenyAllAuthenticationManager();
 
 		final GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer> objectUnderTest = newObjectUnderTest(
 		        availableIncomingWindows, incomingWindowWaitTimeMillis,
 		        failedLoginResponseMillis, pingIntervalSeconds,
-		        pingResponseTimeoutMillis, channelMonitorRegistry,
-		        authenticationManager);
+		        pingResponseTimeoutMillis, authenticationManager);
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        objectUnderTest);
 
@@ -333,14 +292,12 @@ public class GatewayServerChannelPipelineFactoryTest {
 		final long failedLoginResponseMillis = 400L;
 		final int pingIntervalSeconds = 100;
 		final long pingResponseTimeoutMillis = 2000L;
-		final ChannelMonitorRegistry channelMonitorRegistry = new ChannelMonitorRegistry();
 		final AuthenticationManager authenticationManager = new DenyAllAuthenticationManager();
 
 		final GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer> objectUnderTest = newObjectUnderTest(
 		        availableIncomingWindows, incomingWindowWaitTimeMillis,
 		        failedLoginResponseMillis, pingIntervalSeconds,
-		        pingResponseTimeoutMillis, channelMonitorRegistry,
-		        authenticationManager);
+		        pingResponseTimeoutMillis, authenticationManager);
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        objectUnderTest);
 
@@ -376,14 +333,12 @@ public class GatewayServerChannelPipelineFactoryTest {
 		final long failedLoginResponseMillis = 200L;
 		final int pingIntervalSeconds = 100;
 		final long pingResponseTimeoutMillis = 2000L;
-		final ChannelMonitorRegistry channelMonitorRegistry = new ChannelMonitorRegistry();
 		final AuthenticationManager authenticationManager = new DenyAllAuthenticationManager();
 
 		final GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer> objectUnderTest = newObjectUnderTest(
 		        availableIncomingWindows, incomingWindowWaitTimeMillis,
 		        failedLoginResponseMillis, pingIntervalSeconds,
-		        pingResponseTimeoutMillis, channelMonitorRegistry,
-		        authenticationManager);
+		        pingResponseTimeoutMillis, authenticationManager);
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        objectUnderTest);
 
@@ -415,14 +370,12 @@ public class GatewayServerChannelPipelineFactoryTest {
 		final long failedLoginResponseMillis = 400L;
 		final int pingIntervalSeconds = 1;
 		final long pingResponseTimeoutMillis = 10000L;
-		final ChannelMonitorRegistry channelMonitorRegistry = new ChannelMonitorRegistry();
 		final AuthenticationManager authenticationManager = new DenyAllAuthenticationManager();
 
 		final GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer> objectUnderTest = newObjectUnderTest(
 		        availableIncomingWindows, incomingWindowWaitTimeMillis,
 		        failedLoginResponseMillis, pingIntervalSeconds,
-		        pingResponseTimeoutMillis, channelMonitorRegistry,
-		        authenticationManager);
+		        pingResponseTimeoutMillis, authenticationManager);
 		// Will fire "channel connected" and thus start ping interval
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        objectUnderTest);
@@ -451,14 +404,12 @@ public class GatewayServerChannelPipelineFactoryTest {
 		final long failedLoginResponseMillis = 400L;
 		final int pingIntervalSeconds = 1;
 		final long pingResponseTimeoutMillis = 10000L;
-		final ChannelMonitorRegistry channelMonitorRegistry = new ChannelMonitorRegistry();
 		final AuthenticationManager authenticationManager = new AcceptAllAuthenticationManager();
 
 		final GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer> objectUnderTest = newObjectUnderTest(
 		        availableIncomingWindows, incomingWindowWaitTimeMillis,
 		        failedLoginResponseMillis, pingIntervalSeconds,
-		        pingResponseTimeoutMillis, channelMonitorRegistry,
-		        authenticationManager);
+		        pingResponseTimeoutMillis, authenticationManager);
 		// Will fire "channel connected" and thus start ping interval
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        objectUnderTest);
@@ -509,14 +460,12 @@ public class GatewayServerChannelPipelineFactoryTest {
 		final long failedLoginResponseMillis = 400L;
 		final int pingIntervalSeconds = 1;
 		final long pingResponseTimeoutMillis = 10000L;
-		final ChannelMonitorRegistry channelMonitorRegistry = new ChannelMonitorRegistry();
 		final AuthenticationManager authenticationManager = new AcceptAllAuthenticationManager();
 
 		final GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer> objectUnderTest = newObjectUnderTest(
 		        availableIncomingWindows, incomingWindowWaitTimeMillis,
 		        failedLoginResponseMillis, pingIntervalSeconds,
-		        pingResponseTimeoutMillis, channelMonitorRegistry,
-		        authenticationManager);
+		        pingResponseTimeoutMillis, authenticationManager);
 		// Will fire "channel connected" and thus register our
 		// IncomingWindowStore
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(

@@ -53,8 +53,6 @@
 		<property name="gatewayServerInstanceId" value="${gateway.server.instanceId}" />
 		<property name="authenticationManager"
 			ref="vnet.sms.gateway.server.server-framework.authenticationManager" />
-		<property name="channelMonitorRegistry"
-			ref="vnet.sms.gateway.server.server-framework.channelMonitorRegistry" />
 		<property name="messageForwardingJmsBridge"
 			ref="vnet.sms.gateway.server.server-framework.messageForwardingJmsBridge" />
 		<property name="availableIncomingWindows" value="${gateway.server.availableIncomingWindows}" />
@@ -71,11 +69,6 @@
 	<bean id="vnet.sms.gateway.server.server-framework.authenticationManager"
 		class="vnet.sms.gateway.server.framework.test.AcceptAllAuthenticationManager" />
 	<!-- END-SNIPPET: authentication manager -->
-
-	<!-- START-SNIPPET: channel monitor registry -->
-	<bean id="vnet.sms.gateway.server.server-framework.channelMonitorRegistry"
-		class="vnet.sms.gateway.nettysupport.monitor.ChannelMonitorRegistry" />
-	<!-- END-SNIPPET: channel monitor registry -->
 
 	<!-- START-SNIPPET: message forwarding JMS bridge -->
 	<bean

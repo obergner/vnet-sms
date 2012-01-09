@@ -12,7 +12,6 @@ import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.ChannelPipelineFactory;
 import org.jboss.netty.channel.Channels;
 import org.jboss.netty.channel.group.ChannelGroup;
-import org.jboss.netty.channel.group.DefaultChannelGroup;
 import org.jboss.netty.handler.codec.frame.FrameDecoder;
 import org.jboss.netty.handler.codec.oneone.OneToOneDecoder;
 import org.jboss.netty.handler.codec.oneone.OneToOneEncoder;
@@ -22,7 +21,7 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.security.authentication.AuthenticationManager;
 
 import vnet.sms.gateway.nettysupport.login.incoming.IncomingLoginRequestsChannelHandler;
-import vnet.sms.gateway.nettysupport.monitor.ChannelMonitorRegistry;
+import vnet.sms.gateway.nettysupport.monitor.MonitoringChannelGroup;
 import vnet.sms.gateway.nettysupport.monitor.incoming.IncomingBytesCountingChannelHandler;
 import vnet.sms.gateway.nettysupport.monitor.incoming.IncomingMessagesMonitoringChannelHandler;
 import vnet.sms.gateway.nettysupport.monitor.incoming.IncomingPdusCountingChannelHandler;
@@ -70,8 +69,6 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 
 	private final TransportProtocolAdaptingDownstreamChannelHandler<ID, TP>	downstreamTransportProtocolAdapter;
 
-	private final ChannelMonitorRegistry	                                channelMonitorRegistry;
-
 	private final AuthenticationManager	                                    authenticationManager;
 
 	private final MessageReferenceGenerator<ID>	                            windowIdGenerator;
@@ -90,7 +87,6 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 	        final OneToOneEncoder encoder,
 	        final TransportProtocolAdaptingUpstreamChannelHandler<ID, TP> upstreamTransportProtocolAdapter,
 	        final TransportProtocolAdaptingDownstreamChannelHandler<ID, TP> downstreamTransportProtocolAdapter,
-	        final ChannelMonitorRegistry channelMonitorRegistry,
 	        final MessageForwardingJmsBridge<ID> messageForwardingJmsBridge,
 	        final int availableIncomingWindows,
 	        final long incomingWindowWaitTimeMillis,
@@ -109,8 +105,6 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 		        "Argument 'upstreamTransportProtocolAdapter' must not be null");
 		notNull(downstreamTransportProtocolAdapter,
 		        "Argument 'downstreamTransportProtocolAdapter' must not be null");
-		notNull(channelMonitorRegistry,
-		        "Argument 'channelMonitorRegistry' must not be null");
 		notNull(messageForwardingJmsBridge,
 		        "Argument 'messageForwardingJmsBridge' must not be null");
 		notNull(authenticationManager,
@@ -124,7 +118,6 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 		this.encoder = encoder;
 		this.upstreamTransportProtocolAdapter = upstreamTransportProtocolAdapter;
 		this.downstreamTransportProtocolAdapter = downstreamTransportProtocolAdapter;
-		this.channelMonitorRegistry = channelMonitorRegistry;
 		this.availableIncomingWindows = availableIncomingWindows;
 		this.incomingWindowWaitTimeMillis = incomingWindowWaitTimeMillis;
 		this.authenticationManager = authenticationManager;
@@ -134,7 +127,7 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 		this.pingResponseTimeoutMillis = pingResponseTimeoutMillis;
 		this.mbeanExporter = mbeanExporter;
 		this.connectedChannelsTracker = new ConnectedChannelsTrackingChannelHandler(
-		        new DefaultChannelGroup("vnet.sms.gateway:server="
+		        new MonitoringChannelGroup("vnet.sms.gateway:server="
 		                + gatewayServerInstanceId
 		                + ",type=all-connected-channels"));
 		this.incomingMessagesPublisher.addListener(messageForwardingJmsBridge);
@@ -153,12 +146,10 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 
 		// Monitor number of incoming bytes ...
 		pipeline.addLast(IncomingBytesCountingChannelHandler.NAME,
-		        new IncomingBytesCountingChannelHandler(
-		                this.channelMonitorRegistry));
+		        new IncomingBytesCountingChannelHandler());
 		// ... and outgoing bytes, too, while we are at it.
 		pipeline.addLast(OutgoingBytesCountingChannelHandler.NAME,
-		        new OutgoingBytesCountingChannelHandler(
-		                this.channelMonitorRegistry));
+		        new OutgoingBytesCountingChannelHandler());
 
 		// Frame decoder, decoder, encoder
 		pipeline.addLast("vnet.sms.gateway:frame-decoder", this.frameDecoder);
@@ -171,12 +162,10 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 
 		// Monitor number of incoming PDUs ...
 		pipeline.addLast(IncomingPdusCountingChannelHandler.NAME,
-		        new IncomingPdusCountingChannelHandler<TP>(
-		                this.channelMonitorRegistry, this.pduType));
+		        new IncomingPdusCountingChannelHandler<TP>(this.pduType));
 		// ... and outgoing PDUs, too, while we are at it.
 		pipeline.addLast(OutgoingPdusCountingChannelHandler.NAME,
-		        new OutgoingPdusCountingChannelHandler<TP>(
-		                this.channelMonitorRegistry, this.pduType));
+		        new OutgoingPdusCountingChannelHandler<TP>(this.pduType));
 
 		// Transport protocol adapter
 		pipeline.addLast(TransportProtocolAdaptingUpstreamChannelHandler.NAME,
@@ -187,11 +176,9 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 
 		// Monitor incoming and outgoing messages
 		pipeline.addLast(IncomingMessagesMonitoringChannelHandler.NAME,
-		        new IncomingMessagesMonitoringChannelHandler<ID>(
-		                this.channelMonitorRegistry));
+		        new IncomingMessagesMonitoringChannelHandler<ID>());
 		pipeline.addLast(OutgoingMessagesMonitoringChannelHandler.NAME,
-		        new OutgoingMessagesMonitoringChannelHandler<ID>(
-		                this.channelMonitorRegistry));
+		        new OutgoingMessagesMonitoringChannelHandler<ID>());
 
 		// Windowing channel handler
 		pipeline.addLast(WindowingChannelHandler.NAME,
@@ -276,9 +263,5 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 
 	public ChannelGroup getAllConnectedChannels() {
 		return this.connectedChannelsTracker.getAllConnectedChannels();
-	}
-
-	public ChannelMonitorRegistry getChannelMonitorRegistry() {
-		return this.channelMonitorRegistry;
 	}
 }

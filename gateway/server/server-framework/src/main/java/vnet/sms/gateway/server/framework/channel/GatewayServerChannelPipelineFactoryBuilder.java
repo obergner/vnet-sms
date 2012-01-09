@@ -15,7 +15,6 @@ import org.springframework.jmx.export.MBeanExportOperations;
 import org.springframework.security.authentication.AuthenticationManager;
 
 import vnet.sms.common.spring.jmx.MBeanExportOperationsAware;
-import vnet.sms.gateway.nettysupport.monitor.ChannelMonitorRegistry;
 import vnet.sms.gateway.server.framework.jmsbridge.MessageForwardingJmsBridge;
 import vnet.sms.gateway.transport.plugin.TransportProtocolExtensionPoint;
 import vnet.sms.gateway.transport.plugin.context.TransportProtocolPluginInjector;
@@ -36,8 +35,6 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 	private String	                                    gatewayServerInstanceId;
 
 	private TransportProtocolPlugin<ID, TP>	            transportProtocolPlugin;
-
-	private ChannelMonitorRegistry	                    channelMonitorRegistry;
 
 	private int	                                        availableIncomingWindows;
 
@@ -105,8 +102,7 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 		                .getPduToWindowedMessageEventConverter(),
 		        this.transportProtocolPlugin
 		                .getWindowedMessageEventToPduConverter(),
-		        this.channelMonitorRegistry, this.messageForwardingJmsBridge,
-		        this.availableIncomingWindows,
+		        this.messageForwardingJmsBridge, this.availableIncomingWindows,
 		        this.incomingWindowWaitTimeMillis, this.authenticationManager,
 		        this.failedLoginResponseDelayMillis,
 		        this.transportProtocolPlugin.getMessageReferenceGenerator(),
@@ -154,15 +150,6 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 	public final void setGatewayServerInstanceId(
 	        final String gatewayServerInstanceId) {
 		this.gatewayServerInstanceId = gatewayServerInstanceId;
-	}
-
-	/**
-	 * @param channelMonitorRegistry
-	 *            the channelMonitorRegistry to set
-	 */
-	public final void setChannelMonitorRegistry(
-	        final ChannelMonitorRegistry channelMonitorRegistry) {
-		this.channelMonitorRegistry = channelMonitorRegistry;
 	}
 
 	/**

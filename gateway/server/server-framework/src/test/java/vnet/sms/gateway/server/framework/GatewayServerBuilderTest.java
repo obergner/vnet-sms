@@ -13,7 +13,6 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jmx.export.MBeanExporter;
 
 import vnet.sms.common.wme.jmsbridge.WindowedMessageEventToJmsMessageConverter;
-import vnet.sms.gateway.nettysupport.monitor.ChannelMonitorRegistry;
 import vnet.sms.gateway.server.framework.channel.GatewayServerChannelPipelineFactory;
 import vnet.sms.gateway.server.framework.jmsbridge.MessageForwardingJmsBridge;
 import vnet.sms.gateway.server.framework.test.DenyAllAuthenticationManager;
@@ -125,7 +124,6 @@ public class GatewayServerBuilderTest {
 		        new ObjectEncoder(),
 		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(),
-		        new ChannelMonitorRegistry(),
 		        new MessageForwardingJmsBridge<Integer>(newJmsTemplate()), 100,
 		        10000, new DenyAllAuthenticationManager(), 10000,
 		        new SerialIntegersMessageReferenceGenerator(), 100, 20000,

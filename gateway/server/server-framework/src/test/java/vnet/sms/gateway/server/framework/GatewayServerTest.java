@@ -31,7 +31,6 @@ import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.PingResponse;
 import vnet.sms.common.messages.Sms;
 import vnet.sms.common.wme.jmsbridge.WindowedMessageEventToJmsMessageConverter;
-import vnet.sms.gateway.nettysupport.monitor.ChannelMonitorRegistry;
 import vnet.sms.gateway.server.framework.channel.GatewayServerChannelPipelineFactory;
 import vnet.sms.gateway.server.framework.jmsbridge.MessageForwardingJmsBridge;
 import vnet.sms.gateway.server.framework.test.AcceptAllAuthenticationManager;
@@ -140,7 +139,6 @@ public class GatewayServerTest {
 	        final long pingResponseTimeoutMillis,
 	        final AuthenticationManager authenticationManager,
 	        final JmsTemplate jmsTemplate) {
-		final ChannelMonitorRegistry channelMonitorRegistry = new ChannelMonitorRegistry();
 		final MBeanExporter mbeanExporter = new MBeanExporter();
 		mbeanExporter.setServer(ManagementFactory.getPlatformMBeanServer());
 		return new GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer>(
@@ -151,7 +149,6 @@ public class GatewayServerTest {
 		        new ObjectEncoder(),
 		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(),
-		        channelMonitorRegistry,
 		        new MessageForwardingJmsBridge<Integer>(jmsTemplate),
 		        availableIncomingWindows, incomingWindowWaitTimeMillis,
 		        authenticationManager, failedLoginResponseMillis,
@@ -177,22 +174,6 @@ public class GatewayServerTest {
 
 		assertEquals("stop() did not promote GatewayServer into state STOPPED",
 		        ServerStatus.STOPPED, objectUnderTest.getCurrentStatus());
-	}
-
-	@Test
-	public final void assertThatGetChannelMonitorRegistryDoesNotReturnNull() {
-		final JmsTemplate jmsTemplate = newJmsTemplate();
-		final GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer> pipelineFactory = newGatewayServerChannelPipelineFactory(
-		        10, 2000, 2000, 5, 30000, new AcceptAllAuthenticationManager(),
-		        jmsTemplate);
-		final GatewayServer<Integer, ReferenceableMessageContainer> objectUnderTest = new GatewayServer<Integer, ReferenceableMessageContainer>(
-		        "assertThatGetChannelMonitorRegistryDoesNotReturnNull",
-		        new LocalAddress(
-		                "assertThatGetChannelMonitorRegistryDoesNotReturnNull"),
-		        new DefaultLocalServerChannelFactory(), pipelineFactory);
-
-		assertNotNull("getChannelMonitorRegistry() returned null",
-		        objectUnderTest.getChannelMonitorRegistry());
 	}
 
 	@Test

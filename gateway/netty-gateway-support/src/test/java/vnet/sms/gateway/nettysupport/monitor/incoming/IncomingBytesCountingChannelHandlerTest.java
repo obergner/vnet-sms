@@ -6,17 +6,17 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.jboss.netty.buffer.ChannelBuffers;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
-import vnet.sms.gateway.nettysupport.monitor.DefaultChannelMonitorCallback;
-import vnet.sms.gateway.nettysupport.monitor.TestChannelMonitorRegistry;
+import vnet.sms.gateway.nettysupport.monitor.DefaultChannelMonitor;
 import vnet.sms.gateway.nettytest.ChannelPipelineEmbedder;
 import vnet.sms.gateway.nettytest.DefaultChannelPipelineEmbedder;
 
 public class IncomingBytesCountingChannelHandlerTest {
 
 	private static class SimpleChannelMonitorCallback extends
-	        DefaultChannelMonitorCallback {
+	        DefaultChannelMonitor {
 
 		final AtomicLong	numberOfReceivedBytes	= new AtomicLong(0);
 
@@ -32,13 +32,17 @@ public class IncomingBytesCountingChannelHandlerTest {
 
 	private final SimpleChannelMonitorCallback	      monitorCallback	= new SimpleChannelMonitorCallback();
 
-	private final IncomingBytesCountingChannelHandler	objectUnderTest	= new IncomingBytesCountingChannelHandler(
-	                                                                            new TestChannelMonitorRegistry(
-	                                                                                    this.monitorCallback));
+	private final IncomingBytesCountingChannelHandler	objectUnderTest	= new IncomingBytesCountingChannelHandler();
+
+	@Before
+	public void addMonitor() {
+		this.objectUnderTest.addMonitor(this.monitorCallback);
+	}
 
 	@After
 	public void resetMonitor() {
 		this.monitorCallback.reset();
+		this.objectUnderTest.clearMonitors();
 	}
 
 	@Test

@@ -15,8 +15,6 @@ import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
-import vnet.sms.gateway.nettysupport.monitor.ChannelMonitorRegistry;
-
 /**
  * @author obergner
  * 
@@ -44,10 +42,6 @@ public class GatewayServerController<ID extends Serializable, TP> {
 	@ManagedOperation(description = "Stop the GatewayServer")
 	public void stop() throws Exception {
 		this.gatewayServer.stop();
-	}
-
-	public ChannelMonitorRegistry getChannelMonitorRegistry() {
-		return this.gatewayServer.getChannelMonitorRegistry();
 	}
 
 	@ManagedAttribute(description = "This GatewayServer's current state: stopped, starting, running or stopping")

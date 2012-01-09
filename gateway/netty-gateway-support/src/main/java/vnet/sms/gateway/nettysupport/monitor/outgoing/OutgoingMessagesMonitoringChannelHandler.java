@@ -3,45 +3,33 @@
  */
 package vnet.sms.gateway.nettysupport.monitor.outgoing;
 
-import static org.apache.commons.lang.Validate.notNull;
-
 import java.io.Serializable;
-import java.util.concurrent.atomic.AtomicReference;
 
 import org.jboss.netty.channel.ChannelHandlerContext;
-import org.jboss.netty.channel.ChannelStateEvent;
 
 import vnet.sms.common.wme.LoginRequestAcceptedEvent;
 import vnet.sms.common.wme.LoginRequestRejectedEvent;
 import vnet.sms.common.wme.SendPingRequestEvent;
 import vnet.sms.gateway.nettysupport.WindowedChannelHandler;
 import vnet.sms.gateway.nettysupport.monitor.ChannelMonitor;
-import vnet.sms.gateway.nettysupport.monitor.ChannelMonitorRegistry;
+import vnet.sms.gateway.nettysupport.monitor.ChannelMonitors;
+import vnet.sms.gateway.nettysupport.monitor.MonitoredChannel;
 
 /**
  * @author obergner
  * 
  */
 public class OutgoingMessagesMonitoringChannelHandler<ID extends Serializable>
-        extends WindowedChannelHandler<ID> {
+        extends WindowedChannelHandler<ID> implements MonitoredChannel {
 
-	public static final String	                           NAME	            = "vnet.sms.gateway:outgoing-messages-monitoring-handler";
+	public static final String	  NAME	                    = "vnet.sms.gateway:outgoing-messages-monitoring-handler";
 
-	private final AtomicReference<ChannelMonitor.Callback>	monitorCallback	= new AtomicReference<ChannelMonitor.Callback>(
-	                                                                                ChannelMonitor.Callback.NULL);
-
-	private final ChannelMonitorRegistry	               monitorRegistry;
-
-	public OutgoingMessagesMonitoringChannelHandler(
-	        final ChannelMonitorRegistry monitorRegistry) {
-		notNull(monitorRegistry, "Argument 'monitorRegistry' must not be null");
-		this.monitorRegistry = monitorRegistry;
-	}
+	private final ChannelMonitors	channelMonitorCallbacks	= new ChannelMonitors();
 
 	@Override
 	protected void writePingRequestRequested(final ChannelHandlerContext ctx,
 	        final SendPingRequestEvent<ID> e) {
-		getMonitorCallback().sendPingRequest();
+		this.channelMonitorCallbacks.sendPingRequest();
 		super.writePingRequestRequested(ctx, e);
 	}
 
@@ -49,7 +37,7 @@ public class OutgoingMessagesMonitoringChannelHandler<ID extends Serializable>
 	protected void writeLoginRequestAcceptedRequested(
 	        final ChannelHandlerContext ctx,
 	        final LoginRequestAcceptedEvent<ID> e) {
-		getMonitorCallback().sendLoginRequestAccepted();
+		this.channelMonitorCallbacks.sendLoginRequestAccepted();
 		super.writeLoginRequestAcceptedRequested(ctx, e);
 	}
 
@@ -57,22 +45,22 @@ public class OutgoingMessagesMonitoringChannelHandler<ID extends Serializable>
 	protected void writeLoginRequestRejectedRequested(
 	        final ChannelHandlerContext ctx,
 	        final LoginRequestRejectedEvent<ID> e) {
-		getMonitorCallback().sendLoginRequestRejected();
+		this.channelMonitorCallbacks.sendLoginRequestRejected();
 		super.writeLoginRequestRejectedRequested(ctx, e);
 	}
 
-	private ChannelMonitor.Callback getMonitorCallback() {
-		return this.monitorCallback.get();
+	@Override
+	public void addMonitor(final ChannelMonitor monitor) {
+		this.channelMonitorCallbacks.add(monitor);
 	}
 
 	@Override
-	public void channelConnected(final ChannelHandlerContext ctx,
-	        final ChannelStateEvent e) throws Exception {
-		if (!this.monitorCallback.compareAndSet(ChannelMonitor.Callback.NULL,
-		        this.monitorRegistry.registerChannel(ctx.getChannel()))) {
-			throw new IllegalStateException(
-			        "Cannot register a ChannelMonitorCallback for this ChannelHandler more than once");
-		}
-		super.channelConnected(ctx, e);
+	public void removeMonitor(final ChannelMonitor monitor) {
+		this.channelMonitorCallbacks.remove(monitor);
+	}
+
+	@Override
+	public void clearMonitors() {
+		this.channelMonitorCallbacks.clear();
 	}
 }

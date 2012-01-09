@@ -7,7 +7,7 @@ package vnet.sms.gateway.nettysupport.monitor;
  * @author obergner
  * 
  */
-public class DefaultChannelMonitorCallback implements ChannelMonitor.Callback {
+public class DefaultChannelMonitor implements ChannelMonitor {
 
 	/**
 	 * @see vnet.sms.gateway.nettysupport.monitor.ChannelMonitorCallback#bytesReceived(long)

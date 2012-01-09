@@ -1,7 +1,6 @@
 package vnet.sms.gateway.server.framework;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 import org.jboss.netty.channel.local.DefaultLocalServerChannelFactory;
 import org.jboss.netty.channel.local.LocalAddress;
@@ -14,7 +13,6 @@ import org.springframework.jmx.export.MBeanExporter;
 import org.springframework.security.authentication.AuthenticationManager;
 
 import vnet.sms.common.wme.jmsbridge.WindowedMessageEventToJmsMessageConverter;
-import vnet.sms.gateway.nettysupport.monitor.ChannelMonitorRegistry;
 import vnet.sms.gateway.server.framework.channel.GatewayServerChannelPipelineFactory;
 import vnet.sms.gateway.server.framework.jmsbridge.MessageForwardingJmsBridge;
 import vnet.sms.gateway.server.framework.test.AcceptAllAuthenticationManager;
@@ -85,7 +83,6 @@ public class GatewayServerControllerTest {
 	        final long pingResponseTimeoutMillis,
 	        final AuthenticationManager authenticationManager,
 	        final JmsTemplate jmsTemplate) {
-		final ChannelMonitorRegistry channelMonitorRegistry = new ChannelMonitorRegistry();
 		return new GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer>(
 		        "newObjectUnderTest",
 		        ReferenceableMessageContainer.class,
@@ -94,7 +91,6 @@ public class GatewayServerControllerTest {
 		        new ObjectEncoder(),
 		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(),
-		        channelMonitorRegistry,
 		        new MessageForwardingJmsBridge<Integer>(jmsTemplate),
 		        availableIncomingWindows, incomingWindowWaitTimeMillis,
 		        authenticationManager, failedLoginResponseMillis,
@@ -124,25 +120,6 @@ public class GatewayServerControllerTest {
 
 		assertEquals("stop() did not promote GatewayServer into state STOPPED",
 		        ServerStatus.STOPPED, objectUnderTest.getCurrentStatus());
-	}
-
-	@Test
-	public final void assertThatGetChannelMonitorRegistryDoesNotReturnNull() {
-		final JmsTemplate jmsTemplate = newJmsTemplate();
-		final GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer> pipelineFactory = newGatewayServerChannelPipelineFactory(
-		        10, 2000, 2000, 5, 30000, new AcceptAllAuthenticationManager(),
-		        jmsTemplate);
-		final GatewayServer<Integer, ReferenceableMessageContainer> gatewayServer = new GatewayServer<Integer, ReferenceableMessageContainer>(
-		        "assertThatGetChannelMonitorRegistryDoesNotReturnNull",
-		        new LocalAddress(
-		                "GatewayServerControllerTest::assertThatGetChannelMonitorRegistryDoesNotReturnNull"),
-		        new DefaultLocalServerChannelFactory(), pipelineFactory);
-
-		final GatewayServerController<Integer, ReferenceableMessageContainer> objectUnderTest = new GatewayServerController<Integer, ReferenceableMessageContainer>(
-		        gatewayServer);
-
-		assertNotNull("getChannelMonitorRegistry() returned null",
-		        objectUnderTest.getChannelMonitorRegistry());
 	}
 
 	@Test

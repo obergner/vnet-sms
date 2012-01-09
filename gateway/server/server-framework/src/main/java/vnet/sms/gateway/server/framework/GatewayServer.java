@@ -18,7 +18,6 @@ import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import vnet.sms.gateway.nettysupport.monitor.ChannelMonitorRegistry;
 import vnet.sms.gateway.server.framework.channel.GatewayServerChannelPipelineFactory;
 
 /**
@@ -102,10 +101,6 @@ class GatewayServer<ID extends Serializable, TP> {
 
 	void stop() throws Exception {
 		this.currentState.get().stop();
-	}
-
-	ChannelMonitorRegistry getChannelMonitorRegistry() {
-		return this.channelPipelineFactory.getChannelMonitorRegistry();
 	}
 
 	ServerStatus getCurrentStatus() {

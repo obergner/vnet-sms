@@ -7,6 +7,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.jboss.netty.handler.codec.embedder.DecoderEmbedder;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import vnet.sms.common.messages.LoginRequest;
@@ -15,14 +16,13 @@ import vnet.sms.common.messages.Message;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.PingResponse;
 import vnet.sms.common.messages.Sms;
-import vnet.sms.gateway.nettysupport.monitor.DefaultChannelMonitorCallback;
-import vnet.sms.gateway.nettysupport.monitor.TestChannelMonitorRegistry;
+import vnet.sms.gateway.nettysupport.monitor.DefaultChannelMonitor;
 import vnet.sms.gateway.nettysupport.test.ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler;
 
 public class IncomingMessagesMonitoringChannelHandlerTest {
 
 	private static class SimpleChannelMonitorCallback extends
-	        DefaultChannelMonitorCallback {
+	        DefaultChannelMonitor {
 
 		final AtomicLong	numberOfReceivedLoginRequests	= new AtomicLong(0);
 
@@ -70,13 +70,17 @@ public class IncomingMessagesMonitoringChannelHandlerTest {
 
 	private final SimpleChannelMonitorCallback	                    monitorCallback	= new SimpleChannelMonitorCallback();
 
-	private final IncomingMessagesMonitoringChannelHandler<Integer>	objectUnderTest	= new IncomingMessagesMonitoringChannelHandler<Integer>(
-	                                                                                        new TestChannelMonitorRegistry(
-	                                                                                                this.monitorCallback));
+	private final IncomingMessagesMonitoringChannelHandler<Integer>	objectUnderTest	= new IncomingMessagesMonitoringChannelHandler<Integer>();
+
+	@Before
+	public void addMonitor() {
+		this.objectUnderTest.addMonitor(this.monitorCallback);
+	}
 
 	@After
 	public void resetMonitor() {
 		this.monitorCallback.reset();
+		this.objectUnderTest.clearMonitors();
 	}
 
 	@Test
@@ -130,6 +134,7 @@ public class IncomingMessagesMonitoringChannelHandlerTest {
 
 	@Test
 	public final void assertThatTransportProtocolAdapterCorrectlyCountsNumberOfReceivedPingResponses() {
+
 		final DecoderEmbedder<Message> embeddedPipeline = new DecoderEmbedder<Message>(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        this.objectUnderTest);
