@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNull;
 
 import java.net.InetSocketAddress;
 
+import org.jboss.netty.channel.ChannelEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.junit.Test;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,6 +21,7 @@ import vnet.sms.common.wme.LoginRequestAcceptedEvent;
 import vnet.sms.common.wme.LoginRequestRejectedEvent;
 import vnet.sms.common.wme.PingRequestReceivedEvent;
 import vnet.sms.gateway.nettysupport.test.ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler;
+import vnet.sms.gateway.nettytest.ChannelEventFilter;
 import vnet.sms.gateway.nettytest.ChannelPipelineEmbedder;
 import vnet.sms.gateway.nettytest.DefaultChannelPipelineEmbedder;
 import vnet.sms.gateway.nettytest.MessageEventFilter;
@@ -198,5 +200,42 @@ public class IncomingLoginRequestsChannelHandlerTest {
 		assertEquals(
 		        "IncomingLoginRequestsChannelHandler propagated unexpected message after receiving non-login message on authenticated channel",
 		        PingRequestReceivedEvent.class, propagatedMessage.getClass());
+	}
+
+	@Test
+	public final void assertThatLoginChannelHandlerSendsChannelSuccessfullyAuthenticatedEventUpstreamIfLoginSucceeds()
+	        throws Throwable {
+		final AuthenticationManager acceptAll = new AuthenticationManager() {
+			@Override
+			public Authentication authenticate(
+			        final Authentication authentication)
+			        throws AuthenticationException {
+				return new TestingAuthenticationToken(
+				        authentication.getPrincipal(),
+				        authentication.getCredentials(), "test-role");
+			}
+		};
+		final IncomingLoginRequestsChannelHandler<Integer> objectUnderTest = new IncomingLoginRequestsChannelHandler<Integer>(
+		        acceptAll, 10);
+
+		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
+		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
+		        objectUnderTest);
+		embeddedPipeline
+		        .receive(new LoginRequest(
+		                "assertThatLoginChannelHandlerSendsChannelSuccessfullyAuthenticatedEventUpstreamIfLoginSucceeds",
+		                "secret", new InetSocketAddress(0),
+		                new InetSocketAddress(0)));
+		final ChannelEvent upstreamChannelEvent = embeddedPipeline
+		        .nextUpstreamChannelEvent(new ChannelEventFilter() {
+			        @Override
+			        public boolean matches(final ChannelEvent event) {
+				        return event instanceof ChannelSuccessfullyAuthenticatedEvent;
+			        }
+		        });
+
+		assertNotNull(
+		        "IncomingLoginRequestsChannelHandler did not send expected ChannelSuccessfullyAuthenticatedEvent upstream after successful login",
+		        upstreamChannelEvent);
 	}
 }

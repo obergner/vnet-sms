@@ -34,7 +34,7 @@ public final class NoPingResponseReceivedWithinTimeoutEvent implements
 	public NoPingResponseReceivedWithinTimeoutEvent(final Channel channel,
 	        final int pingIntervalSeconds, final long pingResponseTimeoutMillis) {
 		this.channel = channel;
-		this.future = Channels.future(channel, false);
+		this.future = Channels.succeededFuture(channel);
 		this.pingIntervalSeconds = pingIntervalSeconds;
 		this.pingResponseTimeoutMillis = pingResponseTimeoutMillis;
 	}

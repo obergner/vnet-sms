@@ -102,6 +102,9 @@ public class IncomingLoginRequestsChannelHandler<ID extends Serializable>
 			        "Successfully authenticated channel {} - authenticated user is {}",
 			        ctx.getChannel(), authentication.getPrincipal());
 			ctx.sendDownstream(LoginRequestAcceptedEvent.accept(e));
+			// Inform the wider community ...
+			ctx.sendUpstream(new ChannelSuccessfullyAuthenticatedEvent(ctx
+			        .getChannel(), e.getMessage()));
 		}
 	}
 
