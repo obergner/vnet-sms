@@ -80,8 +80,6 @@ public class WindowingChannelHandler<ID extends Serializable> extends
 	@Override
 	public void channelDisconnected(final ChannelHandlerContext ctx,
 	        final ChannelStateEvent e) throws Exception {
-		super.channelDisconnected(ctx, e);
-
 		final Map<ID, Message> pendingMessages = this.incomingWindowStore
 		        .shutDown();
 		if (!pendingMessages.isEmpty()) {
@@ -92,5 +90,7 @@ public class WindowingChannelHandler<ID extends Serializable> extends
 			        ctx.getChannel(), pendingMessages);
 			ctx.sendUpstream(pendingMessagesDiscarded);
 		}
+
+		super.channelDisconnected(ctx, e);
 	}
 }
