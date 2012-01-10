@@ -235,7 +235,45 @@ public class IncomingLoginRequestsChannelHandlerTest {
 		        });
 
 		assertNotNull(
-		        "IncomingLoginRequestsChannelHandler did not send expected ChannelSuccessfullyAuthenticatedEvent upstream after successful login",
+		        "IncomingLoginRequestsChannelHandler did not send expected "
+		                + ChannelSuccessfullyAuthenticatedEvent.class.getName()
+		                + " upstream after successful login",
 		        upstreamChannelEvent);
+	}
+
+	@Test
+	public final void assertThatLoginChannelHandlerSendsChannelAuthenticationFailedEventUpstreamIfLoginFailes()
+	        throws Throwable {
+		final AuthenticationManager rejectAll = new AuthenticationManager() {
+			@Override
+			public Authentication authenticate(
+			        final Authentication authentication)
+			        throws AuthenticationException {
+				throw new BadCredentialsException("Bad credentials");
+			}
+		};
+		final IncomingLoginRequestsChannelHandler<Integer> objectUnderTest = new IncomingLoginRequestsChannelHandler<Integer>(
+		        rejectAll, 10);
+
+		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
+		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
+		        objectUnderTest);
+		embeddedPipeline
+		        .receive(new LoginRequest(
+		                "assertThatLoginChannelHandlerSendsChannelAuthenticationFailedEventUpstreamIfLoginFailes",
+		                "secret", new InetSocketAddress(0),
+		                new InetSocketAddress(0)));
+		final ChannelEvent upstreamChannelEvent = embeddedPipeline
+		        .nextUpstreamChannelEvent(new ChannelEventFilter() {
+			        @Override
+			        public boolean matches(final ChannelEvent event) {
+				        return event instanceof ChannelAuthenticationFailedEvent;
+			        }
+		        });
+
+		assertNotNull(
+		        "IncomingLoginRequestsChannelHandler did not send expected "
+		                + ChannelAuthenticationFailedEvent.class.getName()
+		                + " upstream after failed login", upstreamChannelEvent);
 	}
 }

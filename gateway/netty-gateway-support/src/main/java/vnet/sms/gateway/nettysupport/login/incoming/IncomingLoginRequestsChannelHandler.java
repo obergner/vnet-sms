@@ -19,6 +19,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 
 import vnet.sms.common.messages.Message;
 import vnet.sms.common.wme.LoginRequestAcceptedEvent;
@@ -77,11 +78,14 @@ public class IncomingLoginRequestsChannelHandler<ID extends Serializable>
 			return;
 		}
 
-		final Authentication authentication = authenticate(e);
-		if (authentication != null) {
+		try {
+			final Authentication authentication = this.authenticationManager
+			        .authenticate(new UsernamePasswordAuthenticationToken(e
+			                .getMessage().getUsername(), e.getMessage()
+			                .getPassword()));
 			processSuccessfulAuthentication(ctx, e, authentication);
-		} else {
-			processFailedAuthentication(ctx, e);
+		} catch (final AuthenticationException ae) {
+			processFailedAuthentication(ctx, e, ae);
 		}
 
 		// Send LoginRequest further upstream - it might be needed for auditing,
@@ -109,13 +113,19 @@ public class IncomingLoginRequestsChannelHandler<ID extends Serializable>
 	}
 
 	private void processFailedAuthentication(final ChannelHandlerContext ctx,
-	        final LoginRequestReceivedEvent<ID> e) {
+	        final LoginRequestReceivedEvent<ID> e,
+	        final AuthenticationException ae) {
 		getLog().warn(
-		        "Authentication using credentials from {} failed - will delay negative response for [{}] milliseconds to prevent DoS attacks",
-		        e, this.failedLoginResponseDelayMillis);
+		        "Authentication using credentials from " + e
+		                + " failed - will delay negative response for ["
+		                + this.failedLoginResponseDelayMillis
+		                + "] milliseconds to prevent DoS attacks", ae);
 		this.failedLoginResponseTimer.newTimeout(
 		        this.new DelayFailedLoginResponse(ctx, e),
 		        this.failedLoginResponseDelayMillis, TimeUnit.MILLISECONDS);
+		// Inform the wider community ...
+		ctx.sendUpstream(new ChannelAuthenticationFailedEvent(ctx.getChannel(),
+		        e.getMessage(), ae));
 	}
 
 	private final class DelayFailedLoginResponse implements TimerTask {
