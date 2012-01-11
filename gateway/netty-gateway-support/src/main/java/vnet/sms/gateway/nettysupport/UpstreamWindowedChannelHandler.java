@@ -43,7 +43,7 @@ public abstract class UpstreamWindowedChannelHandler<ID extends Serializable>
 	 * down-casted event.
 	 */
 	@Override
-	public void handleUpstream(final ChannelHandlerContext ctx,
+	public final void handleUpstream(final ChannelHandlerContext ctx,
 	        final ChannelEvent e) throws Exception {
 		getLog().debug("Processing {} ...", e);
 		if (e instanceof LoginRequestReceivedEvent) {
