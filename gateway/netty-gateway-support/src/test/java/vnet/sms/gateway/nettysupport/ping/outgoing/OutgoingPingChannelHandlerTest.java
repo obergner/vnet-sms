@@ -8,11 +8,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jboss.netty.channel.ChannelEvent;
 import org.jboss.netty.channel.MessageEvent;
+import org.jboss.netty.channel.local.LocalAddress;
 import org.junit.Test;
 
+import vnet.sms.common.messages.LoginRequest;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.PingResponse;
 import vnet.sms.common.wme.SendPingRequestEvent;
+import vnet.sms.gateway.nettysupport.login.incoming.ChannelSuccessfullyAuthenticatedEvent;
 import vnet.sms.gateway.nettysupport.test.ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler;
 import vnet.sms.gateway.nettysupport.window.spi.MessageReferenceGenerator;
 import vnet.sms.gateway.nettytest.ChannelEventFilter;
@@ -27,7 +30,7 @@ public class OutgoingPingChannelHandlerTest {
 	}
 
 	@Test
-	public final void assertThatOutgoingPingChannelHandlerSendsPingAfterChannelHasBeenConnectedAndPingIntervalElapsed()
+	public final void assertThatOutgoingPingChannelHandlerSendsPingAfterChannelHasBeenAuthenticatedAndPingIntervalElapsed()
 	        throws InterruptedException {
 		final int pingIntervalSeconds = 1;
 		final int pingTimeoutMillis = 20000;
@@ -35,20 +38,27 @@ public class OutgoingPingChannelHandlerTest {
 		        pingIntervalSeconds, pingTimeoutMillis,
 		        new TestWindowIdGenerator());
 
-		// DefaultChannelPipelineEmbedder's constructor fires channel connected
-		// event => we start to ping after pingIntervalSeconds
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        objectUnderTest);
+		// Simulate successful channel authentication => we start to ping after
+		// pingIntervalSeconds
+		embeddedPipeline
+		        .injectUpstreamChannelEvent(new ChannelSuccessfullyAuthenticatedEvent(
+		                embeddedPipeline.getChannel(),
+		                new LoginRequest(
+		                        "assertThatOutgoingPingChannelHandlerSendsPingAfterChannelHasBeenAuthenticatedAndPingIntervalElapsed",
+		                        "password", new LocalAddress(1),
+		                        new LocalAddress(2))));
 		Thread.sleep(pingIntervalSeconds * 1000 + 100);
 		final MessageEvent pingRequestCandidate = embeddedPipeline
 		        .nextSentMessageEvent();
 
 		assertNotNull(
-		        "OutgoingPingChannelHandler did not send any message after channel has been connected and ping interval elapsed",
+		        "OutgoingPingChannelHandler did not send any message after channel has been authenticated and ping interval elapsed",
 		        pingRequestCandidate);
 		assertEquals(
-		        "OutgoingPingChannelHandler sent wrong message event after channel has been connected and ping interval elapsed",
+		        "OutgoingPingChannelHandler sent wrong message event after channel has been authenticated and ping interval elapsed",
 		        SendPingRequestEvent.class, pingRequestCandidate.getClass());
 	}
 
@@ -61,11 +71,18 @@ public class OutgoingPingChannelHandlerTest {
 		        pingIntervalSeconds, pingTimeoutMillis,
 		        new TestWindowIdGenerator());
 
-		// DefaultChannelPipelineEmbedder's constructor fires channel connected
-		// event => we start to ping after pingIntervalSeconds
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        objectUnderTest);
+		// Simulate successful channel authentication => we start to ping after
+		// pingIntervalSeconds
+		embeddedPipeline
+		        .injectUpstreamChannelEvent(new ChannelSuccessfullyAuthenticatedEvent(
+		                embeddedPipeline.getChannel(),
+		                new LoginRequest(
+		                        "assertThatOutgoingPingChannelHandlerSendsNoPingResponseReceivedWithinTimeoutEventUpstreamIfPingResponseTimeoutExpires",
+		                        "password", new LocalAddress(1),
+		                        new LocalAddress(2))));
 		Thread.sleep(pingIntervalSeconds * 1000 + pingTimeoutMillis + 100);
 		final MessageEvent pingRequestCandidate = embeddedPipeline
 		        .nextSentMessageEvent();
@@ -76,9 +93,9 @@ public class OutgoingPingChannelHandlerTest {
 		Thread.sleep(pingTimeoutMillis + 100);
 		final ChannelEvent noPingResponseReceived = embeddedPipeline
 		        .nextUpstreamChannelEvent(ChannelEventFilter.FILTERS
-		                .ofType(NoPingResponseReceivedWithinTimeoutEvent.class));
+		                .ofType(PingResponseTimeoutExpiredEvent.class));
 		assertNotNull(
-		        "OutgoingPingChannelHandler did not send expected NoPingResponseReceivedWithinTimeoutEvent although ping response timeout expired",
+		        "OutgoingPingChannelHandler did not send expected PingResponseTimeoutExpiredEvent although ping response timeout expired",
 		        noPingResponseReceived);
 	}
 
@@ -91,11 +108,18 @@ public class OutgoingPingChannelHandlerTest {
 		        pingIntervalSeconds, pingTimeoutMillis,
 		        new TestWindowIdGenerator());
 
-		// DefaultChannelPipelineEmbedder's constructor fires channel connected
-		// event => we start to ping after pingIntervalSeconds
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        objectUnderTest);
+		// Simulate successful channel authentication => we start to ping after
+		// pingIntervalSeconds
+		embeddedPipeline
+		        .injectUpstreamChannelEvent(new ChannelSuccessfullyAuthenticatedEvent(
+		                embeddedPipeline.getChannel(),
+		                new LoginRequest(
+		                        "assertThatOutgoingPingChannelHandlerDoesNotSendNoPingResponseReceivedWithinTimeoutEventUpstreamIfItReceivesPingResponseWithinTimeout",
+		                        "password", new LocalAddress(1),
+		                        new LocalAddress(2))));
 		Thread.sleep(pingIntervalSeconds * 1000 + 200);
 		final MessageEvent pingRequestCandidate = embeddedPipeline
 		        .nextSentMessageEvent();
@@ -109,9 +133,9 @@ public class OutgoingPingChannelHandlerTest {
 		Thread.sleep(pingTimeoutMillis + 100);
 		final ChannelEvent noPingResponseReceived = embeddedPipeline
 		        .nextUpstreamChannelEvent(ChannelEventFilter.FILTERS
-		                .ofType(NoPingResponseReceivedWithinTimeoutEvent.class));
+		                .ofType(PingResponseTimeoutExpiredEvent.class));
 		assertNull(
-		        "OutgoingPingChannelHandler sent unexpected NoPingResponseReceivedWithinTimeoutEvent although it received a ping response within timeout",
+		        "OutgoingPingChannelHandler sent unexpected PingResponseTimeoutExpiredEvent although it received a ping response within timeout",
 		        noPingResponseReceived);
 	}
 

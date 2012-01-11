@@ -49,12 +49,13 @@ public class IncomingMessagesPublishingChannelHandler<ID extends Serializable>
 	}
 
 	/**
+	 * @throws Exception
 	 * @see vnet.sms.gateway.nettysupport.UpstreamWindowedChannelHandler#loginRequestReceived(org.jboss.netty.channel.ChannelHandlerContext,
 	 *      vnet.sms.common.wme.LoginRequestReceivedEvent)
 	 */
 	@Override
 	protected void loginRequestReceived(final ChannelHandlerContext ctx,
-	        final LoginRequestReceivedEvent<ID> e) {
+	        final LoginRequestReceivedEvent<ID> e) throws Exception {
 		getLog().debug("Received {} - will notify [{}] listeners", e,
 		        this.listeners.size());
 		for (final IncomingMessagesListener<ID> listener : this.listeners) {
@@ -64,12 +65,13 @@ public class IncomingMessagesPublishingChannelHandler<ID extends Serializable>
 	}
 
 	/**
+	 * @throws Exception
 	 * @see vnet.sms.gateway.nettysupport.UpstreamWindowedChannelHandler#loginResponseReceived(org.jboss.netty.channel.ChannelHandlerContext,
 	 *      vnet.sms.common.wme.LoginResponseReceivedEvent)
 	 */
 	@Override
 	protected void loginResponseReceived(final ChannelHandlerContext ctx,
-	        final LoginResponseReceivedEvent<ID> e) {
+	        final LoginResponseReceivedEvent<ID> e) throws Exception {
 		getLog().debug("Received {} - will notify [{}] listeners", e,
 		        this.listeners.size());
 		for (final IncomingMessagesListener<ID> listener : this.listeners) {
@@ -79,12 +81,13 @@ public class IncomingMessagesPublishingChannelHandler<ID extends Serializable>
 	}
 
 	/**
+	 * @throws Exception
 	 * @see vnet.sms.gateway.nettysupport.UpstreamWindowedChannelHandler#pingRequestReceived(org.jboss.netty.channel.ChannelHandlerContext,
 	 *      vnet.sms.common.wme.PingRequestReceivedEvent)
 	 */
 	@Override
 	protected void pingRequestReceived(final ChannelHandlerContext ctx,
-	        final PingRequestReceivedEvent<ID> e) {
+	        final PingRequestReceivedEvent<ID> e) throws Exception {
 		getLog().debug("Received {} - will notify [{}] listeners", e,
 		        this.listeners.size());
 		for (final IncomingMessagesListener<ID> listener : this.listeners) {
@@ -94,12 +97,13 @@ public class IncomingMessagesPublishingChannelHandler<ID extends Serializable>
 	}
 
 	/**
+	 * @throws Exception
 	 * @see vnet.sms.gateway.nettysupport.UpstreamWindowedChannelHandler#pingResponseReceived(org.jboss.netty.channel.ChannelHandlerContext,
 	 *      vnet.sms.common.wme.PingResponseReceivedEvent)
 	 */
 	@Override
 	protected void pingResponseReceived(final ChannelHandlerContext ctx,
-	        final PingResponseReceivedEvent<ID> e) {
+	        final PingResponseReceivedEvent<ID> e) throws Exception {
 		getLog().debug("Received {} - will notify [{}] listeners", e,
 		        this.listeners.size());
 		for (final IncomingMessagesListener<ID> listener : this.listeners) {
@@ -109,12 +113,13 @@ public class IncomingMessagesPublishingChannelHandler<ID extends Serializable>
 	}
 
 	/**
+	 * @throws Exception
 	 * @see vnet.sms.gateway.nettysupport.UpstreamWindowedChannelHandler#smsReceived(org.jboss.netty.channel.ChannelHandlerContext,
 	 *      vnet.sms.common.wme.SmsReceivedEvent)
 	 */
 	@Override
 	protected void smsReceived(final ChannelHandlerContext ctx,
-	        final SmsReceivedEvent<ID> e) {
+	        final SmsReceivedEvent<ID> e) throws Exception {
 		getLog().debug("Received {} - will notify [{}] listeners", e,
 		        this.listeners.size());
 		for (final IncomingMessagesListener<ID> listener : this.listeners) {

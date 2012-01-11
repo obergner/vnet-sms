@@ -15,6 +15,7 @@ import java.net.InetSocketAddress;
 import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.ChannelEvent;
 import org.jboss.netty.channel.MessageEvent;
+import org.jboss.netty.channel.local.LocalAddress;
 import org.jboss.netty.handler.codec.base64.Base64Decoder;
 import org.jboss.netty.handler.codec.base64.Base64Encoder;
 import org.jboss.netty.handler.codec.frame.DelimiterBasedFrameDecoder;
@@ -31,6 +32,7 @@ import vnet.sms.common.messages.LoginResponse;
 import vnet.sms.common.messages.Message;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.PingResponse;
+import vnet.sms.gateway.nettysupport.login.incoming.ChannelSuccessfullyAuthenticatedEvent;
 import vnet.sms.gateway.nettysupport.window.NoWindowForIncomingMessageAvailableEvent;
 import vnet.sms.gateway.nettytest.ChannelEventFilter;
 import vnet.sms.gateway.nettytest.ChannelPipelineEmbedder;
@@ -376,9 +378,17 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        availableIncomingWindows, incomingWindowWaitTimeMillis,
 		        failedLoginResponseMillis, pingIntervalSeconds,
 		        pingResponseTimeoutMillis, authenticationManager);
-		// Will fire "channel connected" and thus start ping interval
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        objectUnderTest);
+		// Simulate successful channel authentication => we start to ping after
+		// pingIntervalSeconds
+		embeddedPipeline
+		        .injectUpstreamChannelEvent(new ChannelSuccessfullyAuthenticatedEvent(
+		                embeddedPipeline.getChannel(),
+		                new LoginRequest(
+		                        "assertThatOutgoingPingChannelHandlerSendsPingAfterChannelHasBeenAuthenticatedAndPingIntervalElapsed",
+		                        "password", new LocalAddress(1),
+		                        new LocalAddress(2))));
 
 		Thread.sleep(pingIntervalSeconds * 1000L + 100L);
 

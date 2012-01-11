@@ -266,6 +266,13 @@ public class GatewayServerIT {
 			}
 		};
 		this.testClient.connect();
+
+		// Login starts ping timeout
+		this.testClient
+		        .login(1,
+		                "assertThatGatewayServerSendsFirstPingRequestToClientAfterPingIntervalHasElapsed",
+		                "whatever");
+
 		final CountDownLatch pingReceived = this.testClient
 		        .listen(matchesPingEvent);
 		assertTrue("Expected to receive Ping after ping interval of "
@@ -286,6 +293,13 @@ public class GatewayServerIT {
 			}
 		};
 		this.testClient.connect();
+
+		// Login starts ping timeout
+		this.testClient
+		        .login(1,
+		                "assertThatGatewayServerContinuesSendingPingRequestsAfterReceivingPingResponse",
+		                "whatever");
+
 		final CountDownLatch pingReceived = this.testClient
 		        .listen(matchesReceivedPingEvent);
 		assertTrue("Expected to receive Ping after ping interval of "

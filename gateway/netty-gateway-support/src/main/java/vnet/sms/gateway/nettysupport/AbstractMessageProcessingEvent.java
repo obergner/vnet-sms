@@ -19,8 +19,8 @@ import vnet.sms.common.messages.Message;
  * @author obergner
  * 
  */
-public abstract class AbstractInternalMessageProcessingErrorEvent<M extends Message>
-        implements InternalMessageProcessingErrorEvent<M> {
+public abstract class AbstractMessageProcessingEvent<M extends Message>
+        implements MessageProcessingEvent<M> {
 
 	private final UUID	        id;
 
@@ -34,14 +34,13 @@ public abstract class AbstractInternalMessageProcessingErrorEvent<M extends Mess
 
 	private final SocketAddress	remoteAddress;
 
-	protected AbstractInternalMessageProcessingErrorEvent(
-	        final Channel channel, final M failedMessage,
-	        final SocketAddress remoteAddress) {
+	protected AbstractMessageProcessingEvent(final Channel channel,
+	        final M failedMessage, final SocketAddress remoteAddress) {
 		this(UUID.randomUUID(), System.currentTimeMillis(), channel,
 		        failedMessage, remoteAddress);
 	}
 
-	protected AbstractInternalMessageProcessingErrorEvent(final UUID id,
+	protected AbstractMessageProcessingEvent(final UUID id,
 	        final long creationTimestamp, final Channel channel,
 	        final M failedMessage, final SocketAddress remoteAddress) {
 		notNull(id, "Argument 'id' must not be null");
@@ -72,7 +71,7 @@ public abstract class AbstractInternalMessageProcessingErrorEvent<M extends Mess
 	}
 
 	/**
-	 * @see vnet.sms.gateway.nettysupport.InternalMessageProcessingErrorEvent#getId()
+	 * @see vnet.sms.gateway.nettysupport.MessageProcessingEvent#getId()
 	 */
 	@Override
 	public UUID getId() {
@@ -80,15 +79,15 @@ public abstract class AbstractInternalMessageProcessingErrorEvent<M extends Mess
 	}
 
 	/**
-	 * @see vnet.sms.gateway.nettysupport.InternalMessageProcessingErrorEvent#getFailedMessage()
+	 * @see vnet.sms.gateway.nettysupport.MessageProcessingEvent#getMessage()
 	 */
 	@Override
-	public M getFailedMessage() {
+	public M getMessage() {
 		return this.failedMessage;
 	}
 
 	/**
-	 * @see vnet.sms.gateway.nettysupport.InternalMessageProcessingErrorEvent#getRemoteAddress()
+	 * @see vnet.sms.gateway.nettysupport.MessageProcessingEvent#getRemoteAddress()
 	 */
 	@Override
 	public SocketAddress getRemoteAddress() {
@@ -96,7 +95,7 @@ public abstract class AbstractInternalMessageProcessingErrorEvent<M extends Mess
 	}
 
 	/**
-	 * @see vnet.sms.gateway.nettysupport.InternalMessageProcessingErrorEvent#getCreationTimestamp()
+	 * @see vnet.sms.gateway.nettysupport.MessageProcessingEvent#getCreationTimestamp()
 	 */
 	@Override
 	public long getCreationTimestamp() {
@@ -104,7 +103,7 @@ public abstract class AbstractInternalMessageProcessingErrorEvent<M extends Mess
 	}
 
 	/**
-	 * @see vnet.sms.gateway.nettysupport.InternalMessageProcessingErrorEvent#getCreationTime()
+	 * @see vnet.sms.gateway.nettysupport.MessageProcessingEvent#getCreationTime()
 	 */
 	@Override
 	public Date getCreationTime() {
@@ -130,7 +129,7 @@ public abstract class AbstractInternalMessageProcessingErrorEvent<M extends Mess
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		final AbstractInternalMessageProcessingErrorEvent<? extends Message> other = (AbstractInternalMessageProcessingErrorEvent<? extends Message>) obj;
+		final AbstractMessageProcessingEvent<? extends Message> other = (AbstractMessageProcessingEvent<? extends Message>) obj;
 		if (this.id == null) {
 			if (other.id != null) {
 				return false;

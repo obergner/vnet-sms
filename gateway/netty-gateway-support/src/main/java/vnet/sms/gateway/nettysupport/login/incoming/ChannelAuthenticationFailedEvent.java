@@ -9,14 +9,14 @@ import org.jboss.netty.channel.Channel;
 import org.springframework.security.core.AuthenticationException;
 
 import vnet.sms.common.messages.LoginRequest;
-import vnet.sms.gateway.nettysupport.IdentifiableChannelEvent;
+import vnet.sms.gateway.nettysupport.AbstractIdentifiableChannelEvent;
 
 /**
  * @author obergner
  * 
  */
 public class ChannelAuthenticationFailedEvent extends
-        IdentifiableChannelEvent {
+        AbstractIdentifiableChannelEvent {
 
 	private final LoginRequest	          failedLoginRequest;
 
@@ -53,8 +53,8 @@ public class ChannelAuthenticationFailedEvent extends
 	 */
 	@Override
 	public String toString() {
-		return "ChannelAuthenticationFailedEvent@" + this.hashCode()
-		        + "[id: " + getId() + "|creationTimestamp: "
+		return "ChannelAuthenticationFailedEvent@" + this.hashCode() + "[id: "
+		        + getId() + "|creationTimestamp: "
 		        + this.getCreationTimestamp() + "|getChannel: "
 		        + this.getChannel() + "|failedLoginRequest: "
 		        + this.failedLoginRequest + "|authenticationException: "

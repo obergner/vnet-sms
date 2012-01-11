@@ -36,7 +36,7 @@ public class PingTest extends AbstractGatewayServerTest {
 		final long failedLoginResponseMillis = 100L;
 		final int pingIntervalSeconds = 1;
 		final long pingResponseTimeoutMillis = 200000L;
-		final AuthenticationManager authenticationManager = new DenyAllAuthenticationManager();
+		final AuthenticationManager authenticationManager = new AcceptAllAuthenticationManager();
 		final JmsTemplate jmsTemplate = newJmsTemplate();
 		final GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer> channelPipelineFactory = newGatewayServerChannelPipelineFactory(
 		        "assertThatGatewayServerSendsFirstPingRequestToClientAfterPingIntervalHasElapsed",
@@ -62,9 +62,15 @@ public class PingTest extends AbstractGatewayServerTest {
 			}
 		};
 		final LocalClient client = new LocalClient(serverAddress);
-		// Should start ping timeout
 		client.connect();
+		// Should start ping timeout
+		client.login(
+		        1,
+		        "assertThatGatewayServerContinuesSendingPingRequestsAfterReceivingPingResponse",
+		        "whatever");
+
 		client.listen(waitForPing);
+
 		assertTrue("Expected to receive Ping after ping interval of "
 		        + pingIntervalSeconds + " seconds had expired",
 		        pingReceived.await(pingIntervalSeconds * 1000 + 100,

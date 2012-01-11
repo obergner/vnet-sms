@@ -25,6 +25,10 @@ import vnet.sms.common.messages.Message;
 import vnet.sms.common.wme.LoginRequestAcceptedEvent;
 import vnet.sms.common.wme.LoginRequestReceivedEvent;
 import vnet.sms.common.wme.LoginRequestRejectedEvent;
+import vnet.sms.common.wme.LoginResponseReceivedEvent;
+import vnet.sms.common.wme.PingRequestReceivedEvent;
+import vnet.sms.common.wme.PingResponseReceivedEvent;
+import vnet.sms.common.wme.SmsReceivedEvent;
 import vnet.sms.common.wme.WindowedMessageEvent;
 import vnet.sms.gateway.nettysupport.UpstreamWindowedChannelHandler;
 
@@ -54,19 +58,12 @@ public class IncomingLoginRequestsChannelHandler<ID extends Serializable>
 		this.failedLoginResponseDelayMillis = failedLoginResponseDelayMillis;
 	}
 
+	/**
+	 * @see vnet.sms.gateway.nettysupport.UpstreamWindowedChannelHandler#loginRequestReceived(org.jboss.netty.channel.ChannelHandlerContext,
+	 *      vnet.sms.common.wme.LoginRequestReceivedEvent)
+	 */
 	@Override
-	public void windowedMessageReceived(final ChannelHandlerContext ctx,
-	        final WindowedMessageEvent<ID, ? extends Message> e) {
-		getLog().debug("Processing {} ...", e);
-		if (e instanceof LoginRequestReceivedEvent) {
-			processLoginRequest(ctx, (LoginRequestReceivedEvent<ID>) e);
-		} else {
-			processNonLoginRequestMessage(ctx, e);
-		}
-		getLog().debug("Finished processing {}", e);
-	}
-
-	private void processLoginRequest(final ChannelHandlerContext ctx,
+	protected void loginRequestReceived(final ChannelHandlerContext ctx,
 	        final LoginRequestReceivedEvent<ID> e) {
 		getLog().info(
 		        "Attempting to authenticate current channel {} using credentials from {} ...",
@@ -91,6 +88,22 @@ public class IncomingLoginRequestsChannelHandler<ID extends Serializable>
 		// Send LoginRequest further upstream - it might be needed for auditing,
 		// logging, metrics ...
 		ctx.sendUpstream(e);
+	}
+
+	private Authentication authenticate(
+	        final LoginRequestReceivedEvent<ID> loginRequestEvent) {
+		try {
+			return this.authenticationManager
+			        .authenticate(new UsernamePasswordAuthenticationToken(
+			                loginRequestEvent.getMessage().getUsername(),
+			                loginRequestEvent.getMessage().getPassword()));
+		} catch (final BadCredentialsException e) {
+			getLog().warn(
+			        "Login attempt by ["
+			                + loginRequestEvent.getMessage().getUsername()
+			                + "] failed: " + e.getMessage(), e);
+			return null;
+		}
 	}
 
 	private void processSuccessfulAuthentication(
@@ -128,6 +141,66 @@ public class IncomingLoginRequestsChannelHandler<ID extends Serializable>
 		        e.getMessage(), ae));
 	}
 
+	/**
+	 * @see vnet.sms.gateway.nettysupport.UpstreamWindowedChannelHandler#loginResponseReceived(org.jboss.netty.channel.ChannelHandlerContext,
+	 *      vnet.sms.common.wme.LoginResponseReceivedEvent)
+	 */
+	@Override
+	protected void loginResponseReceived(final ChannelHandlerContext ctx,
+	        final LoginResponseReceivedEvent<ID> e) {
+		processNonLoginRequestMessage(ctx, e);
+	}
+
+	private void processNonLoginRequestMessage(final ChannelHandlerContext ctx,
+	        final WindowedMessageEvent<ID, ? extends Message> e) {
+		if (isCurrentChannelAuthenticated()) {
+			getLog().trace(
+			        "Received non-login request {} on authenticated channel {} - will propagate event further upstream",
+			        e, ctx.getChannel());
+			ctx.sendUpstream(e);
+		} else {
+			getLog().warn(
+			        "Received non-login request {} on UNAUTHENTICATED channel {} - DISCARD",
+			        e, ctx.getChannel());
+			ctx.sendDownstream(NonLoginMessageReceivedOnUnauthenticatedChannelEvent
+			        .discardNonLoginMessage(e));
+		}
+	}
+
+	private boolean isCurrentChannelAuthenticated() {
+		return this.authenticatedClient.get() != null;
+	}
+
+	/**
+	 * @see vnet.sms.gateway.nettysupport.UpstreamWindowedChannelHandler#pingRequestReceived(org.jboss.netty.channel.ChannelHandlerContext,
+	 *      vnet.sms.common.wme.PingRequestReceivedEvent)
+	 */
+	@Override
+	protected void pingRequestReceived(final ChannelHandlerContext ctx,
+	        final PingRequestReceivedEvent<ID> e) {
+		processNonLoginRequestMessage(ctx, e);
+	}
+
+	/**
+	 * @see vnet.sms.gateway.nettysupport.UpstreamWindowedChannelHandler#pingResponseReceived(org.jboss.netty.channel.ChannelHandlerContext,
+	 *      vnet.sms.common.wme.PingResponseReceivedEvent)
+	 */
+	@Override
+	protected void pingResponseReceived(final ChannelHandlerContext ctx,
+	        final PingResponseReceivedEvent<ID> e) {
+		processNonLoginRequestMessage(ctx, e);
+	}
+
+	/**
+	 * @see vnet.sms.gateway.nettysupport.UpstreamWindowedChannelHandler#smsReceived(org.jboss.netty.channel.ChannelHandlerContext,
+	 *      vnet.sms.common.wme.SmsReceivedEvent)
+	 */
+	@Override
+	protected void smsReceived(final ChannelHandlerContext ctx,
+	        final SmsReceivedEvent<ID> e) {
+		processNonLoginRequestMessage(ctx, e);
+	}
+
 	private final class DelayFailedLoginResponse implements TimerTask {
 
 		private final ChannelHandlerContext		    ctx;
@@ -152,42 +225,6 @@ public class IncomingLoginRequestsChannelHandler<ID extends Serializable>
 			this.ctx.sendDownstream(LoginRequestRejectedEvent
 			        .reject(this.rejectedLogin));
 		}
-	}
-
-	private Authentication authenticate(
-	        final LoginRequestReceivedEvent<ID> loginRequestEvent) {
-		try {
-			return this.authenticationManager
-			        .authenticate(new UsernamePasswordAuthenticationToken(
-			                loginRequestEvent.getMessage().getUsername(),
-			                loginRequestEvent.getMessage().getPassword()));
-		} catch (final BadCredentialsException e) {
-			getLog().warn(
-			        "Login attempt by ["
-			                + loginRequestEvent.getMessage().getUsername()
-			                + "] failed: " + e.getMessage(), e);
-			return null;
-		}
-	}
-
-	private void processNonLoginRequestMessage(final ChannelHandlerContext ctx,
-	        final WindowedMessageEvent<ID, ? extends Message> e) {
-		if (isCurrentChannelAuthenticated()) {
-			getLog().trace(
-			        "Received non-login request {} on authenticated channel {} - will propagate event further upstream",
-			        e, ctx.getChannel());
-			ctx.sendUpstream(e);
-		} else {
-			getLog().warn(
-			        "Received non-login request {} on UNAUTHENTICATED channel {} - DISCARD",
-			        e, ctx.getChannel());
-			ctx.sendDownstream(NonLoginMessageReceivedOnUnauthenticatedChannelEvent
-			        .discardNonLoginMessage(e));
-		}
-	}
-
-	private boolean isCurrentChannelAuthenticated() {
-		return this.authenticatedClient.get() != null;
 	}
 
 	@Override

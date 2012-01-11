@@ -15,6 +15,7 @@
  */
 package vnet.sms.gateway.nettytest;
 
+import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelEvent;
 import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.MessageEvent;
@@ -22,6 +23,8 @@ import org.jboss.netty.channel.MessageEvent;
 public interface ChannelPipelineEmbedder {
 
 	boolean receive(Object input) throws Throwable;
+
+	void injectUpstreamChannelEvent(ChannelEvent e);
 
 	boolean finishReceive() throws Throwable;
 
@@ -60,4 +63,6 @@ public interface ChannelPipelineEmbedder {
 	int numberOfDownstreamChannelEvents();
 
 	ChannelPipeline getPipeline();
+
+	Channel getChannel();
 }

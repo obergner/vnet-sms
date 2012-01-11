@@ -6,14 +6,14 @@ package vnet.sms.gateway.nettysupport.window;
 import org.jboss.netty.channel.UpstreamMessageEvent;
 
 import vnet.sms.common.messages.Message;
-import vnet.sms.gateway.nettysupport.AbstractInternalMessageProcessingErrorEvent;
+import vnet.sms.gateway.nettysupport.AbstractMessageProcessingEvent;
 
 /**
  * @author obergner
  * 
  */
 public class NoWindowForIncomingMessageAvailableEvent extends
-        AbstractInternalMessageProcessingErrorEvent<Message> {
+        AbstractMessageProcessingEvent<Message> {
 
 	private final int	maximumWindowCapacity;
 
@@ -39,11 +39,11 @@ public class NoWindowForIncomingMessageAvailableEvent extends
 	@Override
 	public String toString() {
 		return "NoWindowForIncomingMessageAvailableEvent@" + this.hashCode()
-		        + " [maximumWindowCapacity: " + this.maximumWindowCapacity
+		        + "[id: " + getId() + "|creationTimestamp: "
+		        + getCreationTimestamp() + "|channel: " + getChannel()
+		        + "|maximumWindowCapacity: " + this.maximumWindowCapacity
 		        + "|waitTimeMillis: " + this.waitTimeMillis
-		        + "|creationTimestamp: " + getCreationTimestamp()
-		        + "|channel: " + getChannel() + "|rejectedMessage: "
-		        + getFailedMessage() + "|remoteAddress: " + getRemoteAddress()
-		        + "]";
+		        + "|rejectedMessage: " + getMessage() + "|remoteAddress: "
+		        + getRemoteAddress() + "]";
 	}
 }

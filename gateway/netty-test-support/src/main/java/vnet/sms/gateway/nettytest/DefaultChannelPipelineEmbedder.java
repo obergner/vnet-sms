@@ -144,7 +144,8 @@ public class DefaultChannelPipelineEmbedder implements ChannelPipelineEmbedder {
 	 * Returns the virtual {@link Channel} which will be used as a mock during
 	 * encoding and decoding.
 	 */
-	protected final Channel getChannel() {
+	@Override
+	public final Channel getChannel() {
 		return this.channel;
 	}
 
@@ -172,6 +173,12 @@ public class DefaultChannelPipelineEmbedder implements ChannelPipelineEmbedder {
 		}
 
 		return !this.receivedMessageEvents.isEmpty();
+	}
+
+	@Override
+	public void injectUpstreamChannelEvent(final ChannelEvent e) {
+		getChannel().getPipeline().sendUpstream(e);
+
 	}
 
 	@Override

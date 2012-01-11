@@ -8,14 +8,14 @@ import static org.apache.commons.lang.Validate.notNull;
 import org.jboss.netty.channel.Channel;
 
 import vnet.sms.common.messages.LoginRequest;
-import vnet.sms.gateway.nettysupport.IdentifiableChannelEvent;
+import vnet.sms.gateway.nettysupport.AbstractIdentifiableChannelEvent;
 
 /**
  * @author obergner
  * 
  */
 public class ChannelSuccessfullyAuthenticatedEvent extends
-        IdentifiableChannelEvent {
+        AbstractIdentifiableChannelEvent {
 
 	private final LoginRequest	successfulLoginRequest;
 
@@ -23,7 +23,7 @@ public class ChannelSuccessfullyAuthenticatedEvent extends
 	 * @param channel
 	 * @param successfulLoginRequest
 	 */
-	ChannelSuccessfullyAuthenticatedEvent(final Channel channel,
+	public ChannelSuccessfullyAuthenticatedEvent(final Channel channel,
 	        final LoginRequest successfulLoginRequest) {
 		super(channel);
 		notNull(successfulLoginRequest,

@@ -20,6 +20,7 @@ import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.wme.PingResponseReceivedEvent;
 import vnet.sms.common.wme.SendPingRequestEvent;
 import vnet.sms.gateway.nettysupport.UpstreamWindowedChannelHandler;
+import vnet.sms.gateway.nettysupport.login.incoming.ChannelSuccessfullyAuthenticatedEvent;
 import vnet.sms.gateway.nettysupport.window.spi.MessageReferenceGenerator;
 
 /**
@@ -61,15 +62,20 @@ public class OutgoingPingChannelHandler<ID extends Serializable> extends
 		return this.pingResponseTimeoutMillis;
 	}
 
+	/**
+	 * @see vnet.sms.gateway.nettysupport.UpstreamWindowedChannelHandler#channelSuccessfullyAuthenticated(org.jboss.netty.channel.ChannelHandlerContext,
+	 *      vnet.sms.gateway.nettysupport.login.incoming.ChannelSuccessfullyAuthenticatedEvent)
+	 */
 	@Override
-	public void channelConnected(final ChannelHandlerContext ctx,
-	        final ChannelStateEvent e) throws Exception {
+	protected void channelSuccessfullyAuthenticated(
+	        final ChannelHandlerContext ctx,
+	        final ChannelSuccessfullyAuthenticatedEvent e) throws Exception {
 		getLog().info(
-		        "Channel {} has been connected - will start to ping in [{}] seconds",
+		        "Channel {} has been successfully authenticated - will start to ping in [{}] seconds",
 		        ctx.getChannel(), this.pingIntervalSeconds);
 		this.pingSender = startPingSenderTask(ctx);
 
-		super.channelConnected(ctx, e);
+		super.channelSuccessfullyAuthenticated(ctx, e);
 	}
 
 	private PingSender startPingSenderTask(final ChannelHandlerContext ctx) {
@@ -81,7 +87,7 @@ public class OutgoingPingChannelHandler<ID extends Serializable> extends
 
 	@Override
 	public void pingResponseReceived(final ChannelHandlerContext ctx,
-	        final PingResponseReceivedEvent<ID> e) {
+	        final PingResponseReceivedEvent<ID> e) throws Exception {
 		if (this.pingSender == null) {
 			throw new IllegalStateException(
 			        "Cannot cancel ping response timout since no PingSender has been started - have you started a PingSender in channelConnected(...)?");
@@ -209,8 +215,8 @@ public class OutgoingPingChannelHandler<ID extends Serializable> extends
 			getLog().warn(
 			        "Did not receive response to ping request after timeout of [{}] milliseconds - will issue a request to close this channel",
 			        OutgoingPingChannelHandler.this.pingResponseTimeoutMillis);
-			this.ctx.sendUpstream(new NoPingResponseReceivedWithinTimeoutEvent(
-			        this.ctx.getChannel(),
+			this.ctx.sendUpstream(new PingResponseTimeoutExpiredEvent(this.ctx
+			        .getChannel(),
 			        OutgoingPingChannelHandler.this.pingIntervalSeconds,
 			        OutgoingPingChannelHandler.this.pingResponseTimeoutMillis));
 		}
