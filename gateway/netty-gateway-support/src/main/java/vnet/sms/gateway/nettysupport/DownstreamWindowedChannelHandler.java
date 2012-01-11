@@ -17,12 +17,7 @@ import org.slf4j.LoggerFactory;
 import vnet.sms.common.wme.LoginRequestAcceptedEvent;
 import vnet.sms.common.wme.LoginRequestRejectedEvent;
 import vnet.sms.common.wme.SendPingRequestEvent;
-import vnet.sms.gateway.nettysupport.login.incoming.ChannelAuthenticationFailedEvent;
-import vnet.sms.gateway.nettysupport.login.incoming.ChannelSuccessfullyAuthenticatedEvent;
 import vnet.sms.gateway.nettysupport.login.incoming.NonLoginMessageReceivedOnUnauthenticatedChannelEvent;
-import vnet.sms.gateway.nettysupport.ping.outgoing.PingResponseTimeoutExpiredEvent;
-import vnet.sms.gateway.nettysupport.window.NoWindowForIncomingMessageAvailableEvent;
-import vnet.sms.gateway.nettysupport.window.PendingWindowedMessagesDiscardedEvent;
 
 /**
  * @author obergner
@@ -56,20 +51,6 @@ public abstract class DownstreamWindowedChannelHandler<ID extends Serializable>
 			        (NonLoginMessageReceivedOnUnauthenticatedChannelEvent<ID, ?>) e);
 		} else if (e instanceof SendPingRequestEvent) {
 			writePingRequestRequested(ctx, (SendPingRequestEvent<ID>) e);
-		} else if (e instanceof ChannelAuthenticationFailedEvent) {
-			channelAuthenticationFailed(ctx,
-			        (ChannelAuthenticationFailedEvent) e);
-		} else if (e instanceof ChannelSuccessfullyAuthenticatedEvent) {
-			channelSuccessfullyAuthenticated(ctx,
-			        (ChannelSuccessfullyAuthenticatedEvent) e);
-		} else if (e instanceof PingResponseTimeoutExpiredEvent) {
-			pingResponseTimeoutExpired(ctx, (PingResponseTimeoutExpiredEvent) e);
-		} else if (e instanceof NoWindowForIncomingMessageAvailableEvent) {
-			noWindowForIncomingMessageAvailable(ctx,
-			        (NoWindowForIncomingMessageAvailableEvent) e);
-		} else if (e instanceof PendingWindowedMessagesDiscardedEvent) {
-			pendingWindowedMessagesDiscarded(ctx,
-			        (PendingWindowedMessagesDiscardedEvent<ID>) e);
 		} else if (e instanceof ChannelStateEvent) {
 			final ChannelStateEvent evt = (ChannelStateEvent) e;
 			switch (evt.getState()) {
@@ -148,59 +129,6 @@ public abstract class DownstreamWindowedChannelHandler<ID extends Serializable>
 	        final NonLoginMessageReceivedOnUnauthenticatedChannelEvent<ID, ?> e)
 	        throws Exception {
 		ctx.sendDownstream(e);
-	}
-
-	/**
-	 * @param ctx
-	 * @param e
-	 * @throws Exception
-	 */
-	protected void channelAuthenticationFailed(final ChannelHandlerContext ctx,
-	        final ChannelAuthenticationFailedEvent e) throws Exception {
-		ctx.sendUpstream(e);
-	}
-
-	/**
-	 * @param ctx
-	 * @param e
-	 * @throws Exception
-	 */
-	protected void channelSuccessfullyAuthenticated(
-	        final ChannelHandlerContext ctx,
-	        final ChannelSuccessfullyAuthenticatedEvent e) throws Exception {
-		ctx.sendUpstream(e);
-	}
-
-	/**
-	 * @param ctx
-	 * @param e
-	 * @throws Exception
-	 */
-	protected void pingResponseTimeoutExpired(final ChannelHandlerContext ctx,
-	        final PingResponseTimeoutExpiredEvent e) throws Exception {
-		ctx.sendUpstream(e);
-	}
-
-	/**
-	 * @param ctx
-	 * @param e
-	 * @throws Exception
-	 */
-	protected void noWindowForIncomingMessageAvailable(
-	        final ChannelHandlerContext ctx,
-	        final NoWindowForIncomingMessageAvailableEvent e) throws Exception {
-		ctx.sendUpstream(e);
-	}
-
-	/**
-	 * @param ctx
-	 * @param e
-	 * @throws Exception
-	 */
-	protected void pendingWindowedMessagesDiscarded(
-	        final ChannelHandlerContext ctx,
-	        final PendingWindowedMessagesDiscardedEvent<ID> e) throws Exception {
-		ctx.sendUpstream(e);
 	}
 
 	/**

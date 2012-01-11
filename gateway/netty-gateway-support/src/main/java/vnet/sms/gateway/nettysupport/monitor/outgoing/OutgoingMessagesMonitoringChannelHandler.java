@@ -28,7 +28,7 @@ public class OutgoingMessagesMonitoringChannelHandler<ID extends Serializable>
 
 	@Override
 	protected void writePingRequestRequested(final ChannelHandlerContext ctx,
-	        final SendPingRequestEvent<ID> e) {
+	        final SendPingRequestEvent<ID> e) throws Exception {
 		this.channelMonitorCallbacks.sendPingRequest();
 		super.writePingRequestRequested(ctx, e);
 	}
@@ -36,7 +36,7 @@ public class OutgoingMessagesMonitoringChannelHandler<ID extends Serializable>
 	@Override
 	protected void writeLoginRequestAcceptedRequested(
 	        final ChannelHandlerContext ctx,
-	        final LoginRequestAcceptedEvent<ID> e) {
+	        final LoginRequestAcceptedEvent<ID> e) throws Exception {
 		this.channelMonitorCallbacks.sendLoginRequestAccepted();
 		super.writeLoginRequestAcceptedRequested(ctx, e);
 	}
@@ -44,7 +44,7 @@ public class OutgoingMessagesMonitoringChannelHandler<ID extends Serializable>
 	@Override
 	protected void writeLoginRequestRejectedRequested(
 	        final ChannelHandlerContext ctx,
-	        final LoginRequestRejectedEvent<ID> e) {
+	        final LoginRequestRejectedEvent<ID> e) throws Exception {
 		this.channelMonitorCallbacks.sendLoginRequestRejected();
 		super.writeLoginRequestRejectedRequested(ctx, e);
 	}
