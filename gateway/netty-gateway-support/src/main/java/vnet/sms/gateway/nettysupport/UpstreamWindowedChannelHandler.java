@@ -25,6 +25,7 @@ import vnet.sms.common.wme.SmsReceivedEvent;
 import vnet.sms.gateway.nettysupport.login.incoming.ChannelAuthenticationFailedEvent;
 import vnet.sms.gateway.nettysupport.login.incoming.ChannelSuccessfullyAuthenticatedEvent;
 import vnet.sms.gateway.nettysupport.ping.outgoing.PingResponseTimeoutExpiredEvent;
+import vnet.sms.gateway.nettysupport.ping.outgoing.StartedToPingEvent;
 import vnet.sms.gateway.nettysupport.window.NoWindowForIncomingMessageAvailableEvent;
 import vnet.sms.gateway.nettysupport.window.PendingWindowedMessagesDiscardedEvent;
 
@@ -62,6 +63,8 @@ public abstract class UpstreamWindowedChannelHandler<ID extends Serializable>
 		} else if (e instanceof ChannelSuccessfullyAuthenticatedEvent) {
 			channelSuccessfullyAuthenticated(ctx,
 			        (ChannelSuccessfullyAuthenticatedEvent) e);
+		} else if (e instanceof StartedToPingEvent) {
+			startedToPing(ctx, (StartedToPingEvent) e);
 		} else if (e instanceof PingResponseTimeoutExpiredEvent) {
 			pingResponseTimeoutExpired(ctx, (PingResponseTimeoutExpiredEvent) e);
 		} else if (e instanceof NoWindowForIncomingMessageAvailableEvent) {
@@ -183,6 +186,16 @@ public abstract class UpstreamWindowedChannelHandler<ID extends Serializable>
 	protected void channelSuccessfullyAuthenticated(
 	        final ChannelHandlerContext ctx,
 	        final ChannelSuccessfullyAuthenticatedEvent e) throws Exception {
+		ctx.sendUpstream(e);
+	}
+
+	/**
+	 * @param ctx
+	 * @param e
+	 * @throws Exception
+	 */
+	protected void startedToPing(final ChannelHandlerContext ctx,
+	        final StartedToPingEvent e) throws Exception {
 		ctx.sendUpstream(e);
 	}
 

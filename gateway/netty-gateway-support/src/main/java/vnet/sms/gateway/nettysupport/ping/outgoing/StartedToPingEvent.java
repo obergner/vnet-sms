@@ -11,15 +11,14 @@ import vnet.sms.gateway.nettysupport.AbstractIdentifiableChannelEvent;
  * @author obergner
  * 
  */
-public final class PingResponseTimeoutExpiredEvent extends
-        AbstractIdentifiableChannelEvent {
+public class StartedToPingEvent extends AbstractIdentifiableChannelEvent {
 
 	private final int	pingIntervalSeconds;
 
 	private final long	pingResponseTimeoutMillis;
 
-	PingResponseTimeoutExpiredEvent(final Channel channel,
-	        final int pingIntervalSeconds, final long pingResponseTimeoutMillis) {
+	StartedToPingEvent(final Channel channel, final int pingIntervalSeconds,
+	        final long pingResponseTimeoutMillis) {
 		super(channel);
 		this.pingIntervalSeconds = pingIntervalSeconds;
 		this.pingResponseTimeoutMillis = pingResponseTimeoutMillis;
@@ -35,10 +34,9 @@ public final class PingResponseTimeoutExpiredEvent extends
 
 	@Override
 	public String toString() {
-		return "PingResponseTimeoutExpiredEvent@" + this.hashCode() + " [id: "
-		        + getId() + "|channel: " + getChannel()
-		        + "|pingIntervalSeconds: " + this.pingIntervalSeconds
-		        + "|pingResponseTimeoutMillis: "
+		return "StartedToPingEvent@" + this.hashCode() + " [id: " + getId()
+		        + "|channel: " + getChannel() + "|pingIntervalSeconds: "
+		        + this.pingIntervalSeconds + "|pingResponseTimeoutMillis: "
 		        + this.pingResponseTimeoutMillis + "|creationTimestamp: "
 		        + getCreationTimestamp() + "]";
 	}

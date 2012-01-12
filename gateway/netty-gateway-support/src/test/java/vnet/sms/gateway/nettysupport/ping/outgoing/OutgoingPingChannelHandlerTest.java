@@ -63,6 +63,43 @@ public class OutgoingPingChannelHandlerTest {
 	}
 
 	@Test
+	public final void assertThatOutgoingPingChannelHandlerSendsStarteToPingEventUpstreamAfterChannelHasBeenAuthenticatedAndPingIntervalElapsed()
+	        throws InterruptedException {
+		final int pingIntervalSeconds = 1;
+		final int pingTimeoutMillis = 20000;
+		final OutgoingPingChannelHandler<Integer> objectUnderTest = new OutgoingPingChannelHandler<Integer>(
+		        pingIntervalSeconds, pingTimeoutMillis,
+		        new TestWindowIdGenerator());
+
+		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
+		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
+		        objectUnderTest);
+		// Simulate successful channel authentication => we start to ping after
+		// pingIntervalSeconds
+		embeddedPipeline
+		        .injectUpstreamChannelEvent(new ChannelSuccessfullyAuthenticatedEvent(
+		                embeddedPipeline.getChannel(),
+		                new LoginRequest(
+		                        "assertThatOutgoingPingChannelHandlerSendsStarteToPingEventUpstreamAfterChannelHasBeenAuthenticatedAndPingIntervalElapsed",
+		                        "password", new LocalAddress(1),
+		                        new LocalAddress(2))));
+		Thread.sleep(pingIntervalSeconds * 1000 + 100);
+		final ChannelEvent startedToPing = embeddedPipeline
+		        .nextUpstreamChannelEvent(new ChannelEventFilter() {
+			        @Override
+			        public boolean matches(final ChannelEvent event) {
+				        return event instanceof StartedToPingEvent;
+			        }
+		        });
+
+		assertNotNull(
+		        "OutgoingPingChannelHandler did not send "
+		                + StartedToPingEvent.class.getName()
+		                + " after channel has been authenticated and ping interval elapsed",
+		        startedToPing);
+	}
+
+	@Test
 	public final void assertThatOutgoingPingChannelHandlerSendsNoPingResponseReceivedWithinTimeoutEventUpstreamIfPingResponseTimeoutExpires()
 	        throws InterruptedException {
 		final int pingIntervalSeconds = 1;

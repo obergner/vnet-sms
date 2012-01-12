@@ -153,6 +153,8 @@ public class OutgoingPingChannelHandler<ID extends Serializable> extends
 				return;
 			}
 			sendPingRequestDownstream();
+			// Inform the wider community
+			sendStartedToPingEventUpstream();
 
 			this.pingResponseTimeout = OutgoingPingChannelHandler.this.pingResponseTimeoutTimer
 			        .newTimeout(
@@ -180,6 +182,16 @@ public class OutgoingPingChannelHandler<ID extends Serializable> extends
 			        OutgoingPingChannelHandler.this.windowIdGenerator
 			                .nextMessageReference(),
 			        this.ctx.getChannel(), pingRequest);
+		}
+
+		private void sendStartedToPingEventUpstream() {
+			final StartedToPingEvent startedToPing = new StartedToPingEvent(
+			        this.ctx.getChannel(), getPingIntervalSeconds(),
+			        getPingResponseTimeoutMillis());
+			this.ctx.sendUpstream(startedToPing);
+			getLog().debug(
+			        "Sent {} upstream to inform upstream channel handlers that pinging commenced on channel {}",
+			        startedToPing, this.ctx.getChannel());
 		}
 
 		boolean cancelPingResponseTimeout() {
