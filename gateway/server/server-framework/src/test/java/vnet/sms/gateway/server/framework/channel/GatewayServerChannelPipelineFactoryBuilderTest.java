@@ -12,6 +12,7 @@ import org.springframework.jmx.export.MBeanExporter;
 import org.springframework.security.authentication.AuthenticationManager;
 
 import vnet.sms.common.messages.Message;
+import vnet.sms.gateway.nettysupport.monitor.incoming.InitialChannelEventsMonitor;
 import vnet.sms.gateway.nettysupport.window.spi.MessageReferenceGenerator;
 import vnet.sms.gateway.server.framework.jmsbridge.MessageForwardingJmsBridge;
 import vnet.sms.gateway.transport.spi.DefaultTransportProtocolPlugin;
@@ -76,6 +77,8 @@ public class GatewayServerChannelPipelineFactoryBuilderTest {
 		objectUnderTest.setMBeanExportOperations(new MBeanExporter());
 		objectUnderTest.setPingIntervalSeconds(2);
 		objectUnderTest.setPingResponseTimeoutMillis(3000L);
+		objectUnderTest
+		        .setInitialChannelEventsMonitor(new InitialChannelEventsMonitor());
 		objectUnderTest.afterPropertiesSet();
 
 		final GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer> product = objectUnderTest

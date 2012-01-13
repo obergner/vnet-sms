@@ -2,14 +2,19 @@ package vnet.sms.gateway.server.framework;
 
 import java.lang.management.ManagementFactory;
 
+import javax.management.Notification;
+
 import org.jboss.netty.handler.codec.serialization.ClassResolvers;
 import org.jboss.netty.handler.codec.serialization.ObjectDecoder;
 import org.jboss.netty.handler.codec.serialization.ObjectEncoder;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jmx.export.MBeanExporter;
+import org.springframework.jmx.export.notification.NotificationPublisher;
+import org.springframework.jmx.export.notification.UnableToSendNotificationException;
 import org.springframework.security.authentication.AuthenticationManager;
 
 import vnet.sms.common.wme.jmsbridge.WindowedMessageEventToJmsMessageConverter;
+import vnet.sms.gateway.nettysupport.monitor.incoming.InitialChannelEventsMonitor;
 import vnet.sms.gateway.server.framework.channel.GatewayServerChannelPipelineFactory;
 import vnet.sms.gateway.server.framework.jmsbridge.MessageForwardingJmsBridge;
 import vnet.sms.gateway.server.framework.test.SerialIntegersMessageReferenceGenerator;
@@ -52,6 +57,16 @@ public class AbstractGatewayServerTest {
 	        final JmsTemplate jmsTemplate) {
 		final MBeanExporter mbeanExporter = new MBeanExporter();
 		mbeanExporter.setServer(ManagementFactory.getPlatformMBeanServer());
+
+		final NotificationPublisher notPublisher = new NotificationPublisher() {
+			@Override
+			public void sendNotification(final Notification notification)
+			        throws UnableToSendNotificationException {
+			}
+		};
+		final InitialChannelEventsMonitor initialChannelEventsMonitor = new InitialChannelEventsMonitor(
+		        notPublisher);
+
 		return new GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer>(
 		        instanceId,
 		        ReferenceableMessageContainer.class,
@@ -64,6 +79,7 @@ public class AbstractGatewayServerTest {
 		        availableIncomingWindows, incomingWindowWaitTimeMillis,
 		        authenticationManager, failedLoginResponseMillis,
 		        new SerialIntegersMessageReferenceGenerator(),
-		        pingIntervalSeconds, pingResponseTimeoutMillis, mbeanExporter);
+		        pingIntervalSeconds, pingResponseTimeoutMillis, mbeanExporter,
+		        initialChannelEventsMonitor);
 	}
 }

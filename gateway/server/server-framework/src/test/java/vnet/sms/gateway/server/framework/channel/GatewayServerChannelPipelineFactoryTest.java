@@ -12,6 +12,8 @@ import static org.junit.Assert.assertTrue;
 import java.lang.management.ManagementFactory;
 import java.net.InetSocketAddress;
 
+import javax.management.Notification;
+
 import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.ChannelEvent;
 import org.jboss.netty.channel.MessageEvent;
@@ -25,6 +27,8 @@ import org.jboss.netty.handler.codec.serialization.ObjectEncoder;
 import org.junit.Test;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jmx.export.MBeanExporter;
+import org.springframework.jmx.export.notification.NotificationPublisher;
+import org.springframework.jmx.export.notification.UnableToSendNotificationException;
 import org.springframework.security.authentication.AuthenticationManager;
 
 import vnet.sms.common.messages.LoginRequest;
@@ -33,6 +37,7 @@ import vnet.sms.common.messages.Message;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.PingResponse;
 import vnet.sms.gateway.nettysupport.login.incoming.ChannelSuccessfullyAuthenticatedEvent;
+import vnet.sms.gateway.nettysupport.monitor.incoming.InitialChannelEventsMonitor;
 import vnet.sms.gateway.nettysupport.window.NoWindowForIncomingMessageAvailableEvent;
 import vnet.sms.gateway.nettytest.ChannelEventFilter;
 import vnet.sms.gateway.nettytest.ChannelPipelineEmbedder;
@@ -62,7 +67,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
 		        1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
-		        new MBeanExporter());
+		        new MBeanExporter(), new InitialChannelEventsMonitor());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -79,7 +84,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
 		        1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
-		        new MBeanExporter());
+		        new MBeanExporter(), new InitialChannelEventsMonitor());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -96,7 +101,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
 		        1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
-		        new MBeanExporter());
+		        new MBeanExporter(), new InitialChannelEventsMonitor());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -113,7 +118,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
 		        1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
-		        new MBeanExporter());
+		        new MBeanExporter(), new InitialChannelEventsMonitor());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -129,7 +134,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        null, new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
 		        1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
-		        new MBeanExporter());
+		        new MBeanExporter(), new InitialChannelEventsMonitor());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -146,7 +151,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
 		        1000L, null, 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
-		        new MBeanExporter());
+		        new MBeanExporter(), new InitialChannelEventsMonitor());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -162,7 +167,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(),
 		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
 		        1000L, new AcceptAllAuthenticationManager(), 1000L, null, 2,
-		        2000L, new MBeanExporter());
+		        2000L, new MBeanExporter(), new InitialChannelEventsMonitor());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -178,7 +183,25 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(),
 		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
 		        1000L, new AcceptAllAuthenticationManager(), 1000L,
-		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L, null);
+		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L, null,
+		        new InitialChannelEventsMonitor());
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public final void assertThatConstructorRejectsNullInitialChannelEventsMonitor() {
+		final JmsTemplate jmsTemplate = createNiceMock(JmsTemplate.class);
+		new GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer>(
+		        "assertThatConstructorRejectsNullMBeanServer",
+		        ReferenceableMessageContainer.class,
+		        new DelimiterBasedFrameDecoder(0, ChannelBuffers.EMPTY_BUFFER),
+		        new Base64Decoder(),
+		        new Base64Encoder(),
+		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(),
+		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(),
+		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
+		        1000L, new AcceptAllAuthenticationManager(), 1000L,
+		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
+		        new MBeanExporter(), null);
 	}
 
 	@Test
@@ -230,8 +253,19 @@ public class GatewayServerChannelPipelineFactoryTest {
 		expect(jmsTemplate.getDefaultDestinationName()).andReturn(
 		        "queue.test.defaultDestination");
 		replay(jmsTemplate);
+
 		final MBeanExporter mbeanExporter = new MBeanExporter();
 		mbeanExporter.setServer(ManagementFactory.getPlatformMBeanServer());
+
+		final NotificationPublisher notPublisher = new NotificationPublisher() {
+			@Override
+			public void sendNotification(final Notification notification)
+			        throws UnableToSendNotificationException {
+			}
+		};
+		final InitialChannelEventsMonitor initialChannelEventsMonitor = new InitialChannelEventsMonitor(
+		        notPublisher);
+
 		return new GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer>(
 		        "newObjectUnderTest",
 		        ReferenceableMessageContainer.class,
@@ -244,7 +278,8 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        availableIncomingWindows, incomingWindowWaitTimeMillis,
 		        authenticationManager, failedLoginResponseMillis,
 		        new SerialIntegersMessageReferenceGenerator(),
-		        pingIntervalSeconds, pingResponseTimeoutMillis, mbeanExporter);
+		        pingIntervalSeconds, pingResponseTimeoutMillis, mbeanExporter,
+		        initialChannelEventsMonitor);
 	}
 
 	@Test

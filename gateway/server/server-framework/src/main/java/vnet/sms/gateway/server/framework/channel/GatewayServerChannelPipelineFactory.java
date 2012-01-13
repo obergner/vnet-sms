@@ -25,6 +25,8 @@ import vnet.sms.gateway.nettysupport.monitor.MonitoringChannelGroup;
 import vnet.sms.gateway.nettysupport.monitor.incoming.IncomingBytesCountingChannelHandler;
 import vnet.sms.gateway.nettysupport.monitor.incoming.IncomingMessagesMonitoringChannelHandler;
 import vnet.sms.gateway.nettysupport.monitor.incoming.IncomingPdusCountingChannelHandler;
+import vnet.sms.gateway.nettysupport.monitor.incoming.InitialChannelEventsMonitor;
+import vnet.sms.gateway.nettysupport.monitor.incoming.InitialChannelEventsPublishingUpstreamChannelHandler;
 import vnet.sms.gateway.nettysupport.monitor.outgoing.OutgoingBytesCountingChannelHandler;
 import vnet.sms.gateway.nettysupport.monitor.outgoing.OutgoingMessagesMonitoringChannelHandler;
 import vnet.sms.gateway.nettysupport.monitor.outgoing.OutgoingPdusCountingChannelHandler;
@@ -77,6 +79,8 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 
 	private final ConnectedChannelsTrackingChannelHandler	                connectedChannelsTracker;
 
+	private final InitialChannelEventsPublishingUpstreamChannelHandler	    initialChannelEventsHandler;
+
 	private final IncomingMessagesPublishingChannelHandler<ID>	            incomingMessagesPublisher	= new IncomingMessagesPublishingChannelHandler<ID>();
 
 	public GatewayServerChannelPipelineFactory(
@@ -95,7 +99,8 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 	        final MessageReferenceGenerator<ID> windowIdGenerator,
 	        final int pingIntervalSeconds,
 	        final long pingResponseTimeoutMillis,
-	        final MBeanExportOperations mbeanExporter) {
+	        final MBeanExportOperations mbeanExporter,
+	        final InitialChannelEventsMonitor initialChannelEventsMonitor) {
 		notEmpty(gatewayServerInstanceId,
 		        "Argument 'gatewayServerInstanceId' must neither be null nor empty");
 		notNull(pduType, "Argument 'pduType' must not be null");
@@ -112,6 +117,8 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 		notNull(windowIdGenerator,
 		        "Argument 'windowIdGenerator' must not be null");
 		notNull(mbeanExporter, "Argument 'mbeanExporter' must not be null");
+		notNull(initialChannelEventsMonitor,
+		        "Argument 'intialChannelEventsMonitor' must not be null");
 		this.pduType = pduType;
 		this.frameDecoder = frameDecoder;
 		this.decoder = decoder;
@@ -126,6 +133,8 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 		this.pingIntervalSeconds = pingIntervalSeconds;
 		this.pingResponseTimeoutMillis = pingResponseTimeoutMillis;
 		this.mbeanExporter = mbeanExporter;
+		this.initialChannelEventsHandler = new InitialChannelEventsPublishingUpstreamChannelHandler(
+		        initialChannelEventsMonitor);
 		this.connectedChannelsTracker = new ConnectedChannelsTrackingChannelHandler(
 		        new MonitoringChannelGroup("vnet.sms.gateway:server="
 		                + gatewayServerInstanceId
@@ -140,7 +149,11 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 	public ChannelPipeline getPipeline() throws Exception {
 		final ChannelPipeline pipeline = Channels.pipeline();
 
-		// Track open channels
+		// Publish OPEN, BOUND and CONNECTED events
+		pipeline.addLast(
+		        InitialChannelEventsPublishingUpstreamChannelHandler.NAME,
+		        this.initialChannelEventsHandler);
+		// Track connected channels
 		pipeline.addLast(ConnectedChannelsTrackingChannelHandler.NAME,
 		        this.connectedChannelsTracker);
 

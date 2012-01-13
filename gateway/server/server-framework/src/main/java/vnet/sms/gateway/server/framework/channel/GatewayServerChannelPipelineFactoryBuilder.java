@@ -11,10 +11,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jmx.export.MBeanExportOperations;
 import org.springframework.security.authentication.AuthenticationManager;
 
 import vnet.sms.common.spring.jmx.MBeanExportOperationsAware;
+import vnet.sms.gateway.nettysupport.monitor.incoming.InitialChannelEventsMonitor;
 import vnet.sms.gateway.server.framework.jmsbridge.MessageForwardingJmsBridge;
 import vnet.sms.gateway.transport.plugin.TransportProtocolExtensionPoint;
 import vnet.sms.gateway.transport.plugin.context.TransportProtocolPluginInjector;
@@ -50,9 +52,11 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 
 	private MBeanExportOperations	                    mbeanExporter;
 
-	private GatewayServerChannelPipelineFactory<ID, TP>	producedPipelineFactory;
-
 	private MessageForwardingJmsBridge<ID>	            messageForwardingJmsBridge;
+
+	private InitialChannelEventsMonitor	                initialChannelEventsMonitor;
+
+	private GatewayServerChannelPipelineFactory<ID, TP>	producedPipelineFactory;
 
 	/**
 	 * @see org.springframework.beans.factory.FactoryBean#getObject()
@@ -107,7 +111,7 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 		        this.failedLoginResponseDelayMillis,
 		        this.transportProtocolPlugin.getMessageReferenceGenerator(),
 		        this.pingIntervalSeconds, this.pingResponseTimeoutMillis,
-		        this.mbeanExporter);
+		        this.mbeanExporter, this.initialChannelEventsMonitor);
 
 		this.log.info(
 		        "Finished building GatewayServerChannelPipelineFactory instance {}",
@@ -147,6 +151,7 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 	 * @param gatewayServerInstanceId
 	 *            the gatewayServerInstanceId to set
 	 */
+	@Required
 	public final void setGatewayServerInstanceId(
 	        final String gatewayServerInstanceId) {
 		this.gatewayServerInstanceId = gatewayServerInstanceId;
@@ -156,15 +161,27 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 	 * @param messageForwardingJmsBridge
 	 *            the messageForwardingJmsBridge to set
 	 */
+	@Required
 	public final void setMessageForwardingJmsBridge(
 	        final MessageForwardingJmsBridge<ID> messageForwardingJmsBridge) {
 		this.messageForwardingJmsBridge = messageForwardingJmsBridge;
 	}
 
 	/**
+	 * @param initialChannelEventsMonitor
+	 *            the initialChannelEventsMonitor to set
+	 */
+	@Required
+	public final void setInitialChannelEventsMonitor(
+	        final InitialChannelEventsMonitor initialChannelEventsMonitor) {
+		this.initialChannelEventsMonitor = initialChannelEventsMonitor;
+	}
+
+	/**
 	 * @param availableIncomingWindows
 	 *            the availableIncomingWindows to set
 	 */
+	@Required
 	public final void setAvailableIncomingWindows(
 	        final int availableIncomingWindows) {
 		this.availableIncomingWindows = availableIncomingWindows;
@@ -174,6 +191,7 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 	 * @param incomingWindowWaitTimeMillis
 	 *            the incomingWindowWaitTimeMillis to set
 	 */
+	@Required
 	public final void setIncomingWindowWaitTimeMillis(
 	        final long incomingWindowWaitTimeMillis) {
 		this.incomingWindowWaitTimeMillis = incomingWindowWaitTimeMillis;
@@ -183,6 +201,7 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 	 * @param authenticationManager
 	 *            the authenticationManager to set
 	 */
+	@Required
 	public final void setAuthenticationManager(
 	        final AuthenticationManager authenticationManager) {
 		this.authenticationManager = authenticationManager;
@@ -192,6 +211,7 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 	 * @param failedLoginResponseDelayMillis
 	 *            the failedLoginResponseDelayMillis to set
 	 */
+	@Required
 	public final void setFailedLoginResponseDelayMillis(
 	        final long failedLoginResponseDelayMillis) {
 		this.failedLoginResponseDelayMillis = failedLoginResponseDelayMillis;
@@ -201,6 +221,7 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 	 * @param pingIntervalSeconds
 	 *            the pingIntervalSeconds to set
 	 */
+	@Required
 	public final void setPingIntervalSeconds(final int pingIntervalSeconds) {
 		this.pingIntervalSeconds = pingIntervalSeconds;
 	}
@@ -209,6 +230,7 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 	 * @param pingResponseTimeoutMillis
 	 *            the pingResponseTimeoutMillis to set
 	 */
+	@Required
 	public final void setPingResponseTimeoutMillis(
 	        final long pingResponseTimeoutMillis) {
 		this.pingResponseTimeoutMillis = pingResponseTimeoutMillis;

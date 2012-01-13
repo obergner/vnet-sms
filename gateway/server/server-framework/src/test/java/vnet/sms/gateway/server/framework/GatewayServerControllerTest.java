@@ -13,6 +13,7 @@ import org.springframework.jmx.export.MBeanExporter;
 import org.springframework.security.authentication.AuthenticationManager;
 
 import vnet.sms.common.wme.jmsbridge.WindowedMessageEventToJmsMessageConverter;
+import vnet.sms.gateway.nettysupport.monitor.incoming.InitialChannelEventsMonitor;
 import vnet.sms.gateway.server.framework.channel.GatewayServerChannelPipelineFactory;
 import vnet.sms.gateway.server.framework.jmsbridge.MessageForwardingJmsBridge;
 import vnet.sms.gateway.server.framework.test.AcceptAllAuthenticationManager;
@@ -96,7 +97,7 @@ public class GatewayServerControllerTest {
 		        authenticationManager, failedLoginResponseMillis,
 		        new SerialIntegersMessageReferenceGenerator(),
 		        pingIntervalSeconds, pingResponseTimeoutMillis,
-		        new MBeanExporter());
+		        new MBeanExporter(), new InitialChannelEventsMonitor());
 	}
 
 	@Test

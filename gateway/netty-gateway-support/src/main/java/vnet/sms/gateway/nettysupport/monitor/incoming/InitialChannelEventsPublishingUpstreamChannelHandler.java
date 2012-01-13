@@ -18,6 +18,8 @@ import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
 public class InitialChannelEventsPublishingUpstreamChannelHandler extends
         SimpleChannelUpstreamHandler {
 
+	public static final String	              NAME	= "vnet.sms.gateway:initial-channel-events-publishing-handler";
+
 	private final InitialChannelEventsMonitor	initialChannelEventsMonitor;
 
 	/**

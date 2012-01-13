@@ -55,6 +55,8 @@
 			ref="vnet.sms.gateway.server.server-framework.authenticationManager" />
 		<property name="messageForwardingJmsBridge"
 			ref="vnet.sms.gateway.server.server-framework.messageForwardingJmsBridge" />
+		<property name="initialChannelEventsMonitor"
+			ref="vnet.sms.gateway.server.server-framework.initialChannelEventsMonitor" />
 		<property name="availableIncomingWindows" value="${gateway.server.availableIncomingWindows}" />
 		<property name="failedLoginResponseDelayMillis"
 			value="${gateway.server.failedLoginResponseDelayMillis}" />
@@ -76,5 +78,11 @@
 		class="vnet.sms.gateway.server.framework.jmsbridge.MessageForwardingJmsBridge"
 		c:jmsTemplate-ref="vnet.sms.gateway.server.server-framework.jmsTemplate" />
 	<!-- END-SNIPPET: message forwarding JMS bridge -->
+
+	<!-- START-SNIPPET: initial channel events monitor -->
+	<bean
+		id="vnet.sms.gateway.server.server-framework.initialChannelEventsMonitor"
+		class="vnet.sms.gateway.nettysupport.monitor.incoming.InitialChannelEventsMonitor" />
+	<!-- END-SNIPPET: initial channel events monitor -->
 
 </beans>
