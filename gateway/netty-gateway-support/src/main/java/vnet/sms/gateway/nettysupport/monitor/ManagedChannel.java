@@ -99,10 +99,13 @@ public class ManagedChannel implements NotificationPublisherAware {
 				}
 			});
 
-			managedChannel.addChannelMonitorToChannel();
-
 			this.mbeanExporter.registerManagedResource(managedChannel,
 			        managedChannel.getObjectName());
+			// Take care to call this AFTER managedChannel has been registered
+			// in MBeanExporter since it will receive its NotificationPublisher
+			// during that registration. Otherwise, it may receive events to
+			// publish via JMX BEFORE it obtained its NotificationPublisher.
+			managedChannel.addChannelMonitorToChannel();
 
 			return managedChannel;
 		}
