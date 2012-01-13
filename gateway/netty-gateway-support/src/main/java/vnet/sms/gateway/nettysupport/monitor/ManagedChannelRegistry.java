@@ -54,7 +54,7 @@ class ManagedChannelRegistry {
 			        "Registered channel {} as a managed channel to be monitored via JMX",
 			        channel);
 		} else {
-			managedChannel.close();
+			managedChannel.cleanup();
 		}
 	}
 

@@ -5,6 +5,7 @@ package vnet.sms.gateway.nettysupport.monitor;
 
 import static org.apache.commons.lang.Validate.notNull;
 
+import java.net.SocketAddress;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
@@ -94,7 +95,7 @@ public class ManagedChannel implements NotificationPublisherAware {
 				@Override
 				public void operationComplete(final ChannelFuture future)
 				        throws Exception {
-					managedChannel.close();
+					managedChannel.cleanup();
 				}
 			});
 
@@ -231,7 +232,7 @@ public class ManagedChannel implements NotificationPublisherAware {
 		}
 	}
 
-	void close() {
+	void cleanup() {
 		Metrics.removeMetric(metricNameOf(this.numberOfAcceptedLoginRequests));
 		Metrics.removeMetric(metricNameOf(this.numberOfReceivedBytes));
 		Metrics.removeMetric(metricNameOf(this.totalNumberOfReceivedBytes));
@@ -306,6 +307,41 @@ public class ManagedChannel implements NotificationPublisherAware {
 		notNull(notificationPublisher,
 		        "Argument 'notificationPublisher' must not be null");
 		this.notificationPublisher = notificationPublisher;
+	}
+
+	// ------------------------------------------------------------------------
+	//
+	// ------------------------------------------------------------------------
+
+	@ManagedOperation(description = "Closes this channel - this channel cannot be reused afterwards")
+	public void close() {
+		this.log.info("Received request to close channel {} via JMX",
+		        this.channel);
+		final ChannelFuture closed = this.channel.close();
+		closed.addListener(new ChannelFutureListener() {
+			@Override
+			public void operationComplete(final ChannelFuture future)
+			        throws Exception {
+				if (future.isSuccess()) {
+					ManagedChannel.this.log.info("Channel {} has been closed",
+					        future.getChannel());
+				} else {
+					ManagedChannel.this.log.warn("Failed to close channel "
+					        + future.getChannel() + ": "
+					        + future.getCause().getMessage(), future.getCause());
+				}
+			}
+		});
+	}
+
+	@ManagedAttribute(description = "The local address this channel is bound to")
+	public SocketAddress getLocalAddress() {
+		return this.channel.getLocalAddress();
+	}
+
+	@ManagedAttribute(description = "The remote address this channel is connected to")
+	public SocketAddress getRemoteAddress() {
+		return this.channel.getRemoteAddress();
 	}
 
 	// ------------------------------------------------------------------------
