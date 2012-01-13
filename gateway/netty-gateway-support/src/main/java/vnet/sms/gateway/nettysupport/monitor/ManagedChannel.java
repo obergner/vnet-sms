@@ -7,8 +7,10 @@ import static org.apache.commons.lang.Validate.notNull;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javax.management.MalformedObjectNameException;
+import javax.management.Notification;
 import javax.management.ObjectName;
 
 import org.jboss.netty.channel.Channel;
@@ -20,10 +22,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jmx.export.MBeanExportOperations;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
+import org.springframework.jmx.export.annotation.ManagedNotification;
+import org.springframework.jmx.export.annotation.ManagedNotifications;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedOperationParameter;
 import org.springframework.jmx.export.annotation.ManagedOperationParameters;
 import org.springframework.jmx.export.annotation.ManagedResource;
+import org.springframework.jmx.export.notification.NotificationPublisher;
+import org.springframework.jmx.export.notification.NotificationPublisherAware;
+
+import vnet.sms.gateway.nettysupport.login.incoming.ChannelAuthenticationFailedEvent;
+import vnet.sms.gateway.nettysupport.login.incoming.ChannelSuccessfullyAuthenticatedEvent;
+import vnet.sms.gateway.nettysupport.ping.outgoing.PingResponseTimeoutExpiredEvent;
+import vnet.sms.gateway.nettysupport.ping.outgoing.StartedToPingEvent;
+import vnet.sms.gateway.nettysupport.window.NoWindowForIncomingMessageAvailableEvent;
+import vnet.sms.gateway.nettysupport.window.PendingWindowedMessagesDiscardedEvent;
 
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.CounterMetric;
@@ -36,8 +49,30 @@ import com.yammer.metrics.core.MetricName;
  * @author obergner
  * 
  */
+@ManagedNotifications({
+        @ManagedNotification(name = ManagedChannel.Events.CHANNEL_AUTHENTICATED, description = "Channel has been authenticated", notificationTypes = ManagedChannel.Events.CHANNEL_AUTHENTICATED),
+        @ManagedNotification(name = ManagedChannel.Events.CHANNEL_AUTHENTICATION_FAILED, description = "Attempt to authenticate channel failed", notificationTypes = ManagedChannel.Events.CHANNEL_AUTHENTICATION_FAILED),
+        @ManagedNotification(name = ManagedChannel.Events.STARTED_TO_PING, description = "Started to send out Pings", notificationTypes = ManagedChannel.Events.STARTED_TO_PING),
+        @ManagedNotification(name = ManagedChannel.Events.PING_RESPONSE_TIMEOUT_EXPIRED, description = "Did not receive a response to a previously sent out Ping within the predefined timeout", notificationTypes = ManagedChannel.Events.PING_RESPONSE_TIMEOUT_EXPIRED),
+        @ManagedNotification(name = ManagedChannel.Events.NO_WINDOW_FOR_INCOMING_MESSAGE_AVAILABLE, description = "A message came in, but no free window was available", notificationTypes = ManagedChannel.Events.NO_WINDOW_FOR_INCOMING_MESSAGE_AVAILABLE),
+        @ManagedNotification(name = ManagedChannel.Events.PENDING_WINDOWED_MESSAGES_DISCARDED, description = "Messages stored in window store have expired and will be discarded", notificationTypes = ManagedChannel.Events.CHANNEL_AUTHENTICATED) })
 @ManagedResource
-public class ManagedChannel {
+public class ManagedChannel implements NotificationPublisherAware {
+
+	public static class Events {
+
+		public static final String	CHANNEL_AUTHENTICATED		             = "channel.authenticated";
+
+		public static final String	CHANNEL_AUTHENTICATION_FAILED		     = "channel.authentication-failed";
+
+		public static final String	STARTED_TO_PING		                     = "channel.started-to-ping";
+
+		public static final String	PING_RESPONSE_TIMEOUT_EXPIRED		     = "channel.ping-response-timeout-expired";
+
+		public static final String	NO_WINDOW_FOR_INCOMING_MESSAGE_AVAILABLE	= "channel.no-window-for-incoming-message-available";
+
+		public static final String	PENDING_WINDOWED_MESSAGES_DISCARDED		 = "channel.pending-windowed-messages-discarde";
+	}
 
 	static class Factory {
 
@@ -81,6 +116,8 @@ public class ManagedChannel {
 	                                                .getLogger(getClass());
 
 	private final MBeanExportOperations	mbeanExporter;
+
+	private NotificationPublisher	    notificationPublisher;
 
 	private final HistogramMetric	    numberOfReceivedBytes;
 
@@ -257,6 +294,18 @@ public class ManagedChannel {
 		} catch (final MalformedObjectNameException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	// ------------------------------------------------------------------------
+	//
+	// ------------------------------------------------------------------------
+
+	@Override
+	public void setNotificationPublisher(
+	        final NotificationPublisher notificationPublisher) {
+		notNull(notificationPublisher,
+		        "Argument 'notificationPublisher' must not be null");
+		this.notificationPublisher = notificationPublisher;
 	}
 
 	// ------------------------------------------------------------------------
@@ -713,6 +762,24 @@ public class ManagedChannel {
 
 	private class Listener implements ChannelMonitor {
 
+		private final AtomicLong	channelAuthenticatedSeq		          = new AtomicLong(
+		                                                                          1L);
+
+		private final AtomicLong	channelAuthenticationFailedSeq		  = new AtomicLong(
+		                                                                          1L);
+
+		private final AtomicLong	startedToPingSeq		              = new AtomicLong(
+		                                                                          1L);
+
+		private final AtomicLong	pingResponseTimeoutExpiredSeq		  = new AtomicLong(
+		                                                                          1L);
+
+		private final AtomicLong	noWindowForIncomingMessaeAvailableSeq	= new AtomicLong(
+		                                                                          1L);
+
+		private final AtomicLong	pendingWindowedMessagedDiscardedSeq		= new AtomicLong(
+		                                                                          1L);
+
 		@Override
 		public void bytesReceived(final long numberOfBytes) {
 			ManagedChannel.this.numberOfReceivedBytes.update(numberOfBytes);
@@ -783,6 +850,77 @@ public class ManagedChannel {
 		public void sendBytes(final long numberOfBytes) {
 			ManagedChannel.this.numberOfSentBytes.update(numberOfBytes);
 			ManagedChannel.this.totalNumberOfSentBytes.inc(numberOfBytes);
+		}
+
+		@Override
+		public void channelAuthenticated(
+		        final ChannelSuccessfullyAuthenticatedEvent e) {
+			final Notification notification = new Notification(
+			        Events.CHANNEL_AUTHENTICATED, e.getChannel(),
+			        this.channelAuthenticatedSeq.getAndIncrement());
+			notification.setUserData(e.getSuccessfulLoginRequest());
+			sendNotification(notification);
+		}
+
+		private void sendNotification(final Notification notification) {
+			if (ManagedChannel.this.notificationPublisher == null) {
+				throw new IllegalStateException(
+				        "No "
+				                + NotificationPublisher.class.getName()
+				                + " has been set. Did you remember to manually inject a NotificationPublisher when using this class outside a Spring context?");
+			}
+			ManagedChannel.this.notificationPublisher
+			        .sendNotification(notification);
+		}
+
+		@Override
+		public void channelAuthenticationFailed(
+		        final ChannelAuthenticationFailedEvent e) {
+			final Notification notification = new Notification(
+			        Events.CHANNEL_AUTHENTICATION_FAILED, e.getChannel(),
+			        this.channelAuthenticationFailedSeq.getAndIncrement());
+			notification.setUserData(e.getFailedLoginRequest());
+			sendNotification(notification);
+		}
+
+		@Override
+		public void startedToPing(final StartedToPingEvent e) {
+			final Notification notification = new Notification(
+			        Events.STARTED_TO_PING, e.getChannel(),
+			        this.startedToPingSeq.getAndIncrement());
+			notification.setUserData(e.getPingIntervalSeconds());
+			sendNotification(notification);
+		}
+
+		@Override
+		public void pingResponseTimeoutExpired(
+		        final PingResponseTimeoutExpiredEvent e) {
+			final Notification notification = new Notification(
+			        Events.PING_RESPONSE_TIMEOUT_EXPIRED, e.getChannel(),
+			        this.pingResponseTimeoutExpiredSeq.getAndIncrement());
+			notification.setUserData(e.getPingResponseTimeoutMillis());
+			sendNotification(notification);
+		}
+
+		@Override
+		public void noWindowForIncomingMessageAvailable(
+		        final NoWindowForIncomingMessageAvailableEvent e) {
+			final Notification notification = new Notification(
+			        Events.NO_WINDOW_FOR_INCOMING_MESSAGE_AVAILABLE,
+			        e.getChannel(),
+			        this.noWindowForIncomingMessaeAvailableSeq
+			                .getAndIncrement());
+			notification.setUserData(e.getMessage());
+			sendNotification(notification);
+		}
+
+		@Override
+		public void pendingWindowedMessagesDiscarded(
+		        final PendingWindowedMessagesDiscardedEvent<?> e) {
+			final Notification notification = new Notification(
+			        Events.PENDING_WINDOWED_MESSAGES_DISCARDED, e.getChannel(),
+			        this.pendingWindowedMessagedDiscardedSeq.getAndIncrement());
+			sendNotification(notification);
 		}
 	}
 }

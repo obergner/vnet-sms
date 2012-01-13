@@ -6,6 +6,13 @@ package vnet.sms.gateway.nettysupport.monitor;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import vnet.sms.gateway.nettysupport.login.incoming.ChannelAuthenticationFailedEvent;
+import vnet.sms.gateway.nettysupport.login.incoming.ChannelSuccessfullyAuthenticatedEvent;
+import vnet.sms.gateway.nettysupport.ping.outgoing.PingResponseTimeoutExpiredEvent;
+import vnet.sms.gateway.nettysupport.ping.outgoing.StartedToPingEvent;
+import vnet.sms.gateway.nettysupport.window.NoWindowForIncomingMessageAvailableEvent;
+import vnet.sms.gateway.nettysupport.window.PendingWindowedMessagesDiscardedEvent;
+
 /**
  * @author obergner
  * 
@@ -121,6 +128,53 @@ public class ChannelMonitors implements ChannelMonitor {
 	public void sendBytes(final long numberOfBytes) {
 		for (final ChannelMonitor cb : this.callbacks) {
 			cb.sendBytes(numberOfBytes);
+		}
+	}
+
+	@Override
+	public void channelAuthenticated(
+	        final ChannelSuccessfullyAuthenticatedEvent e) {
+		for (final ChannelMonitor cb : this.callbacks) {
+			cb.channelAuthenticated(e);
+		}
+	}
+
+	@Override
+	public void channelAuthenticationFailed(
+	        final ChannelAuthenticationFailedEvent e) {
+		for (final ChannelMonitor cb : this.callbacks) {
+			cb.channelAuthenticationFailed(e);
+		}
+	}
+
+	@Override
+	public void startedToPing(final StartedToPingEvent e) {
+		for (final ChannelMonitor cb : this.callbacks) {
+			cb.startedToPing(e);
+		}
+	}
+
+	@Override
+	public void pingResponseTimeoutExpired(
+	        final PingResponseTimeoutExpiredEvent e) {
+		for (final ChannelMonitor cb : this.callbacks) {
+			cb.pingResponseTimeoutExpired(e);
+		}
+	}
+
+	@Override
+	public void noWindowForIncomingMessageAvailable(
+	        final NoWindowForIncomingMessageAvailableEvent e) {
+		for (final ChannelMonitor cb : this.callbacks) {
+			cb.noWindowForIncomingMessageAvailable(e);
+		}
+	}
+
+	@Override
+	public void pendingWindowedMessagesDiscarded(
+	        final PendingWindowedMessagesDiscardedEvent<?> e) {
+		for (final ChannelMonitor cb : this.callbacks) {
+			cb.pendingWindowedMessagesDiscarded(e);
 		}
 	}
 }
