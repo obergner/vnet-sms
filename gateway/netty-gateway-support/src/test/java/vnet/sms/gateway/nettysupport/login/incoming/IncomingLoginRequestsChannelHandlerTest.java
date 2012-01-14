@@ -9,6 +9,7 @@ import java.net.InetSocketAddress;
 import org.jboss.netty.channel.ChannelEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.junit.Test;
+import org.slf4j.MDC;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.TestingAuthenticationToken;
@@ -275,5 +276,39 @@ public class IncomingLoginRequestsChannelHandlerTest {
 		        "IncomingLoginRequestsChannelHandler did not send expected "
 		                + ChannelAuthenticationFailedEvent.class.getName()
 		                + " upstream after failed login", upstreamChannelEvent);
+	}
+
+	@Test
+	public final void assertThatLoginChannelHandlerPushedAuthenticatedUserOnMDCIfLoginSucceeds()
+	        throws Throwable {
+		final AuthenticationManager acceptAll = new AuthenticationManager() {
+			@Override
+			public Authentication authenticate(
+			        final Authentication authentication)
+			        throws AuthenticationException {
+				return new TestingAuthenticationToken(
+				        authentication.getPrincipal(),
+				        authentication.getCredentials(), "test-role");
+			}
+		};
+		final IncomingLoginRequestsChannelHandler<Integer> objectUnderTest = new IncomingLoginRequestsChannelHandler<Integer>(
+		        acceptAll, 10);
+
+		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
+		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
+		        objectUnderTest);
+		final LoginRequest loginRequest = new LoginRequest(
+		        "assertThatLoginChannelHandlerPushedAuthenticatedUserOnMDCIfLoginSucceeds",
+		        "secret", new InetSocketAddress(0), new InetSocketAddress(0));
+		embeddedPipeline.receive(loginRequest);
+		final String currentUserInMdc = MDC
+		        .get(IncomingLoginRequestsChannelHandler.CURRENT_USER_MDC_KEY);
+
+		assertNotNull(
+		        "IncomingLoginRequestsChannelHandler did not push authenticated user onto MDC after successful login",
+		        currentUserInMdc);
+		assertEquals(
+		        "IncomingLoginRequestsChannelHandler pushed unexpected authenticated user onto MDC after successful login",
+		        loginRequest.getUsername(), currentUserInMdc);
 	}
 }
