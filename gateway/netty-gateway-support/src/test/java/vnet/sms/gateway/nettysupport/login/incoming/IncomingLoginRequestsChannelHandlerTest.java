@@ -279,7 +279,7 @@ public class IncomingLoginRequestsChannelHandlerTest {
 	}
 
 	@Test
-	public final void assertThatLoginChannelHandlerPushedAuthenticatedUserOnMDCIfLoginSucceeds()
+	public final void assertThatLoginChannelHandlerRemovesAuthenticatedUserFromMDCAfterReturning()
 	        throws Throwable {
 		final AuthenticationManager acceptAll = new AuthenticationManager() {
 			@Override
@@ -298,17 +298,14 @@ public class IncomingLoginRequestsChannelHandlerTest {
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        objectUnderTest);
 		final LoginRequest loginRequest = new LoginRequest(
-		        "assertThatLoginChannelHandlerPushedAuthenticatedUserOnMDCIfLoginSucceeds",
+		        "assertThatLoginChannelHandlerRemovesAuthenticatedUserFromMDCAfterReturning",
 		        "secret", new InetSocketAddress(0), new InetSocketAddress(0));
 		embeddedPipeline.receive(loginRequest);
 		final String currentUserInMdc = MDC
 		        .get(IncomingLoginRequestsChannelHandler.CURRENT_USER_MDC_KEY);
 
-		assertNotNull(
-		        "IncomingLoginRequestsChannelHandler did not push authenticated user onto MDC after successful login",
+		assertNull(
+		        "IncomingLoginRequestsChannelHandler did not remove authenticated user from MDC after returning",
 		        currentUserInMdc);
-		assertEquals(
-		        "IncomingLoginRequestsChannelHandler pushed unexpected authenticated user onto MDC after successful login",
-		        loginRequest.getUsername(), currentUserInMdc);
 	}
 }

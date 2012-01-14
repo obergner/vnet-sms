@@ -38,9 +38,9 @@ import vnet.sms.common.wme.WindowedMessageEvent;
 public class IncomingLoginRequestsChannelHandler<ID extends Serializable>
         extends SimpleChannelUpstreamHandler {
 
-	public static final String	                  CURRENT_USER_MDC_KEY	   = "currentUser";
-
 	public static final String	                  NAME	                   = "vnet.sms.gateway:incoming-login-handler";
+
+	public static final String	                  CURRENT_USER_MDC_KEY	   = "currentUser";
 
 	private final Logger	                      log	                   = LoggerFactory
 	                                                                               .getLogger(getClass());
@@ -72,7 +72,7 @@ public class IncomingLoginRequestsChannelHandler<ID extends Serializable>
 		if (e instanceof LoginRequestReceivedEvent) {
 			loginRequestReceived(ctx, (LoginRequestReceivedEvent<ID>) e);
 		} else if (e instanceof WindowedMessageEvent) {
-			processNonLoginRequestMessage(ctx,
+			nonLoginRequestReceived(ctx,
 			        (WindowedMessageEvent<ID, ? extends Message>) e);
 		} else {
 			throw new IllegalArgumentException("Unsupported MessageEvent: " + e);
@@ -113,15 +113,20 @@ public class IncomingLoginRequestsChannelHandler<ID extends Serializable>
 			this.log.warn(
 			        "Ignoring attempt to re-authenticate an already authenticated channel {}",
 			        ctx.getChannel());
-		} else {
+			return;
+		}
+
+		try {
+			MDC.put(CURRENT_USER_MDC_KEY, authentication.getName());
 			this.log.info(
 			        "Successfully authenticated channel {} - authenticated user is {}",
 			        ctx.getChannel(), authentication.getPrincipal());
-			MDC.put(CURRENT_USER_MDC_KEY, authentication.getName());
 			ctx.sendDownstream(LoginRequestAcceptedEvent.accept(e));
 			// Inform the wider community ...
 			ctx.sendUpstream(new ChannelSuccessfullyAuthenticatedEvent(ctx
 			        .getChannel(), e.getMessage()));
+		} finally {
+			MDC.remove(CURRENT_USER_MDC_KEY);
 		}
 	}
 
@@ -140,21 +145,40 @@ public class IncomingLoginRequestsChannelHandler<ID extends Serializable>
 		        e.getMessage(), ae));
 	}
 
-	private void processNonLoginRequestMessage(final ChannelHandlerContext ctx,
+	private void nonLoginRequestReceived(final ChannelHandlerContext ctx,
 	        final WindowedMessageEvent<ID, ? extends Message> e) {
-		if (isCurrentChannelAuthenticated()) {
+		if (!isCurrentChannelAuthenticated()) {
+			nonLoginRequestReceivedOnUnauthenticatedChannel(ctx, e);
+			return;
+		}
+
+		nonLoginRequestReceivedOnAuthenticatedChannel(ctx, e);
+	}
+
+	private void nonLoginRequestReceivedOnUnauthenticatedChannel(
+	        final ChannelHandlerContext ctx,
+	        final WindowedMessageEvent<ID, ? extends Message> e) {
+		this.log.warn(
+		        "Received non-login request {} on UNAUTHENTICATED channel {} - DISCARD",
+		        e, ctx.getChannel());
+		ctx.sendDownstream(NonLoginMessageReceivedOnUnauthenticatedChannelEvent
+		        .discardNonLoginMessage(e));
+		return;
+	}
+
+	private void nonLoginRequestReceivedOnAuthenticatedChannel(
+	        final ChannelHandlerContext ctx,
+	        final WindowedMessageEvent<ID, ? extends Message> e)
+	        throws IllegalArgumentException {
+		try {
+			MDC.put(CURRENT_USER_MDC_KEY, this.authenticatedClient.get()
+			        .getName());
 			this.log.trace(
 			        "Received non-login request {} on authenticated channel {} - will propagate event further upstream",
 			        e, ctx.getChannel());
-			MDC.put(CURRENT_USER_MDC_KEY, this.authenticatedClient.get()
-			        .getName());
 			ctx.sendUpstream(e);
-		} else {
-			this.log.warn(
-			        "Received non-login request {} on UNAUTHENTICATED channel {} - DISCARD",
-			        e, ctx.getChannel());
-			ctx.sendDownstream(NonLoginMessageReceivedOnUnauthenticatedChannelEvent
-			        .discardNonLoginMessage(e));
+		} finally {
+			MDC.remove(CURRENT_USER_MDC_KEY);
 		}
 	}
 

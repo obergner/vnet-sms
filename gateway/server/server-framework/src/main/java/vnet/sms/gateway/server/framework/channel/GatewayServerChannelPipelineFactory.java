@@ -20,6 +20,7 @@ import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.security.authentication.AuthenticationManager;
 
+import vnet.sms.gateway.nettysupport.logging.incoming.ChannelContextLoggingUpstreamChannelHandler;
 import vnet.sms.gateway.nettysupport.login.incoming.IncomingLoginRequestsChannelHandler;
 import vnet.sms.gateway.nettysupport.monitor.MonitoringChannelGroup;
 import vnet.sms.gateway.nettysupport.monitor.incoming.IncomingBytesCountingChannelHandler;
@@ -81,7 +82,9 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 
 	private final InitialChannelEventsPublishingUpstreamChannelHandler	    initialChannelEventsHandler;
 
-	private final IncomingMessagesPublishingChannelHandler<ID>	            incomingMessagesPublisher	= new IncomingMessagesPublishingChannelHandler<ID>();
+	private final IncomingMessagesPublishingChannelHandler<ID>	            incomingMessagesPublisher	         = new IncomingMessagesPublishingChannelHandler<ID>();
+
+	private final ChannelContextLoggingUpstreamChannelHandler	            channelContextLoggingUpstreamHandler	= new ChannelContextLoggingUpstreamChannelHandler();
 
 	public GatewayServerChannelPipelineFactory(
 	        final String gatewayServerInstanceId,
@@ -148,6 +151,10 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 	@Override
 	public ChannelPipeline getPipeline() throws Exception {
 		final ChannelPipeline pipeline = Channels.pipeline();
+
+		// Push current channel onto MDC so that we may log it
+		pipeline.addLast(ChannelContextLoggingUpstreamChannelHandler.NAME,
+		        this.channelContextLoggingUpstreamHandler);
 
 		// Publish OPEN, BOUND and CONNECTED events
 		pipeline.addLast(
