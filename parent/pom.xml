@@ -43,6 +43,7 @@
 		<module.gateway.transports.serialization-transport.version>1.0.0-SNAPSHOT</module.gateway.transports.serialization-transport.version>
 		<module.gateway.server.version>1.0.0-SNAPSHOT</module.gateway.server.version>
 		<module.gateway.server.server-framework.version>1.0.0-SNAPSHOT</module.gateway.server.server-framework.version>
+		<module.gateway.server.serialization-server-minimal.version>1.0.0-SNAPSHOT</module.gateway.server.serialization-server-minimal.version>
 		<!-- Standard javax apis -->
 		<deps.jta.version>1.1</deps.jta.version>
 		<deps.jms.version>1.1</deps.jms.version>
@@ -255,7 +256,13 @@
 				<groupId>vnet.sms.gateway.server</groupId>
 				<artifactId>server-framework</artifactId>
 				<version>${module.gateway.server.server-framework.version}</version>
-				<type>pom</type>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>vnet.sms.gateway.server</groupId>
+				<artifactId>serialization-server-minimal</artifactId>
+				<version>${module.gateway.server.serialization-server-minimal.version}</version>
+				<type>jar</type>
 			</dependency>
 			<!-- =========================================== -->
 			<!-- Standard Javax APIs -->

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:jms="http://www.springframework.org/schema/jms"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       http://www.springframework.org/schema/jms
+       http://www.springframework.org/schema/jms/spring-jms-3.1.xsd"
+	profile="itest">
+
+	<bean id="vnet.sms.gateway.server.server-framework.itest.testClient"
+		class="vnet.sms.gateway.server.framework.test.IntegrationTestClient"
+		c:host="${gateway.server.host}" c:port="${gateway.server.port}" />
+
+	<jms:listener-container destination-type="queue"
+		connection-factory="vnet.sms.gateway.server.server-framework.pooledJmsConnectionFactory"
+		container-type="default">
+		<jms:listener destination="${gateway.server.jmsserver.incomingMessagesQueue}"
+			ref="vnet.sms.gateway.server.server-framework.itest.testJmsMessageListener" />
+	</jms:listener-container>
+
+	<bean
+		id="vnet.sms.gateway.server.server-framework.itest.testJmsMessageListener"
+		class="vnet.sms.gateway.server.framework.test.ForwardingJmsMessageListener" />
+
+</beans>
