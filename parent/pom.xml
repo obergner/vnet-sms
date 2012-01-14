@@ -389,44 +389,6 @@
 				<version>${deps.camel.version}</version>
 				<type>jar</type>
 			</dependency>
-			<!-- ActiveMQ -->
-			<dependency>
-				<groupId>org.apache.activemq</groupId>
-				<artifactId>activemq-core</artifactId>
-				<version>${deps.activemq.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>commons-logging</groupId>
-						<artifactId>commons-logging-api</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>commons-logging</groupId>
-						<artifactId>commons-logging</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.activemq</groupId>
-				<artifactId>activemq-camel</artifactId>
-				<version>${deps.activemq.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>commons-logging</groupId>
-						<artifactId>commons-logging-api</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.xbean</groupId>
-				<artifactId>xbean-spring</artifactId>
-				<version>${deps.xbean-spring.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>commons-logging</groupId>
-						<artifactId>commons-logging</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
 			<!-- JBoss Netty -->
 			<dependency>
 				<groupId>org.jboss.netty</groupId>
@@ -555,11 +517,29 @@
 				<groupId>org.apache.activemq</groupId>
 				<artifactId>activemq-core</artifactId>
 				<version>${deps.activemq.version}</version>
-				<type>jar</type>
 				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging-api</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
 					<exclusion>
 						<groupId>org.apache.geronimo.specs</groupId>
 						<artifactId>geronimo-jms_1.1_spec</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.activemq</groupId>
+				<artifactId>activemq-camel</artifactId>
+				<version>${deps.activemq.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging-api</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>
@@ -586,6 +566,17 @@
 				<groupId>org.apache.xbean</groupId>
 				<artifactId>xbean-spring-v2c</artifactId>
 				<version>${deps.xbean.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.xbean</groupId>
+				<artifactId>xbean-spring</artifactId>
+				<version>${deps.xbean-spring.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<!-- =========================================== -->
 			<!-- Test dependencies -->
