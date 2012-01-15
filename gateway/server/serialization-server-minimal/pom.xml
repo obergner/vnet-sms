@@ -36,14 +36,14 @@
 		<!-- *************************************************************** -->
 		<!-- Compile -->
 		<!-- *************************************************************** -->
-		<!-- *************************************************************** -->
-		<!-- Runtime -->
-		<!-- *************************************************************** -->
 		<dependency>
 			<groupId>vnet.sms.gateway.server</groupId>
 			<artifactId>server-framework</artifactId>
-			<scope>runtime</scope>
+			<scope>compile</scope>
 		</dependency>
+		<!-- *************************************************************** -->
+		<!-- Runtime -->
+		<!-- *************************************************************** -->
 		<dependency>
 			<groupId>vnet.sms.gateway.transports</groupId>
 			<artifactId>serialization-transport</artifactId>
