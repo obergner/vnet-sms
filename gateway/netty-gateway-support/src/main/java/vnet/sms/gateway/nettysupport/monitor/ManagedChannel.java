@@ -6,6 +6,7 @@ package vnet.sms.gateway.nettysupport.monitor;
 import static org.apache.commons.lang.Validate.notNull;
 
 import java.net.SocketAddress;
+import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
@@ -26,8 +27,6 @@ import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedNotification;
 import org.springframework.jmx.export.annotation.ManagedNotifications;
 import org.springframework.jmx.export.annotation.ManagedOperation;
-import org.springframework.jmx.export.annotation.ManagedOperationParameter;
-import org.springframework.jmx.export.annotation.ManagedOperationParameters;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.jmx.export.notification.NotificationPublisher;
 import org.springframework.jmx.export.notification.NotificationPublisherAware;
@@ -50,15 +49,11 @@ import com.yammer.metrics.core.MetricName;
  * @author obergner
  * 
  */
-@ManagedNotifications({
-        @ManagedNotification(name = ManagedChannel.Events.CHANNEL_AUTHENTICATED, description = "Channel has been authenticated", notificationTypes = ManagedChannel.Events.CHANNEL_AUTHENTICATED),
-        @ManagedNotification(name = ManagedChannel.Events.CHANNEL_AUTHENTICATION_FAILED, description = "Attempt to authenticate channel failed", notificationTypes = ManagedChannel.Events.CHANNEL_AUTHENTICATION_FAILED),
-        @ManagedNotification(name = ManagedChannel.Events.STARTED_TO_PING, description = "Started to send out Pings", notificationTypes = ManagedChannel.Events.STARTED_TO_PING),
-        @ManagedNotification(name = ManagedChannel.Events.PING_RESPONSE_TIMEOUT_EXPIRED, description = "Did not receive a response to a previously sent out Ping within the predefined timeout", notificationTypes = ManagedChannel.Events.PING_RESPONSE_TIMEOUT_EXPIRED),
-        @ManagedNotification(name = ManagedChannel.Events.NO_WINDOW_FOR_INCOMING_MESSAGE_AVAILABLE, description = "A message came in, but no free window was available", notificationTypes = ManagedChannel.Events.NO_WINDOW_FOR_INCOMING_MESSAGE_AVAILABLE),
-        @ManagedNotification(name = ManagedChannel.Events.PENDING_WINDOWED_MESSAGES_DISCARDED, description = "Messages stored in window store have expired and will be discarded", notificationTypes = ManagedChannel.Events.CHANNEL_AUTHENTICATED) })
-@ManagedResource
 public class ManagedChannel implements NotificationPublisherAware {
+
+	private static final String	GROUP	= "vnet.sms.gateway.server";
+
+	private static final String	TYPE	= "Channel";
 
 	public static class Events {
 
@@ -99,8 +94,6 @@ public class ManagedChannel implements NotificationPublisherAware {
 				}
 			});
 
-			this.mbeanExporter.registerManagedResource(managedChannel,
-			        managedChannel.getObjectName());
 			// Take care to call this AFTER managedChannel has been registered
 			// in MBeanExporter since it will receive its NotificationPublisher
 			// during that registration. Otherwise, it may receive events to
@@ -155,58 +148,73 @@ public class ManagedChannel implements NotificationPublisherAware {
 
 	private final Channel	            channel;
 
+	private final Controller	        controller;
+
 	private final ChannelMonitor	    listener;
+
+	private final long	                connectedSinceTimestamp;
 
 	private ManagedChannel(final Channel channel,
 	        final MBeanExportOperations mbeanExporter) {
 		notNull(channel, "Argument 'channel' must not be null");
 		notNull(mbeanExporter, "Argument 'mbeanExporter' must not be null");
 
+		this.connectedSinceTimestamp = System.currentTimeMillis();
 		this.channel = channel;
 		this.listener = this.new Listener();
 		this.mbeanExporter = mbeanExporter;
 		// Incoming metrics
-		this.numberOfReceivedBytes = Metrics.newHistogram(Channel.class,
-		        "received-bytes", channel.getId().toString());
-		this.totalNumberOfReceivedBytes = Metrics.newCounter(Channel.class,
-		        "total-received-bytes", channel.getId().toString());
-		this.numberOfReceivedPdus = Metrics.newMeter(Channel.class,
-		        "received-pdus", channel.getId().toString(), "pdu-received",
-		        TimeUnit.SECONDS);
-		this.numberOfReceivedLoginRequests = Metrics.newMeter(Channel.class,
-		        "received-login-requests", channel.getId().toString(),
-		        "login-request-received", TimeUnit.SECONDS);
-		this.numberOfReceivedLoginResponses = Metrics.newMeter(Channel.class,
-		        "received-login-responses", channel.getId().toString(),
-		        "login-response-received", TimeUnit.SECONDS);
-		this.numberOfReceivedPingRequests = Metrics.newMeter(Channel.class,
-		        "received-ping-requests", channel.getId().toString(),
+		this.numberOfReceivedBytes = Metrics.newHistogram(new MetricName(GROUP,
+		        TYPE, "received-bytes", channel.getId().toString()));
+		this.totalNumberOfReceivedBytes = Metrics
+		        .newCounter(new MetricName(GROUP, TYPE, "total-received-bytes",
+		                channel.getId().toString()));
+		this.numberOfReceivedPdus = Metrics.newMeter(new MetricName(GROUP,
+		        TYPE, "received-pdus", channel.getId().toString()),
 		        "pdu-received", TimeUnit.SECONDS);
-		this.numberOfReceivedPingResponses = Metrics.newMeter(Channel.class,
-		        "received-ping-responses", channel.getId().toString(),
-		        "ping-response-received", TimeUnit.SECONDS);
-		this.numberOfReceivedSms = Metrics.newMeter(Channel.class,
-		        "received-sms", channel.getId().toString(), "pdu-received",
+		this.numberOfReceivedLoginRequests = Metrics.newMeter(new MetricName(
+		        GROUP, TYPE, "received-login-requests", channel.getId()
+		                .toString()), "login-request-received",
+		        TimeUnit.SECONDS);
+		this.numberOfReceivedLoginResponses = Metrics.newMeter(new MetricName(
+		        GROUP, TYPE, "received-login-responses", channel.getId()
+		                .toString()), "login-response-received",
+		        TimeUnit.SECONDS);
+		this.numberOfReceivedPingRequests = Metrics.newMeter(new MetricName(
+		        GROUP, TYPE, "received-ping-requests", channel.getId()
+		                .toString()), "pdu-received", TimeUnit.SECONDS);
+		this.numberOfReceivedPingResponses = Metrics.newMeter(new MetricName(
+		        GROUP, TYPE, "received-ping-responses", channel.getId()
+		                .toString()), "ping-response-received",
+		        TimeUnit.SECONDS);
+		this.numberOfReceivedSms = Metrics.newMeter(new MetricName(GROUP, TYPE,
+		        "received-sms", channel.getId().toString()), "pdu-received",
 		        TimeUnit.SECONDS);
 		// Outgoing metrics
-		this.numberOfSentBytes = Metrics.newHistogram(Channel.class,
-		        "sent-bytes", channel.getId().toString());
-		this.totalNumberOfSentBytes = Metrics.newCounter(Channel.class,
-		        "total-sent-bytes", channel.getId().toString());
+		this.numberOfSentBytes = Metrics.newHistogram(new MetricName(GROUP,
+		        TYPE, "sent-bytes", channel.getId().toString()));
+		this.totalNumberOfSentBytes = Metrics.newCounter(new MetricName(GROUP,
+		        TYPE, "total-sent-bytes", channel.getId().toString()));
 		this.numberOfSentPdus = Metrics.newMeter(Channel.class, "sent-pdus",
 		        channel.getId().toString(), "pdu-sent", TimeUnit.SECONDS);
-		this.numberOfAcceptedLoginRequests = Metrics.newMeter(Channel.class,
-		        "accepted-login-requests", channel.getId().toString(),
-		        "login-request-accepted", TimeUnit.SECONDS);
-		this.numberOfRejectedLoginRequests = Metrics.newMeter(Channel.class,
-		        "rejected-login-requests", channel.getId().toString(),
-		        "login-request-rejected", TimeUnit.SECONDS);
-		this.numberOfSentPingRequests = Metrics.newMeter(Channel.class,
-		        "sent-ping-requests", channel.getId().toString(),
+		this.numberOfAcceptedLoginRequests = Metrics.newMeter(new MetricName(
+		        GROUP, TYPE, "accepted-login-requests", channel.getId()
+		                .toString()), "login-request-accepted",
+		        TimeUnit.SECONDS);
+		this.numberOfRejectedLoginRequests = Metrics.newMeter(new MetricName(
+		        GROUP, TYPE, "rejected-login-requests", channel.getId()
+		                .toString()), "login-request-rejected",
+		        TimeUnit.SECONDS);
+		this.numberOfSentPingRequests = Metrics.newMeter(new MetricName(GROUP,
+		        TYPE, "sent-ping-requests", channel.getId().toString()),
 		        "ping-request-sent", TimeUnit.SECONDS);
-		this.numberOfSentPingResponses = Metrics.newMeter(Channel.class,
-		        "sent-ping-responses", channel.getId().toString(),
+		this.numberOfSentPingResponses = Metrics.newMeter(new MetricName(GROUP,
+		        TYPE, "sent-ping-responses", channel.getId().toString()),
 		        "ping-response-sent", TimeUnit.SECONDS);
+		// Controller
+		this.controller = this.new Controller();
+		this.mbeanExporter.registerManagedResource(this.controller,
+		        this.controller.getObjectName());
 	}
 
 	private void addChannelMonitorToChannel() throws IllegalArgumentException {
@@ -254,7 +262,8 @@ public class ManagedChannel implements NotificationPublisherAware {
 
 		removeChannelMonitorFromChannel();
 
-		this.mbeanExporter.unregisterManagedResource(getObjectName());
+		this.mbeanExporter.unregisterManagedResource(this.controller
+		        .getObjectName());
 		this.log.debug(
 		        "Removed {} from MBeanServer as the underlying channel {} has been closed",
 		        this, this.channel);
@@ -290,16 +299,6 @@ public class ManagedChannel implements NotificationPublisherAware {
 		return this.listener;
 	}
 
-	private ObjectName getObjectName() {
-		try {
-			return new ObjectName(
-			        "vnet.sms.gateway.netty-gateway-support:component=Channel,id="
-			                + this.channel.getId());
-		} catch (final MalformedObjectNameException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
 	// ------------------------------------------------------------------------
 	//
 	// ------------------------------------------------------------------------
@@ -310,432 +309,6 @@ public class ManagedChannel implements NotificationPublisherAware {
 		notNull(notificationPublisher,
 		        "Argument 'notificationPublisher' must not be null");
 		this.notificationPublisher = notificationPublisher;
-	}
-
-	// ------------------------------------------------------------------------
-	//
-	// ------------------------------------------------------------------------
-
-	@ManagedOperation(description = "Closes this channel - this channel cannot be reused afterwards")
-	public void close() {
-		this.log.info("Received request to close channel {} via JMX",
-		        this.channel);
-		final ChannelFuture closed = this.channel.close();
-		closed.addListener(new ChannelFutureListener() {
-			@Override
-			public void operationComplete(final ChannelFuture future)
-			        throws Exception {
-				if (future.isSuccess()) {
-					ManagedChannel.this.log.info("Channel {} has been closed",
-					        future.getChannel());
-				} else {
-					ManagedChannel.this.log.warn("Failed to close channel "
-					        + future.getChannel() + ": "
-					        + future.getCause().getMessage(), future.getCause());
-				}
-			}
-		});
-	}
-
-	@ManagedAttribute(description = "The local address this channel is bound to")
-	public SocketAddress getLocalAddress() {
-		return this.channel.getLocalAddress();
-	}
-
-	@ManagedAttribute(description = "The remote address this channel is connected to")
-	public SocketAddress getRemoteAddress() {
-		return this.channel.getRemoteAddress();
-	}
-
-	// ------------------------------------------------------------------------
-	// number of received bytes
-	// ------------------------------------------------------------------------
-
-	@ManagedAttribute(description = "Total number of bytes received since this channel has been connected")
-	public long getTotalNumberOfReceivedBytes() {
-		return this.totalNumberOfReceivedBytes.count();
-	}
-
-	@ManagedAttribute(description = "Mean number of bytes received per frame")
-	public double getMeanNumberOfReceivedBytes() {
-		return this.numberOfReceivedBytes.mean();
-	}
-
-	@ManagedAttribute(description = "Maximum number of bytes received per frame")
-	public double getMaxNumberOfReceivedBytes() {
-		return this.numberOfReceivedBytes.max();
-	}
-
-	@ManagedAttribute(description = "Minimum number of bytes received per frame")
-	public double getMinNumberOfReceivedBytes() {
-		return this.numberOfReceivedBytes.min();
-	}
-
-	@ManagedAttribute(description = "Standard deviation of bytes received per frame")
-	public double getNumberOfReceivedBytesStdDev() {
-		return this.numberOfReceivedBytes.stdDev();
-	}
-
-	@ManagedOperation(description = "Compute and return percentile of number of bytes received per frame")
-	@ManagedOperationParameters({ @ManagedOperationParameter(name = "percentile", description = "The value returned from this operation will denote the upper bound "
-	        + "of bytes per frame for 'percentile' percent of all received frames") })
-	public double numberOfReceivedBytesPercentile(final double percentile) {
-		return this.numberOfReceivedBytes.percentile(percentile);
-	}
-
-	// ------------------------------------------------------------------------
-	// number of received PDUs
-	// ------------------------------------------------------------------------
-
-	@ManagedAttribute(description = "Total number of PDUs received since this channel has been connected")
-	public long getTotalNumberOfReceivedPdus() {
-		return this.numberOfReceivedPdus.count();
-	}
-
-	@ManagedAttribute(description = "Number of PDUs received within the last minute")
-	public double getNumberOfPdusReceivedWithinLast1Minute() {
-		return this.numberOfReceivedPdus.oneMinuteRate();
-	}
-
-	@ManagedAttribute(description = "Number of PDUs received within the last 5 minutes")
-	public double getNumberOfPdusReceivedWithinLast5Minutes() {
-		return this.numberOfReceivedPdus.fiveMinuteRate();
-	}
-
-	@ManagedAttribute(description = "Number of PDUs received within the last 15 minutes")
-	public double getNumberOfPdusReceivedWithinLast15Minutes() {
-		return this.numberOfReceivedPdus.fifteenMinuteRate();
-	}
-
-	@ManagedAttribute(description = "Mean number of PDUs received per second")
-	public double getMeanNumberOfPdusReceivedPerSecond() {
-		return this.numberOfReceivedPdus.meanRate();
-	}
-
-	// ------------------------------------------------------------------------
-	// number of accepted login requests
-	// ------------------------------------------------------------------------
-
-	@ManagedAttribute(description = "Total number of accepted/successful login requests")
-	public long getTotalNumberOfAcceptedLoginRequests() {
-		return this.numberOfAcceptedLoginRequests.count();
-	}
-
-	@ManagedAttribute(description = "Number of login requests accepted within the last minute")
-	public double getNumberOfLoginRequestsAcceptedWithinLast1Minute() {
-		return this.numberOfAcceptedLoginRequests.oneMinuteRate();
-	}
-
-	@ManagedAttribute(description = "Number of login requests accepted within the last 5 minutes")
-	public double getNumberOfLoginRequestsAcceptedWithinLast5Minutes() {
-		return this.numberOfAcceptedLoginRequests.fiveMinuteRate();
-	}
-
-	@ManagedAttribute(description = "Number of login requests accepted within the last 15 minutes")
-	public double getNumberOfLoginRequestsAcceptedWithinLast15Minutes() {
-		return this.numberOfAcceptedLoginRequests.fifteenMinuteRate();
-	}
-
-	@ManagedAttribute(description = "Number of accepted login requests per second")
-	public double getMeanNumberOfLoginRequestsAcceptedPerSecond() {
-		return this.numberOfAcceptedLoginRequests.meanRate();
-	}
-
-	// ------------------------------------------------------------------------
-	// number of rejected login requests
-	// ------------------------------------------------------------------------
-
-	@ManagedAttribute(description = "Total number of rejected/failed login requests")
-	public long getTotalNumberOfRejectedLoginRequests() {
-		return this.numberOfRejectedLoginRequests.count();
-	}
-
-	@ManagedAttribute(description = "Number of login requests rejected within the last minute")
-	public double getNumberOfLoginRequestsRejectedWithinLast1Minute() {
-		return this.numberOfRejectedLoginRequests.oneMinuteRate();
-	}
-
-	@ManagedAttribute(description = "Number of login requests rejected within the last 5 minutes")
-	public double getNumberOfLoginRequestsRejectedWithinLast5Minutes() {
-		return this.numberOfRejectedLoginRequests.fiveMinuteRate();
-	}
-
-	@ManagedAttribute(description = "Number of login requests rejected within the last 15 minutes")
-	public double getNumberOfLoginRequestsRejectedWithinLast15Minutes() {
-		return this.numberOfRejectedLoginRequests.fifteenMinuteRate();
-	}
-
-	@ManagedAttribute(description = "Number of rejected login requests per second")
-	public double getMeanNumberOfLoginRequestsRejectedPerSecond() {
-		return this.numberOfRejectedLoginRequests.meanRate();
-	}
-
-	// ------------------------------------------------------------------------
-	// number of sent bytes
-	// ------------------------------------------------------------------------
-
-	@ManagedAttribute(description = "Total number of bytes sent since this channel has been connected")
-	public long getTotalNumberOfSentBytes() {
-		return this.totalNumberOfSentBytes.count();
-	}
-
-	@ManagedAttribute(description = "Mean number of bytes sent per frame")
-	public double getMeanNumberOfSentBytes() {
-		return this.numberOfSentBytes.mean();
-	}
-
-	@ManagedAttribute(description = "Maximum number of bytes sent per frame")
-	public double getMaxNumberOfSentBytes() {
-		return this.numberOfSentBytes.max();
-	}
-
-	@ManagedAttribute(description = "Minimum number of bytes sent per frame")
-	public double getMinNumberOfSentBytes() {
-		return this.numberOfSentBytes.min();
-	}
-
-	@ManagedAttribute(description = "Standard deviation of bytes sent per frame")
-	public double getNumberOfSentBytesStdDev() {
-		return this.numberOfSentBytes.stdDev();
-	}
-
-	@ManagedOperation(description = "Compute and return percentile of number of bytes sent per frame")
-	@ManagedOperationParameters({ @ManagedOperationParameter(name = "percentile", description = "The value returned from this operation will denote the upper bound "
-	        + "of bytes per frame for 'percentile' percent of all sent frames") })
-	public double numberOfSentBytesPercentile(final double percentile) {
-		return this.numberOfSentBytes.percentile(percentile);
-	}
-
-	// ------------------------------------------------------------------------
-	// number of sent PDUs
-	// ------------------------------------------------------------------------
-
-	@ManagedAttribute(description = "Total number of sent PDUs")
-	public long getTotalNumberOfSentPdus() {
-		return this.numberOfSentPdus.count();
-	}
-
-	@ManagedAttribute(description = "Number of PDUs sent within the last minute")
-	public double getNumberOfPdusSentWithinLast1Minute() {
-		return this.numberOfSentPdus.oneMinuteRate();
-	}
-
-	@ManagedAttribute(description = "Number of PDUs sent within the last 5 minutes")
-	public double getNumberOfPdusSentWithinLast5Minutes() {
-		return this.numberOfSentPdus.fiveMinuteRate();
-	}
-
-	@ManagedAttribute(description = "Number of PDUs sent within the last 15 minutes")
-	public double getNumberOfPdusSentWithinLast15Minutes() {
-		return this.numberOfSentPdus.fifteenMinuteRate();
-	}
-
-	@ManagedAttribute(description = "Number of PDUs sent per second")
-	public double getMeanNumberOfPdusSentPerSecond() {
-		return this.numberOfSentPdus.meanRate();
-	}
-
-	// ------------------------------------------------------------------------
-	// number of sent ping requests
-	// ------------------------------------------------------------------------
-
-	@ManagedAttribute(description = "Total number of sent ping requests")
-	public long getTotalNumberOfSentPingRequests() {
-		return this.numberOfSentPingRequests.count();
-	}
-
-	@ManagedAttribute(description = "Number of ping requests sent within the last minute")
-	public double getNumberOfPingRequestsSentWithinLast1Minute() {
-		return this.numberOfSentPingRequests.oneMinuteRate();
-	}
-
-	@ManagedAttribute(description = "Number of ping requests sent within the last 5 minutes")
-	public double getNumberOfPingRequestsSentWithinLast5Minutes() {
-		return this.numberOfSentPingRequests.fiveMinuteRate();
-	}
-
-	@ManagedAttribute(description = "Number of ping requests sent within the last 15 minutes")
-	public double getNumberOfPingRequestsSentWithinLast15Minutes() {
-		return this.numberOfSentPingRequests.fifteenMinuteRate();
-	}
-
-	@ManagedAttribute(description = "Number of rejected login requests per second")
-	public double getMeanNumberOfPingRequestsSentPerSecond() {
-		return this.numberOfSentPingRequests.meanRate();
-	}
-
-	// ------------------------------------------------------------------------
-	// number of sent ping responses
-	// ------------------------------------------------------------------------
-
-	@ManagedAttribute(description = "Total number of sent ping responses")
-	public long getTotalNumberOfSentPingResponses() {
-		return this.numberOfSentPingResponses.count();
-	}
-
-	@ManagedAttribute(description = "Number of ping responses sent within the last minute")
-	public double getNumberOfPingResponsesSentWithinLast1Minute() {
-		return this.numberOfSentPingResponses.oneMinuteRate();
-	}
-
-	@ManagedAttribute(description = "Number of ping responses sent within the last 5 minutes")
-	public double getNumberOfPingResponsesSentWithinLast5Minutes() {
-		return this.numberOfSentPingResponses.fiveMinuteRate();
-	}
-
-	@ManagedAttribute(description = "Number of ping responses sent within the last 15 minutes")
-	public double getNumberOfPingResponsesSentWithinLast15Minutes() {
-		return this.numberOfSentPingResponses.fifteenMinuteRate();
-	}
-
-	@ManagedAttribute(description = "Number of ping responses sent per second")
-	public double getMeanNumberOfPingResponsesSentPerSecond() {
-		return this.numberOfSentPingResponses.meanRate();
-	}
-
-	// ------------------------------------------------------------------------
-	// number of received login requests
-	// ------------------------------------------------------------------------
-
-	@ManagedAttribute(description = "Total number of received login requests")
-	public long getTotalNumberOfReceivedLoginRequests() {
-		return this.numberOfReceivedLoginRequests.count();
-	}
-
-	@ManagedAttribute(description = "Number of login requests received within the last minute")
-	public double getNumberOfLoginRequestsReceivedWithinLast1Minute() {
-		return this.numberOfReceivedLoginRequests.oneMinuteRate();
-	}
-
-	@ManagedAttribute(description = "Number of login requests received within the last 5 minutes")
-	public double getNumberOfLoginRequestsReceivedWithinLast5Minutes() {
-		return this.numberOfReceivedLoginRequests.fiveMinuteRate();
-	}
-
-	@ManagedAttribute(description = "Number of login requests received within the last 15 minutes")
-	public double getNumberOfLoginRequestsReceivedWithinLast15Minutes() {
-		return this.numberOfReceivedLoginRequests.fifteenMinuteRate();
-	}
-
-	@ManagedAttribute(description = "Number of login requests received per second")
-	public double getMeanNumberOfLoginRequestsReceivedPerSecond() {
-		return this.numberOfReceivedLoginRequests.meanRate();
-	}
-
-	// ------------------------------------------------------------------------
-	// number of received login responses
-	// ------------------------------------------------------------------------
-
-	@ManagedAttribute(description = "Total number of received login responses")
-	public long getTotalNumberOfReceivedLoginResponses() {
-		return this.numberOfReceivedLoginResponses.count();
-	}
-
-	@ManagedAttribute(description = "Number of login responses received within the last minute")
-	public double getNumberOfLoginResponsesReceivedWithinLast1Minute() {
-		return this.numberOfReceivedLoginResponses.oneMinuteRate();
-	}
-
-	@ManagedAttribute(description = "Number of login responses received within the last 5 minutes")
-	public double getNumberOfLoginResponsesReceivedWithinLast5Minutes() {
-		return this.numberOfReceivedLoginResponses.fiveMinuteRate();
-	}
-
-	@ManagedAttribute(description = "Number of login responses received within the last 15 minutes")
-	public double getNumberOfLoginResponsesReceivedWithinLast15Minutes() {
-		return this.numberOfReceivedLoginResponses.fifteenMinuteRate();
-	}
-
-	@ManagedAttribute(description = "Number of login responses received per second")
-	public double getMeanNumberOfLoginResponsesReceivedPerSecond() {
-		return this.numberOfReceivedLoginResponses.meanRate();
-	}
-
-	// ------------------------------------------------------------------------
-	// number of received ping requests
-	// ------------------------------------------------------------------------
-
-	@ManagedAttribute(description = "Total number of received ping requests")
-	public long getTotalNumberOfReceivedPingRequests() {
-		return this.numberOfReceivedPingRequests.count();
-	}
-
-	@ManagedAttribute(description = "Number of ping requests received within the last minute")
-	public double getNumberOfPingRequestsReceivedWithinLast1Minute() {
-		return this.numberOfReceivedPingRequests.oneMinuteRate();
-	}
-
-	@ManagedAttribute(description = "Number of ping requests received within the last 5 minutes")
-	public double getNumberOfPingRequestsReceivedWithinLast5Minutes() {
-		return this.numberOfReceivedPingRequests.fiveMinuteRate();
-	}
-
-	@ManagedAttribute(description = "Number of ping requests received within the last 15 minutes")
-	public double getNumberOfPingRequestsReceivedWithinLast15Minutes() {
-		return this.numberOfReceivedPingRequests.fifteenMinuteRate();
-	}
-
-	@ManagedAttribute(description = "Number of ping requests received per second")
-	public double getMeanNumberOfPingRequestsReceivedPerSecond() {
-		return this.numberOfReceivedPingRequests.meanRate();
-	}
-
-	// ------------------------------------------------------------------------
-	// number of received ping responses
-	// ------------------------------------------------------------------------
-
-	@ManagedAttribute(description = "Total number of received ping responses")
-	public long getTotalNumberOfReceivedPingResponses() {
-		return this.numberOfReceivedPingResponses.count();
-	}
-
-	@ManagedAttribute(description = "Number of ping responses received within the last minute")
-	public double getNumberOfPingResponsesReceivedWithinLast1Minute() {
-		return this.numberOfReceivedPingResponses.oneMinuteRate();
-	}
-
-	@ManagedAttribute(description = "Number of ping responses received within the last 5 minutes")
-	public double getNumberOfPingResponsesReceivedWithinLast5Minutes() {
-		return this.numberOfReceivedPingResponses.fiveMinuteRate();
-	}
-
-	@ManagedAttribute(description = "Number of ping responses received within the last 15 minutes")
-	public double getNumberOfPingResponsesReceivedWithinLast15Minutes() {
-		return this.numberOfReceivedPingResponses.fifteenMinuteRate();
-	}
-
-	@ManagedAttribute(description = "Number of ping responses received per second")
-	public double getMeanNumberOfPingResponsesReceivedPerSecond() {
-		return this.numberOfReceivedPingResponses.meanRate();
-	}
-
-	// ------------------------------------------------------------------------
-	// number of received SMS
-	// ------------------------------------------------------------------------
-
-	@ManagedAttribute(description = "Total number of received SMS")
-	public long getTotalNumberOfReceivedSms() {
-		return this.numberOfReceivedSms.count();
-	}
-
-	@ManagedAttribute(description = "Number of SMS received within the last minute")
-	public double getNumberOfSmsReceivedWithinLast1Minute() {
-		return this.numberOfReceivedSms.oneMinuteRate();
-	}
-
-	@ManagedAttribute(description = "Number of SMS received within the last 5 minutes")
-	public double getNumberOfSmsReceivedWithinLast5Minutes() {
-		return this.numberOfReceivedSms.fiveMinuteRate();
-	}
-
-	@ManagedAttribute(description = "Number of SMS received within the last 15 minutes")
-	public double getNumberOfSmsReceivedWithinLast15Minutes() {
-		return this.numberOfReceivedSms.fifteenMinuteRate();
-	}
-
-	@ManagedAttribute(description = "Number of SMS received per second")
-	public double getMeanNumberOfSmsReceivedPerSecond() {
-		return this.numberOfReceivedSms.meanRate();
 	}
 
 	// ------------------------------------------------------------------------
@@ -773,30 +346,79 @@ public class ManagedChannel implements NotificationPublisherAware {
 		return true;
 	}
 
-	@Override
-	public String toString() {
-		return "ManagedChannel@" + hashCode() + "[channel: " + this.channel
-		        + "|numberOfReceivedBytes: " + getTotalNumberOfReceivedBytes()
-		        + "|numberOfReceivedPdus: " + getTotalNumberOfReceivedPdus()
-		        + "|numberOfReceivedLoginRequests: "
-		        + getTotalNumberOfReceivedLoginRequests()
-		        + "|numberOfReceivedLoginResponses: "
-		        + getTotalNumberOfReceivedLoginResponses()
-		        + "|numberOfReceivedPingRequests: "
-		        + getTotalNumberOfReceivedPingRequests()
-		        + "|numberOfReceivedPingResponses: "
-		        + getTotalNumberOfReceivedPingResponses()
-		        + "|numberOfReceivedSms: " + getTotalNumberOfReceivedSms()
-		        + "|numberOfAcceptedLoginRequests: "
-		        + getTotalNumberOfAcceptedLoginRequests()
-		        + "|numberOfRejectedLoginRequests: "
-		        + getTotalNumberOfRejectedLoginRequests()
-		        + "|numberOfSentBytes: " + getTotalNumberOfSentBytes()
-		        + "|numberOfSentPdus: " + getTotalNumberOfSentPdus()
-		        + "|numberOfSentPingRequests: "
-		        + getTotalNumberOfSentPingRequests()
-		        + "|numberOfSentPingResponses: "
-		        + getTotalNumberOfSentPingResponses() + "]";
+	// ------------------------------------------------------------------------
+	// Inner classes
+	// ------------------------------------------------------------------------
+
+	@ManagedNotifications({
+	        @ManagedNotification(name = ManagedChannel.Events.CHANNEL_AUTHENTICATED, description = "Channel has been authenticated", notificationTypes = ManagedChannel.Events.CHANNEL_AUTHENTICATED),
+	        @ManagedNotification(name = ManagedChannel.Events.CHANNEL_AUTHENTICATION_FAILED, description = "Attempt to authenticate channel failed", notificationTypes = ManagedChannel.Events.CHANNEL_AUTHENTICATION_FAILED),
+	        @ManagedNotification(name = ManagedChannel.Events.STARTED_TO_PING, description = "Started to send out Pings", notificationTypes = ManagedChannel.Events.STARTED_TO_PING),
+	        @ManagedNotification(name = ManagedChannel.Events.PING_RESPONSE_TIMEOUT_EXPIRED, description = "Did not receive a response to a previously sent out Ping within the predefined timeout", notificationTypes = ManagedChannel.Events.PING_RESPONSE_TIMEOUT_EXPIRED),
+	        @ManagedNotification(name = ManagedChannel.Events.NO_WINDOW_FOR_INCOMING_MESSAGE_AVAILABLE, description = "A message came in, but no free window was available", notificationTypes = ManagedChannel.Events.NO_WINDOW_FOR_INCOMING_MESSAGE_AVAILABLE),
+	        @ManagedNotification(name = ManagedChannel.Events.PENDING_WINDOWED_MESSAGES_DISCARDED, description = "Messages stored in window store have expired and will be discarded", notificationTypes = ManagedChannel.Events.CHANNEL_AUTHENTICATED) })
+	@ManagedResource
+	public class Controller {
+
+		@ManagedOperation(description = "Closes this channel - this channel cannot be reused afterwards")
+		public void close() {
+			ManagedChannel.this.log.info(
+			        "Received request to close channel {} via JMX",
+			        ManagedChannel.this.channel);
+			final ChannelFuture closed = ManagedChannel.this.channel.close();
+			closed.addListener(new ChannelFutureListener() {
+				@Override
+				public void operationComplete(final ChannelFuture future)
+				        throws Exception {
+					if (future.isSuccess()) {
+						ManagedChannel.this.log.info(
+						        "Channel {} has been closed",
+						        future.getChannel());
+					} else {
+						ManagedChannel.this.log.warn("Failed to close channel "
+						        + future.getChannel() + ": "
+						        + future.getCause().getMessage(),
+						        future.getCause());
+					}
+				}
+			});
+		}
+
+		@ManagedAttribute(description = "This channel's unique id")
+		public Integer getId() {
+			return ManagedChannel.this.channel.getId();
+		}
+
+		@ManagedAttribute(description = "Since when this channel is connected")
+		public Date getConnectedSince() {
+			return new Date(ManagedChannel.this.connectedSinceTimestamp);
+		}
+
+		@ManagedAttribute(description = "The local address this channel is bound to")
+		public SocketAddress getLocalAddress() {
+			return ManagedChannel.this.channel.getLocalAddress();
+		}
+
+		@ManagedAttribute(description = "The remote address this channel is connected to")
+		public SocketAddress getRemoteAddress() {
+			return ManagedChannel.this.channel.getRemoteAddress();
+		}
+
+		@ManagedAttribute(description = "The timeout in milliseconds after that this channel will consider a connection attempt failed")
+		public int getConnectTimeoutMillis() {
+			return ManagedChannel.this.channel.getConfig()
+			        .getConnectTimeoutMillis();
+		}
+
+		ObjectName getObjectName() {
+			try {
+				return new ObjectName(GROUP + ":type=" + TYPE + ",scope="
+				        + ManagedChannel.this.channel.getId()
+				        + ",name=Controller");
+			} catch (final MalformedObjectNameException e) {
+				throw new RuntimeException(e);
+			}
+		}
 	}
 
 	private class Listener implements ChannelMonitor {

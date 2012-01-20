@@ -7,6 +7,9 @@ import static org.apache.commons.lang.Validate.notNull;
 
 import java.util.concurrent.TimeUnit;
 
+import javax.jms.DeliveryMode;
+import javax.jms.Session;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.JmsException;
@@ -26,49 +29,68 @@ import vnet.sms.gateway.nettysupport.publish.incoming.IncomingMessagesListener;
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.HistogramMetric;
 import com.yammer.metrics.core.MeterMetric;
+import com.yammer.metrics.core.MetricName;
 import com.yammer.metrics.core.TimerMetric;
 
 /**
  * @author obergner
  * 
  */
-@ManagedResource(objectName = "vnet.sms.gateway.server.framework:component=JMSBridge")
+@ManagedResource(objectName = MessageForwardingJmsBridge.OBJECT_NAME)
 public class MessageForwardingJmsBridge<ID extends java.io.Serializable>
         implements IncomingMessagesListener<ID> {
+
+	private static final String	  GROUP	                          = "vnet.sms.gateway.server";
+
+	private static final String	  TYPE	                          = "JMSBridge";
+
+	static final String	          OBJECT_NAME	                  = GROUP
+	                                                                      + ":type="
+	                                                                      + TYPE
+	                                                                      + ",name=JMSBridge";
 
 	private final Logger	      log	                          = LoggerFactory
 	                                                                      .getLogger(getClass());
 
 	private final MeterMetric	  numberOfForwardedSms	          = Metrics
 	                                                                      .newMeter(
-	                                                                              getClass(),
-	                                                                              "number-of-forwarded-sms",
+	                                                                              new MetricName(
+	                                                                                      GROUP,
+	                                                                                      TYPE,
+	                                                                                      "number-of-forwarded-sms"),
 	                                                                              "sms-forwarded",
 	                                                                              TimeUnit.SECONDS);
 
 	private final MeterMetric	  numberOfForwardedLoginRequests	= Metrics
 	                                                                      .newMeter(
-	                                                                              getClass(),
-	                                                                              "number-of-forwarded-login-requests",
+	                                                                              new MetricName(
+	                                                                                      GROUP,
+	                                                                                      TYPE,
+	                                                                                      "number-of-forwarded-login-requests"),
 	                                                                              "login-request-forwarded",
 	                                                                              TimeUnit.SECONDS);
 
 	private final MeterMetric	  numberOfForwardedLoginResponses	= Metrics
 	                                                                      .newMeter(
-	                                                                              getClass(),
-	                                                                              "number-of-forwarded-login-responses",
+	                                                                              new MetricName(
+	                                                                                      GROUP,
+	                                                                                      TYPE,
+	                                                                                      "number-of-forwarded-login-responses"),
 	                                                                              "login-response-forwarded",
 	                                                                              TimeUnit.SECONDS);
 
 	private final HistogramMetric	forwardedMessages	          = Metrics
-	                                                                      .newHistogram(
-	                                                                              getClass(),
-	                                                                              "forwarded-messages");
+	                                                                      .newHistogram(new MetricName(
+	                                                                              GROUP,
+	                                                                              TYPE,
+	                                                                              "forwarded-messages-distribution"));
 
 	private final TimerMetric	  sendDuration	                  = Metrics
 	                                                                      .newTimer(
-	                                                                              getClass(),
-	                                                                              "send-duration",
+	                                                                              new MetricName(
+	                                                                                      GROUP,
+	                                                                                      TYPE,
+	                                                                                      "message-send-duration"),
 	                                                                              TimeUnit.MILLISECONDS,
 	                                                                              TimeUnit.SECONDS);
 
@@ -155,122 +177,74 @@ public class MessageForwardingJmsBridge<ID extends java.io.Serializable>
 	// JMX API
 	// ------------------------------------------------------------------------
 
-	// Number of forwarded SMS
-
-	@ManagedAttribute(description = "COUNT: Aggregate number of all SMS that have been forwarded by this bridge")
-	public long getTotalNumberOfForwardedSms() {
-		return this.numberOfForwardedSms.count();
+	@ManagedAttribute(description = "The name of the JMS queue this JMS bridge will forward messages to by default")
+	public String getDefaultDestination() {
+		return this.jmsTemplate.getDefaultDestinationName();
 	}
 
-	@ManagedAttribute(description = "COUNT: Number of SMS forwarded within last minute")
-	public double getNumberOfSmsForwardedWithinLast1Minute() {
-		return this.numberOfForwardedSms.oneMinuteRate();
+	@ManagedAttribute(description = "If this bridge uses the configured settings for delivery mode, "
+	        + "message priority and time-to-live, or if these are set administratively")
+	public boolean isExplicitQosEnabled() {
+		return this.jmsTemplate.isExplicitQosEnabled();
 	}
 
-	@ManagedAttribute(description = "COUNT: Number of SMS forwarded within last five minutes")
-	public double getNumberOfSmsForwardedWithinLast5Minutes() {
-		return this.numberOfForwardedSms.fiveMinuteRate();
+	@ManagedAttribute(description = "The delivery mode to use for each forwarded message")
+	public String getDeliveryMode() {
+		final int deliveryMode = this.jmsTemplate.getDeliveryMode();
+		final String deliveryModeString;
+		switch (deliveryMode) {
+		case DeliveryMode.PERSISTENT:
+			deliveryModeString = "PERSISTENT";
+			break;
+		case DeliveryMode.NON_PERSISTENT:
+			deliveryModeString = "NON_PERSISTENT";
+			break;
+		default:
+			deliveryModeString = "ERROR:UNKNOWN";
+		}
+		return deliveryModeString;
 	}
 
-	@ManagedAttribute(description = "COUNT: Number of SMS forwarded within last fifteen minutes")
-	public double getNumberOfSmsForwardedWithinLast15Minutes() {
-		return this.numberOfForwardedSms.fifteenMinuteRate();
+	@ManagedAttribute(description = "The priority this bridge uses for each message when forwarding it")
+	public int getMessagePriority() {
+		return this.jmsTemplate.getPriority();
 	}
 
-	// Number of forwarded login requests
-
-	@ManagedAttribute(description = "COUNT: Aggregate number of all Login Requests that have been forwarded by this bridge")
-	public long getTotalNumberOfForwardedLoginRequests() {
-		return this.numberOfForwardedLoginRequests.count();
+	@ManagedAttribute(description = "The time-to-live in milliseconds of each message sent")
+	public long getTimeToLive() {
+		return this.jmsTemplate.getTimeToLive();
 	}
 
-	@ManagedAttribute(description = "COUNT: Number of Login Requests forwarded within last minute")
-	public double getNumberOfLoginRequestsForwardedWithinLast1Minute() {
-		return this.numberOfForwardedLoginRequests.oneMinuteRate();
+	@ManagedAttribute(description = "Are we forwarding messages transactionally?")
+	public boolean isSessionTransacted() {
+		return this.jmsTemplate.isSessionTransacted();
 	}
 
-	@ManagedAttribute(description = "COUNT: Number of Login Requests forwarded within last five minutes")
-	public double getNumberOfLoginRequestsForwardedWithinLast5Minutes() {
-		return this.numberOfForwardedLoginRequests.fiveMinuteRate();
+	@ManagedAttribute(description = "The acknowledgement mode used when forwarding messages via JMS")
+	public String getSessionAcknowledgeMode() {
+		final int ackMode = this.jmsTemplate.getSessionAcknowledgeMode();
+		final String ackModeString;
+		switch (ackMode) {
+		case Session.AUTO_ACKNOWLEDGE:
+			ackModeString = "AUTO_ACKNOWLEDGE";
+			break;
+		case Session.CLIENT_ACKNOWLEDGE:
+			ackModeString = "CLIENT_ACKNOWLEDGE";
+			break;
+		case Session.DUPS_OK_ACKNOWLEDGE:
+			ackModeString = "DUPS_OK_ACKNOWLEDGE";
+			break;
+		case Session.SESSION_TRANSACTED:
+			ackModeString = "SESSION_TRANSACTED";
+			break;
+		default:
+			ackModeString = "ERROR:UNKNOWN";
+		}
+		return ackModeString;
 	}
 
-	@ManagedAttribute(description = "COUNT: Number of Login Requests forwarded within last fifteen minutes")
-	public double getNumberOfLoginRequestsForwardedWithinLast15Minutes() {
-		return this.numberOfForwardedLoginRequests.fifteenMinuteRate();
-	}
-
-	// Number of forwarded login responses
-
-	@ManagedAttribute(description = "COUNT: Aggregate number of Login Responses that have been forwarded by this bridge")
-	public long getTotalNumberOfForwardedLoginResponses() {
-		return this.numberOfForwardedLoginResponses.count();
-	}
-
-	@ManagedAttribute(description = "COUNT: Number of Login Responses forwarded within last minute")
-	public double getNumberOfLoginResponsesForwardedWithinLast1Minute() {
-		return this.numberOfForwardedLoginResponses.oneMinuteRate();
-	}
-
-	@ManagedAttribute(description = "COUNT: Number of Login Responses forwarded within last five minutes")
-	public double getNumberOfLoginResponsesForwardedWithinLast5Minutes() {
-		return this.numberOfForwardedLoginResponses.fiveMinuteRate();
-	}
-
-	@ManagedAttribute(description = "COUNT: Number of Login Responses forwarded within last fifteen minutes")
-	public double getNumberOfLoginResponsesForwardedWithinLast15Minutes() {
-		return this.numberOfForwardedLoginResponses.fifteenMinuteRate();
-	}
-
-	// Aggregate number of forwarded messages
-
-	@ManagedAttribute(description = "COUNT: Aggregate number of all messages that have been forwarded by this bridge")
-	public long getTotalNumberOfForwardedMessages() {
-		return getTotalNumberOfForwardedSms()
-		        + getTotalNumberOfForwardedLoginRequests()
-		        + getTotalNumberOfForwardedLoginResponses();
-	}
-
-	// Send durations
-
-	@ManagedAttribute(description = "DURATION: Mean send duration per message in milliseconds")
-	public double getMeanSendDurationInMillis() {
-		return this.sendDuration.mean();
-	}
-
-	@ManagedAttribute(description = "DURATION: Maximum send duration in milliseconds")
-	public double getMaxSendDurationInMillis() {
-		return this.sendDuration.max();
-	}
-
-	@ManagedAttribute(description = "DURATION: Minimum send duration in milliseconds")
-	public double getMinSendDurationInMillis() {
-		return this.sendDuration.min();
-	}
-
-	@ManagedAttribute(description = "DURATION: Standard deviation of all send durations in milliseconds")
-	public double getSendDurationStdDevInMillis() {
-		return this.sendDuration.stdDev();
-	}
-
-	// Throughput
-
-	@ManagedAttribute(description = "TRHOUGHPUT: Mean number of messages forwarded per second")
-	public double getMeanNumberOfForwardedMessagesPerSecond() {
-		return this.sendDuration.meanRate();
-	}
-
-	@ManagedAttribute(description = "THROUGHPUT: Mean number of messages forwarded per second, restricted to those forwarded within the last minute")
-	public double getMeanNumberOfForwardedMessagesPerSecondWithinLast1Minute() {
-		return this.sendDuration.oneMinuteRate();
-	}
-
-	@ManagedAttribute(description = "THROUGHPUT: Mean number of messages forwarded per second, restricted to those forwarded within the last five minutes")
-	public double getMeanNumberOfForwardedMessagesPerSecondWithinLast5Minutes() {
-		return this.sendDuration.fiveMinuteRate();
-	}
-
-	@ManagedAttribute(description = "THROUGHPUT: Mean number of messages forwarded per second, restricted to those forwarded within the last fifteen minutes")
-	public double getMeanNumberOfForwardedMessagesPerSecondWithinLast15Minutes() {
-		return this.sendDuration.fifteenMinuteRate();
+	@ManagedAttribute(description = "The time span in milliseconds after which this bridge will consider a receive failed")
+	public long getReceiveTimeoutMillis() {
+		return this.jmsTemplate.getReceiveTimeout();
 	}
 }

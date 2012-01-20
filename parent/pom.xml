@@ -86,6 +86,7 @@
 		<plugins.cobertura.version>2.5.1</plugins.cobertura.version>
 		<plugins.license.version>1.8.0</plugins.license.version>
 		<plugins.assembly.version>2.2.2</plugins.assembly.version>
+		<plugins.gmaven.version>1.4</plugins.gmaven.version>
 		<!-- ######################################################### -->
 		<!-- Reporting plugin versions -->
 		<!-- ######################################################### -->
@@ -401,7 +402,6 @@
 				<groupId>org.jboss.netty</groupId>
 				<artifactId>netty</artifactId>
 				<version>${deps.netty.version}</version>
-				<scope>provided</scope>
 				<type>jar</type>
 			</dependency>
 			<!-- Google -->
@@ -573,12 +573,24 @@
 				<groupId>org.apache.xbean</groupId>
 				<artifactId>xbean-spring-v2c</artifactId>
 				<version>${deps.xbean.version}</version>
+				<exclusions>
+					<exclusion>
+						<!-- It's using spring 2.0 -->
+						<groupId>org.springframework</groupId>
+						<artifactId>spring</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.xbean</groupId>
 				<artifactId>xbean-spring</artifactId>
 				<version>${deps.xbean-spring.version}</version>
 				<exclusions>
+					<exclusion>
+						<!-- It's using spring 2.0 -->
+						<groupId>org.springframework</groupId>
+						<artifactId>spring</artifactId>
+					</exclusion>
 					<exclusion>
 						<groupId>commons-logging</groupId>
 						<artifactId>commons-logging</artifactId>
@@ -895,24 +907,14 @@
 					<version>${plugins.dependency.version}</version>
 				</plugin>
 				<plugin>
+					<groupId>org.codehaus.gmaven</groupId>
+					<artifactId>gmaven-plugin</artifactId>
+					<version>${plugins.gmaven.version}</version>
+				</plugin>
+				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-assembly-plugin</artifactId>
 					<version>${plugins.assembly.version}</version>
-					<configuration>
-						<descriptors>
-							<descriptor>src/main/assembly/distribution.xml
-                            </descriptor>
-						</descriptors>
-					</configuration>
-					<executions>
-						<execution>
-							<id>assemble-distribution</id>
-							<phase>package</phase>
-							<goals>
-								<goal>single</goal>
-							</goals>
-						</execution>
-					</executions>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>

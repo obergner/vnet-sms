@@ -31,7 +31,7 @@ WRAPPER_CONF="../conf/wrapper.conf"
 PRIORITY=
 
 # Location of the pid file.
-PIDDIR="."
+PIDDIR="./.run"
 
 # FIXED_COMMAND tells the script to use a hard coded action rather than
 # expecting the first parameter of the command line to be the command.
@@ -63,7 +63,7 @@ WAIT_FOR_STARTED_TIMEOUT=120
 
 # If set, the status, start_msg and stop_msg commands will print out detailed
 #   state information on the Wrapper and Java processes.
-#DETAIL_STATUS=true
+DETAIL_STATUS=true
 
 # If set, the 'pause' and 'resume' commands will be enabled.  These make it
 #  possible to pause the JVM or Java application without completely stopping
@@ -89,7 +89,7 @@ USE_UPSTART=
 
 # When installing on On Mac OSX platforms, the following domain will be used to
 #  prefix the plist file name.
-PLIST_DOMAIN=org.tanukisoftware.wrapper
+PLIST_DOMAIN=vnet.sms.gateway.server
 
 # The following two lines are used by the chkconfig command. Change as is
 #  appropriate for your application.  They should remain commented.

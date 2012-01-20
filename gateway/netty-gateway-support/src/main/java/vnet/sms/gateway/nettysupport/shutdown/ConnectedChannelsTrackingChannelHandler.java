@@ -42,7 +42,7 @@ public class ConnectedChannelsTrackingChannelHandler extends
 	public void channelConnected(final ChannelHandlerContext ctx,
 	        final ChannelStateEvent e) throws Exception {
 		this.log.info(
-		        "Channel [{}] has been opened and will be registered as a connected channel for later shutdown",
+		        "Channel [{}] has been connected and will be registered as a connected channel for later shutdown",
 		        ctx.getChannel());
 		this.allConnectedChannels.add(ctx.getChannel());
 		super.channelConnected(ctx, e);

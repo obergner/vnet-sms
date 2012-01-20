@@ -57,10 +57,12 @@ wrapper.java.mainclass=org.tanukisoftware.wrapper.WrapperSimpleApp
 
 # Java Classpath (include wrapper.jar)  Add class path elements as
 #  needed starting from 1
-wrapper.java.classpath.1=../lib/wrapper.jar
-
+wrapper.java.classpath.1=../conf/
+wrapper.java.classpath.2=../lib/wrapper.jar
+wrapper.java.classpath.3=../lib/<%= projectArtifact %>.jar
+<% classpath.eachWithIndex { dep, idx -> %><% ix = idx + 4 %>wrapper.java.classpath.${ix}=${dep}\n<% } %>
 # Java Library Path (location of Wrapper.DLL or libwrapper.so)
-wrapper.java.library.path.1=../bin/native/lib64
+wrapper.java.library.path.1=../bin/native/lib64/
 
 # Java Bits.  On applicable platforms, tells the JVM to run in 32 or 64-bit mode.
 wrapper.java.additional.auto_bits=TRUE
@@ -76,12 +78,12 @@ wrapper.java.initmemory=128
 wrapper.java.maxmemory=512
 
 # Application parameters.  Add parameters as needed starting from 1
-wrapper.app.parameter.1=vnet.sms.gateway.server.serialization.minimal
+wrapper.app.parameter.1=vnet.sms.gateway.server.serialization.minimal.Main
 #********************************************************************
 # Wrapper Logging Properties
 #********************************************************************
 # Enables Debug output from the Wrapper.
-# wrapper.debug=TRUE
+wrapper.debug=TRUE
 
 # Format of output for the console.  (See docs for formats)
 wrapper.console.format=PM
@@ -90,7 +92,7 @@ wrapper.console.format=PM
 wrapper.console.loglevel=DEBUG
 
 # Log file to use for wrapper output logging.
-wrapper.logfile=../logs/wrapper.log
+wrapper.logfile=../log/wrapper.log
 
 # Format of output for the log file.  (See docs for formats)
 wrapper.logfile.format=LPTM
