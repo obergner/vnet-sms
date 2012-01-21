@@ -5,6 +5,7 @@ package vnet.sms.gateway.nettysupport.shutdown;
 
 import static org.apache.commons.lang.Validate.notNull;
 
+import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelHandler;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ChannelStateEvent;
@@ -41,10 +42,14 @@ public class ConnectedChannelsTrackingChannelHandler extends
 	@Override
 	public void channelConnected(final ChannelHandlerContext ctx,
 	        final ChannelStateEvent e) throws Exception {
+		final Channel connectedChannel = e.getChannel();
 		this.log.info(
-		        "Channel [{}] has been connected and will be registered as a connected channel for later shutdown",
-		        ctx.getChannel());
-		this.allConnectedChannels.add(ctx.getChannel());
+		        "Channel {} has been connected and will be registered as a connected channel for later shutdown",
+		        connectedChannel);
+		getAllConnectedChannels().add(connectedChannel);
+		this.log.info(
+		        "Channel {} has been registered as a connected channel - total number of connected channels is now [{}]",
+		        connectedChannel, getAllConnectedChannels().size());
 		super.channelConnected(ctx, e);
 	}
 

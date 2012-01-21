@@ -10,8 +10,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javax.management.MalformedObjectNameException;
+import javax.management.Notification;
 import javax.management.ObjectName;
 
 import org.jboss.netty.channel.Channel;
@@ -21,20 +23,34 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jmx.export.MBeanExportOperations;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
+import org.springframework.jmx.export.annotation.ManagedNotification;
+import org.springframework.jmx.export.annotation.ManagedNotifications;
 import org.springframework.jmx.export.annotation.ManagedResource;
+import org.springframework.jmx.export.notification.NotificationPublisher;
+import org.springframework.jmx.export.notification.NotificationPublisherAware;
 
 import vnet.sms.common.messages.Message;
 import vnet.sms.common.wme.WindowedMessageEvent;
+import vnet.sms.gateway.nettysupport.Jmx;
 
 /**
  * @author obergner
  * 
  */
+@ManagedNotifications({ @ManagedNotification(name = IncomingWindowStore.Events.NO_WINDOW_FOR_INCOMING_MESSAGE, description = "An incoming message has been rejected since no free windows has been available", notificationTypes = IncomingWindowStore.Events.NO_WINDOW_FOR_INCOMING_MESSAGE) })
 @ManagedResource(description = "Buffers incoming messages until a predefined limit is reached.")
-public class IncomingWindowStore<ID extends Serializable> {
+public class IncomingWindowStore<ID extends Serializable> implements
+        NotificationPublisherAware {
 
-	private final Logger	                 log	  = LoggerFactory
-	                                                          .getLogger(getClass());
+	private static final String	TYPE	= "Channel";
+
+	public static class Events {
+
+		public static final String	NO_WINDOW_FOR_INCOMING_MESSAGE	= "channel.no-window-for-incoming-message";
+	}
+
+	private final Logger	                 log	              = LoggerFactory
+	                                                                      .getLogger(getClass());
 
 	private final int	                     maximumCapacity;
 
@@ -42,11 +58,20 @@ public class IncomingWindowStore<ID extends Serializable> {
 
 	private final MBeanExportOperations	     mbeanExporter;
 
+	private NotificationPublisher	         notificationPublisher;
+
 	private final ConcurrentMap<ID, Message>	messageReferenceToMessage;
 
 	private final Semaphore	                 availableWindows;
 
-	private volatile boolean	             shutDown	= false;
+	private volatile boolean	             shutDown	          = false;
+
+	private final AtomicLong	             noWindowAvailableSeq	= new AtomicLong(
+	                                                                      1);
+
+	// ------------------------------------------------------------------------
+	// Constructors
+	// ------------------------------------------------------------------------
 
 	public IncomingWindowStore(final int maximumCapacity,
 	        final long waitTimeMillis, final MBeanExportOperations mbeanExporter) {
@@ -58,6 +83,22 @@ public class IncomingWindowStore<ID extends Serializable> {
 		this.messageReferenceToMessage = new ConcurrentHashMap<ID, Message>(
 		        maximumCapacity);
 	}
+
+	// ------------------------------------------------------------------------
+	// NotificationPublisherAware
+	// ------------------------------------------------------------------------
+
+	@Override
+	public void setNotificationPublisher(
+	        final NotificationPublisher notificationPublisher) {
+		notNull(notificationPublisher,
+		        "Argument 'notificationPublisher' must not be null");
+		this.notificationPublisher = notificationPublisher;
+	}
+
+	// ------------------------------------------------------------------------
+	// JMX API
+	// ------------------------------------------------------------------------
 
 	/**
 	 * @see vnet.sms.gateway.nettysupport.window.incoming.IncomingWindowStoreMBean#getMaximumCapacity()
@@ -81,6 +122,10 @@ public class IncomingWindowStore<ID extends Serializable> {
 		return this.messageReferenceToMessage.size();
 	}
 
+	// ------------------------------------------------------------------------
+	// Attach to/detach from Channel
+	// ------------------------------------------------------------------------
+
 	public void attachTo(final Channel channel)
 	        throws MalformedObjectNameException {
 		notNull(channel, "Argument 'channel' must not be null");
@@ -101,9 +146,8 @@ public class IncomingWindowStore<ID extends Serializable> {
 
 	private final ObjectName objectNameFor(final Channel channel)
 	        throws MalformedObjectNameException {
-		return new ObjectName(
-		        "vnet.sms:service=IncomingWindowStore,owner=channel-"
-		                + channel.getId());
+		return new ObjectName(Jmx.GROUP + ":type=" + TYPE + ",scope="
+		        + channel.getId() + ",name=incoming-windows");
 	}
 
 	private void detachFrom(final Channel channel)
@@ -115,9 +159,21 @@ public class IncomingWindowStore<ID extends Serializable> {
 		        new Object[] { this, objectName });
 	}
 
+	// ------------------------------------------------------------------------
+	// Store new message
+	// ------------------------------------------------------------------------
+
+	/**
+	 * @param messageEvent
+	 * @return
+	 * @throws IllegalArgumentException
+	 * @throws IllegalStateException
+	 * @throws InterruptedException
+	 */
 	public boolean tryAcquireWindow(
 	        final WindowedMessageEvent<ID, ? extends Message> messageEvent)
-	        throws IllegalArgumentException, InterruptedException {
+	        throws IllegalArgumentException, IllegalStateException,
+	        InterruptedException {
 		notNull(messageEvent, "Cannot store a null message");
 		isTrue(messageEvent.getMessage() instanceof Message,
 		        "Can only process MessageEvents containing a message of type "
@@ -126,16 +182,36 @@ public class IncomingWindowStore<ID extends Serializable> {
 		ensureNotShutDown();
 		if (!this.availableWindows.tryAcquire(this.waitTimeMillis,
 		        TimeUnit.MILLISECONDS)) {
+			publishNoWindowAvailableEvent(messageEvent);
 			return false;
 		}
 		return storeMessageHavingPermit(messageEvent);
 	}
 
-	private void ensureNotShutDown() throws IllegalArgumentException {
+	private void ensureNotShutDown() throws IllegalStateException {
 		if (this.shutDown) {
-			throw new IllegalArgumentException(
+			throw new IllegalStateException(
 			        "This IncomingWindowStore has already been shut down");
 		}
+	}
+
+	private void publishNoWindowAvailableEvent(
+	        final WindowedMessageEvent<ID, ? extends Message> messageEvent) {
+		final Notification noWindowAvailableNot = new Notification(
+		        Events.NO_WINDOW_FOR_INCOMING_MESSAGE, this,
+		        this.noWindowAvailableSeq.getAndIncrement());
+		noWindowAvailableNot.setUserData(messageEvent.getMessage());
+		sendNotification(noWindowAvailableNot);
+	}
+
+	private void sendNotification(final Notification notification) {
+		if (this.notificationPublisher == null) {
+			throw new IllegalStateException(
+			        "No "
+			                + NotificationPublisher.class.getName()
+			                + " has been set. Did you remember to manually inject a NotificationPublisher when using this class outside a Spring context?");
+		}
+		this.notificationPublisher.sendNotification(notification);
 	}
 
 	private boolean storeMessageHavingPermit(
@@ -154,8 +230,18 @@ public class IncomingWindowStore<ID extends Serializable> {
 		return true;
 	}
 
+	// ------------------------------------------------------------------------
+	// Release message from store
+	// ------------------------------------------------------------------------
+
+	/**
+	 * @param messageReference
+	 * @return
+	 * @throws IllegalArgumentException
+	 * @throws IllegalStateException
+	 */
 	public Message releaseWindow(final ID messageReference)
-	        throws IllegalArgumentException {
+	        throws IllegalArgumentException, IllegalStateException {
 		ensureNotShutDown();
 		try {
 			final Message releasedMessage = this.messageReferenceToMessage
@@ -172,6 +258,13 @@ public class IncomingWindowStore<ID extends Serializable> {
 		}
 	}
 
+	// ------------------------------------------------------------------------
+	// Shutdown this store
+	// ------------------------------------------------------------------------
+
+	/**
+	 * @return
+	 */
 	public Map<ID, Message> shutDown() {
 		if (this.shutDown) {
 			return Collections.emptyMap();

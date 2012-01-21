@@ -19,8 +19,16 @@ import org.springframework.jmx.export.annotation.ManagedResource;
  * @author obergner
  * 
  */
-@ManagedResource(objectName = "vnet.sms.gateway.server:type=GatewayServerController", description = "A controller for starting, stopping and monitoring a GatewayServer instance")
+@ManagedResource(objectName = GatewayServerController.OBJECT_NAME, description = "A controller for starting, stopping and monitoring a GatewayServer instance")
 public class GatewayServerController<ID extends Serializable, TP> {
+
+	private static final String	        TYPE	    = "GatewayServerController";
+
+	private static final String	        NAME	    = "DEFAULT";
+
+	static final String	                OBJECT_NAME	= Jmx.GROUP + ":type="
+	                                                        + TYPE + ",name="
+	                                                        + NAME;
 
 	private final GatewayServer<ID, TP>	gatewayServer;
 

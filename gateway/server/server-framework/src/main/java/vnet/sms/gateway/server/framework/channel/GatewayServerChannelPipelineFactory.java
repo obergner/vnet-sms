@@ -40,15 +40,26 @@ import vnet.sms.gateway.nettysupport.transport.outgoing.TransportProtocolAdaptin
 import vnet.sms.gateway.nettysupport.window.WindowingChannelHandler;
 import vnet.sms.gateway.nettysupport.window.incoming.IncomingWindowStore;
 import vnet.sms.gateway.nettysupport.window.spi.MessageReferenceGenerator;
+import vnet.sms.gateway.server.framework.Jmx;
 import vnet.sms.gateway.server.framework.jmsbridge.MessageForwardingJmsBridge;
 
 /**
  * @author obergner
  * 
  */
-@ManagedResource(objectName = "vnet.sms.gateway:service=ChannelPipelineFactory,type=Server", description = "Netty ChannelPipelineFactory for attaching a pipeline of channel handlers to each newly connected channel")
+@ManagedResource(objectName = GatewayServerChannelPipelineFactory.OBJECT_NAME, description = "Netty ChannelPipelineFactory for attaching a pipeline of channel handlers to each newly connected channel")
 public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
         implements ChannelPipelineFactory {
+
+	private static final String	                                            TYPE	                             = "ChannelPipelineFactory";
+
+	private static final String	                                            NAME	                             = "DEFAULT";
+
+	static final String	                                                    OBJECT_NAME	                         = Jmx.GROUP
+	                                                                                                                     + ":type="
+	                                                                                                                     + TYPE
+	                                                                                                                     + ",name="
+	                                                                                                                     + NAME;
 
 	private final int	                                                    availableIncomingWindows;
 

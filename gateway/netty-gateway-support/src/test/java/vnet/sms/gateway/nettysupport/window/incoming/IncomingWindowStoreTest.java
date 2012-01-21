@@ -4,15 +4,21 @@ import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.net.InetSocketAddress;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
+
+import javax.management.Notification;
 
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.UpstreamMessageEvent;
 import org.junit.Test;
 import org.springframework.jmx.export.MBeanExporter;
+import org.springframework.jmx.export.notification.NotificationPublisher;
+import org.springframework.jmx.export.notification.UnableToSendNotificationException;
 
 import vnet.sms.common.messages.Message;
 import vnet.sms.common.messages.PingRequest;
@@ -83,6 +89,12 @@ public class IncomingWindowStoreTest {
 		final int windowStoreCapacity = 234;
 		final IncomingWindowStore<Integer> objectUnderTest = new IncomingWindowStore<Integer>(
 		        windowStoreCapacity, 10, new MBeanExporter());
+		objectUnderTest.setNotificationPublisher(new NotificationPublisher() {
+			@Override
+			public void sendNotification(final Notification notification)
+			        throws UnableToSendNotificationException {
+			}
+		});
 
 		final Channel mockChannel = createNiceMock(Channel.class);
 		replay(mockChannel);
@@ -110,12 +122,62 @@ public class IncomingWindowStoreTest {
 	}
 
 	@Test
+	public final void assertThatTryAcquireWindowPublishesEventViaJmxIfNoWindowIsAvailable()
+	        throws IllegalArgumentException, InterruptedException {
+		final AtomicReference<Notification> publishedEvent = new AtomicReference<Notification>();
+
+		final int windowStoreCapacity = 234;
+		final IncomingWindowStore<Integer> objectUnderTest = new IncomingWindowStore<Integer>(
+		        windowStoreCapacity, 10, new MBeanExporter());
+		objectUnderTest.setNotificationPublisher(new NotificationPublisher() {
+			@Override
+			public void sendNotification(final Notification notification)
+			        throws UnableToSendNotificationException {
+				publishedEvent.set(notification);
+			}
+		});
+
+		final Channel mockChannel = createNiceMock(Channel.class);
+		replay(mockChannel);
+		for (int i = 1; i <= windowStoreCapacity; i++) {
+			final PingRequest pingRequest = new PingRequest(
+			        new InetSocketAddress(0), new InetSocketAddress(0));
+			objectUnderTest
+			        .tryAcquireWindow(new PingRequestReceivedEvent<Integer>(
+			                Integer.valueOf(i), new UpstreamMessageEvent(
+			                        mockChannel, pingRequest,
+			                        new InetSocketAddress(0)), pingRequest));
+		}
+
+		final PingRequest pingRequest = new PingRequest(
+		        new InetSocketAddress(0), new InetSocketAddress(0));
+		final boolean windowAcquired = objectUnderTest
+		        .tryAcquireWindow(new PingRequestReceivedEvent<Integer>(Integer
+		                .valueOf(windowStoreCapacity + 1),
+		                new UpstreamMessageEvent(mockChannel, pingRequest,
+		                        new InetSocketAddress(0)), pingRequest));
+
+		assertFalse(
+		        "tryAcquireWindow(...) succeeded although no window is available",
+		        windowAcquired);
+		assertNotNull(
+		        "tryAcquireWindow(...) should have published via JMX that no window is available",
+		        publishedEvent.get());
+	}
+
+	@Test
 	public final void assertThatTryAcquireWindowWaitsConfiguredTimespanForAWindowToBecomeAvailable()
 	        throws IllegalArgumentException, InterruptedException {
 		final int windowStoreCapacity = 234;
 		final int waitTimeMillis = 500;
 		final IncomingWindowStore<Integer> objectUnderTest = new IncomingWindowStore<Integer>(
 		        windowStoreCapacity, waitTimeMillis, new MBeanExporter());
+		objectUnderTest.setNotificationPublisher(new NotificationPublisher() {
+			@Override
+			public void sendNotification(final Notification notification)
+			        throws UnableToSendNotificationException {
+			}
+		});
 
 		final Channel mockChannel = createNiceMock(Channel.class);
 		replay(mockChannel);

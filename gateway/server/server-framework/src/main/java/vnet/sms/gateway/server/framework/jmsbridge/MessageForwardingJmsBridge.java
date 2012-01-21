@@ -25,6 +25,7 @@ import vnet.sms.common.wme.PingResponseReceivedEvent;
 import vnet.sms.common.wme.SmsReceivedEvent;
 import vnet.sms.common.wme.WindowedMessageEvent;
 import vnet.sms.gateway.nettysupport.publish.incoming.IncomingMessagesListener;
+import vnet.sms.gateway.server.framework.Jmx;
 
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.HistogramMetric;
@@ -40,14 +41,15 @@ import com.yammer.metrics.core.TimerMetric;
 public class MessageForwardingJmsBridge<ID extends java.io.Serializable>
         implements IncomingMessagesListener<ID> {
 
-	private static final String	  GROUP	                          = "vnet.sms.gateway.server";
-
 	private static final String	  TYPE	                          = "JMSBridge";
 
-	static final String	          OBJECT_NAME	                  = GROUP
+	private static final String	  NAME	                          = "DEFAULT";
+
+	static final String	          OBJECT_NAME	                  = Jmx.GROUP
 	                                                                      + ":type="
 	                                                                      + TYPE
-	                                                                      + ",name=JMSBridge";
+	                                                                      + ",name="
+	                                                                      + NAME;
 
 	private final Logger	      log	                          = LoggerFactory
 	                                                                      .getLogger(getClass());
@@ -55,7 +57,7 @@ public class MessageForwardingJmsBridge<ID extends java.io.Serializable>
 	private final MeterMetric	  numberOfForwardedSms	          = Metrics
 	                                                                      .newMeter(
 	                                                                              new MetricName(
-	                                                                                      GROUP,
+	                                                                                      Jmx.GROUP,
 	                                                                                      TYPE,
 	                                                                                      "number-of-forwarded-sms"),
 	                                                                              "sms-forwarded",
@@ -64,7 +66,7 @@ public class MessageForwardingJmsBridge<ID extends java.io.Serializable>
 	private final MeterMetric	  numberOfForwardedLoginRequests	= Metrics
 	                                                                      .newMeter(
 	                                                                              new MetricName(
-	                                                                                      GROUP,
+	                                                                                      Jmx.GROUP,
 	                                                                                      TYPE,
 	                                                                                      "number-of-forwarded-login-requests"),
 	                                                                              "login-request-forwarded",
@@ -73,7 +75,7 @@ public class MessageForwardingJmsBridge<ID extends java.io.Serializable>
 	private final MeterMetric	  numberOfForwardedLoginResponses	= Metrics
 	                                                                      .newMeter(
 	                                                                              new MetricName(
-	                                                                                      GROUP,
+	                                                                                      Jmx.GROUP,
 	                                                                                      TYPE,
 	                                                                                      "number-of-forwarded-login-responses"),
 	                                                                              "login-response-forwarded",
@@ -81,14 +83,14 @@ public class MessageForwardingJmsBridge<ID extends java.io.Serializable>
 
 	private final HistogramMetric	forwardedMessages	          = Metrics
 	                                                                      .newHistogram(new MetricName(
-	                                                                              GROUP,
+	                                                                              Jmx.GROUP,
 	                                                                              TYPE,
 	                                                                              "forwarded-messages-distribution"));
 
 	private final TimerMetric	  sendDuration	                  = Metrics
 	                                                                      .newTimer(
 	                                                                              new MetricName(
-	                                                                                      GROUP,
+	                                                                                      Jmx.GROUP,
 	                                                                                      TYPE,
 	                                                                                      "message-send-duration"),
 	                                                                              TimeUnit.MILLISECONDS,

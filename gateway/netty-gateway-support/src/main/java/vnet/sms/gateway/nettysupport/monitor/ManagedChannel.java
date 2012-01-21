@@ -31,6 +31,7 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.jmx.export.notification.NotificationPublisher;
 import org.springframework.jmx.export.notification.NotificationPublisherAware;
 
+import vnet.sms.gateway.nettysupport.Jmx;
 import vnet.sms.gateway.nettysupport.login.incoming.ChannelAuthenticationFailedEvent;
 import vnet.sms.gateway.nettysupport.login.incoming.ChannelSuccessfullyAuthenticatedEvent;
 import vnet.sms.gateway.nettysupport.ping.outgoing.PingResponseTimeoutExpiredEvent;
@@ -49,9 +50,7 @@ import com.yammer.metrics.core.MetricName;
  * @author obergner
  * 
  */
-public class ManagedChannel implements NotificationPublisherAware {
-
-	private static final String	GROUP	= "vnet.sms.gateway.server";
+public class ManagedChannel {
 
 	private static final String	TYPE	= "Channel";
 
@@ -164,53 +163,55 @@ public class ManagedChannel implements NotificationPublisherAware {
 		this.listener = this.new Listener();
 		this.mbeanExporter = mbeanExporter;
 		// Incoming metrics
-		this.numberOfReceivedBytes = Metrics.newHistogram(new MetricName(GROUP,
-		        TYPE, "received-bytes", channel.getId().toString()));
-		this.totalNumberOfReceivedBytes = Metrics
-		        .newCounter(new MetricName(GROUP, TYPE, "total-received-bytes",
-		                channel.getId().toString()));
-		this.numberOfReceivedPdus = Metrics.newMeter(new MetricName(GROUP,
+		this.numberOfReceivedBytes = Metrics.newHistogram(new MetricName(
+		        Jmx.GROUP, TYPE, "received-bytes", channel.getId().toString()));
+		this.totalNumberOfReceivedBytes = Metrics.newCounter(new MetricName(
+		        Jmx.GROUP, TYPE, "total-received-bytes", channel.getId()
+		                .toString()));
+		this.numberOfReceivedPdus = Metrics.newMeter(new MetricName(Jmx.GROUP,
 		        TYPE, "received-pdus", channel.getId().toString()),
 		        "pdu-received", TimeUnit.SECONDS);
 		this.numberOfReceivedLoginRequests = Metrics.newMeter(new MetricName(
-		        GROUP, TYPE, "received-login-requests", channel.getId()
+		        Jmx.GROUP, TYPE, "received-login-requests", channel.getId()
 		                .toString()), "login-request-received",
 		        TimeUnit.SECONDS);
 		this.numberOfReceivedLoginResponses = Metrics.newMeter(new MetricName(
-		        GROUP, TYPE, "received-login-responses", channel.getId()
+		        Jmx.GROUP, TYPE, "received-login-responses", channel.getId()
 		                .toString()), "login-response-received",
 		        TimeUnit.SECONDS);
 		this.numberOfReceivedPingRequests = Metrics.newMeter(new MetricName(
-		        GROUP, TYPE, "received-ping-requests", channel.getId()
+		        Jmx.GROUP, TYPE, "received-ping-requests", channel.getId()
 		                .toString()), "pdu-received", TimeUnit.SECONDS);
 		this.numberOfReceivedPingResponses = Metrics.newMeter(new MetricName(
-		        GROUP, TYPE, "received-ping-responses", channel.getId()
+		        Jmx.GROUP, TYPE, "received-ping-responses", channel.getId()
 		                .toString()), "ping-response-received",
 		        TimeUnit.SECONDS);
-		this.numberOfReceivedSms = Metrics.newMeter(new MetricName(GROUP, TYPE,
-		        "received-sms", channel.getId().toString()), "pdu-received",
-		        TimeUnit.SECONDS);
+		this.numberOfReceivedSms = Metrics.newMeter(new MetricName(Jmx.GROUP,
+		        TYPE, "received-sms", channel.getId().toString()),
+		        "pdu-received", TimeUnit.SECONDS);
 		// Outgoing metrics
-		this.numberOfSentBytes = Metrics.newHistogram(new MetricName(GROUP,
+		this.numberOfSentBytes = Metrics.newHistogram(new MetricName(Jmx.GROUP,
 		        TYPE, "sent-bytes", channel.getId().toString()));
-		this.totalNumberOfSentBytes = Metrics.newCounter(new MetricName(GROUP,
-		        TYPE, "total-sent-bytes", channel.getId().toString()));
-		this.numberOfSentPdus = Metrics.newMeter(Channel.class, "sent-pdus",
-		        channel.getId().toString(), "pdu-sent", TimeUnit.SECONDS);
+		this.totalNumberOfSentBytes = Metrics
+		        .newCounter(new MetricName(Jmx.GROUP, TYPE, "total-sent-bytes",
+		                channel.getId().toString()));
+		this.numberOfSentPdus = Metrics.newMeter(new MetricName(Jmx.GROUP,
+		        TYPE, "sent-pdus", channel.getId().toString()), "pdu-sent",
+		        TimeUnit.SECONDS);
 		this.numberOfAcceptedLoginRequests = Metrics.newMeter(new MetricName(
-		        GROUP, TYPE, "accepted-login-requests", channel.getId()
+		        Jmx.GROUP, TYPE, "accepted-login-requests", channel.getId()
 		                .toString()), "login-request-accepted",
 		        TimeUnit.SECONDS);
 		this.numberOfRejectedLoginRequests = Metrics.newMeter(new MetricName(
-		        GROUP, TYPE, "rejected-login-requests", channel.getId()
+		        Jmx.GROUP, TYPE, "rejected-login-requests", channel.getId()
 		                .toString()), "login-request-rejected",
 		        TimeUnit.SECONDS);
-		this.numberOfSentPingRequests = Metrics.newMeter(new MetricName(GROUP,
-		        TYPE, "sent-ping-requests", channel.getId().toString()),
-		        "ping-request-sent", TimeUnit.SECONDS);
-		this.numberOfSentPingResponses = Metrics.newMeter(new MetricName(GROUP,
-		        TYPE, "sent-ping-responses", channel.getId().toString()),
-		        "ping-response-sent", TimeUnit.SECONDS);
+		this.numberOfSentPingRequests = Metrics.newMeter(new MetricName(
+		        Jmx.GROUP, TYPE, "sent-ping-requests", channel.getId()
+		                .toString()), "ping-request-sent", TimeUnit.SECONDS);
+		this.numberOfSentPingResponses = Metrics.newMeter(new MetricName(
+		        Jmx.GROUP, TYPE, "sent-ping-responses", channel.getId()
+		                .toString()), "ping-response-sent", TimeUnit.SECONDS);
 		// Controller
 		this.controller = this.new Controller();
 		this.mbeanExporter.registerManagedResource(this.controller,
@@ -303,14 +304,6 @@ public class ManagedChannel implements NotificationPublisherAware {
 	//
 	// ------------------------------------------------------------------------
 
-	@Override
-	public void setNotificationPublisher(
-	        final NotificationPublisher notificationPublisher) {
-		notNull(notificationPublisher,
-		        "Argument 'notificationPublisher' must not be null");
-		this.notificationPublisher = notificationPublisher;
-	}
-
 	// ------------------------------------------------------------------------
 	// equals, hashCode, ...
 	// ------------------------------------------------------------------------
@@ -358,7 +351,7 @@ public class ManagedChannel implements NotificationPublisherAware {
 	        @ManagedNotification(name = ManagedChannel.Events.NO_WINDOW_FOR_INCOMING_MESSAGE_AVAILABLE, description = "A message came in, but no free window was available", notificationTypes = ManagedChannel.Events.NO_WINDOW_FOR_INCOMING_MESSAGE_AVAILABLE),
 	        @ManagedNotification(name = ManagedChannel.Events.PENDING_WINDOWED_MESSAGES_DISCARDED, description = "Messages stored in window store have expired and will be discarded", notificationTypes = ManagedChannel.Events.CHANNEL_AUTHENTICATED) })
 	@ManagedResource
-	public class Controller {
+	public class Controller implements NotificationPublisherAware {
 
 		@ManagedOperation(description = "Closes this channel - this channel cannot be reused afterwards")
 		public void close() {
@@ -412,12 +405,20 @@ public class ManagedChannel implements NotificationPublisherAware {
 
 		ObjectName getObjectName() {
 			try {
-				return new ObjectName(GROUP + ":type=" + TYPE + ",scope="
+				return new ObjectName(Jmx.GROUP + ":type=" + TYPE + ",scope="
 				        + ManagedChannel.this.channel.getId()
 				        + ",name=Controller");
 			} catch (final MalformedObjectNameException e) {
 				throw new RuntimeException(e);
 			}
+		}
+
+		@Override
+		public void setNotificationPublisher(
+		        final NotificationPublisher notificationPublisher) {
+			notNull(notificationPublisher,
+			        "Argument 'notificationPublisher' must not be null");
+			ManagedChannel.this.notificationPublisher = notificationPublisher;
 		}
 	}
 

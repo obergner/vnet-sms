@@ -16,16 +16,25 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.jmx.export.notification.NotificationPublisher;
 import org.springframework.jmx.export.notification.NotificationPublisherAware;
 
+import vnet.sms.gateway.nettysupport.Jmx;
+
 /**
  * @author obergner
  * 
  */
-@ManagedResource(objectName = "vnet.sms.gateway.nettysupport:resource=Channels,property=InitialChannelEvents", description = "Monitors and publishes initial channel events OPEN, BOUND, CONNECTED")
+@ManagedResource(objectName = InitialChannelEventsMonitor.OBJECT_NAME, description = "Monitors and publishes initial channel events OPEN, BOUND, CONNECTED")
 @ManagedNotifications({
         @ManagedNotification(name = InitialChannelEventsMonitor.Events.OPENED, description = "A channel has been opened. It is not yet bound to a local address.", notificationTypes = InitialChannelEventsMonitor.Events.OPENED),
         @ManagedNotification(name = InitialChannelEventsMonitor.Events.BOUND, description = "A channel has been bound to a local address. It is not yet connected to a remote address.", notificationTypes = InitialChannelEventsMonitor.Events.BOUND),
         @ManagedNotification(name = InitialChannelEventsMonitor.Events.CONNECTED, description = "A channel has been connected to a remote address. It is ready to receive messages.", notificationTypes = InitialChannelEventsMonitor.Events.CONNECTED) })
 public class InitialChannelEventsMonitor implements NotificationPublisherAware {
+
+	private static final String	TYPE	    = "Channels";
+
+	private static final String	NAME	    = "initial-channel-events";
+
+	static final String	        OBJECT_NAME	= Jmx.GROUP + ":type=" + TYPE
+	                                                + ",name=" + NAME;
 
 	public static class Events {
 
