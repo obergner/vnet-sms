@@ -87,6 +87,7 @@
 		<plugins.license.version>1.8.0</plugins.license.version>
 		<plugins.assembly.version>2.2.2</plugins.assembly.version>
 		<plugins.gmaven.version>1.4</plugins.gmaven.version>
+		<plugins.buildnumber.version>1.0</plugins.buildnumber.version>
 		<!-- ######################################################### -->
 		<!-- Reporting plugin versions -->
 		<!-- ######################################################### -->
@@ -765,8 +766,18 @@
 					<version>${plugins.build-helper.version}</version>
 					<executions>
 						<execution>
+							<id>parse-version</id>
+							<phase>validate</phase>
+							<goals>
+								<goal>parse-version</goal>
+							</goals>
+							<configuration>
+								<propertyPrefix>parsedVersion</propertyPrefix>
+							</configuration>
+						</execution>
+						<execution>
 							<id>add-test-source</id>
-							<phase>generate-test-sources</phase>
+							<phase>validate</phase>
 							<goals>
 								<goal>add-test-source</goal>
 							</goals>
@@ -778,7 +789,7 @@
 						</execution>
 						<execution>
 							<id>add-resource</id>
-							<phase>generate-test-resources</phase>
+							<phase>validate</phase>
 							<goals>
 								<goal>add-test-resource</goal>
 							</goals>
@@ -867,6 +878,28 @@
 					<version>${plugins.plugin.version}</version>
 				</plugin>
 				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>buildnumber-maven-plugin</artifactId>
+					<version>${plugins.buildnumber.version}</version>
+					<executions>
+						<execution>
+							<phase>validate</phase>
+							<goals>
+								<goal>create</goal>
+							</goals>
+						</execution>
+					</executions>
+					<configuration>
+						<doCheck>false</doCheck>
+						<doUpdate>false</doUpdate>
+						<revisionOnScmFailure>-1</revisionOnScmFailure>
+						<format>{0,number,integer}</format>
+						<items>
+							<item>buildNumber0</item>
+						</items>
+					</configuration>
+				</plugin>
+				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-jar-plugin</artifactId>
 					<version>${plugins.jar.version}</version>
@@ -877,6 +910,13 @@
 								<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
 								<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
 							</manifest>
+							<manifestEntries>
+								<Implementation-MajorVersion>${parsedVersion.majorVersion}</Implementation-MajorVersion>
+								<Implementation-MinorVersion>${parsedVersion.minorVersion}</Implementation-MinorVersion>
+								<Implementation-IncrementalVersion>${parsedVersion.incrementalVersion}</Implementation-IncrementalVersion>
+								<Implementation-Qualifier>${parsedVersion.qualifier}</Implementation-Qualifier>
+								<Implementation-BuildNumber>${buildNumber}</Implementation-BuildNumber>
+							</manifestEntries>
 						</archive>
 					</configuration>
 				</plugin>
@@ -967,6 +1007,10 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-plugin-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>buildnumber-maven-plugin</artifactId>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
