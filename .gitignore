@@ -7,3 +7,6 @@ target/
 # Ignore eclipse' pseudo 'poms' directory
 poms/
 
+# Ignore generated buildnumber file
+buildNumber.properties
+
