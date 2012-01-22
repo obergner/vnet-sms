@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import vnet.sms.gateway.server.framework.channel.GatewayServerChannelPipelineFactory;
+import vnet.sms.gateway.server.framework.spi.GatewayServerDescription;
 
 /**
  * @author obergner
@@ -28,6 +29,8 @@ class GatewayServer<ID extends Serializable, TP> {
 
 	private final Logger	                                  log	       = LoggerFactory
 	                                                                               .getLogger(getClass());
+
+	private final GatewayServerDescription	                  description;
 
 	private final String	                                  instanceId;
 
@@ -49,46 +52,44 @@ class GatewayServer<ID extends Serializable, TP> {
 	                                                                               this.stopped);
 
 	GatewayServer(
+	        final GatewayServerDescription description,
 	        final String instanceId,
 	        final int listenPort,
 	        final GatewayServerChannelPipelineFactory<ID, TP> channelPipelineFactory,
 	        final Executor bossExecutor, final Executor workerExecutor) {
-		this(instanceId, "127.0.0.1", listenPort, channelPipelineFactory,
-		        bossExecutor, workerExecutor);
+		this(description, instanceId, "127.0.0.1", listenPort,
+		        channelPipelineFactory, bossExecutor, workerExecutor);
 	}
 
 	GatewayServer(
+	        final GatewayServerDescription description,
 	        final String instanceId,
 	        final String host,
 	        final int listenPort,
 	        final GatewayServerChannelPipelineFactory<ID, TP> channelPipelineFactory,
 	        final Executor bossExecutor, final Executor workerExecutor) {
 		this(
+		        description,
 		        instanceId,
 		        new InetSocketAddress(host, listenPort),
 		        new NioServerSocketChannelFactory(bossExecutor, workerExecutor),
 		        channelPipelineFactory);
 	}
 
-	/**
-	 * Exposed for testing purposes.
-	 * 
-	 * @param instanceId
-	 * @param localAddress
-	 * @param channelFactory
-	 * @param channelPipelineFactory
-	 */
 	GatewayServer(
+	        final GatewayServerDescription description,
 	        final String instanceId,
 	        final SocketAddress localAddress,
 	        final ServerChannelFactory channelFactory,
 	        final GatewayServerChannelPipelineFactory<ID, TP> channelPipelineFactory) {
+		notNull(description, "Argument 'description' must not be null");
 		notEmpty(instanceId,
 		        "Argument 'instanceId' may be neither null nor empty");
 		notNull(channelPipelineFactory,
 		        "Argument 'channelPipelineFactory' must not be null");
 		notNull(localAddress, "Argument 'localAddress' must not be null");
 		notNull(channelFactory, "Argument 'channelFactory' must not be null");
+		this.description = description;
 		this.instanceId = instanceId;
 		this.localAddress = localAddress;
 		this.channelFactory = channelFactory;
@@ -107,6 +108,10 @@ class GatewayServer<ID extends Serializable, TP> {
 		return this.currentState.get().getStatus();
 	}
 
+	GatewayServerDescription getDescription() {
+		return this.description;
+	}
+
 	String getInstanceId() {
 		return this.instanceId;
 	}
@@ -117,7 +122,9 @@ class GatewayServer<ID extends Serializable, TP> {
 
 	@Override
 	public String toString() {
-		return "GatewayServer@" + hashCode() + "[instanceId: "
+		return "GatewayServer@" + hashCode() + "[name: "
+		        + this.description.getName() + "|version: "
+		        + this.description.getVersion() + "|instanceId: "
 		        + this.instanceId + "|localAddress: " + this.localAddress + "]";
 	}
 

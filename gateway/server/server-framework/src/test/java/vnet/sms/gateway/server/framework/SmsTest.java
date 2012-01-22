@@ -13,6 +13,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 
 import vnet.sms.common.messages.Sms;
 import vnet.sms.gateway.server.framework.channel.GatewayServerChannelPipelineFactory;
+import vnet.sms.gateway.server.framework.spi.GatewayServerDescription;
 import vnet.sms.gateway.server.framework.test.AcceptAllAuthenticationManager;
 import vnet.sms.gateway.server.framework.test.LocalClient;
 import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;
@@ -39,6 +40,7 @@ public class SmsTest extends AbstractGatewayServerTest {
 		        pingResponseTimeoutMillis, authenticationManager, jmsTemplate);
 
 		final GatewayServer<Integer, ReferenceableMessageContainer> objectUnderTest = new GatewayServer<Integer, ReferenceableMessageContainer>(
+		        new TestGatewayServerDescription(),
 		        "assertThatGatewayServerForwardsReceivedSmsToJmsServer",
 		        serverAddress, new DefaultLocalServerChannelFactory(),
 		        channelPipelineFactory);
@@ -70,5 +72,14 @@ public class SmsTest extends AbstractGatewayServerTest {
 		assertEquals(
 		        "GatewayServer should have forwarded SMS passed in to JMS server",
 		        sms, forwardedMessage.getObject());
+	}
+
+	@SuppressWarnings("serial")
+	private static final class TestGatewayServerDescription extends
+	        GatewayServerDescription {
+
+		public TestGatewayServerDescription() {
+			super("Test", 1, 0, 0, "BETA", 15);
+		}
 	}
 }

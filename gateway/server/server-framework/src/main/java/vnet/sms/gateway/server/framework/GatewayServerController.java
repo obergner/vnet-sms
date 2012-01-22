@@ -57,6 +57,22 @@ public class GatewayServerController<ID extends Serializable, TP> {
 		return this.gatewayServer.getCurrentStatus().name();
 	}
 
+	@ManagedAttribute(description = "This GatewayServer's name")
+	public String getName() {
+		return this.gatewayServer.getDescription().getName();
+	}
+
+	@ManagedAttribute(description = "This GatewayServer's version")
+	public String getVersion() {
+		return this.gatewayServer.getDescription().getVersion().toString();
+	}
+
+	@ManagedAttribute(description = "This GatewayServer's long description, including name, version and build number")
+	public String getDescription() {
+		return this.gatewayServer.getDescription().toString() + " - "
+		        + this.gatewayServer.getInstanceId();
+	}
+
 	@ManagedAttribute(description = "This GatewayServer's instance ID, uniquely identifying this instance among all GatewayServers")
 	public String getInstanceId() {
 		return this.gatewayServer.getInstanceId();

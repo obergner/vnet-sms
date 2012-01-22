@@ -19,6 +19,12 @@
 		location="classpath:gateway-server-configuration.properties" />
 	<!-- END-SNIPPET: general settings -->
 
+	<!-- START-SNIPPET: custom bean post processors -->
+	<bean
+		id="vnet.sms.gateway.server.server-framework.gatewayServerDescriptionInjector"
+		class="vnet.sms.gateway.server.framework.description.GatewayServerDescriptionInjector" />
+	<!-- END-SNIPPET: custom bean post processors -->
+
 	<!-- START-SNIPPET: gateway server controller -->
 	<bean
 		id="vnet.sms.gateway.server.server-framework.gatewayServerController"
@@ -39,11 +45,19 @@
 
 	<bean id="vnet.sms.gateway.server.server-framework.bossExecutor"
 		class="org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean"
-		p:threadNamePrefix="gateway-server-tcp-acceptor-" />
+		p:threadFactory-ref="vnet.sms.gateway.server.server-framework.bossThreadFactory" />
+
+	<bean id="vnet.sms.gateway.server.server-framework.bossThreadFactory"
+		class="vnet.sms.gateway.server.framework.executor.GatewayServerDescriptionMdcThreadFactoryBuilder"
+		p:threadNamePrefix="New I/O TCP Acceptor" />
 
 	<bean id="vnet.sms.gateway.server.server-framework.workerExecutor"
 		class="org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean"
-		p:threadNamePrefix="gateway-server-connection-worker-" />
+		p:threadFactory-ref="vnet.sms.gateway.server.server-framework.workerThreadFactory" />
+
+	<bean id="vnet.sms.gateway.server.server-framework.workerThreadFactory"
+		class="vnet.sms.gateway.server.framework.executor.GatewayServerDescriptionMdcThreadFactoryBuilder"
+		p:threadNamePrefix="New I/O TCP Worker" />
 	<!-- END-SNIPPET: gateway server -->
 
 	<!-- START-SNIPPET: gateway server channel pipeline factory -->

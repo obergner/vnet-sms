@@ -18,6 +18,7 @@ import vnet.sms.common.messages.LoginResponse;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.PingResponse;
 import vnet.sms.gateway.server.framework.channel.GatewayServerChannelPipelineFactory;
+import vnet.sms.gateway.server.framework.spi.GatewayServerDescription;
 import vnet.sms.gateway.server.framework.test.AcceptAllAuthenticationManager;
 import vnet.sms.gateway.server.framework.test.DenyAllAuthenticationManager;
 import vnet.sms.gateway.server.framework.test.LocalClient;
@@ -46,6 +47,7 @@ public class LoginTest extends AbstractGatewayServerTest {
 		        pingResponseTimeoutMillis, authenticationManager, jmsTemplate);
 
 		final GatewayServer<Integer, ReferenceableMessageContainer> objectUnderTest = new GatewayServer<Integer, ReferenceableMessageContainer>(
+		        new TestGatewayServerDescription(),
 		        "assertThatGatewayServerRespondsWithASuccessfulLoginResponseToASuccessfulLoginRequest",
 		        serverAddress, new DefaultLocalServerChannelFactory(),
 		        channelPipelineFactory);
@@ -74,6 +76,15 @@ public class LoginTest extends AbstractGatewayServerTest {
 		                .loginSucceeded());
 	}
 
+	@SuppressWarnings("serial")
+	private static final class TestGatewayServerDescription extends
+	        GatewayServerDescription {
+
+		public TestGatewayServerDescription() {
+			super("Test", 1, 0, 0, "BETA", 15);
+		}
+	}
+
 	@Test
 	public final void assertThatGatewayServerRespondsWithAFailedLoginResponseToAFailedLoginRequest()
 	        throws Throwable {
@@ -95,6 +106,7 @@ public class LoginTest extends AbstractGatewayServerTest {
 		        pingResponseTimeoutMillis, authenticationManager, jmsTemplate);
 
 		final GatewayServer<Integer, ReferenceableMessageContainer> objectUnderTest = new GatewayServer<Integer, ReferenceableMessageContainer>(
+		        new TestGatewayServerDescription(),
 		        "assertThatGatewayServerRespondsWithAFailedLoginResponseToAFailedLoginRequest",
 		        serverAddress, new DefaultLocalServerChannelFactory(),
 		        channelPipelineFactory);
@@ -144,6 +156,7 @@ public class LoginTest extends AbstractGatewayServerTest {
 		        pingResponseTimeoutMillis, authenticationManager, jmsTemplate);
 
 		final GatewayServer<Integer, ReferenceableMessageContainer> objectUnderTest = new GatewayServer<Integer, ReferenceableMessageContainer>(
+		        new TestGatewayServerDescription(),
 		        "assertThatGatewayServerForwardsSuccessfulLoginRequestToJmsServer",
 		        serverAddress, new DefaultLocalServerChannelFactory(),
 		        channelPipelineFactory);
@@ -190,6 +203,7 @@ public class LoginTest extends AbstractGatewayServerTest {
 		        pingResponseTimeoutMillis, authenticationManager, jmsTemplate);
 
 		final GatewayServer<Integer, ReferenceableMessageContainer> objectUnderTest = new GatewayServer<Integer, ReferenceableMessageContainer>(
+		        new TestGatewayServerDescription(),
 		        "assertThatGatewayServerForwardsFailedLoginRequestToJmsServer",
 		        serverAddress, new DefaultLocalServerChannelFactory(),
 		        channelPipelineFactory);
@@ -236,6 +250,7 @@ public class LoginTest extends AbstractGatewayServerTest {
 		        pingResponseTimeoutMillis, authenticationManager, jmsTemplate);
 
 		final GatewayServer<Integer, ReferenceableMessageContainer> objectUnderTest = new GatewayServer<Integer, ReferenceableMessageContainer>(
+		        new TestGatewayServerDescription(),
 		        "assertThatGatewayServerRespondsWithAFailedLoginResponseToAFailedLoginRequest",
 		        serverAddress, new DefaultLocalServerChannelFactory(),
 		        channelPipelineFactory);
@@ -281,6 +296,7 @@ public class LoginTest extends AbstractGatewayServerTest {
 		        pingResponseTimeoutMillis, authenticationManager, jmsTemplate);
 
 		final GatewayServer<Integer, ReferenceableMessageContainer> objectUnderTest = new GatewayServer<Integer, ReferenceableMessageContainer>(
+		        new TestGatewayServerDescription(),
 		        "assertThatGatewayServerRespondsWithAFailedLoginResponseToAFailedLoginRequest",
 		        serverAddress, new DefaultLocalServerChannelFactory(),
 		        channelPipelineFactory);

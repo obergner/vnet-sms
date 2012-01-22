@@ -17,19 +17,21 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Required;
 
 import vnet.sms.gateway.server.framework.channel.GatewayServerChannelPipelineFactory;
+import vnet.sms.gateway.server.framework.spi.GatewayServerDescription;
 
 /**
  * @author obergner
  * 
  */
 public class GatewayServerBuilder<ID extends java.io.Serializable, TP>
-        implements FactoryBean<GatewayServer<ID, TP>>, InitializingBean,
-        DisposableBean {
+        implements FactoryBean<GatewayServer<ID, TP>>,
+        GatewayServerDescriptionAware, InitializingBean, DisposableBean {
 
 	private static final String	                        DEFAULT_HOST	= "127.0.0.1";
 
 	private final Logger	                            log	           = LoggerFactory
 	                                                                           .getLogger(getClass());
+	private GatewayServerDescription	                description;
 
 	private String	                                    instanceId;
 
@@ -47,6 +49,14 @@ public class GatewayServerBuilder<ID extends java.io.Serializable, TP>
 
 	private GatewayServer<ID, TP>	                    product;
 
+	@Override
+	public void setGatewayServerDescription(
+	        final GatewayServerDescription gatewayServerDescription) {
+		notNull(gatewayServerDescription,
+		        "Argument 'gatewayServerDescription' must not be null");
+		this.description = gatewayServerDescription;
+	}
+
 	/**
 	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
 	 */
@@ -57,8 +67,9 @@ public class GatewayServerBuilder<ID extends java.io.Serializable, TP>
 			throw new IllegalStateException(
 			        "Illegal attempt to build GatewayServer twice");
 		}
-		this.product = new GatewayServer<ID, TP>(this.instanceId, this.host,
-		        this.port, this.channelPipelineFactory, this.bossExecutor,
+		this.product = new GatewayServer<ID, TP>(this.description,
+		        this.instanceId, this.host, this.port,
+		        this.channelPipelineFactory, this.bossExecutor,
 		        this.workerExecutor);
 		this.log.info("Finished building GatewayServer instance {}",
 		        this.product);

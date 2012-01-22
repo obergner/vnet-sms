@@ -14,6 +14,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 
 import vnet.sms.common.messages.Sms;
 import vnet.sms.gateway.server.framework.channel.GatewayServerChannelPipelineFactory;
+import vnet.sms.gateway.server.framework.spi.GatewayServerDescription;
 import vnet.sms.gateway.server.framework.test.AcceptAllAuthenticationManager;
 import vnet.sms.gateway.server.framework.test.LocalClient;
 import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;
@@ -42,6 +43,7 @@ public class IncomingWindowingTest extends AbstractGatewayServerTest {
 		        pingResponseTimeoutMillis, authenticationManager, jmsTemplate);
 
 		final GatewayServer<Integer, ReferenceableMessageContainer> objectUnderTest = new GatewayServer<Integer, ReferenceableMessageContainer>(
+		        new TestGatewayServerDescription(),
 		        "assertThatGatewayServerForwardsUpToWindowSizeManySmsToJmsServer",
 		        serverAddress, new DefaultLocalServerChannelFactory(),
 		        channelPipelineFactory);
@@ -82,6 +84,15 @@ public class IncomingWindowingTest extends AbstractGatewayServerTest {
 		objectUnderTest.stop();
 	}
 
+	@SuppressWarnings("serial")
+	private static final class TestGatewayServerDescription extends
+	        GatewayServerDescription {
+
+		public TestGatewayServerDescription() {
+			super("Test", 1, 0, 0, "BETA", 15);
+		}
+	}
+
 	@Test
 	public final void assertThatGatewayServerDoesNotForwardMoreThanWindowSizeManySmsToJmsServer()
 	        throws Throwable {
@@ -104,6 +115,7 @@ public class IncomingWindowingTest extends AbstractGatewayServerTest {
 		        pingResponseTimeoutMillis, authenticationManager, jmsTemplate);
 
 		final GatewayServer<Integer, ReferenceableMessageContainer> objectUnderTest = new GatewayServer<Integer, ReferenceableMessageContainer>(
+		        new TestGatewayServerDescription(),
 		        "assertThatGatewayServerDoesNotForwardMoreThanWindowSizeManySmsToJmsServer",
 		        serverAddress, new DefaultLocalServerChannelFactory(),
 		        channelPipelineFactory);

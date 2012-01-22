@@ -1,7 +1,7 @@
 /**
  * 
  */
-package vnet.sms.gateway.server.framework.executor;
+package vnet.sms.common.executor.thread;
 
 import static org.apache.commons.lang.Validate.notEmpty;
 import static org.apache.commons.lang.Validate.notNull;
@@ -11,14 +11,11 @@ import java.util.Map;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.slf4j.MDC;
-import org.springframework.beans.factory.annotation.Required;
-
 /**
  * @author obergner
  * 
  */
-public class MessageDiagnosticContextAwareThreadFactory implements
+public class MessageDiagnosticContextPopulatingThreadFactory implements
         ThreadFactory {
 
 	private String	                  threadNamePrefix;
@@ -39,7 +36,7 @@ public class MessageDiagnosticContextAwareThreadFactory implements
 	 */
 	@Override
 	public Thread newThread(final Runnable r) {
-		final Thread t = new MessageDiagnosticeContextInstallingThread(
+		final Thread t = new MessageDiagnosticContextPopulatingThread(
 		        this.threadGroup, r, nextThreadName(),
 		        this.messageDiagnosticContextParameters);
 		t.setDaemon(this.daemon);
@@ -48,7 +45,7 @@ public class MessageDiagnosticContextAwareThreadFactory implements
 	}
 
 	private String nextThreadName() {
-		return getMandatoryThreadNamePrefix()
+		return getMandatoryThreadNamePrefix() + " #"
 		        + this.threadCount.getAndIncrement();
 	}
 
@@ -56,7 +53,6 @@ public class MessageDiagnosticContextAwareThreadFactory implements
 	 * @param threadNamePrefix
 	 *            the threadNamePrefix to set
 	 */
-	@Required
 	public final void setThreadNamePrefix(final String threadNamePrefix) {
 		notEmpty(threadNamePrefix,
 		        "Argument 'threadNamePrefix' must be neither null nor empty");
@@ -112,36 +108,5 @@ public class MessageDiagnosticContextAwareThreadFactory implements
 		        "Argument 'messageDiagnosticContextParameters' must not be null");
 		this.messageDiagnosticContextParameters
 		        .putAll(messageDiagnosticContextParameters);
-	}
-
-	private static final class MessageDiagnosticeContextInstallingThread extends
-	        Thread {
-
-		private final Map<String, String>	mdcParameters	= new HashMap<String, String>();
-
-		MessageDiagnosticeContextInstallingThread(
-		        final ThreadGroup threadGroup, final Runnable runnable,
-		        final String threadName, final Map<String, String> mdcParameters) {
-			super(threadGroup, runnable, threadName);
-			this.mdcParameters.putAll(mdcParameters);
-		}
-
-		/**
-		 * @see java.lang.Thread#run()
-		 */
-		@Override
-		public void run() {
-			try {
-				for (final Map.Entry<String, String> mdcParam : this.mdcParameters
-				        .entrySet()) {
-					MDC.put(mdcParam.getKey(), mdcParam.getValue());
-				}
-				super.run();
-			} finally {
-				for (final String mdcKey : this.mdcParameters.keySet()) {
-					MDC.remove(mdcKey);
-				}
-			}
-		}
 	}
 }

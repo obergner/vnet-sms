@@ -16,6 +16,7 @@ import vnet.sms.common.wme.jmsbridge.WindowedMessageEventToJmsMessageConverter;
 import vnet.sms.gateway.nettysupport.monitor.incoming.InitialChannelEventsMonitor;
 import vnet.sms.gateway.server.framework.channel.GatewayServerChannelPipelineFactory;
 import vnet.sms.gateway.server.framework.jmsbridge.MessageForwardingJmsBridge;
+import vnet.sms.gateway.server.framework.spi.GatewayServerDescription;
 import vnet.sms.gateway.server.framework.test.AcceptAllAuthenticationManager;
 import vnet.sms.gateway.server.framework.test.SerialIntegersMessageReferenceGenerator;
 import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;
@@ -43,6 +44,7 @@ public class GatewayServerControllerTest {
 		        10, 2000, 2000, 5, 30000, new AcceptAllAuthenticationManager(),
 		        jmsTemplate);
 		final GatewayServer<Integer, ReferenceableMessageContainer> gatewayServer = new GatewayServer<Integer, ReferenceableMessageContainer>(
+		        new TestGatewayServerDescription(),
 		        "assertThatStartPromotesGatewayServerToStateRunning",
 		        new LocalAddress(
 		                "GatewayServerControllerTest::assertThatStartPromotesGatewayServerToStateRunning"),
@@ -57,6 +59,15 @@ public class GatewayServerControllerTest {
 		        ServerStatus.RUNNING.name(), objectUnderTest.getCurrentStatus());
 
 		objectUnderTest.stop();
+	}
+
+	@SuppressWarnings("serial")
+	private static final class TestGatewayServerDescription extends
+	        GatewayServerDescription {
+
+		public TestGatewayServerDescription() {
+			super("Test", 1, 0, 0, "BETA", 15);
+		}
 	}
 
 	private final JmsTemplate newJmsTemplate() {
@@ -108,6 +119,7 @@ public class GatewayServerControllerTest {
 		        10, 2000, 2000, 5, 30000, new AcceptAllAuthenticationManager(),
 		        jmsTemplate);
 		final GatewayServer<Integer, ReferenceableMessageContainer> gatewayServer = new GatewayServer<Integer, ReferenceableMessageContainer>(
+		        new TestGatewayServerDescription(),
 		        "assertThatStopPromotesGatewayServerToStateStopped",
 		        new LocalAddress(
 		                "GatewayServerControllerTest::assertThatStopPromotesGatewayServerToStateStopped"),
@@ -132,6 +144,7 @@ public class GatewayServerControllerTest {
 		        10, 2000, 2000, 5, 30000, new AcceptAllAuthenticationManager(),
 		        jmsTemplate);
 		final GatewayServer<Integer, ReferenceableMessageContainer> gatewayServer = new GatewayServer<Integer, ReferenceableMessageContainer>(
+		        new TestGatewayServerDescription(),
 		        expectedInstanceId,
 		        new LocalAddress(
 		                "GatewayServerControllerTest::assertThatGetChannelMonitorRegistryDoesNotReturnNull"),
@@ -154,6 +167,7 @@ public class GatewayServerControllerTest {
 		        10, 2000, 2000, 5, 30000, new AcceptAllAuthenticationManager(),
 		        jmsTemplate);
 		final GatewayServer<Integer, ReferenceableMessageContainer> gatewayServer = new GatewayServer<Integer, ReferenceableMessageContainer>(
+		        new TestGatewayServerDescription(),
 		        "assertThatGetLocalAddressReturnsCorrectAddress",
 		        expectedLocalAddress, new DefaultLocalServerChannelFactory(),
 		        pipelineFactory);

@@ -58,6 +58,11 @@
 			<artifactId>spring-extensions</artifactId>
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<groupId>vnet.sms.common</groupId>
+			<artifactId>executor-support</artifactId>
+			<scope>compile</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>vnet.sms.gateway</groupId>

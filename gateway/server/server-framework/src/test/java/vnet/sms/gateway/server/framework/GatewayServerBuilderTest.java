@@ -16,6 +16,7 @@ import vnet.sms.common.wme.jmsbridge.WindowedMessageEventToJmsMessageConverter;
 import vnet.sms.gateway.nettysupport.monitor.incoming.InitialChannelEventsMonitor;
 import vnet.sms.gateway.server.framework.channel.GatewayServerChannelPipelineFactory;
 import vnet.sms.gateway.server.framework.jmsbridge.MessageForwardingJmsBridge;
+import vnet.sms.gateway.server.framework.spi.GatewayServerDescription;
 import vnet.sms.gateway.server.framework.test.DenyAllAuthenticationManager;
 import vnet.sms.gateway.server.framework.test.SerialIntegersMessageReferenceGenerator;
 import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;
@@ -33,6 +34,8 @@ public class GatewayServerBuilderTest {
 	        throws Exception {
 		final GatewayServerBuilder<Integer, ReferenceableMessageContainer> objectUnderTest = new GatewayServerBuilder<Integer, ReferenceableMessageContainer>();
 		objectUnderTest
+		        .setGatewayServerDescription(new TestGatewayServerDescription());
+		objectUnderTest
 		        .setInstanceId("assertThatAfterPropertiesSetRefusesToBeCalledTwice");
 		objectUnderTest.setPort(1000);
 		objectUnderTest
@@ -42,10 +45,21 @@ public class GatewayServerBuilderTest {
 		objectUnderTest.afterPropertiesSet();
 	}
 
+	@SuppressWarnings("serial")
+	private static final class TestGatewayServerDescription extends
+	        GatewayServerDescription {
+
+		public TestGatewayServerDescription() {
+			super("Test", 1, 0, 0, "BETA", 15);
+		}
+	}
+
 	@Test(expected = IllegalStateException.class)
 	public final void assertThatGetObjectRecognizesThatAfterPropertiesSetHasNotBeenCalled()
 	        throws Exception {
 		final GatewayServerBuilder<Integer, ReferenceableMessageContainer> objectUnderTest = new GatewayServerBuilder<Integer, ReferenceableMessageContainer>();
+		objectUnderTest
+		        .setGatewayServerDescription(new TestGatewayServerDescription());
 		objectUnderTest
 		        .setInstanceId("assertThatGetObjectRecognizesThatAfterPropertiesSetHasNotBeenCalled");
 		objectUnderTest.setPort(1000);
@@ -59,6 +73,8 @@ public class GatewayServerBuilderTest {
 	public final void assertThatGetObjectReturnsProperGatewayServerAsSoonAsAfterPropertiesSetHasBeenCalled()
 	        throws Exception {
 		final GatewayServerBuilder<Integer, ReferenceableMessageContainer> objectUnderTest = new GatewayServerBuilder<Integer, ReferenceableMessageContainer>();
+		objectUnderTest
+		        .setGatewayServerDescription(new TestGatewayServerDescription());
 		objectUnderTest
 		        .setInstanceId("assertThatAfterPropertiesSetRefusesToBeCalledTwice");
 		objectUnderTest.setPort(1000);
@@ -98,6 +114,8 @@ public class GatewayServerBuilderTest {
 	public final void assertThatDestroyStopsTheCreatedGatewayServer()
 	        throws Exception {
 		final GatewayServerBuilder<Integer, ReferenceableMessageContainer> objectUnderTest = new GatewayServerBuilder<Integer, ReferenceableMessageContainer>();
+		objectUnderTest
+		        .setGatewayServerDescription(new TestGatewayServerDescription());
 		objectUnderTest
 		        .setInstanceId("assertThatDestroyStopsTheCreatedGatewayServer");
 		objectUnderTest.setPort(65500);

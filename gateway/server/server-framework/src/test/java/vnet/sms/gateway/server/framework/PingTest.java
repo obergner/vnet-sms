@@ -19,6 +19,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.PingResponse;
 import vnet.sms.gateway.server.framework.channel.GatewayServerChannelPipelineFactory;
+import vnet.sms.gateway.server.framework.spi.GatewayServerDescription;
 import vnet.sms.gateway.server.framework.test.AcceptAllAuthenticationManager;
 import vnet.sms.gateway.server.framework.test.DenyAllAuthenticationManager;
 import vnet.sms.gateway.server.framework.test.LocalClient;
@@ -45,6 +46,7 @@ public class PingTest extends AbstractGatewayServerTest {
 		        pingResponseTimeoutMillis, authenticationManager, jmsTemplate);
 
 		final GatewayServer<Integer, ReferenceableMessageContainer> objectUnderTest = new GatewayServer<Integer, ReferenceableMessageContainer>(
+		        new TestGatewayServerDescription(),
 		        "assertThatGatewayServerRespondsWithAFailedLoginResponseToAFailedLoginRequest",
 		        serverAddress, new DefaultLocalServerChannelFactory(),
 		        channelPipelineFactory);
@@ -79,6 +81,15 @@ public class PingTest extends AbstractGatewayServerTest {
 		objectUnderTest.stop();
 	}
 
+	@SuppressWarnings("serial")
+	private static final class TestGatewayServerDescription extends
+	        GatewayServerDescription {
+
+		public TestGatewayServerDescription() {
+			super("Test", 1, 0, 0, "BETA", 15);
+		}
+	}
+
 	@Test
 	public final void assertThatGatewayServerContinuesSendingPingRequestsAfterReceivingPingResponse()
 	        throws Throwable {
@@ -98,6 +109,7 @@ public class PingTest extends AbstractGatewayServerTest {
 		        pingResponseTimeoutMillis, authenticationManager, jmsTemplate);
 
 		final GatewayServer<Integer, ReferenceableMessageContainer> objectUnderTest = new GatewayServer<Integer, ReferenceableMessageContainer>(
+		        new TestGatewayServerDescription(),
 		        "assertThatGatewayServerRespondsWithAFailedLoginResponseToAFailedLoginRequest",
 		        serverAddress, new DefaultLocalServerChannelFactory(),
 		        channelPipelineFactory);
@@ -180,6 +192,7 @@ public class PingTest extends AbstractGatewayServerTest {
 		        pingResponseTimeoutMillis, authenticationManager, jmsTemplate);
 
 		final GatewayServer<Integer, ReferenceableMessageContainer> objectUnderTest = new GatewayServer<Integer, ReferenceableMessageContainer>(
+		        new TestGatewayServerDescription(),
 		        "assertThatGatewayServerForwardsFailedLoginRequestToJmsServer",
 		        serverAddress, new DefaultLocalServerChannelFactory(),
 		        channelPipelineFactory);

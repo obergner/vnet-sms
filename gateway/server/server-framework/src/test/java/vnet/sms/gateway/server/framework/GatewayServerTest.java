@@ -9,15 +9,35 @@ import org.junit.Test;
 import org.springframework.jms.core.JmsTemplate;
 
 import vnet.sms.gateway.server.framework.channel.GatewayServerChannelPipelineFactory;
+import vnet.sms.gateway.server.framework.spi.GatewayServerDescription;
 import vnet.sms.gateway.server.framework.test.AcceptAllAuthenticationManager;
 import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;
 
 public class GatewayServerTest extends AbstractGatewayServerTest {
 
 	@Test(expected = IllegalArgumentException.class)
-	public final void assertThatConstructorRejectsNullInstanceId() {
+	public final void assertThatConstructorRejectsNullDescription() {
 		new GatewayServer<Integer, ReferenceableMessageContainer>(null,
+		        "assertThatConstructorRejectsNullDescription",
 		        new LocalAddress("assertThatConstructorRejectsNullInstanceId"),
+		        new DefaultLocalServerChannelFactory(),
+		        createNiceMock(GatewayServerChannelPipelineFactory.class));
+	}
+
+	@SuppressWarnings("serial")
+	private static final class TestGatewayServerDescription extends
+	        GatewayServerDescription {
+
+		public TestGatewayServerDescription() {
+			super("Test", 1, 0, 0, "BETA", 15);
+		}
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public final void assertThatConstructorRejectsNullInstanceId() {
+		new GatewayServer<Integer, ReferenceableMessageContainer>(
+		        new TestGatewayServerDescription(), null, new LocalAddress(
+		                "assertThatConstructorRejectsNullInstanceId"),
 		        new DefaultLocalServerChannelFactory(),
 		        createNiceMock(GatewayServerChannelPipelineFactory.class));
 	}
@@ -25,8 +45,8 @@ public class GatewayServerTest extends AbstractGatewayServerTest {
 	@Test(expected = IllegalArgumentException.class)
 	public final void assertThatConstructorRejectsEmptyInstanceId() {
 		new GatewayServer<Integer, ReferenceableMessageContainer>(
-		        "",
-		        new LocalAddress("assertThatConstructorRejectsEmptyInstanceId"),
+		        new TestGatewayServerDescription(), "", new LocalAddress(
+		                "assertThatConstructorRejectsEmptyInstanceId"),
 		        new DefaultLocalServerChannelFactory(),
 		        createNiceMock(GatewayServerChannelPipelineFactory.class));
 	}
@@ -34,6 +54,7 @@ public class GatewayServerTest extends AbstractGatewayServerTest {
 	@Test(expected = IllegalArgumentException.class)
 	public final void assertThatConstructorRejectsNullSocketAddress() {
 		new GatewayServer<Integer, ReferenceableMessageContainer>(
+		        new TestGatewayServerDescription(),
 		        "assertThatConstructorRejectsNullSocketAddress", null,
 		        new DefaultLocalServerChannelFactory(),
 		        createNiceMock(GatewayServerChannelPipelineFactory.class));
@@ -42,6 +63,7 @@ public class GatewayServerTest extends AbstractGatewayServerTest {
 	@Test(expected = IllegalArgumentException.class)
 	public final void assertThatConstructorRejectsNullServerChannelFactory() {
 		new GatewayServer<Integer, ReferenceableMessageContainer>(
+		        new TestGatewayServerDescription(),
 		        "assertThatConstructorRejectsNullServerChannelFactory",
 		        new LocalAddress(
 		                "assertThatConstructorRejectsNullServerChannelFactory"),
@@ -51,6 +73,7 @@ public class GatewayServerTest extends AbstractGatewayServerTest {
 	@Test(expected = IllegalArgumentException.class)
 	public final void assertThatConstructorRejectsNullServerChannelPipelineFactory() {
 		new GatewayServer<Integer, ReferenceableMessageContainer>(
+		        new TestGatewayServerDescription(),
 		        "assertThatConstructorRejectsNullServerChannelFactory",
 		        new LocalAddress(
 		                "assertThatConstructorRejectsNullServerChannelFactory"),
@@ -66,6 +89,7 @@ public class GatewayServerTest extends AbstractGatewayServerTest {
 		        2000, 5, 30000, new AcceptAllAuthenticationManager(),
 		        jmsTemplate);
 		final GatewayServer<Integer, ReferenceableMessageContainer> objectUnderTest = new GatewayServer<Integer, ReferenceableMessageContainer>(
+		        new TestGatewayServerDescription(),
 		        "assertThatStartPromotesGatewayServerToStateRunning",
 		        new LocalAddress(
 		                "assertThatStartPromotesGatewayServerToStateRunning"),
@@ -89,6 +113,7 @@ public class GatewayServerTest extends AbstractGatewayServerTest {
 		        2000, 5, 30000, new AcceptAllAuthenticationManager(),
 		        jmsTemplate);
 		final GatewayServer<Integer, ReferenceableMessageContainer> objectUnderTest = new GatewayServer<Integer, ReferenceableMessageContainer>(
+		        new TestGatewayServerDescription(),
 		        "assertThatStopPromotesGatewayServerToStateStopped",
 		        new LocalAddress(
 		                "assertThatStopPromotesGatewayServerToStateStopped"),
@@ -109,6 +134,7 @@ public class GatewayServerTest extends AbstractGatewayServerTest {
 		        2000, 2000, 5, 30000, new AcceptAllAuthenticationManager(),
 		        jmsTemplate);
 		final GatewayServer<Integer, ReferenceableMessageContainer> objectUnderTest = new GatewayServer<Integer, ReferenceableMessageContainer>(
+		        new TestGatewayServerDescription(),
 		        "assertThatGetCurrentStateInitiallyReturnsStateSTOPPED",
 		        new LocalAddress(
 		                "assertThatGetCurrentStateInitiallyReturnsStateSTOPPED"),
