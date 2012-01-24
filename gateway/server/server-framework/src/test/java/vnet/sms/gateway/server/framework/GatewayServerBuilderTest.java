@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import org.jboss.netty.channel.group.DefaultChannelGroup;
 import org.jboss.netty.handler.codec.serialization.ClassResolvers;
 import org.jboss.netty.handler.codec.serialization.ObjectDecoder;
 import org.jboss.netty.handler.codec.serialization.ObjectEncoder;
@@ -146,7 +147,8 @@ public class GatewayServerBuilderTest {
 		        new MessageForwardingJmsBridge<Integer>(newJmsTemplate()), 100,
 		        10000, new DenyAllAuthenticationManager(), 10000,
 		        new SerialIntegersMessageReferenceGenerator(), 100, 20000,
-		        new MBeanExporter(), new InitialChannelEventsMonitor());
+		        new MBeanExporter(), new InitialChannelEventsMonitor(),
+		        new DefaultChannelGroup());
 	}
 
 	private final JmsTemplate newJmsTemplate() {
@@ -160,7 +162,8 @@ public class GatewayServerBuilderTest {
 
 		final JmsTemplate jmsTemplate = new JmsTemplate(mockConnectionFactory);
 		jmsTemplate
-		        .setMessageConverter(new WindowedMessageEventToJmsMessageConverter());
+		        .setMessageConverter(new WindowedMessageEventToJmsMessageConverter(
+		                new DefaultChannelGroup()));
 		jmsTemplate.setDefaultDestinationName("default.queue");
 
 		return jmsTemplate;

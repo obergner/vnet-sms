@@ -18,12 +18,12 @@ import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
 import vnet.sms.common.messages.Message;
-import vnet.sms.common.wme.LoginRequestReceivedEvent;
-import vnet.sms.common.wme.LoginResponseReceivedEvent;
-import vnet.sms.common.wme.PingRequestReceivedEvent;
-import vnet.sms.common.wme.PingResponseReceivedEvent;
-import vnet.sms.common.wme.SmsReceivedEvent;
 import vnet.sms.common.wme.WindowedMessageEvent;
+import vnet.sms.common.wme.receive.LoginRequestReceivedEvent;
+import vnet.sms.common.wme.receive.LoginResponseReceivedEvent;
+import vnet.sms.common.wme.receive.PingRequestReceivedEvent;
+import vnet.sms.common.wme.receive.PingResponseReceivedEvent;
+import vnet.sms.common.wme.receive.SmsReceivedEvent;
 import vnet.sms.gateway.nettysupport.publish.incoming.IncomingMessagesListener;
 import vnet.sms.gateway.server.framework.Jmx;
 
@@ -115,7 +115,7 @@ public class MessageForwardingJmsBridge<ID extends java.io.Serializable>
 	// ------------------------------------------------------------------------
 
 	/**
-	 * @see vnet.sms.gateway.nettysupport.publish.incoming.IncomingMessagesListener#smsReceived(vnet.sms.common.wme.SmsReceivedEvent)
+	 * @see vnet.sms.gateway.nettysupport.publish.incoming.IncomingMessagesListener#smsReceived(vnet.sms.common.wme.receive.SmsReceivedEvent)
 	 */
 	@Override
 	public void smsReceived(final SmsReceivedEvent<ID> smsReceived) {
@@ -138,7 +138,7 @@ public class MessageForwardingJmsBridge<ID extends java.io.Serializable>
 	}
 
 	/**
-	 * @see vnet.sms.gateway.nettysupport.publish.incoming.IncomingMessagesListener#loginRequestReceived(vnet.sms.common.wme.LoginRequestReceivedEvent)
+	 * @see vnet.sms.gateway.nettysupport.publish.incoming.IncomingMessagesListener#loginRequestReceived(vnet.sms.common.wme.receive.LoginRequestReceivedEvent)
 	 */
 	@Override
 	public void loginRequestReceived(
@@ -148,7 +148,7 @@ public class MessageForwardingJmsBridge<ID extends java.io.Serializable>
 	}
 
 	/**
-	 * @see vnet.sms.gateway.nettysupport.publish.incoming.IncomingMessagesListener#loginResponseReceived(vnet.sms.common.wme.LoginResponseReceivedEvent)
+	 * @see vnet.sms.gateway.nettysupport.publish.incoming.IncomingMessagesListener#loginResponseReceived(vnet.sms.common.wme.receive.LoginResponseReceivedEvent)
 	 */
 	@Override
 	public void loginResponseReceived(
@@ -158,7 +158,7 @@ public class MessageForwardingJmsBridge<ID extends java.io.Serializable>
 	}
 
 	/**
-	 * @see vnet.sms.gateway.nettysupport.publish.incoming.IncomingMessagesListener#pingRequestReceived(vnet.sms.common.wme.PingRequestReceivedEvent)
+	 * @see vnet.sms.gateway.nettysupport.publish.incoming.IncomingMessagesListener#pingRequestReceived(vnet.sms.common.wme.receive.PingRequestReceivedEvent)
 	 */
 	@Override
 	public void pingRequestReceived(
@@ -167,7 +167,7 @@ public class MessageForwardingJmsBridge<ID extends java.io.Serializable>
 	}
 
 	/**
-	 * @see vnet.sms.gateway.nettysupport.publish.incoming.IncomingMessagesListener#pingResponseReceived(vnet.sms.common.wme.PingResponseReceivedEvent)
+	 * @see vnet.sms.gateway.nettysupport.publish.incoming.IncomingMessagesListener#pingResponseReceived(vnet.sms.common.wme.receive.PingResponseReceivedEvent)
 	 */
 	@Override
 	public void pingResponseReceived(

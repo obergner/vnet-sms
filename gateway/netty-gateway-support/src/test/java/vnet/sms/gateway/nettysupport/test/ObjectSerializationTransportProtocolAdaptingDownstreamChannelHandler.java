@@ -1,9 +1,9 @@
 package vnet.sms.gateway.nettysupport.test;
 
 import vnet.sms.common.messages.Message;
-import vnet.sms.common.wme.LoginRequestAcceptedEvent;
-import vnet.sms.common.wme.LoginRequestRejectedEvent;
-import vnet.sms.common.wme.SendPingRequestEvent;
+import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestAckedEvent;
+import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestNackedEvent;
+import vnet.sms.common.wme.send.SendPingRequestEvent;
 import vnet.sms.gateway.nettysupport.login.incoming.NonLoginMessageReceivedOnUnauthenticatedChannelEvent;
 import vnet.sms.gateway.nettysupport.transport.outgoing.TransportProtocolAdaptingDownstreamChannelHandler;
 
@@ -19,13 +19,13 @@ public class ObjectSerializationTransportProtocolAdaptingDownstreamChannelHandle
 
 	@Override
 	protected Message convertLoginRequestAcceptedEventToPdu(
-	        final LoginRequestAcceptedEvent<Integer> e) {
+	        final ReceivedLoginRequestAckedEvent<Integer> e) {
 		return e.getMessage();
 	}
 
 	@Override
 	protected Message convertLoginRequestRejectedEventToPdu(
-	        final LoginRequestRejectedEvent<Integer> e) {
+	        final ReceivedLoginRequestNackedEvent<Integer> e) {
 		return e.getMessage();
 	}
 

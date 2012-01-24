@@ -2,6 +2,7 @@ package vnet.sms.gateway.server.framework;
 
 import static org.junit.Assert.assertEquals;
 
+import org.jboss.netty.channel.group.DefaultChannelGroup;
 import org.jboss.netty.channel.local.DefaultLocalServerChannelFactory;
 import org.jboss.netty.channel.local.LocalAddress;
 import org.jboss.netty.handler.codec.serialization.ClassResolvers;
@@ -81,7 +82,8 @@ public class GatewayServerControllerTest {
 
 		final JmsTemplate jmsTemplate = new JmsTemplate(mockConnectionFactory);
 		jmsTemplate
-		        .setMessageConverter(new WindowedMessageEventToJmsMessageConverter());
+		        .setMessageConverter(new WindowedMessageEventToJmsMessageConverter(
+		                new DefaultChannelGroup()));
 		jmsTemplate.setDefaultDestinationName(DEFAULT_QUEUE_NAME);
 
 		return jmsTemplate;
@@ -108,7 +110,8 @@ public class GatewayServerControllerTest {
 		        authenticationManager, failedLoginResponseMillis,
 		        new SerialIntegersMessageReferenceGenerator(),
 		        pingIntervalSeconds, pingResponseTimeoutMillis,
-		        new MBeanExporter(), new InitialChannelEventsMonitor());
+		        new MBeanExporter(), new InitialChannelEventsMonitor(),
+		        new DefaultChannelGroup());
 	}
 
 	@Test

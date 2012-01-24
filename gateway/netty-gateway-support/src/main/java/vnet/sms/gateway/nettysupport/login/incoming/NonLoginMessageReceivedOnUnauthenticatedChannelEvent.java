@@ -12,8 +12,9 @@ import org.jboss.netty.channel.Channel;
 import vnet.sms.common.messages.Acknowledgement;
 import vnet.sms.common.messages.LoginRequest;
 import vnet.sms.common.messages.Message;
-import vnet.sms.common.wme.DownstreamReceivedMessageAckedEvent;
+import vnet.sms.common.wme.MessageType;
 import vnet.sms.common.wme.WindowedMessageEvent;
+import vnet.sms.common.wme.acknowledge.DownstreamReceivedMessageAckedEvent;
 
 /**
  * @author obergner
@@ -27,7 +28,7 @@ public final class NonLoginMessageReceivedOnUnauthenticatedChannelEvent<ID exten
 		isTrue(!(nonLoginRequest.getMessage() instanceof LoginRequest),
 		        "Argument 'nonLoginRequest' must not be a LoginRequest");
 		return new NonLoginMessageReceivedOnUnauthenticatedChannelEvent<ID, M>(
-		        nonLoginRequest.getMessageReference(),
+		        nonLoginRequest.getAcknowledgedMessageReference(),
 		        nonLoginRequest.getChannel(), nonLoginRequest.getMessage());
 	}
 
@@ -35,7 +36,7 @@ public final class NonLoginMessageReceivedOnUnauthenticatedChannelEvent<ID exten
 	        final ID messageReference, final Channel channel, final M message) {
 		super(
 		        messageReference,
-		        WindowedMessageEvent.Type.NON_LOGIN_MESSAGE_RECEIVED_ON_UNAUTHENTICATED_CHANNEL,
+		        MessageType.NON_LOGIN_MESSAGE_RECEIVED_ON_UNAUTHENTICATED_CHANNEL,
 		        channel, message, Acknowledgement.nack());
 	}
 }

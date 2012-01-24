@@ -17,6 +17,7 @@ import javax.management.Notification;
 import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.ChannelEvent;
 import org.jboss.netty.channel.MessageEvent;
+import org.jboss.netty.channel.group.DefaultChannelGroup;
 import org.jboss.netty.channel.local.LocalAddress;
 import org.jboss.netty.handler.codec.base64.Base64Decoder;
 import org.jboss.netty.handler.codec.base64.Base64Encoder;
@@ -67,7 +68,8 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
 		        1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
-		        new MBeanExporter(), new InitialChannelEventsMonitor());
+		        new MBeanExporter(), new InitialChannelEventsMonitor(),
+		        new DefaultChannelGroup());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -84,7 +86,8 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
 		        1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
-		        new MBeanExporter(), new InitialChannelEventsMonitor());
+		        new MBeanExporter(), new InitialChannelEventsMonitor(),
+		        new DefaultChannelGroup());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -101,7 +104,8 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
 		        1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
-		        new MBeanExporter(), new InitialChannelEventsMonitor());
+		        new MBeanExporter(), new InitialChannelEventsMonitor(),
+		        new DefaultChannelGroup());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -118,7 +122,8 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
 		        1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
-		        new MBeanExporter(), new InitialChannelEventsMonitor());
+		        new MBeanExporter(), new InitialChannelEventsMonitor(),
+		        new DefaultChannelGroup());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -134,7 +139,8 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        null, new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
 		        1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
-		        new MBeanExporter(), new InitialChannelEventsMonitor());
+		        new MBeanExporter(), new InitialChannelEventsMonitor(),
+		        new DefaultChannelGroup());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -151,7 +157,8 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
 		        1000L, null, 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
-		        new MBeanExporter(), new InitialChannelEventsMonitor());
+		        new MBeanExporter(), new InitialChannelEventsMonitor(),
+		        new DefaultChannelGroup());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -167,7 +174,8 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(),
 		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
 		        1000L, new AcceptAllAuthenticationManager(), 1000L, null, 2,
-		        2000L, new MBeanExporter(), new InitialChannelEventsMonitor());
+		        2000L, new MBeanExporter(), new InitialChannelEventsMonitor(),
+		        new DefaultChannelGroup());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -184,7 +192,24 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
 		        1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L, null,
-		        new InitialChannelEventsMonitor());
+		        new InitialChannelEventsMonitor(), new DefaultChannelGroup());
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public final void assertThatConstructorRejectsNullChannelGroup() {
+		final JmsTemplate jmsTemplate = createNiceMock(JmsTemplate.class);
+		new GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer>(
+		        "assertThatConstructorRejectsNullMBeanServer",
+		        ReferenceableMessageContainer.class,
+		        new DelimiterBasedFrameDecoder(0, ChannelBuffers.EMPTY_BUFFER),
+		        new Base64Decoder(),
+		        new Base64Encoder(),
+		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(),
+		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(),
+		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
+		        1000L, new AcceptAllAuthenticationManager(), 1000L,
+		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
+		        new MBeanExporter(), new InitialChannelEventsMonitor(), null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -201,7 +226,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
 		        1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
-		        new MBeanExporter(), null);
+		        new MBeanExporter(), null, new DefaultChannelGroup());
 	}
 
 	@Test
@@ -230,7 +255,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        .nextSentMessageEvent();
 
 		assertNotNull(
-		        "Expected channel pipeline to send LoginRequestAcceptedEvent to client after successful login, yet it sent NO message in reply",
+		        "Expected channel pipeline to send ReceivedLoginRequestAckedEvent to client after successful login, yet it sent NO message in reply",
 		        encodedLoginResponse);
 		final Message decodedLoginResponse = SerializationUtils
 		        .deserialize(encodedLoginResponse);
@@ -279,7 +304,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        authenticationManager, failedLoginResponseMillis,
 		        new SerialIntegersMessageReferenceGenerator(),
 		        pingIntervalSeconds, pingResponseTimeoutMillis, mbeanExporter,
-		        initialChannelEventsMonitor);
+		        initialChannelEventsMonitor, new DefaultChannelGroup());
 	}
 
 	@Test
@@ -309,7 +334,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        .nextSentMessageEvent();
 
 		assertNotNull(
-		        "Expected channel pipeline to send LoginRequestRejectedEvent to client after failed login, yet it sent NO message in reply",
+		        "Expected channel pipeline to send ReceivedLoginRequestNackedEvent to client after failed login, yet it sent NO message in reply",
 		        encodedLoginResponse);
 		final Message decodedLoginResponse = SerializationUtils
 		        .deserialize(encodedLoginResponse);
@@ -356,7 +381,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		final MessageEvent expectedLoginResponse = embeddedPipeline
 		        .nextSentMessageEvent();
 		assertNotNull(
-		        "Expected channel pipeline to send LoginRequestRejectedEvent to client after "
+		        "Expected channel pipeline to send ReceivedLoginRequestNackedEvent to client after "
 		                + failedLoginResponseMillis
 		                + " milliseconds, yet it sent NO message in reply",
 		        expectedLoginResponse);

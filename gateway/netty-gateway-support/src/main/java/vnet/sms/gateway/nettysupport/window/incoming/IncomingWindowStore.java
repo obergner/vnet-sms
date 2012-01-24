@@ -219,11 +219,11 @@ public class IncomingWindowStore<ID extends Serializable> implements
 	        throws IllegalArgumentException {
 		final Message storedMessageHavingSameId;
 		if ((storedMessageHavingSameId = this.messageReferenceToMessage
-		        .putIfAbsent(messageEvent.getMessageReference(),
+		        .putIfAbsent(messageEvent.getAcknowledgedMessageReference(),
 		                messageEvent.getMessage())) != null) {
 			throw new IllegalArgumentException("Another message ["
 			        + storedMessageHavingSameId + "] having the same ID ["
-			        + messageEvent.getMessageReference()
+			        + messageEvent.getAcknowledgedMessageReference()
 			        + "] has already been stored");
 		}
 

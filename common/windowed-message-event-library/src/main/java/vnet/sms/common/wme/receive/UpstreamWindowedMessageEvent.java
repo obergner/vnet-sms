@@ -1,7 +1,7 @@
 /**
  * 
  */
-package vnet.sms.common.wme;
+package vnet.sms.common.wme.receive;
 
 import static org.apache.commons.lang.Validate.notNull;
 
@@ -10,6 +10,8 @@ import java.io.Serializable;
 import org.jboss.netty.channel.UpstreamMessageEvent;
 
 import vnet.sms.common.messages.Message;
+import vnet.sms.common.wme.MessageType;
+import vnet.sms.common.wme.WindowedMessageEvent;
 
 /**
  * @author obergner
@@ -18,13 +20,13 @@ import vnet.sms.common.messages.Message;
 public abstract class UpstreamWindowedMessageEvent<ID extends Serializable, M extends Message>
         extends UpstreamMessageEvent implements WindowedMessageEvent<ID, M> {
 
-	private final ID	messageReference;
+	private final ID	      messageReference;
 
-	private final Type	type;
+	private final MessageType	type;
 
 	protected UpstreamWindowedMessageEvent(final ID messageReference,
-	        final Type type, final UpstreamMessageEvent upstreamMessageEvent,
-	        final M message) {
+	        final MessageType type,
+	        final UpstreamMessageEvent upstreamMessageEvent, final M message) {
 		super(upstreamMessageEvent.getChannel(), message, upstreamMessageEvent
 		        .getRemoteAddress());
 		notNull(messageReference,
@@ -35,18 +37,18 @@ public abstract class UpstreamWindowedMessageEvent<ID extends Serializable, M ex
 	}
 
 	/**
-	 * @see vnet.sms.common.wme.WindowedMessageEvent#getMessageReference()
+	 * @see vnet.sms.common.wme.WindowedMessageEvent#getAcknowledgedMessageReference()
 	 */
 	@Override
-	public ID getMessageReference() {
+	public ID getAcknowledgedMessageReference() {
 		return this.messageReference;
 	}
 
 	/**
-	 * @see vnet.sms.common.wme.WindowedMessageEvent#getType()
+	 * @see vnet.sms.common.wme.WindowedMessageEvent#getAcknowledgedMessageType()
 	 */
 	@Override
-	public Type getType() {
+	public MessageType getAcknowledgedMessageType() {
 		return this.type;
 	}
 
@@ -95,8 +97,9 @@ public abstract class UpstreamWindowedMessageEvent<ID extends Serializable, M ex
 	public String toString() {
 		return getClass().getSimpleName() + "@" + hashCode()
 		        + "[messageReference: " + this.messageReference + "|type: "
-		        + getType() + "|message: " + getMessage() + "|channel: "
-		        + getChannel() + "|remoteAddress: " + getRemoteAddress() + "]";
+		        + getAcknowledgedMessageType() + "|message: " + getMessage()
+		        + "|channel: " + getChannel() + "|remoteAddress: "
+		        + getRemoteAddress() + "]";
 	}
 
 }

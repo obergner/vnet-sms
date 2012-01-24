@@ -17,11 +17,11 @@ import org.jboss.netty.channel.WriteCompletionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import vnet.sms.common.wme.LoginRequestReceivedEvent;
-import vnet.sms.common.wme.LoginResponseReceivedEvent;
-import vnet.sms.common.wme.PingRequestReceivedEvent;
-import vnet.sms.common.wme.PingResponseReceivedEvent;
-import vnet.sms.common.wme.SmsReceivedEvent;
+import vnet.sms.common.wme.receive.LoginRequestReceivedEvent;
+import vnet.sms.common.wme.receive.LoginResponseReceivedEvent;
+import vnet.sms.common.wme.receive.PingRequestReceivedEvent;
+import vnet.sms.common.wme.receive.PingResponseReceivedEvent;
+import vnet.sms.common.wme.receive.SmsReceivedEvent;
 import vnet.sms.gateway.nettysupport.login.incoming.ChannelAuthenticationFailedEvent;
 import vnet.sms.gateway.nettysupport.login.incoming.ChannelSuccessfullyAuthenticatedEvent;
 import vnet.sms.gateway.nettysupport.ping.outgoing.PingResponseTimeoutExpiredEvent;

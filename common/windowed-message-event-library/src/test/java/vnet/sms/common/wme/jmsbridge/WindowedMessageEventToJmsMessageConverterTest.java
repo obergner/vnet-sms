@@ -21,26 +21,24 @@ import javax.jms.Session;
 import org.easymock.Capture;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.UpstreamMessageEvent;
+import org.jboss.netty.channel.group.DefaultChannelGroup;
 import org.junit.Test;
-import org.springframework.jms.support.converter.MessageConversionException;
 
 import vnet.sms.common.messages.LoginRequest;
 import vnet.sms.common.messages.LoginResponse;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.PingResponse;
 import vnet.sms.common.messages.Sms;
-import vnet.sms.common.wme.LoginRequestAcceptedEvent;
-import vnet.sms.common.wme.LoginRequestReceivedEvent;
-import vnet.sms.common.wme.LoginRequestRejectedEvent;
-import vnet.sms.common.wme.LoginResponseReceivedEvent;
-import vnet.sms.common.wme.PingRequestAcknowledgedEvent;
-import vnet.sms.common.wme.PingRequestReceivedEvent;
-import vnet.sms.common.wme.PingResponseReceivedEvent;
-import vnet.sms.common.wme.SmsReceivedEvent;
+import vnet.sms.common.wme.receive.LoginRequestReceivedEvent;
+import vnet.sms.common.wme.receive.LoginResponseReceivedEvent;
+import vnet.sms.common.wme.receive.PingRequestReceivedEvent;
+import vnet.sms.common.wme.receive.PingResponseReceivedEvent;
+import vnet.sms.common.wme.receive.SmsReceivedEvent;
 
 public class WindowedMessageEventToJmsMessageConverterTest {
 
-	private final WindowedMessageEventToJmsMessageConverter	objectUnderTest	= new WindowedMessageEventToJmsMessageConverter();
+	private final WindowedMessageEventToJmsMessageConverter	objectUnderTest	= new WindowedMessageEventToJmsMessageConverter(
+	                                                                                new DefaultChannelGroup());
 
 	@Test
 	public final void assertThatToMessageCorrectlyConvertsPingRequestReceivedEvent()
@@ -77,9 +75,17 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		        + ") returned a message NOT having the expected payload",
 		        message, convertedMessage.getObject());
 		// Verify headers
+		assertEquals(
+		        "toMessage("
+		                + windowedMessageEvent
+		                + ", "
+		                + jmsSession
+		                + ") returned a message NOT having the expected message reference",
+		        windowedMessageEvent.getAcknowledgedMessageReference(),
+		        convertedMessage.getObjectProperty(Headers.MESSAGE_REFERENCE));
 		assertEquals("toMessage(" + windowedMessageEvent + ", " + jmsSession
 		        + ") returned a message NOT having the expected type header",
-		        windowedMessageEvent.getType().toString(),
+		        windowedMessageEvent.getAcknowledgedMessageType().toString(),
 		        convertedMessage.getStringProperty(Headers.EVENT_TYPE));
 		assertEquals(
 		        "toMessage("
@@ -365,83 +371,6 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 	}
 
 	@Test
-	public final void assertThatToMessageCorrectlyConvertsPingRequestAcknowledgedEvent()
-	        throws JMSException {
-		final InetSocketAddress sender = new InetSocketAddress(1);
-		final InetSocketAddress receiver = new InetSocketAddress(2);
-		final Integer channelId = 123;
-		final Integer messageReference = 78;
-
-		final Session jmsSession = createNiceMock(Session.class);
-		final Capture<Serializable> capturedMessage = new Capture<Serializable>();
-		expect(jmsSession.createObjectMessage(capture(capturedMessage)))
-		        .andReturn(new RecordingJmsObjectMessage(capturedMessage));
-
-		final Channel receivingChannel = createNiceMock(Channel.class);
-		expect(receivingChannel.getRemoteAddress()).andReturn(sender)
-		        .anyTimes();
-		expect(receivingChannel.getId()).andReturn(channelId).anyTimes();
-
-		final PingRequest message = new PingRequest(sender, receiver);
-		final UpstreamMessageEvent upstreamMessageEvent = new UpstreamMessageEvent(
-		        receivingChannel, message, message.getSender());
-		final PingRequestReceivedEvent<Integer> pingRequestReceived = new PingRequestReceivedEvent<Integer>(
-		        messageReference, upstreamMessageEvent, message);
-		final PingRequestAcknowledgedEvent<Integer> windowedMessageEvent = PingRequestAcknowledgedEvent
-		        .acknowledge(pingRequestReceived);
-
-		replay(jmsSession, receivingChannel);
-
-		final javax.jms.ObjectMessage convertedMessage = (ObjectMessage) this.objectUnderTest
-		        .toMessage(windowedMessageEvent, jmsSession);
-
-		assertNotNull("toMessage(" + windowedMessageEvent + ", " + jmsSession
-		        + ") returned null", convertedMessage);
-		assertEquals("toMessage(" + windowedMessageEvent + ", " + jmsSession
-		        + ") returned a message NOT having the expected payload",
-		        message, convertedMessage.getObject());
-		// Verify headers
-		assertEquals("toMessage(" + windowedMessageEvent + ", " + jmsSession
-		        + ") returned a message NOT having the expected type header",
-		        windowedMessageEvent.getType().toString(),
-		        convertedMessage.getStringProperty(Headers.EVENT_TYPE));
-		assertEquals(
-		        "toMessage("
-		                + windowedMessageEvent
-		                + ", "
-		                + jmsSession
-		                + ") returned a message NOT having the expected receive timestamp",
-		        windowedMessageEvent.getMessage().getCreationTimestamp(),
-		        convertedMessage.getLongProperty(Headers.RECEIVE_TIMESTAMP));
-		assertEquals(
-		        "toMessage("
-		                + windowedMessageEvent
-		                + ", "
-		                + jmsSession
-		                + ") returned a message NOT having the expected receiver socket address",
-		        windowedMessageEvent.getMessage().getReceiver().toString(),
-		        convertedMessage
-		                .getStringProperty(Headers.RECEIVER_SOCKET_ADDRESS));
-		assertEquals(
-		        "toMessage("
-		                + windowedMessageEvent
-		                + ", "
-		                + jmsSession
-		                + ") returned a message NOT having the expected receiving channel id",
-		        (int) windowedMessageEvent.getChannel().getId(),
-		        convertedMessage.getIntProperty(Headers.RECEIVING_CHANNEL_ID));
-		assertEquals(
-		        "toMessage("
-		                + windowedMessageEvent
-		                + ", "
-		                + jmsSession
-		                + ") returned a message NOT having the expected sender socket address",
-		        windowedMessageEvent.getMessage().getSender().toString(),
-		        convertedMessage
-		                .getStringProperty(Headers.SENDER_SOCKET_ADDRESS));
-	}
-
-	@Test
 	public final void assertThatToMessageCorrectlyConvertsPingResponseReceivedEvent()
 	        throws JMSException {
 		final InetSocketAddress sender = new InetSocketAddress(1);
@@ -477,9 +406,17 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		        + ") returned a message NOT having the expected payload",
 		        message, convertedMessage.getObject());
 		// Verify headers
+		assertEquals(
+		        "toMessage("
+		                + windowedMessageEvent
+		                + ", "
+		                + jmsSession
+		                + ") returned a message NOT having the expected message reference",
+		        windowedMessageEvent.getAcknowledgedMessageReference(),
+		        convertedMessage.getObjectProperty(Headers.MESSAGE_REFERENCE));
 		assertEquals("toMessage(" + windowedMessageEvent + ", " + jmsSession
 		        + ") returned a message NOT having the expected type header",
-		        windowedMessageEvent.getType().toString(),
+		        windowedMessageEvent.getAcknowledgedMessageType().toString(),
 		        convertedMessage.getStringProperty(Headers.EVENT_TYPE));
 		assertEquals(
 		        "toMessage("
@@ -555,169 +492,17 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		        + ") returned a message NOT having the expected payload",
 		        message, convertedMessage.getObject());
 		// Verify headers
+		assertEquals(
+		        "toMessage("
+		                + windowedMessageEvent
+		                + ", "
+		                + jmsSession
+		                + ") returned a message NOT having the expected message reference",
+		        windowedMessageEvent.getAcknowledgedMessageReference(),
+		        convertedMessage.getObjectProperty(Headers.MESSAGE_REFERENCE));
 		assertEquals("toMessage(" + windowedMessageEvent + ", " + jmsSession
 		        + ") returned a message NOT having the expected type header",
-		        windowedMessageEvent.getType().toString(),
-		        convertedMessage.getStringProperty(Headers.EVENT_TYPE));
-		assertEquals(
-		        "toMessage("
-		                + windowedMessageEvent
-		                + ", "
-		                + jmsSession
-		                + ") returned a message NOT having the expected receive timestamp",
-		        windowedMessageEvent.getMessage().getCreationTimestamp(),
-		        convertedMessage.getLongProperty(Headers.RECEIVE_TIMESTAMP));
-		assertEquals(
-		        "toMessage("
-		                + windowedMessageEvent
-		                + ", "
-		                + jmsSession
-		                + ") returned a message NOT having the expected receiver socket address",
-		        windowedMessageEvent.getMessage().getReceiver().toString(),
-		        convertedMessage
-		                .getStringProperty(Headers.RECEIVER_SOCKET_ADDRESS));
-		assertEquals(
-		        "toMessage("
-		                + windowedMessageEvent
-		                + ", "
-		                + jmsSession
-		                + ") returned a message NOT having the expected receiving channel id",
-		        (int) windowedMessageEvent.getChannel().getId(),
-		        convertedMessage.getIntProperty(Headers.RECEIVING_CHANNEL_ID));
-		assertEquals(
-		        "toMessage("
-		                + windowedMessageEvent
-		                + ", "
-		                + jmsSession
-		                + ") returned a message NOT having the expected sender socket address",
-		        windowedMessageEvent.getMessage().getSender().toString(),
-		        convertedMessage
-		                .getStringProperty(Headers.SENDER_SOCKET_ADDRESS));
-	}
-
-	@Test
-	public final void assertThatToMessageCorrectlyConvertsLoginRequestAcceptedEvent()
-	        throws JMSException {
-		final InetSocketAddress sender = new InetSocketAddress(1);
-		final InetSocketAddress receiver = new InetSocketAddress(2);
-		final Integer channelId = 123;
-		final Integer messageReference = 78;
-
-		final Session jmsSession = createNiceMock(Session.class);
-		final Capture<Serializable> capturedMessage = new Capture<Serializable>();
-		expect(jmsSession.createObjectMessage(capture(capturedMessage)))
-		        .andReturn(new RecordingJmsObjectMessage(capturedMessage));
-
-		final Channel receivingChannel = createNiceMock(Channel.class);
-		expect(receivingChannel.getRemoteAddress()).andReturn(sender)
-		        .anyTimes();
-		expect(receivingChannel.getId()).andReturn(channelId).anyTimes();
-
-		final LoginRequest loginRequest = new LoginRequest(
-		        "assertThatToMessageCorrectlyConvertsLoginRequestAcceptedEvent",
-		        "assertThatToMessageCorrectlyConvertsLoginRequestAcceptedEvent",
-		        sender, receiver);
-		final UpstreamMessageEvent upstreamMessageEvent = new UpstreamMessageEvent(
-		        receivingChannel, loginRequest, loginRequest.getSender());
-		final LoginRequestReceivedEvent<Integer> loginRequestReceived = new LoginRequestReceivedEvent<Integer>(
-		        messageReference, upstreamMessageEvent, loginRequest);
-		final LoginRequestAcceptedEvent<Integer> windowedMessageEvent = LoginRequestAcceptedEvent
-		        .accept(loginRequestReceived);
-
-		replay(jmsSession, receivingChannel);
-
-		final javax.jms.ObjectMessage convertedMessage = (ObjectMessage) this.objectUnderTest
-		        .toMessage(windowedMessageEvent, jmsSession);
-
-		assertNotNull("toMessage(" + windowedMessageEvent + ", " + jmsSession
-		        + ") returned null", convertedMessage);
-		assertEquals("toMessage(" + windowedMessageEvent + ", " + jmsSession
-		        + ") returned a message NOT having the expected payload",
-		        loginRequest, convertedMessage.getObject());
-		// Verify headers
-		assertEquals("toMessage(" + windowedMessageEvent + ", " + jmsSession
-		        + ") returned a message NOT having the expected type header",
-		        windowedMessageEvent.getType().toString(),
-		        convertedMessage.getStringProperty(Headers.EVENT_TYPE));
-		assertEquals(
-		        "toMessage("
-		                + windowedMessageEvent
-		                + ", "
-		                + jmsSession
-		                + ") returned a message NOT having the expected receive timestamp",
-		        windowedMessageEvent.getMessage().getCreationTimestamp(),
-		        convertedMessage.getLongProperty(Headers.RECEIVE_TIMESTAMP));
-		assertEquals(
-		        "toMessage("
-		                + windowedMessageEvent
-		                + ", "
-		                + jmsSession
-		                + ") returned a message NOT having the expected receiver socket address",
-		        windowedMessageEvent.getMessage().getReceiver().toString(),
-		        convertedMessage
-		                .getStringProperty(Headers.RECEIVER_SOCKET_ADDRESS));
-		assertEquals(
-		        "toMessage("
-		                + windowedMessageEvent
-		                + ", "
-		                + jmsSession
-		                + ") returned a message NOT having the expected receiving channel id",
-		        (int) windowedMessageEvent.getChannel().getId(),
-		        convertedMessage.getIntProperty(Headers.RECEIVING_CHANNEL_ID));
-		assertEquals(
-		        "toMessage("
-		                + windowedMessageEvent
-		                + ", "
-		                + jmsSession
-		                + ") returned a message NOT having the expected sender socket address",
-		        windowedMessageEvent.getMessage().getSender().toString(),
-		        convertedMessage
-		                .getStringProperty(Headers.SENDER_SOCKET_ADDRESS));
-	}
-
-	@Test
-	public final void assertThatToMessageCorrectlyConvertsLoginRequestRejectedEvent()
-	        throws JMSException {
-		final InetSocketAddress sender = new InetSocketAddress(1);
-		final InetSocketAddress receiver = new InetSocketAddress(2);
-		final Integer channelId = 123;
-		final Integer messageReference = 78;
-
-		final Session jmsSession = createNiceMock(Session.class);
-		final Capture<Serializable> capturedMessage = new Capture<Serializable>();
-		expect(jmsSession.createObjectMessage(capture(capturedMessage)))
-		        .andReturn(new RecordingJmsObjectMessage(capturedMessage));
-
-		final Channel receivingChannel = createNiceMock(Channel.class);
-		expect(receivingChannel.getRemoteAddress()).andReturn(sender)
-		        .anyTimes();
-		expect(receivingChannel.getId()).andReturn(channelId).anyTimes();
-
-		final LoginRequest loginRequest = new LoginRequest(
-		        "assertThatToMessageCorrectlyConvertsLoginRequestRejectedEvent",
-		        "assertThatToMessageCorrectlyConvertsLoginRequestRejectedEvent",
-		        sender, receiver);
-		final UpstreamMessageEvent upstreamMessageEvent = new UpstreamMessageEvent(
-		        receivingChannel, loginRequest, loginRequest.getSender());
-		final LoginRequestReceivedEvent<Integer> loginRequestReceived = new LoginRequestReceivedEvent<Integer>(
-		        messageReference, upstreamMessageEvent, loginRequest);
-		final LoginRequestRejectedEvent<Integer> windowedMessageEvent = LoginRequestRejectedEvent
-		        .reject(loginRequestReceived);
-
-		replay(jmsSession, receivingChannel);
-
-		final javax.jms.ObjectMessage convertedMessage = (ObjectMessage) this.objectUnderTest
-		        .toMessage(windowedMessageEvent, jmsSession);
-
-		assertNotNull("toMessage(" + windowedMessageEvent + ", " + jmsSession
-		        + ") returned null", convertedMessage);
-		assertEquals("toMessage(" + windowedMessageEvent + ", " + jmsSession
-		        + ") returned a message NOT having the expected payload",
-		        loginRequest, convertedMessage.getObject());
-		// Verify headers
-		assertEquals("toMessage(" + windowedMessageEvent + ", " + jmsSession
-		        + ") returned a message NOT having the expected type header",
-		        windowedMessageEvent.getType().toString(),
+		        windowedMessageEvent.getAcknowledgedMessageType().toString(),
 		        convertedMessage.getStringProperty(Headers.EVENT_TYPE));
 		assertEquals(
 		        "toMessage("
@@ -794,9 +579,17 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		        + ") returned a message NOT having the expected payload",
 		        message, convertedMessage.getObject());
 		// Verify headers
+		assertEquals(
+		        "toMessage("
+		                + windowedMessageEvent
+		                + ", "
+		                + jmsSession
+		                + ") returned a message NOT having the expected message reference",
+		        windowedMessageEvent.getAcknowledgedMessageReference(),
+		        convertedMessage.getObjectProperty(Headers.MESSAGE_REFERENCE));
 		assertEquals("toMessage(" + windowedMessageEvent + ", " + jmsSession
 		        + ") returned a message NOT having the expected type header",
-		        windowedMessageEvent.getType().toString(),
+		        windowedMessageEvent.getAcknowledgedMessageType().toString(),
 		        convertedMessage.getStringProperty(Headers.EVENT_TYPE));
 		assertEquals(
 		        "toMessage("
@@ -871,9 +664,17 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		        + ") returned a message NOT having the expected payload",
 		        message, convertedMessage.getObject());
 		// Verify headers
+		assertEquals(
+		        "toMessage("
+		                + windowedMessageEvent
+		                + ", "
+		                + jmsSession
+		                + ") returned a message NOT having the expected message reference",
+		        windowedMessageEvent.getAcknowledgedMessageReference(),
+		        convertedMessage.getObjectProperty(Headers.MESSAGE_REFERENCE));
 		assertEquals("toMessage(" + windowedMessageEvent + ", " + jmsSession
 		        + ") returned a message NOT having the expected type header",
-		        windowedMessageEvent.getType().toString(),
+		        windowedMessageEvent.getAcknowledgedMessageType().toString(),
 		        convertedMessage.getStringProperty(Headers.EVENT_TYPE));
 		assertEquals(
 		        "toMessage("
@@ -909,11 +710,5 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		        windowedMessageEvent.getMessage().getSender().toString(),
 		        convertedMessage
 		                .getStringProperty(Headers.SENDER_SOCKET_ADDRESS));
-	}
-
-	@Test(expected = UnsupportedOperationException.class)
-	public final void assertThatFromMessageThrowsUnsupportedOperationException()
-	        throws MessageConversionException, JMSException {
-		this.objectUnderTest.fromMessage(null);
 	}
 }

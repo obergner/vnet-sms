@@ -71,6 +71,8 @@
 			ref="vnet.sms.gateway.server.server-framework.messageForwardingJmsBridge" />
 		<property name="initialChannelEventsMonitor"
 			ref="vnet.sms.gateway.server.server-framework.initialChannelEventsMonitor" />
+		<property name="allConnectedChannels"
+			ref="vnet.sms.gateway.server.server-framework.allConnectedChannels" />
 		<property name="availableIncomingWindows" value="${gateway.server.availableIncomingWindows}" />
 		<property name="failedLoginResponseDelayMillis"
 			value="${gateway.server.failedLoginResponseDelayMillis}" />
@@ -98,5 +100,10 @@
 		id="vnet.sms.gateway.server.server-framework.initialChannelEventsMonitor"
 		class="vnet.sms.gateway.nettysupport.monitor.incoming.InitialChannelEventsMonitor" />
 	<!-- END-SNIPPET: initial channel events monitor -->
+
+	<!-- START-SNIPPET: ChannelGroup storing all connected channels -->
+	<bean id="vnet.sms.gateway.server.server-framework.allConnectedChannels"
+		class="vnet.sms.gateway.server.framework.channel.ChannelGroupFactory" />
+	<!-- END-SNIPPET: ChannelGroup storing all connected channels -->
 
 </beans>

@@ -4,6 +4,7 @@ import static org.easymock.EasyMock.createNiceMock;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import org.jboss.netty.channel.group.DefaultChannelGroup;
 import org.jboss.netty.handler.codec.serialization.ClassResolvers;
 import org.jboss.netty.handler.codec.serialization.ObjectDecoder;
 import org.jboss.netty.handler.codec.serialization.ObjectEncoder;
@@ -79,6 +80,7 @@ public class GatewayServerChannelPipelineFactoryBuilderTest {
 		objectUnderTest.setPingResponseTimeoutMillis(3000L);
 		objectUnderTest
 		        .setInitialChannelEventsMonitor(new InitialChannelEventsMonitor());
+		objectUnderTest.setAllConnectedChannels(new DefaultChannelGroup());
 		objectUnderTest.afterPropertiesSet();
 
 		final GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer> product = objectUnderTest

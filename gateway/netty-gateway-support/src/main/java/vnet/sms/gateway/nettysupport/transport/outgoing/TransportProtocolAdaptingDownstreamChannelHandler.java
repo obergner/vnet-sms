@@ -8,9 +8,9 @@ import java.io.Serializable;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.DownstreamMessageEvent;
 
-import vnet.sms.common.wme.LoginRequestAcceptedEvent;
-import vnet.sms.common.wme.LoginRequestRejectedEvent;
-import vnet.sms.common.wme.SendPingRequestEvent;
+import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestAckedEvent;
+import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestNackedEvent;
+import vnet.sms.common.wme.send.SendPingRequestEvent;
 import vnet.sms.gateway.nettysupport.WindowedChannelHandler;
 import vnet.sms.gateway.nettysupport.login.incoming.NonLoginMessageReceivedOnUnauthenticatedChannelEvent;
 
@@ -35,7 +35,7 @@ public abstract class TransportProtocolAdaptingDownstreamChannelHandler<ID exten
 	@Override
 	protected void writeLoginRequestAcceptedRequested(
 	        final ChannelHandlerContext ctx,
-	        final LoginRequestAcceptedEvent<ID> e) {
+	        final ReceivedLoginRequestAckedEvent<ID> e) {
 		final TP pdu = convertLoginRequestAcceptedEventToPdu(e);
 		getLog().trace("{} converted to {}", e, pdu);
 		ctx.sendDownstream(new DownstreamMessageEvent(ctx.getChannel(), e
@@ -45,7 +45,7 @@ public abstract class TransportProtocolAdaptingDownstreamChannelHandler<ID exten
 	@Override
 	protected void writeLoginRequestRejectedRequested(
 	        final ChannelHandlerContext ctx,
-	        final LoginRequestRejectedEvent<ID> e) {
+	        final ReceivedLoginRequestNackedEvent<ID> e) {
 		final TP pdu = convertLoginRequestRejectedEventToPdu(e);
 		getLog().trace("{} converted to {}", e, pdu);
 		ctx.sendDownstream(new DownstreamMessageEvent(ctx.getChannel(), e
@@ -66,10 +66,10 @@ public abstract class TransportProtocolAdaptingDownstreamChannelHandler<ID exten
 	        final SendPingRequestEvent<ID> e);
 
 	protected abstract TP convertLoginRequestAcceptedEventToPdu(
-	        final LoginRequestAcceptedEvent<ID> e);
+	        final ReceivedLoginRequestAckedEvent<ID> e);
 
 	protected abstract TP convertLoginRequestRejectedEventToPdu(
-	        final LoginRequestRejectedEvent<ID> e);
+	        final ReceivedLoginRequestNackedEvent<ID> e);
 
 	protected abstract TP convertNonLoginMessageReceivedOnUnauthenticatedChannelEventToPdu(
 	        final NonLoginMessageReceivedOnUnauthenticatedChannelEvent<ID, ?> e);

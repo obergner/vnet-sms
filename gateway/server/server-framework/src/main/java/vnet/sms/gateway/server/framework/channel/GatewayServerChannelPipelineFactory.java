@@ -22,7 +22,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 
 import vnet.sms.gateway.nettysupport.logging.incoming.ChannelContextLoggingUpstreamChannelHandler;
 import vnet.sms.gateway.nettysupport.login.incoming.IncomingLoginRequestsChannelHandler;
-import vnet.sms.gateway.nettysupport.monitor.MonitoringChannelGroup;
 import vnet.sms.gateway.nettysupport.monitor.incoming.IncomingBytesCountingChannelHandler;
 import vnet.sms.gateway.nettysupport.monitor.incoming.IncomingMessagesMonitoringChannelHandler;
 import vnet.sms.gateway.nettysupport.monitor.incoming.IncomingPdusCountingChannelHandler;
@@ -114,7 +113,8 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 	        final int pingIntervalSeconds,
 	        final long pingResponseTimeoutMillis,
 	        final MBeanExportOperations mbeanExporter,
-	        final InitialChannelEventsMonitor initialChannelEventsMonitor) {
+	        final InitialChannelEventsMonitor initialChannelEventsMonitor,
+	        final ChannelGroup allConnectedChannels) {
 		notEmpty(gatewayServerInstanceId,
 		        "Argument 'gatewayServerInstanceId' must neither be null nor empty");
 		notNull(pduType, "Argument 'pduType' must not be null");
@@ -133,6 +133,8 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 		notNull(mbeanExporter, "Argument 'mbeanExporter' must not be null");
 		notNull(initialChannelEventsMonitor,
 		        "Argument 'intialChannelEventsMonitor' must not be null");
+		notNull(allConnectedChannels,
+		        "Argument 'allConnectedChannels' must not be null");
 		this.pduType = pduType;
 		this.frameDecoder = frameDecoder;
 		this.decoder = decoder;
@@ -150,9 +152,7 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 		this.initialChannelEventsHandler = new InitialChannelEventsPublishingUpstreamChannelHandler(
 		        initialChannelEventsMonitor);
 		this.connectedChannelsTracker = new ConnectedChannelsTrackingChannelHandler(
-		        new MonitoringChannelGroup("vnet.sms.gateway:server="
-		                + gatewayServerInstanceId
-		                + ",type=all-connected-channels", mbeanExporter));
+		        allConnectedChannels);
 		this.incomingMessagesPublisher.addListener(messageForwardingJmsBridge);
 	}
 

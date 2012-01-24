@@ -26,10 +26,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 
 import vnet.sms.common.messages.Message;
-import vnet.sms.common.wme.LoginRequestAcceptedEvent;
-import vnet.sms.common.wme.LoginRequestReceivedEvent;
-import vnet.sms.common.wme.LoginRequestRejectedEvent;
 import vnet.sms.common.wme.WindowedMessageEvent;
+import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestAckedEvent;
+import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestNackedEvent;
+import vnet.sms.common.wme.receive.LoginRequestReceivedEvent;
 
 /**
  * @author obergner
@@ -121,7 +121,7 @@ public class IncomingLoginRequestsChannelHandler<ID extends Serializable>
 			this.log.info(
 			        "Successfully authenticated channel {} - authenticated user is {}",
 			        ctx.getChannel(), authentication.getPrincipal());
-			ctx.sendDownstream(LoginRequestAcceptedEvent.accept(e));
+			ctx.sendDownstream(ReceivedLoginRequestAckedEvent.accept(e));
 			// Inform the wider community ...
 			ctx.sendUpstream(new ChannelSuccessfullyAuthenticatedEvent(ctx
 			        .getChannel(), e.getMessage()));
@@ -207,7 +207,7 @@ public class IncomingLoginRequestsChannelHandler<ID extends Serializable>
 			        .warn("Sending response to failed login request {} after delay of {} milliseconds",
 			                this.rejectedLogin.getMessage(),
 			                IncomingLoginRequestsChannelHandler.this.failedLoginResponseDelayMillis);
-			this.ctx.sendDownstream(LoginRequestRejectedEvent
+			this.ctx.sendDownstream(ReceivedLoginRequestNackedEvent
 			        .reject(this.rejectedLogin));
 		}
 	}

@@ -4,6 +4,7 @@ import java.lang.management.ManagementFactory;
 
 import javax.management.Notification;
 
+import org.jboss.netty.channel.group.DefaultChannelGroup;
 import org.jboss.netty.handler.codec.serialization.ClassResolvers;
 import org.jboss.netty.handler.codec.serialization.ObjectDecoder;
 import org.jboss.netty.handler.codec.serialization.ObjectEncoder;
@@ -41,7 +42,8 @@ public class AbstractGatewayServerTest {
 
 		final JmsTemplate jmsTemplate = new JmsTemplate(mockConnectionFactory);
 		jmsTemplate
-		        .setMessageConverter(new WindowedMessageEventToJmsMessageConverter());
+		        .setMessageConverter(new WindowedMessageEventToJmsMessageConverter(
+		                new DefaultChannelGroup()));
 		jmsTemplate.setDefaultDestinationName(DEFAULT_QUEUE_NAME);
 
 		return jmsTemplate;
@@ -80,6 +82,6 @@ public class AbstractGatewayServerTest {
 		        authenticationManager, failedLoginResponseMillis,
 		        new SerialIntegersMessageReferenceGenerator(),
 		        pingIntervalSeconds, pingResponseTimeoutMillis, mbeanExporter,
-		        initialChannelEventsMonitor);
+		        initialChannelEventsMonitor, new DefaultChannelGroup());
 	}
 }

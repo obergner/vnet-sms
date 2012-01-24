@@ -7,6 +7,7 @@ import static org.apache.commons.lang.Validate.notNull;
 
 import java.io.Serializable;
 
+import org.jboss.netty.channel.group.ChannelGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
@@ -51,6 +52,8 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 	private long	                                    pingResponseTimeoutMillis;
 
 	private MBeanExportOperations	                    mbeanExporter;
+
+	private ChannelGroup	                            allConnectedChannels;
 
 	private MessageForwardingJmsBridge<ID>	            messageForwardingJmsBridge;
 
@@ -111,7 +114,8 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 		        this.failedLoginResponseDelayMillis,
 		        this.transportProtocolPlugin.getMessageReferenceGenerator(),
 		        this.pingIntervalSeconds, this.pingResponseTimeoutMillis,
-		        this.mbeanExporter, this.initialChannelEventsMonitor);
+		        this.mbeanExporter, this.initialChannelEventsMonitor,
+		        this.allConnectedChannels);
 
 		this.log.info(
 		        "Finished building GatewayServerChannelPipelineFactory instance {}",
@@ -158,12 +162,26 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 	}
 
 	/**
+	 * @param allConnectedChannels
+	 *            the allConnectedChannels to set
+	 */
+	@Required
+	public final void setAllConnectedChannels(
+	        final ChannelGroup allConnectedChannels) {
+		notNull(allConnectedChannels,
+		        "Argument 'allConnectedChannels' must not be null");
+		this.allConnectedChannels = allConnectedChannels;
+	}
+
+	/**
 	 * @param messageForwardingJmsBridge
 	 *            the messageForwardingJmsBridge to set
 	 */
 	@Required
 	public final void setMessageForwardingJmsBridge(
 	        final MessageForwardingJmsBridge<ID> messageForwardingJmsBridge) {
+		notNull(messageForwardingJmsBridge,
+		        "Argument 'messageForwardingJmsBridge' must not be null");
 		this.messageForwardingJmsBridge = messageForwardingJmsBridge;
 	}
 
@@ -174,6 +192,8 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 	@Required
 	public final void setInitialChannelEventsMonitor(
 	        final InitialChannelEventsMonitor initialChannelEventsMonitor) {
+		notNull(initialChannelEventsMonitor,
+		        "Argument 'initialChannelEventsMonitor' must not be null");
 		this.initialChannelEventsMonitor = initialChannelEventsMonitor;
 	}
 

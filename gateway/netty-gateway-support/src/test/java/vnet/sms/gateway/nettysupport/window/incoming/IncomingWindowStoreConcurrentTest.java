@@ -26,7 +26,7 @@ import org.springframework.jmx.export.MBeanExporter;
 
 import vnet.sms.common.messages.Message;
 import vnet.sms.common.messages.Sms;
-import vnet.sms.common.wme.SmsReceivedEvent;
+import vnet.sms.common.wme.receive.SmsReceivedEvent;
 
 /**
  * @author obergner

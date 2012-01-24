@@ -17,11 +17,11 @@ import org.junit.Test;
 import vnet.sms.common.messages.LoginRequest;
 import vnet.sms.common.messages.LoginResponse;
 import vnet.sms.common.messages.PingRequest;
-import vnet.sms.common.wme.LoginRequestAcceptedEvent;
-import vnet.sms.common.wme.LoginRequestReceivedEvent;
-import vnet.sms.common.wme.LoginRequestRejectedEvent;
-import vnet.sms.common.wme.SendPingRequestEvent;
 import vnet.sms.common.wme.WindowedMessageEvent;
+import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestAckedEvent;
+import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestNackedEvent;
+import vnet.sms.common.wme.receive.LoginRequestReceivedEvent;
+import vnet.sms.common.wme.send.SendPingRequestEvent;
 import vnet.sms.gateway.nettytest.ChannelPipelineEmbedder;
 import vnet.sms.gateway.nettytest.DefaultChannelPipelineEmbedder;
 import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;
@@ -93,7 +93,7 @@ public class SerializationTransportProtocolAdaptingDownstreamChannelHandlerTest 
 		        "assertThatTransportProtocolAdapterCorrectlyConvertsAcceptedLoginRequestToPdu",
 		        "secret", new InetSocketAddress(1), new InetSocketAddress(2));
 		final ReferenceableMessageContainer convertedMessageContainer = this.objectUnderTest
-		        .convertLoginRequestAcceptedEventToPdu(LoginRequestAcceptedEvent
+		        .convertLoginRequestAcceptedEventToPdu(ReceivedLoginRequestAckedEvent
 		                .accept(new LoginRequestReceivedEvent<Integer>(1,
 		                        new UpstreamMessageEvent(embeddedPipeline
 		                                .getPipeline().getChannel(),
@@ -126,7 +126,7 @@ public class SerializationTransportProtocolAdaptingDownstreamChannelHandlerTest 
 		        "assertThatTransportProtocolAdapterCorrectlyConvertsRejectedLoginRequestToPdu",
 		        "secret", new InetSocketAddress(1), new InetSocketAddress(2));
 		final ReferenceableMessageContainer convertedMessageContainer = this.objectUnderTest
-		        .convertLoginRequestRejectedEventToPdu(LoginRequestRejectedEvent
+		        .convertLoginRequestRejectedEventToPdu(ReceivedLoginRequestNackedEvent
 		                .reject(new LoginRequestReceivedEvent<Integer>(1,
 		                        new UpstreamMessageEvent(embeddedPipeline
 		                                .getPipeline().getChannel(),

@@ -2,11 +2,11 @@ package vnet.sms.gateway.nettysupport.publish.incoming;
 
 import java.io.Serializable;
 
-import vnet.sms.common.wme.LoginRequestReceivedEvent;
-import vnet.sms.common.wme.LoginResponseReceivedEvent;
-import vnet.sms.common.wme.PingRequestReceivedEvent;
-import vnet.sms.common.wme.PingResponseReceivedEvent;
-import vnet.sms.common.wme.SmsReceivedEvent;
+import vnet.sms.common.wme.receive.LoginRequestReceivedEvent;
+import vnet.sms.common.wme.receive.LoginResponseReceivedEvent;
+import vnet.sms.common.wme.receive.PingRequestReceivedEvent;
+import vnet.sms.common.wme.receive.PingResponseReceivedEvent;
+import vnet.sms.common.wme.receive.SmsReceivedEvent;
 
 /**
  * @author obergner

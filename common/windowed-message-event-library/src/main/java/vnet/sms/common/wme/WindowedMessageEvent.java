@@ -16,32 +16,9 @@ import vnet.sms.common.messages.Message;
 public interface WindowedMessageEvent<ID extends Serializable, M extends Message>
         extends MessageEvent {
 
-	public enum Type {
+	ID getAcknowledgedMessageReference();
 
-		LOGIN_REQUEST_RECEIVED,
-
-		LOGIN_REQUEST_ACCEPTED,
-
-		LOGIN_REQUEST_REJECTED,
-
-		LOGIN_RESPONSE_RECEIVED,
-
-		PING_REQUEST_RECEIVED,
-
-		PING_REQUEST_ACKNOWLEDGED,
-
-		SEND_PING_REQUEST,
-
-		PING_RESPONSE_RECEIVED,
-
-		SMS_RECEIVED,
-
-		NON_LOGIN_MESSAGE_RECEIVED_ON_UNAUTHENTICATED_CHANNEL,
-	}
-
-	ID getMessageReference();
-
-	Type getType();
+	MessageType getAcknowledgedMessageType();
 
 	@Override
 	M getMessage();

@@ -4,9 +4,9 @@ import vnet.sms.common.messages.LoginResponse;
 import vnet.sms.common.messages.Message;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.PingResponse;
-import vnet.sms.common.wme.LoginRequestAcceptedEvent;
-import vnet.sms.common.wme.LoginRequestRejectedEvent;
-import vnet.sms.common.wme.SendPingRequestEvent;
+import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestAckedEvent;
+import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestNackedEvent;
+import vnet.sms.common.wme.send.SendPingRequestEvent;
 import vnet.sms.gateway.nettysupport.login.incoming.NonLoginMessageReceivedOnUnauthenticatedChannelEvent;
 import vnet.sms.gateway.nettysupport.transport.outgoing.TransportProtocolAdaptingDownstreamChannelHandler;
 import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;
@@ -18,21 +18,23 @@ public class SerializationTransportProtocolAdaptingDownstreamChannelHandler
 	@Override
 	protected ReferenceableMessageContainer convertSendPingRequestEventToPdu(
 	        final SendPingRequestEvent<Integer> e) {
-		return ReferenceableMessageContainer.wrap(e.getMessageReference(),
-		        e.getMessage());
+		return ReferenceableMessageContainer.wrap(
+		        e.getAcknowledgedMessageReference(), e.getMessage());
 	}
 
 	@Override
 	protected ReferenceableMessageContainer convertLoginRequestAcceptedEventToPdu(
-	        final LoginRequestAcceptedEvent<Integer> e) {
-		return ReferenceableMessageContainer.wrap(e.getMessageReference(),
+	        final ReceivedLoginRequestAckedEvent<Integer> e) {
+		return ReferenceableMessageContainer.wrap(
+		        e.getAcknowledgedMessageReference(),
 		        LoginResponse.accept(e.getMessage()));
 	}
 
 	@Override
 	protected ReferenceableMessageContainer convertLoginRequestRejectedEventToPdu(
-	        final LoginRequestRejectedEvent<Integer> e) {
-		return ReferenceableMessageContainer.wrap(e.getMessageReference(),
+	        final ReceivedLoginRequestNackedEvent<Integer> e) {
+		return ReferenceableMessageContainer.wrap(
+		        e.getAcknowledgedMessageReference(),
 		        LoginResponse.reject(e.getMessage()));
 	}
 
@@ -49,7 +51,7 @@ public class SerializationTransportProtocolAdaptingDownstreamChannelHandler
 			throw new IllegalStateException(
 			        "Currently, we only support rejecting PingRequests as non-login messages");
 		}
-		return ReferenceableMessageContainer
-		        .wrap(e.getMessageReference(), nack);
+		return ReferenceableMessageContainer.wrap(
+		        e.getAcknowledgedMessageReference(), nack);
 	}
 }

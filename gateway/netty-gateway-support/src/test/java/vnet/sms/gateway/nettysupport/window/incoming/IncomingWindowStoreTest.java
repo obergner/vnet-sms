@@ -22,7 +22,7 @@ import org.springframework.jmx.export.notification.UnableToSendNotificationExcep
 
 import vnet.sms.common.messages.Message;
 import vnet.sms.common.messages.PingRequest;
-import vnet.sms.common.wme.PingRequestReceivedEvent;
+import vnet.sms.common.wme.receive.PingRequestReceivedEvent;
 
 public class IncomingWindowStoreTest {
 

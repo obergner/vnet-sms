@@ -14,9 +14,9 @@ import org.jboss.netty.channel.ChannelStateEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import vnet.sms.common.wme.LoginRequestAcceptedEvent;
-import vnet.sms.common.wme.LoginRequestRejectedEvent;
-import vnet.sms.common.wme.SendPingRequestEvent;
+import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestAckedEvent;
+import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestNackedEvent;
+import vnet.sms.common.wme.send.SendPingRequestEvent;
 import vnet.sms.gateway.nettysupport.login.incoming.NonLoginMessageReceivedOnUnauthenticatedChannelEvent;
 
 /**
@@ -39,12 +39,12 @@ public abstract class DownstreamWindowedChannelHandler<ID extends Serializable>
 		getLog().debug("Processing {} ...", e);
 		if (e instanceof SendPingRequestEvent) {
 			writePingRequestRequested(ctx, (SendPingRequestEvent<ID>) e);
-		} else if (e instanceof LoginRequestAcceptedEvent) {
+		} else if (e instanceof ReceivedLoginRequestAckedEvent) {
 			writeLoginRequestAcceptedRequested(ctx,
-			        (LoginRequestAcceptedEvent<ID>) e);
-		} else if (e instanceof LoginRequestRejectedEvent) {
+			        (ReceivedLoginRequestAckedEvent<ID>) e);
+		} else if (e instanceof ReceivedLoginRequestNackedEvent) {
 			writeLoginRequestRejectedRequested(ctx,
-			        (LoginRequestRejectedEvent<ID>) e);
+			        (ReceivedLoginRequestNackedEvent<ID>) e);
 		} else if (e instanceof NonLoginMessageReceivedOnUnauthenticatedChannelEvent) {
 			writeNonLoginMessageReceivedOnUnauthenticatedChannelRequested(
 			        ctx,
@@ -104,7 +104,7 @@ public abstract class DownstreamWindowedChannelHandler<ID extends Serializable>
 	 */
 	protected void writeLoginRequestAcceptedRequested(
 	        final ChannelHandlerContext ctx,
-	        final LoginRequestAcceptedEvent<ID> e) throws Exception {
+	        final ReceivedLoginRequestAckedEvent<ID> e) throws Exception {
 		ctx.sendDownstream(e);
 	}
 
@@ -115,7 +115,7 @@ public abstract class DownstreamWindowedChannelHandler<ID extends Serializable>
 	 */
 	protected void writeLoginRequestRejectedRequested(
 	        final ChannelHandlerContext ctx,
-	        final LoginRequestRejectedEvent<ID> e) throws Exception {
+	        final ReceivedLoginRequestNackedEvent<ID> e) throws Exception {
 		ctx.sendDownstream(e);
 	}
 
