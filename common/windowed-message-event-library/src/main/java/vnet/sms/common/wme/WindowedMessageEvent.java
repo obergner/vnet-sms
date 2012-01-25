@@ -16,9 +16,9 @@ import vnet.sms.common.messages.Message;
 public interface WindowedMessageEvent<ID extends Serializable, M extends Message>
         extends MessageEvent {
 
-	ID getAcknowledgedMessageReference();
+	ID getMessageReference();
 
-	MessageType getAcknowledgedMessageType();
+	MessageType getMessageType();
 
 	@Override
 	M getMessage();

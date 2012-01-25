@@ -18,20 +18,20 @@ import vnet.sms.common.wme.receive.PingRequestReceivedEvent;
  * @author obergner
  * 
  */
-public class ReceivedPingRequestAcknowledgedEvent<ID extends Serializable>
-        extends DownstreamReceivedMessageAckedEvent<ID, PingRequest> {
+public class ReceivedPingRequestAckedEvent<ID extends Serializable> extends
+        DownstreamReceivedMessageAcknowledgedEvent<ID, PingRequest> {
 
-	public static final <ID extends Serializable> ReceivedPingRequestAcknowledgedEvent<ID> acknowledge(
+	public static final <ID extends Serializable> ReceivedPingRequestAckedEvent<ID> ack(
 	        final PingRequestReceivedEvent<ID> pingRequestReceived) {
 		notNull(pingRequestReceived,
 		        "Argument 'pingRequestReceived' must not be null");
-		return new ReceivedPingRequestAcknowledgedEvent<ID>(
-		        pingRequestReceived.getAcknowledgedMessageReference(),
+		return new ReceivedPingRequestAckedEvent<ID>(
+		        pingRequestReceived.getMessageReference(),
 		        pingRequestReceived.getChannel(),
 		        pingRequestReceived.getMessage());
 	}
 
-	private ReceivedPingRequestAcknowledgedEvent(final ID messageReference,
+	private ReceivedPingRequestAckedEvent(final ID messageReference,
 	        final Channel channel, final PingRequest message) {
 		super(messageReference, MessageType.RECEIVED_PING_REQUEST_ACKNOWLEDGED,
 		        channel, message, Acknowledgement.ack());

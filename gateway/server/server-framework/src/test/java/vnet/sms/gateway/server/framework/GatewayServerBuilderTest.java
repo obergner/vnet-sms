@@ -162,8 +162,7 @@ public class GatewayServerBuilderTest {
 
 		final JmsTemplate jmsTemplate = new JmsTemplate(mockConnectionFactory);
 		jmsTemplate
-		        .setMessageConverter(new WindowedMessageEventToJmsMessageConverter(
-		                new DefaultChannelGroup()));
+		        .setMessageConverter(new WindowedMessageEventToJmsMessageConverter());
 		jmsTemplate.setDefaultDestinationName("default.queue");
 
 		return jmsTemplate;

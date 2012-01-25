@@ -20,8 +20,7 @@
 	<!-- START-SNIPPET: Spring JMS message converter -->
 	<bean
 		id="vnet.sms.gateway.server.server-framework.windowedMessageEventConverter"
-		class="vnet.sms.common.wme.jmsbridge.WindowedMessageEventToJmsMessageConverter"
-		c:allConnectedChannels-ref="vnet.sms.gateway.server.server-framework.allConnectedChannels" />
+		class="vnet.sms.common.wme.jmsbridge.WindowedMessageEventToJmsMessageConverter" />
 	<!-- END-SNIPPET: Spring JMS message converter -->
 
 	<!-- START-SNIPPET: JMS connection factory -->

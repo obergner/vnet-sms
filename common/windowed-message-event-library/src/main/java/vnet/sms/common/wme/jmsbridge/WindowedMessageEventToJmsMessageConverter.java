@@ -9,9 +9,6 @@ import javax.jms.JMSException;
 import javax.jms.ObjectMessage;
 import javax.jms.Session;
 
-import org.jboss.netty.channel.Channel;
-import org.jboss.netty.channel.MessageEvent;
-import org.jboss.netty.channel.group.ChannelGroup;
 import org.springframework.jms.JmsException;
 import org.springframework.jms.support.JmsUtils;
 import org.springframework.jms.support.converter.MessageConversionException;
@@ -21,9 +18,9 @@ import vnet.sms.common.messages.Message;
 import vnet.sms.common.messages.Sms;
 import vnet.sms.common.wme.MessageType;
 import vnet.sms.common.wme.WindowedMessageEvent;
-import vnet.sms.common.wme.acknowledge.ReceivedSmsAckedEvent;
-import vnet.sms.common.wme.acknowledge.ReceivedSmsNackedEvent;
-import vnet.sms.common.wme.send.SendSmsEvent;
+import vnet.sms.common.wme.acknowledge.ReceivedSmsAckedContainer;
+import vnet.sms.common.wme.acknowledge.ReceivedSmsNackedContainer;
+import vnet.sms.common.wme.send.SendSmsContainer;
 
 /**
  * @author obergner
@@ -31,15 +28,6 @@ import vnet.sms.common.wme.send.SendSmsEvent;
  */
 public class WindowedMessageEventToJmsMessageConverter implements
         MessageConverter {
-
-	private final ChannelGroup	allConnectedChannels;
-
-	public WindowedMessageEventToJmsMessageConverter(
-	        final ChannelGroup allConnectedChannels) {
-		notNull(allConnectedChannels,
-		        "Argument 'allConnectedChannels' must not be null");
-		this.allConnectedChannels = allConnectedChannels;
-	}
 
 	@Override
 	public final javax.jms.Message toMessage(final Object object,
@@ -58,9 +46,9 @@ public class WindowedMessageEventToJmsMessageConverter implements
 		converted.setJMSMessageID("urn:message:id:"
 		        + windowedMessageEvent.getMessage().getId().toString());
 		converted.setObjectProperty(Headers.MESSAGE_REFERENCE,
-		        windowedMessageEvent.getAcknowledgedMessageReference());
+		        windowedMessageEvent.getMessageReference());
 		converted.setStringProperty(Headers.EVENT_TYPE, windowedMessageEvent
-		        .getAcknowledgedMessageType().toString());
+		        .getMessageType().toString());
 		converted.setIntProperty(Headers.RECEIVING_CHANNEL_ID,
 		        windowedMessageEvent.getChannel().getId());
 		converted.setLongProperty(Headers.RECEIVE_TIMESTAMP,
@@ -82,7 +70,7 @@ public class WindowedMessageEventToJmsMessageConverter implements
 		final MessageType eventType = MessageType.valueOf(objectMessage
 		        .getStringProperty(Headers.EVENT_TYPE));
 
-		final MessageEvent converted;
+		final Object converted;
 		switch (eventType) {
 		case RECEIVED_SMS_ACKED:
 			final Sms ackedSms = Sms.class.cast(objectMessage.getObject());
@@ -91,9 +79,8 @@ public class WindowedMessageEventToJmsMessageConverter implements
 			                .getObjectProperty(Headers.MESSAGE_REFERENCE));
 			final int receivingChannelId = objectMessage
 			        .getIntProperty(Headers.RECEIVING_CHANNEL_ID);
-			final Channel receivingChannel = replyChannel(receivingChannelId);
-			converted = new ReceivedSmsAckedEvent<Serializable>(
-			        messageReference, receivingChannel, ackedSms);
+			converted = new ReceivedSmsAckedContainer<Serializable>(
+			        messageReference, receivingChannelId, ackedSms);
 			break;
 		case RECEIVED_SMS_NACKED:
 			final Sms nackedSms = Sms.class.cast(objectMessage.getObject());
@@ -102,24 +89,22 @@ public class WindowedMessageEventToJmsMessageConverter implements
 			                .getObjectProperty(Headers.MESSAGE_REFERENCE));
 			final int receivChannelId = objectMessage
 			        .getIntProperty(Headers.RECEIVING_CHANNEL_ID);
-			final Channel receivChannel = replyChannel(receivChannelId);
 			final int errorKey = objectMessage
 			        .getIntProperty(Headers.ERROR_KEY);
 			final String errorDescription = objectMessage
 			        .getStringProperty(Headers.ERROR_DESCRIPTION);
-			converted = new ReceivedSmsNackedEvent<Serializable>(messageRef,
-			        receivChannel, nackedSms, errorKey, errorDescription);
+			converted = new ReceivedSmsNackedContainer<Serializable>(errorKey,
+			        errorDescription, messageRef, receivChannelId, nackedSms);
 			break;
 		case SEND_SMS:
 			final Sms sms = Sms.class.cast(objectMessage.getObject());
-			converted = new SendSmsEvent(this.allConnectedChannels.iterator()
-			        .next(), sms);
+			converted = new SendSmsContainer(sms);
 			break;
 		default:
 			throw new IllegalArgumentException("Unsupported message type: "
 			        + eventType);
 		}
-		return null;
+		return converted;
 	}
 
 	private void validateReceivedMessage(final javax.jms.Message message)
@@ -174,7 +159,7 @@ public class WindowedMessageEventToJmsMessageConverter implements
 		        + "' is of type " + MessageType.RECEIVED_SMS_ACKED
 		        + ", yet it does not contain an SMS but rather "
 		        + messagePayload);
-		isTrue(jmsMessage.getIntProperty(Headers.RECEIVING_CHANNEL_ID) > 0,
+		isTrue(jmsMessage.getObjectProperty(Headers.RECEIVING_CHANNEL_ID) != null,
 		        "No header '" + Headers.RECEIVING_CHANNEL_ID
 		                + "' has been set on message " + jmsMessage
 		                + ". Cannot determine reply channel.");
@@ -189,14 +174,14 @@ public class WindowedMessageEventToJmsMessageConverter implements
 		        + "' is of type " + MessageType.RECEIVED_SMS_NACKED
 		        + ", yet it does not contain an SMS but rather "
 		        + messagePayload);
-		isTrue(jmsMessage.getIntProperty(Headers.RECEIVING_CHANNEL_ID) > 0,
+		isTrue(jmsMessage.getObjectProperty(Headers.RECEIVING_CHANNEL_ID) != null,
 		        "No header '" + Headers.RECEIVING_CHANNEL_ID
 		                + "' has been set on message " + jmsMessage
 		                + ". Cannot determine reply channel.");
 		notNull(jmsMessage.getObjectProperty(Headers.MESSAGE_REFERENCE),
 		        "No message reference has been set on message " + jmsMessage
 		                + ". Cannot determine nacked SMS.");
-		isTrue(jmsMessage.getIntProperty(Headers.ERROR_KEY) > 0,
+		isTrue(jmsMessage.getObjectProperty(Headers.ERROR_KEY) != null,
 		        "No header '"
 		                + Headers.ERROR_KEY
 		                + "' has been set on message "
@@ -208,17 +193,5 @@ public class WindowedMessageEventToJmsMessageConverter implements
 		                + "' has been set on message "
 		                + jmsMessage
 		                + ". This SMS has been nacked, and yet no error description has been provided.");
-	}
-
-	private Channel replyChannel(final int channelId)
-	        throws MessageConversionException {
-		final Channel replyChannel = this.allConnectedChannels.find(channelId);
-		if (replyChannel == null) {
-			throw new MessageConversionException(
-			        "Could not find channel having ID = ["
-			                + channelId
-			                + "] among all currently connected channels. Maybe that channel has been closed subsequently?");
-		}
-		return replyChannel;
 	}
 }

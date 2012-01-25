@@ -16,13 +16,13 @@ import vnet.sms.common.wme.MessageType;
  * 
  */
 public class ReceivedSmsNackedEvent<ID extends java.io.Serializable> extends
-        DownstreamReceivedMessageAckedEvent<ID, Sms> {
+        DownstreamReceivedMessageAcknowledgedEvent<ID, Sms> {
 
 	private final int	 errorKey;
 
 	private final String	errorDescription;
 
-	public ReceivedSmsNackedEvent(final ID messageReference,
+	private ReceivedSmsNackedEvent(final ID messageReference,
 	        final Channel channel, final Sms message, final int errorKey,
 	        final String errorDescription) {
 		super(messageReference, MessageType.RECEIVED_SMS_NACKED, channel,

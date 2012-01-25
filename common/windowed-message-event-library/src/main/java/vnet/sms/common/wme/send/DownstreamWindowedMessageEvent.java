@@ -47,18 +47,18 @@ public abstract class DownstreamWindowedMessageEvent<ID extends Serializable, M 
 	}
 
 	/**
-	 * @see vnet.sms.common.wme.WindowedMessageEvent#getAcknowledgedMessageReference()
+	 * @see vnet.sms.common.wme.WindowedMessageEvent#getMessageReference()
 	 */
 	@Override
-	public ID getAcknowledgedMessageReference() {
+	public ID getMessageReference() {
 		return this.messageReference;
 	}
 
 	/**
-	 * @see vnet.sms.common.wme.WindowedMessageEvent#getAcknowledgedMessageType()
+	 * @see vnet.sms.common.wme.WindowedMessageEvent#getMessageType()
 	 */
 	@Override
-	public MessageType getAcknowledgedMessageType() {
+	public MessageType getMessageType() {
 		return this.type;
 	}
 

@@ -15,7 +15,6 @@ import javax.jms.ObjectMessage;
 
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.UpstreamMessageEvent;
-import org.jboss.netty.channel.group.DefaultChannelGroup;
 import org.junit.Test;
 import org.springframework.jms.core.JmsTemplate;
 
@@ -56,8 +55,7 @@ public class MessageForwardingJmsBridgeTest {
 		final JmsTemplate jmsTemplate = new JmsTemplate(mockConnFactory);
 		jmsTemplate.setDefaultDestinationName(DEFAULT_QUEUE_NAME);
 		jmsTemplate
-		        .setMessageConverter(new WindowedMessageEventToJmsMessageConverter(
-		                new DefaultChannelGroup()));
+		        .setMessageConverter(new WindowedMessageEventToJmsMessageConverter());
 
 		final MessageForwardingJmsBridge<Integer> objectUnderTest = new MessageForwardingJmsBridge<Integer>(
 		        jmsTemplate);
@@ -107,8 +105,7 @@ public class MessageForwardingJmsBridgeTest {
 		final JmsTemplate jmsTemplate = new JmsTemplate(mockConnFactory);
 		jmsTemplate.setDefaultDestinationName(DEFAULT_QUEUE_NAME);
 		jmsTemplate
-		        .setMessageConverter(new WindowedMessageEventToJmsMessageConverter(
-		                new DefaultChannelGroup()));
+		        .setMessageConverter(new WindowedMessageEventToJmsMessageConverter());
 
 		final MessageForwardingJmsBridge<Integer> objectUnderTest = new MessageForwardingJmsBridge<Integer>(
 		        jmsTemplate);
@@ -159,8 +156,7 @@ public class MessageForwardingJmsBridgeTest {
 		final JmsTemplate jmsTemplate = new JmsTemplate(mockConnFactory);
 		jmsTemplate.setDefaultDestinationName(DEFAULT_QUEUE_NAME);
 		jmsTemplate
-		        .setMessageConverter(new WindowedMessageEventToJmsMessageConverter(
-		                new DefaultChannelGroup()));
+		        .setMessageConverter(new WindowedMessageEventToJmsMessageConverter());
 
 		final MessageForwardingJmsBridge<Integer> objectUnderTest = new MessageForwardingJmsBridge<Integer>(
 		        jmsTemplate);
@@ -212,8 +208,7 @@ public class MessageForwardingJmsBridgeTest {
 		final JmsTemplate jmsTemplate = new JmsTemplate(mockConnFactory);
 		jmsTemplate.setDefaultDestinationName(DEFAULT_QUEUE_NAME);
 		jmsTemplate
-		        .setMessageConverter(new WindowedMessageEventToJmsMessageConverter(
-		                new DefaultChannelGroup()));
+		        .setMessageConverter(new WindowedMessageEventToJmsMessageConverter());
 
 		final MessageForwardingJmsBridge<Integer> objectUnderTest = new MessageForwardingJmsBridge<Integer>(
 		        jmsTemplate);
@@ -258,8 +253,7 @@ public class MessageForwardingJmsBridgeTest {
 		final JmsTemplate jmsTemplate = new JmsTemplate(mockConnFactory);
 		jmsTemplate.setDefaultDestinationName(DEFAULT_QUEUE_NAME);
 		jmsTemplate
-		        .setMessageConverter(new WindowedMessageEventToJmsMessageConverter(
-		                new DefaultChannelGroup()));
+		        .setMessageConverter(new WindowedMessageEventToJmsMessageConverter());
 
 		final MessageForwardingJmsBridge<Integer> objectUnderTest = new MessageForwardingJmsBridge<Integer>(
 		        jmsTemplate);

@@ -20,9 +20,9 @@ import vnet.sms.common.wme.MessageType;
  * @author obergner
  * 
  */
-public class DownstreamReceivedMessageAckedEvent<ID extends Serializable, M extends Message>
+public class DownstreamReceivedMessageAcknowledgedEvent<ID extends Serializable, M extends Message>
         extends DownstreamMessageEvent implements
-        ReceivedMessageAckedEvent<ID, M> {
+        ReceivedMessageAcknowledgedEvent<ID, M> {
 
 	private final ID	          acknowledgedMessageReference;
 
@@ -30,7 +30,7 @@ public class DownstreamReceivedMessageAckedEvent<ID extends Serializable, M exte
 
 	private final Acknowledgement	acknowledgement;
 
-	protected DownstreamReceivedMessageAckedEvent(
+	protected DownstreamReceivedMessageAcknowledgedEvent(
 	        final ID acknowledgedMessageReference,
 	        final MessageType acknowledgedMessageType, final Channel channel,
 	        final M message, final Acknowledgement acknowledgement) {
@@ -38,7 +38,7 @@ public class DownstreamReceivedMessageAckedEvent<ID extends Serializable, M exte
 		        Channels.future(channel, false), message, acknowledgement);
 	}
 
-	private DownstreamReceivedMessageAckedEvent(
+	private DownstreamReceivedMessageAcknowledgedEvent(
 	        final ID acknowledgedMessageReference,
 	        final MessageType acknowledgedMessageType, final Channel channel,
 	        final ChannelFuture future, final Object message,
@@ -58,7 +58,7 @@ public class DownstreamReceivedMessageAckedEvent<ID extends Serializable, M exte
 	}
 
 	/**
-	 * @see vnet.sms.common.wme.acknowledge.ReceivedMessageAckedEvent#getAcknowledgedMessageType()
+	 * @see vnet.sms.common.wme.acknowledge.ReceivedMessageAcknowledgedEvent#getAcknowledgedMessageType()
 	 */
 	@Override
 	public MessageType getAcknowledgedMessageType() {
@@ -66,7 +66,7 @@ public class DownstreamReceivedMessageAckedEvent<ID extends Serializable, M exte
 	}
 
 	/**
-	 * @see vnet.sms.common.wme.acknowledge.ReceivedMessageAckedEvent#getAcknowledgedMessageReference()
+	 * @see vnet.sms.common.wme.acknowledge.ReceivedMessageAcknowledgedEvent#getAcknowledgedMessageReference()
 	 */
 	@Override
 	public ID getAcknowledgedMessageReference() {
@@ -74,7 +74,7 @@ public class DownstreamReceivedMessageAckedEvent<ID extends Serializable, M exte
 	}
 
 	/**
-	 * @see vnet.sms.common.wme.acknowledge.ReceivedMessageAckedEvent#getAcknowledgement
+	 * @see vnet.sms.common.wme.acknowledge.ReceivedMessageAcknowledgedEvent#getAcknowledgement
 	 *      ()
 	 */
 	@Override
@@ -83,7 +83,7 @@ public class DownstreamReceivedMessageAckedEvent<ID extends Serializable, M exte
 	}
 
 	/**
-	 * @see vnet.sms.common.wme.acknowledge.ReceivedMessageAckedEvent#isAccepted()
+	 * @see vnet.sms.common.wme.acknowledge.ReceivedMessageAcknowledgedEvent#isAccepted()
 	 */
 	@Override
 	public boolean isAccepted() {

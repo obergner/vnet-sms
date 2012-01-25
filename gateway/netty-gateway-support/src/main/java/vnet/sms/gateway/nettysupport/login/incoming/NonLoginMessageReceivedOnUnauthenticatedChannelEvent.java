@@ -14,21 +14,21 @@ import vnet.sms.common.messages.LoginRequest;
 import vnet.sms.common.messages.Message;
 import vnet.sms.common.wme.MessageType;
 import vnet.sms.common.wme.WindowedMessageEvent;
-import vnet.sms.common.wme.acknowledge.DownstreamReceivedMessageAckedEvent;
+import vnet.sms.common.wme.acknowledge.DownstreamReceivedMessageAcknowledgedEvent;
 
 /**
  * @author obergner
  * 
  */
 public final class NonLoginMessageReceivedOnUnauthenticatedChannelEvent<ID extends Serializable, M extends Message>
-        extends DownstreamReceivedMessageAckedEvent<ID, M> {
+        extends DownstreamReceivedMessageAcknowledgedEvent<ID, M> {
 
 	public static final <ID extends Serializable, M extends Message> NonLoginMessageReceivedOnUnauthenticatedChannelEvent<ID, M> discardNonLoginMessage(
 	        final WindowedMessageEvent<ID, M> nonLoginRequest) {
 		isTrue(!(nonLoginRequest.getMessage() instanceof LoginRequest),
 		        "Argument 'nonLoginRequest' must not be a LoginRequest");
 		return new NonLoginMessageReceivedOnUnauthenticatedChannelEvent<ID, M>(
-		        nonLoginRequest.getAcknowledgedMessageReference(),
+		        nonLoginRequest.getMessageReference(),
 		        nonLoginRequest.getChannel(), nonLoginRequest.getMessage());
 	}
 

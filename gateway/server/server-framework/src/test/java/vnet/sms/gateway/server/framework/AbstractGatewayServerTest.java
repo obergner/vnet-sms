@@ -42,8 +42,7 @@ public class AbstractGatewayServerTest {
 
 		final JmsTemplate jmsTemplate = new JmsTemplate(mockConnectionFactory);
 		jmsTemplate
-		        .setMessageConverter(new WindowedMessageEventToJmsMessageConverter(
-		                new DefaultChannelGroup()));
+		        .setMessageConverter(new WindowedMessageEventToJmsMessageConverter());
 		jmsTemplate.setDefaultDestinationName(DEFAULT_QUEUE_NAME);
 
 		return jmsTemplate;

@@ -18,8 +18,8 @@ public class SerializationTransportProtocolAdaptingDownstreamChannelHandler
 	@Override
 	protected ReferenceableMessageContainer convertSendPingRequestEventToPdu(
 	        final SendPingRequestEvent<Integer> e) {
-		return ReferenceableMessageContainer.wrap(
-		        e.getAcknowledgedMessageReference(), e.getMessage());
+		return ReferenceableMessageContainer.wrap(e.getMessageReference(),
+		        e.getMessage());
 	}
 
 	@Override

@@ -19,14 +19,14 @@ import vnet.sms.common.wme.receive.LoginRequestReceivedEvent;
  * 
  */
 public class ReceivedLoginRequestNackedEvent<ID extends Serializable> extends
-        DownstreamReceivedMessageAckedEvent<ID, LoginRequest> {
+        DownstreamReceivedMessageAcknowledgedEvent<ID, LoginRequest> {
 
 	public static final <I extends Serializable> ReceivedLoginRequestNackedEvent<I> reject(
 	        final LoginRequestReceivedEvent<I> loginRequestReceivedEvent) {
 		notNull(loginRequestReceivedEvent,
 		        "Argument 'loginRequestReceivedEvent' must not be null");
 		return new ReceivedLoginRequestNackedEvent<I>(
-		        loginRequestReceivedEvent.getAcknowledgedMessageReference(),
+		        loginRequestReceivedEvent.getMessageReference(),
 		        loginRequestReceivedEvent.getChannel(),
 		        loginRequestReceivedEvent.getMessage());
 	}

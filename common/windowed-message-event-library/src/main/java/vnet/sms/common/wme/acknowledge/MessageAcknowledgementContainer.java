@@ -5,8 +5,6 @@ package vnet.sms.common.wme.acknowledge;
 
 import java.io.Serializable;
 
-import org.jboss.netty.channel.MessageEvent;
-
 import vnet.sms.common.messages.Acknowledgement;
 import vnet.sms.common.messages.Message;
 import vnet.sms.common.wme.MessageType;
@@ -15,8 +13,7 @@ import vnet.sms.common.wme.MessageType;
  * @author obergner
  * 
  */
-public interface ReceivedMessageAckedEvent<ID extends Serializable, M extends Message>
-        extends MessageEvent {
+public interface MessageAcknowledgementContainer<ID extends Serializable, M extends Message> {
 
 	MessageType getAcknowledgedMessageType();
 
@@ -26,6 +23,7 @@ public interface ReceivedMessageAckedEvent<ID extends Serializable, M extends Me
 
 	ID getAcknowledgedMessageReference();
 
-	@Override
-	M getMessage();
+	int getReceivingChannelId();
+
+	M getAcknowledgedMessage();
 }

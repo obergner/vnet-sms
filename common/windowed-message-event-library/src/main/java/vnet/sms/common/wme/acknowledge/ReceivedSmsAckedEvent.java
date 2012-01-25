@@ -14,9 +14,9 @@ import vnet.sms.common.wme.MessageType;
  * 
  */
 public class ReceivedSmsAckedEvent<ID extends java.io.Serializable> extends
-        DownstreamReceivedMessageAckedEvent<ID, Sms> {
+        DownstreamReceivedMessageAcknowledgedEvent<ID, Sms> {
 
-	public ReceivedSmsAckedEvent(final ID messageReference,
+	private ReceivedSmsAckedEvent(final ID messageReference,
 	        final Channel channel, final Sms message) {
 		super(messageReference, MessageType.RECEIVED_SMS_ACKED, channel,
 		        message, Acknowledgement.ack());

@@ -64,6 +64,11 @@
 		<!-- *************************************************************** -->
 		<!-- Test -->
 		<!-- *************************************************************** -->
+		<dependency>
+			<groupId>com.mockrunner</groupId>
+			<artifactId>mockrunner</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 </project>

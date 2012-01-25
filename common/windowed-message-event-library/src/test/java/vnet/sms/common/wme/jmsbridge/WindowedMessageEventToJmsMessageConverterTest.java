@@ -17,11 +17,11 @@ import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.ObjectMessage;
 import javax.jms.Session;
+import javax.jms.TextMessage;
 
 import org.easymock.Capture;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.UpstreamMessageEvent;
-import org.jboss.netty.channel.group.DefaultChannelGroup;
 import org.junit.Test;
 
 import vnet.sms.common.messages.LoginRequest;
@@ -29,16 +29,22 @@ import vnet.sms.common.messages.LoginResponse;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.PingResponse;
 import vnet.sms.common.messages.Sms;
+import vnet.sms.common.wme.MessageType;
+import vnet.sms.common.wme.acknowledge.ReceivedSmsAckedContainer;
+import vnet.sms.common.wme.acknowledge.ReceivedSmsNackedContainer;
 import vnet.sms.common.wme.receive.LoginRequestReceivedEvent;
 import vnet.sms.common.wme.receive.LoginResponseReceivedEvent;
 import vnet.sms.common.wme.receive.PingRequestReceivedEvent;
 import vnet.sms.common.wme.receive.PingResponseReceivedEvent;
 import vnet.sms.common.wme.receive.SmsReceivedEvent;
+import vnet.sms.common.wme.send.SendSmsContainer;
+
+import com.mockrunner.mock.jms.MockObjectMessage;
+import com.mockrunner.mock.jms.MockTextMessage;
 
 public class WindowedMessageEventToJmsMessageConverterTest {
 
-	private final WindowedMessageEventToJmsMessageConverter	objectUnderTest	= new WindowedMessageEventToJmsMessageConverter(
-	                                                                                new DefaultChannelGroup());
+	private final WindowedMessageEventToJmsMessageConverter	objectUnderTest	= new WindowedMessageEventToJmsMessageConverter();
 
 	@Test
 	public final void assertThatToMessageCorrectlyConvertsPingRequestReceivedEvent()
@@ -81,11 +87,11 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		                + ", "
 		                + jmsSession
 		                + ") returned a message NOT having the expected message reference",
-		        windowedMessageEvent.getAcknowledgedMessageReference(),
+		        windowedMessageEvent.getMessageReference(),
 		        convertedMessage.getObjectProperty(Headers.MESSAGE_REFERENCE));
 		assertEquals("toMessage(" + windowedMessageEvent + ", " + jmsSession
 		        + ") returned a message NOT having the expected type header",
-		        windowedMessageEvent.getAcknowledgedMessageType().toString(),
+		        windowedMessageEvent.getMessageType().toString(),
 		        convertedMessage.getStringProperty(Headers.EVENT_TYPE));
 		assertEquals(
 		        "toMessage("
@@ -412,11 +418,11 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		                + ", "
 		                + jmsSession
 		                + ") returned a message NOT having the expected message reference",
-		        windowedMessageEvent.getAcknowledgedMessageReference(),
+		        windowedMessageEvent.getMessageReference(),
 		        convertedMessage.getObjectProperty(Headers.MESSAGE_REFERENCE));
 		assertEquals("toMessage(" + windowedMessageEvent + ", " + jmsSession
 		        + ") returned a message NOT having the expected type header",
-		        windowedMessageEvent.getAcknowledgedMessageType().toString(),
+		        windowedMessageEvent.getMessageType().toString(),
 		        convertedMessage.getStringProperty(Headers.EVENT_TYPE));
 		assertEquals(
 		        "toMessage("
@@ -498,11 +504,11 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		                + ", "
 		                + jmsSession
 		                + ") returned a message NOT having the expected message reference",
-		        windowedMessageEvent.getAcknowledgedMessageReference(),
+		        windowedMessageEvent.getMessageReference(),
 		        convertedMessage.getObjectProperty(Headers.MESSAGE_REFERENCE));
 		assertEquals("toMessage(" + windowedMessageEvent + ", " + jmsSession
 		        + ") returned a message NOT having the expected type header",
-		        windowedMessageEvent.getAcknowledgedMessageType().toString(),
+		        windowedMessageEvent.getMessageType().toString(),
 		        convertedMessage.getStringProperty(Headers.EVENT_TYPE));
 		assertEquals(
 		        "toMessage("
@@ -585,11 +591,11 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		                + ", "
 		                + jmsSession
 		                + ") returned a message NOT having the expected message reference",
-		        windowedMessageEvent.getAcknowledgedMessageReference(),
+		        windowedMessageEvent.getMessageReference(),
 		        convertedMessage.getObjectProperty(Headers.MESSAGE_REFERENCE));
 		assertEquals("toMessage(" + windowedMessageEvent + ", " + jmsSession
 		        + ") returned a message NOT having the expected type header",
-		        windowedMessageEvent.getAcknowledgedMessageType().toString(),
+		        windowedMessageEvent.getMessageType().toString(),
 		        convertedMessage.getStringProperty(Headers.EVENT_TYPE));
 		assertEquals(
 		        "toMessage("
@@ -670,11 +676,11 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		                + ", "
 		                + jmsSession
 		                + ") returned a message NOT having the expected message reference",
-		        windowedMessageEvent.getAcknowledgedMessageReference(),
+		        windowedMessageEvent.getMessageReference(),
 		        convertedMessage.getObjectProperty(Headers.MESSAGE_REFERENCE));
 		assertEquals("toMessage(" + windowedMessageEvent + ", " + jmsSession
 		        + ") returned a message NOT having the expected type header",
-		        windowedMessageEvent.getAcknowledgedMessageType().toString(),
+		        windowedMessageEvent.getMessageType().toString(),
 		        convertedMessage.getStringProperty(Headers.EVENT_TYPE));
 		assertEquals(
 		        "toMessage("
@@ -710,5 +716,295 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		        windowedMessageEvent.getMessage().getSender().toString(),
 		        convertedMessage
 		                .getStringProperty(Headers.SENDER_SOCKET_ADDRESS));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public final void assertThatFromMessageRejectsNullJmsMessage()
+	        throws JMSException {
+		this.objectUnderTest.fromMessage(null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public final void assertThatFromMessageRejectsTextMessage()
+	        throws JMSException {
+		final TextMessage textMessage = new MockTextMessage();
+
+		this.objectUnderTest.fromMessage(textMessage);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public final void assertThatFromMessageRejectsObjectMessageWithoutMessageTypeHeader()
+	        throws JMSException {
+		final ObjectMessage objectMessage = new MockObjectMessage();
+
+		this.objectUnderTest.fromMessage(objectMessage);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public final void assertThatFromMessageRejectsSmsMessageWithoutPayload()
+	        throws JMSException {
+		final ObjectMessage smsMessage = new MockObjectMessage();
+		smsMessage.setStringProperty(Headers.EVENT_TYPE,
+		        MessageType.SEND_SMS.name());
+
+		this.objectUnderTest.fromMessage(smsMessage);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public final void assertThatFromMessageRejectsSmsMessageWithWrongPayload()
+	        throws JMSException {
+		final ObjectMessage smsMessage = new MockObjectMessage(
+		        "assertThatFromMessageRejectsSmsMessageWithWrongPayload");
+		smsMessage.setStringProperty(Headers.EVENT_TYPE,
+		        MessageType.SEND_SMS.name());
+
+		this.objectUnderTest.fromMessage(smsMessage);
+	}
+
+	@Test
+	public final void assertThatFromMessageCorrectlyConvertsSendSmsMessage()
+	        throws JMSException {
+		final Sms sms = new Sms(
+		        "assertThatFromMessageCorrectlyConvertsSendSmsMessage",
+		        new InetSocketAddress(0), new InetSocketAddress(1));
+		final ObjectMessage smsMessage = new MockObjectMessage(sms);
+		smsMessage.setStringProperty(Headers.EVENT_TYPE,
+		        MessageType.SEND_SMS.name());
+
+		final Object converted = this.objectUnderTest.fromMessage(smsMessage);
+
+		assertEquals("fromMessage(" + smsMessage
+		        + ") did not produce converted message of expected type",
+		        SendSmsContainer.class, converted.getClass());
+		assertEquals(
+		        "fromMessage("
+		                + smsMessage
+		                + ") did not produce SendSmsContainer with the original SMS as its payload",
+		        sms, SendSmsContainer.class.cast(converted).getMessage());
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public final void assertThatFromMessageRejectsReceivedSmsAckMessageWithWrongPayload()
+	        throws JMSException {
+		final ObjectMessage receivedSmsAckedMessage = new MockObjectMessage(
+		        "assertThatFromMessageRejectsReceivedSmsAckMessageWithWrongPayload");
+		receivedSmsAckedMessage.setStringProperty(Headers.EVENT_TYPE,
+		        MessageType.RECEIVED_SMS_ACKED.name());
+
+		this.objectUnderTest.fromMessage(receivedSmsAckedMessage);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public final void assertThatFromMessageRejectsReceivedSmsAckedMessageWithoutReceivingChannelId()
+	        throws JMSException {
+		final Sms ackedSms = new Sms(
+		        "assertThatFromMessageRejectsReceivedSmsAckMessageWithoutReceivingChannelId",
+		        new InetSocketAddress(0), new InetSocketAddress(1));
+		final ObjectMessage receivedSmsAckedMessage = new MockObjectMessage(
+		        ackedSms);
+		receivedSmsAckedMessage.setStringProperty(Headers.EVENT_TYPE,
+		        MessageType.RECEIVED_SMS_ACKED.name());
+		receivedSmsAckedMessage.setObjectProperty(Headers.MESSAGE_REFERENCE,
+		        "1");
+
+		this.objectUnderTest.fromMessage(receivedSmsAckedMessage);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public final void assertThatFromMessageRejectsReceivedSmsAckedMessageWithoutMessageReference()
+	        throws JMSException {
+		final Sms ackedSms = new Sms(
+		        "assertThatFromMessageRejectsReceivedSmsAckedMessageWithoutMessageReference",
+		        new InetSocketAddress(0), new InetSocketAddress(1));
+		final ObjectMessage receivedSmsAckedMessage = new MockObjectMessage(
+		        ackedSms);
+		receivedSmsAckedMessage.setStringProperty(Headers.EVENT_TYPE,
+		        MessageType.RECEIVED_SMS_ACKED.name());
+		receivedSmsAckedMessage.setIntProperty(Headers.RECEIVING_CHANNEL_ID, 1);
+
+		this.objectUnderTest.fromMessage(receivedSmsAckedMessage);
+	}
+
+	@Test
+	public final void assertThatFromMessageCorrectlyConvertsReceivedSmsAckedMessage()
+	        throws JMSException {
+		final int receivingChannelId = 1;
+		final String messageReference = "1";
+
+		final Sms ackedSms = new Sms(
+		        "assertThatFromMessageCorrectlyConvertsReceivedSmsAckedMessage",
+		        new InetSocketAddress(0), new InetSocketAddress(1));
+		final ObjectMessage receivedSmsAckedMessage = new MockObjectMessage(
+		        ackedSms);
+		receivedSmsAckedMessage.setStringProperty(Headers.EVENT_TYPE,
+		        MessageType.RECEIVED_SMS_ACKED.name());
+		receivedSmsAckedMessage.setObjectProperty(Headers.MESSAGE_REFERENCE,
+		        messageReference);
+		receivedSmsAckedMessage.setIntProperty(Headers.RECEIVING_CHANNEL_ID,
+		        receivingChannelId);
+
+		final Object converted = this.objectUnderTest
+		        .fromMessage(receivedSmsAckedMessage);
+
+		assertEquals("fromMessage(" + receivedSmsAckedMessage
+		        + ") did not produce converted message of expected type",
+		        ReceivedSmsAckedContainer.class, converted.getClass());
+		final ReceivedSmsAckedContainer<?> casted = ReceivedSmsAckedContainer.class
+		        .cast(converted);
+		assertEquals(
+		        "fromMessage("
+		                + receivedSmsAckedMessage
+		                + ") did not produce ReceivedMessageAckedContainer with the original SMS as its payload",
+		        ackedSms, casted.getAcknowledgedMessage());
+		assertEquals(
+		        "fromMessage("
+		                + receivedSmsAckedMessage
+		                + ") did not produce ReceivedMessageAckedContainer with the original Message Reference",
+		        messageReference, casted.getAcknowledgedMessageReference());
+		assertEquals(
+		        "fromMessage("
+		                + receivedSmsAckedMessage
+		                + ") did not produce ReceivedMessageAckedContainer with the original receiving channel id",
+		        receivingChannelId, casted.getReceivingChannelId());
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public final void assertThatFromMessageRejectsReceivedSmsNAckedMessageWithoutReceivingChannelId()
+	        throws JMSException {
+		final Sms nackedSms = new Sms(
+		        "assertThatFromMessageRejectsReceivedSmsNAckedMessageWithoutReceivingChannelId",
+		        new InetSocketAddress(0), new InetSocketAddress(1));
+		final ObjectMessage receivedSmsNAckedMessage = new MockObjectMessage(
+		        nackedSms);
+		receivedSmsNAckedMessage.setStringProperty(Headers.EVENT_TYPE,
+		        MessageType.RECEIVED_SMS_NACKED.name());
+		receivedSmsNAckedMessage.setObjectProperty(Headers.MESSAGE_REFERENCE,
+		        "1");
+		receivedSmsNAckedMessage.setIntProperty(Headers.ERROR_KEY, 1);
+		receivedSmsNAckedMessage
+		        .setObjectProperty(Headers.ERROR_DESCRIPTION,
+		                "assertThatFromMessageRejectsReceivedSmsNAckedMessageWithoutReceivingChannelId");
+
+		this.objectUnderTest.fromMessage(receivedSmsNAckedMessage);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public final void assertThatFromMessageRejectsReceivedSmsNAckedMessageWithoutMessageReference()
+	        throws JMSException {
+		final Sms nackedSms = new Sms(
+		        "assertThatFromMessageRejectsReceivedSmsNAckedMessageWithoutMessageReference",
+		        new InetSocketAddress(0), new InetSocketAddress(1));
+		final ObjectMessage receivedSmsNAckedMessage = new MockObjectMessage(
+		        nackedSms);
+		receivedSmsNAckedMessage.setStringProperty(Headers.EVENT_TYPE,
+		        MessageType.RECEIVED_SMS_NACKED.name());
+		receivedSmsNAckedMessage
+		        .setIntProperty(Headers.RECEIVING_CHANNEL_ID, 1);
+		receivedSmsNAckedMessage.setIntProperty(Headers.ERROR_KEY, 1);
+		receivedSmsNAckedMessage
+		        .setObjectProperty(Headers.ERROR_DESCRIPTION,
+		                "assertThatFromMessageRejectsReceivedSmsNAckedMessageWithoutMessageReference");
+
+		this.objectUnderTest.fromMessage(receivedSmsNAckedMessage);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public final void assertThatFromMessageRejectsReceivedSmsNAckedMessageWithoutErrorCode()
+	        throws JMSException {
+		final Sms nackedSms = new Sms(
+		        "assertThatFromMessageRejectsReceivedSmsNAckedMessageWithoutErrorCode",
+		        new InetSocketAddress(0), new InetSocketAddress(1));
+		final ObjectMessage receivedSmsNAckedMessage = new MockObjectMessage(
+		        nackedSms);
+		receivedSmsNAckedMessage.setStringProperty(Headers.EVENT_TYPE,
+		        MessageType.RECEIVED_SMS_NACKED.name());
+		receivedSmsNAckedMessage
+		        .setIntProperty(Headers.RECEIVING_CHANNEL_ID, 1);
+		receivedSmsNAckedMessage
+		        .setObjectProperty(Headers.MESSAGE_REFERENCE,
+		                "assertThatFromMessageRejectsReceivedSmsNAckedMessageWithoutErrorCode");
+		receivedSmsNAckedMessage
+		        .setObjectProperty(Headers.ERROR_DESCRIPTION,
+		                "assertThatFromMessageRejectsReceivedSmsNAckedMessageWithoutErrorCode");
+
+		this.objectUnderTest.fromMessage(receivedSmsNAckedMessage);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public final void assertThatFromMessageRejectsReceivedSmsNAckedMessageWithoutErrorDescription()
+	        throws JMSException {
+		final Sms nackedSms = new Sms(
+		        "assertThatFromMessageRejectsReceivedSmsNAckedMessageWithoutErrorDescription",
+		        new InetSocketAddress(0), new InetSocketAddress(1));
+		final ObjectMessage receivedSmsNAckedMessage = new MockObjectMessage(
+		        nackedSms);
+		receivedSmsNAckedMessage.setStringProperty(Headers.EVENT_TYPE,
+		        MessageType.RECEIVED_SMS_NACKED.name());
+		receivedSmsNAckedMessage
+		        .setIntProperty(Headers.RECEIVING_CHANNEL_ID, 1);
+		receivedSmsNAckedMessage
+		        .setObjectProperty(Headers.MESSAGE_REFERENCE,
+		                "assertThatFromMessageRejectsReceivedSmsNAckedMessageWithoutErrorDescription");
+		receivedSmsNAckedMessage.setIntProperty(Headers.ERROR_KEY, 1);
+
+		this.objectUnderTest.fromMessage(receivedSmsNAckedMessage);
+	}
+
+	@Test
+	public final void assertThatFromMessageCorrectlyConvertsReceivedSmsNAckedMessage()
+	        throws JMSException {
+		final int receivingChannelId = 1;
+		final String messageReference = "1";
+		final int errorKey = 55;
+		final String errorDescription = "assertThatFromMessageCorrectlyConvertsReceivedSmsNAckedMessage";
+
+		final Sms nackedSms = new Sms(
+		        "assertThatFromMessageCorrectlyConvertsReceivedSmsNAckedMessage",
+		        new InetSocketAddress(0), new InetSocketAddress(1));
+		final ObjectMessage receivedSmsNAckedMessage = new MockObjectMessage(
+		        nackedSms);
+		receivedSmsNAckedMessage.setStringProperty(Headers.EVENT_TYPE,
+		        MessageType.RECEIVED_SMS_NACKED.name());
+		receivedSmsNAckedMessage.setObjectProperty(Headers.MESSAGE_REFERENCE,
+		        messageReference);
+		receivedSmsNAckedMessage.setIntProperty(Headers.RECEIVING_CHANNEL_ID,
+		        receivingChannelId);
+		receivedSmsNAckedMessage.setIntProperty(Headers.ERROR_KEY, errorKey);
+		receivedSmsNAckedMessage.setObjectProperty(Headers.ERROR_DESCRIPTION,
+		        errorDescription);
+
+		final Object converted = this.objectUnderTest
+		        .fromMessage(receivedSmsNAckedMessage);
+
+		assertEquals("fromMessage(" + receivedSmsNAckedMessage
+		        + ") did not produce converted message of expected type",
+		        ReceivedSmsNackedContainer.class, converted.getClass());
+		final ReceivedSmsNackedContainer<?> casted = ReceivedSmsNackedContainer.class
+		        .cast(converted);
+		assertEquals(
+		        "fromMessage("
+		                + receivedSmsNAckedMessage
+		                + ") did not produce ReceivedMessageNackedContainer with the original SMS as its payload",
+		        nackedSms, casted.getAcknowledgedMessage());
+		assertEquals(
+		        "fromMessage("
+		                + receivedSmsNAckedMessage
+		                + ") did not produce ReceivedMessageAckedContainer with the original Message Reference",
+		        messageReference, casted.getAcknowledgedMessageReference());
+		assertEquals(
+		        "fromMessage("
+		                + receivedSmsNAckedMessage
+		                + ") did not produce ReceivedMessageAckedContainer with the original receiving channel id",
+		        receivingChannelId, casted.getReceivingChannelId());
+		assertEquals(
+		        "fromMessage("
+		                + receivedSmsNAckedMessage
+		                + ") did not produce ReceivedMessageAckedContainer with the original error key",
+		        errorKey, casted.getErrorKey());
+		assertEquals(
+		        "fromMessage("
+		                + receivedSmsNAckedMessage
+		                + ") did not produce ReceivedMessageAckedContainer with the original error description",
+		        errorDescription, casted.getErrorDescription());
 	}
 }

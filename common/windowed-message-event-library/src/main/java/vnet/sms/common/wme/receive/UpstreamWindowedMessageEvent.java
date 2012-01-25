@@ -37,18 +37,18 @@ public abstract class UpstreamWindowedMessageEvent<ID extends Serializable, M ex
 	}
 
 	/**
-	 * @see vnet.sms.common.wme.WindowedMessageEvent#getAcknowledgedMessageReference()
+	 * @see vnet.sms.common.wme.WindowedMessageEvent#getMessageReference()
 	 */
 	@Override
-	public ID getAcknowledgedMessageReference() {
+	public ID getMessageReference() {
 		return this.messageReference;
 	}
 
 	/**
-	 * @see vnet.sms.common.wme.WindowedMessageEvent#getAcknowledgedMessageType()
+	 * @see vnet.sms.common.wme.WindowedMessageEvent#getMessageType()
 	 */
 	@Override
-	public MessageType getAcknowledgedMessageType() {
+	public MessageType getMessageType() {
 		return this.type;
 	}
 
@@ -97,9 +97,8 @@ public abstract class UpstreamWindowedMessageEvent<ID extends Serializable, M ex
 	public String toString() {
 		return getClass().getSimpleName() + "@" + hashCode()
 		        + "[messageReference: " + this.messageReference + "|type: "
-		        + getAcknowledgedMessageType() + "|message: " + getMessage()
-		        + "|channel: " + getChannel() + "|remoteAddress: "
-		        + getRemoteAddress() + "]";
+		        + getMessageType() + "|message: " + getMessage() + "|channel: "
+		        + getChannel() + "|remoteAddress: " + getRemoteAddress() + "]";
 	}
 
 }
