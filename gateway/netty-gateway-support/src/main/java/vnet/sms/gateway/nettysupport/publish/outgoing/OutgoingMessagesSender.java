@@ -5,8 +5,9 @@ package vnet.sms.gateway.nettysupport.publish.outgoing;
 
 import java.io.Serializable;
 
-import vnet.sms.common.messages.Message;
-import vnet.sms.common.wme.WindowedMessageEvent;
+import org.jboss.netty.channel.ChannelFuture;
+
+import vnet.sms.common.wme.send.SendSmsContainer;
 
 /**
  * @author obergner
@@ -14,5 +15,34 @@ import vnet.sms.common.wme.WindowedMessageEvent;
  */
 public interface OutgoingMessagesSender<ID extends Serializable> {
 
-	void send(WindowedMessageEvent<ID, ? extends Message> sms) throws Exception;
+	// ------------------------------------------------------------------------
+	// Listener
+	// ------------------------------------------------------------------------
+
+	public interface Listener {
+
+		void sendSmsFailed(final SendSmsContainer failedSms,
+		        final Throwable error);
+	}
+
+	// ------------------------------------------------------------------------
+	// Managing listeners
+	// ------------------------------------------------------------------------
+
+	boolean addListener(Listener listener);
+
+	boolean removeListener(Listener listener);
+
+	void clearListeners();
+
+	// ------------------------------------------------------------------------
+	//
+	// ------------------------------------------------------------------------
+
+	/**
+	 * @param sms
+	 * @return
+	 * @throws Exception
+	 */
+	ChannelFuture sendSms(SendSmsContainer sms) throws Exception;
 }

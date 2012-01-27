@@ -40,9 +40,9 @@ import vnet.sms.gateway.nettysupport.window.NoWindowForIncomingMessageAvailableE
 import vnet.sms.gateway.nettysupport.window.PendingWindowedMessagesDiscardedEvent;
 
 import com.yammer.metrics.Metrics;
-import com.yammer.metrics.core.CounterMetric;
-import com.yammer.metrics.core.HistogramMetric;
-import com.yammer.metrics.core.MeterMetric;
+import com.yammer.metrics.core.Counter;
+import com.yammer.metrics.core.Histogram;
+import com.yammer.metrics.core.Meter;
 import com.yammer.metrics.core.Metric;
 import com.yammer.metrics.core.MetricName;
 
@@ -115,35 +115,35 @@ public class ManagedChannel {
 
 	private NotificationPublisher	    notificationPublisher;
 
-	private final HistogramMetric	    numberOfReceivedBytes;
+	private final Histogram	            numberOfReceivedBytes;
 
-	private final CounterMetric	        totalNumberOfReceivedBytes;
+	private final Counter	            totalNumberOfReceivedBytes;
 
-	private final MeterMetric	        numberOfReceivedPdus;
+	private final Meter	                numberOfReceivedPdus;
 
-	private final MeterMetric	        numberOfReceivedLoginRequests;
+	private final Meter	                numberOfReceivedLoginRequests;
 
-	private final MeterMetric	        numberOfReceivedLoginResponses;
+	private final Meter	                numberOfReceivedLoginResponses;
 
-	private final MeterMetric	        numberOfReceivedPingRequests;
+	private final Meter	                numberOfReceivedPingRequests;
 
-	private final MeterMetric	        numberOfReceivedPingResponses;
+	private final Meter	                numberOfReceivedPingResponses;
 
-	private final MeterMetric	        numberOfReceivedSms;
+	private final Meter	                numberOfReceivedSms;
 
-	private final MeterMetric	        numberOfAcceptedLoginRequests;
+	private final Meter	                numberOfAcceptedLoginRequests;
 
-	private final MeterMetric	        numberOfRejectedLoginRequests;
+	private final Meter	                numberOfRejectedLoginRequests;
 
-	private final HistogramMetric	    numberOfSentBytes;
+	private final Histogram	            numberOfSentBytes;
 
-	private final CounterMetric	        totalNumberOfSentBytes;
+	private final Counter	            totalNumberOfSentBytes;
 
-	private final MeterMetric	        numberOfSentPdus;
+	private final Meter	                numberOfSentPdus;
 
-	private final MeterMetric	        numberOfSentPingRequests;
+	private final Meter	                numberOfSentPingRequests;
 
-	private final MeterMetric	        numberOfSentPingResponses;
+	private final Meter	                numberOfSentPingResponses;
 
 	private final Channel	            channel;
 
@@ -245,21 +245,36 @@ public class ManagedChannel {
 	}
 
 	void cleanup() {
-		Metrics.removeMetric(metricNameOf(this.numberOfAcceptedLoginRequests));
-		Metrics.removeMetric(metricNameOf(this.numberOfReceivedBytes));
-		Metrics.removeMetric(metricNameOf(this.totalNumberOfReceivedBytes));
-		Metrics.removeMetric(metricNameOf(this.numberOfReceivedLoginRequests));
-		Metrics.removeMetric(metricNameOf(this.numberOfReceivedLoginResponses));
-		Metrics.removeMetric(metricNameOf(this.numberOfReceivedPdus));
-		Metrics.removeMetric(metricNameOf(this.numberOfReceivedPingRequests));
-		Metrics.removeMetric(metricNameOf(this.numberOfReceivedPingResponses));
-		Metrics.removeMetric(metricNameOf(this.numberOfReceivedSms));
-		Metrics.removeMetric(metricNameOf(this.numberOfRejectedLoginRequests));
-		Metrics.removeMetric(metricNameOf(this.numberOfSentBytes));
-		Metrics.removeMetric(metricNameOf(this.totalNumberOfSentBytes));
-		Metrics.removeMetric(metricNameOf(this.numberOfSentPdus));
-		Metrics.removeMetric(metricNameOf(this.numberOfSentPingRequests));
-		Metrics.removeMetric(metricNameOf(this.numberOfSentPingResponses));
+		Metrics.defaultRegistry().removeMetric(
+		        metricNameOf(this.numberOfAcceptedLoginRequests));
+		Metrics.defaultRegistry().removeMetric(
+		        metricNameOf(this.numberOfReceivedBytes));
+		Metrics.defaultRegistry().removeMetric(
+		        metricNameOf(this.totalNumberOfReceivedBytes));
+		Metrics.defaultRegistry().removeMetric(
+		        metricNameOf(this.numberOfReceivedLoginRequests));
+		Metrics.defaultRegistry().removeMetric(
+		        metricNameOf(this.numberOfReceivedLoginResponses));
+		Metrics.defaultRegistry().removeMetric(
+		        metricNameOf(this.numberOfReceivedPdus));
+		Metrics.defaultRegistry().removeMetric(
+		        metricNameOf(this.numberOfReceivedPingRequests));
+		Metrics.defaultRegistry().removeMetric(
+		        metricNameOf(this.numberOfReceivedPingResponses));
+		Metrics.defaultRegistry().removeMetric(
+		        metricNameOf(this.numberOfReceivedSms));
+		Metrics.defaultRegistry().removeMetric(
+		        metricNameOf(this.numberOfRejectedLoginRequests));
+		Metrics.defaultRegistry().removeMetric(
+		        metricNameOf(this.numberOfSentBytes));
+		Metrics.defaultRegistry().removeMetric(
+		        metricNameOf(this.totalNumberOfSentBytes));
+		Metrics.defaultRegistry().removeMetric(
+		        metricNameOf(this.numberOfSentPdus));
+		Metrics.defaultRegistry().removeMetric(
+		        metricNameOf(this.numberOfSentPingRequests));
+		Metrics.defaultRegistry().removeMetric(
+		        metricNameOf(this.numberOfSentPingResponses));
 
 		removeChannelMonitorFromChannel();
 
@@ -272,7 +287,7 @@ public class ManagedChannel {
 
 	private MetricName metricNameOf(final Metric metric) {
 		for (final Map.Entry<MetricName, Metric> namePlusMetric : Metrics
-		        .allMetrics().entrySet()) {
+		        .defaultRegistry().allMetrics().entrySet()) {
 			if (namePlusMetric.getValue().equals(metric)) {
 				return namePlusMetric.getKey();
 			}

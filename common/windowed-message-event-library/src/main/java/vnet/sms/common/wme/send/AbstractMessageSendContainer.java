@@ -1,6 +1,9 @@
 package vnet.sms.common.wme.send;
 
 import static org.apache.commons.lang.Validate.notNull;
+
+import java.io.Serializable;
+
 import vnet.sms.common.messages.Message;
 import vnet.sms.common.wme.MessageType;
 
@@ -10,7 +13,9 @@ import vnet.sms.common.wme.MessageType;
  * @param <M>
  */
 abstract class AbstractMessageSendContainer<M extends Message> implements
-        MessageSendContainer<M> {
+        MessageSendContainer<M>, Serializable {
+
+	private static final long	serialVersionUID	= -662855539360676935L;
 
 	private final MessageType	messageType;
 

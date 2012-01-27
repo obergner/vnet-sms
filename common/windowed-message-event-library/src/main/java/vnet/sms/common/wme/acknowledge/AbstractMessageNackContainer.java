@@ -19,9 +19,14 @@ abstract class AbstractMessageNackContainer<ID extends Serializable, M extends M
         extends AbstractMessageAcknowledgementContainer<ID, M> implements
         MessageNackContainer<ID, M> {
 
-	private final int	 errorKey;
+	/**
+     * 
+     */
+	private static final long	serialVersionUID	= -4417985555383260744L;
 
-	private final String	errorDescription;
+	private final int	      errorKey;
+
+	private final String	  errorDescription;
 
 	protected AbstractMessageNackContainer(final int errorKey,
 	        final String errorDescription,

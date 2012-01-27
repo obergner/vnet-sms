@@ -16,7 +16,9 @@ import vnet.sms.common.wme.MessageType;
  * 
  */
 abstract class AbstractMessageAcknowledgementContainer<ID extends Serializable, M extends Message>
-        implements MessageAcknowledgementContainer<ID, M> {
+        implements MessageAcknowledgementContainer<ID, M>, Serializable {
+
+	private static final long	  serialVersionUID	= 2256764884947681256L;
 
 	private final MessageType	  acknowledgedMessageType;
 

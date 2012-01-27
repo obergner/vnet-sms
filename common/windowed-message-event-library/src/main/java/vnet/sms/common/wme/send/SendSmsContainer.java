@@ -12,6 +12,11 @@ import vnet.sms.common.wme.MessageType;
  */
 public final class SendSmsContainer extends AbstractMessageSendContainer<Sms> {
 
+	/**
+     * 
+     */
+	private static final long	serialVersionUID	= -6177476897774774517L;
+
 	public SendSmsContainer(final Sms message) {
 		super(MessageType.SEND_SMS, message);
 	}

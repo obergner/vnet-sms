@@ -28,10 +28,10 @@ import vnet.sms.gateway.nettysupport.publish.incoming.IncomingMessagesListener;
 import vnet.sms.gateway.server.framework.Jmx;
 
 import com.yammer.metrics.Metrics;
-import com.yammer.metrics.core.HistogramMetric;
-import com.yammer.metrics.core.MeterMetric;
+import com.yammer.metrics.core.Histogram;
+import com.yammer.metrics.core.Meter;
 import com.yammer.metrics.core.MetricName;
-import com.yammer.metrics.core.TimerMetric;
+import com.yammer.metrics.core.Timer;
 
 /**
  * @author obergner
@@ -41,62 +41,62 @@ import com.yammer.metrics.core.TimerMetric;
 public class MessageForwardingJmsBridge<ID extends java.io.Serializable>
         implements IncomingMessagesListener<ID> {
 
-	private static final String	  TYPE	                          = "JMSBridge";
+	private static final String	TYPE	                        = "JMSBridge";
 
-	private static final String	  NAME	                          = "DEFAULT";
+	private static final String	NAME	                        = "DEFAULT";
 
-	static final String	          OBJECT_NAME	                  = Jmx.GROUP
-	                                                                      + ":type="
-	                                                                      + TYPE
-	                                                                      + ",name="
-	                                                                      + NAME;
+	static final String	        OBJECT_NAME	                    = Jmx.GROUP
+	                                                                    + ":type="
+	                                                                    + TYPE
+	                                                                    + ",name="
+	                                                                    + NAME;
 
-	private final Logger	      log	                          = LoggerFactory
-	                                                                      .getLogger(getClass());
+	private final Logger	    log	                            = LoggerFactory
+	                                                                    .getLogger(getClass());
 
-	private final MeterMetric	  numberOfForwardedSms	          = Metrics
-	                                                                      .newMeter(
-	                                                                              new MetricName(
-	                                                                                      Jmx.GROUP,
-	                                                                                      TYPE,
-	                                                                                      "number-of-forwarded-sms"),
-	                                                                              "sms-forwarded",
-	                                                                              TimeUnit.SECONDS);
+	private final Meter	        numberOfForwardedSms	        = Metrics
+	                                                                    .newMeter(
+	                                                                            new MetricName(
+	                                                                                    Jmx.GROUP,
+	                                                                                    TYPE,
+	                                                                                    "number-of-forwarded-sms"),
+	                                                                            "sms-forwarded",
+	                                                                            TimeUnit.SECONDS);
 
-	private final MeterMetric	  numberOfForwardedLoginRequests	= Metrics
-	                                                                      .newMeter(
-	                                                                              new MetricName(
-	                                                                                      Jmx.GROUP,
-	                                                                                      TYPE,
-	                                                                                      "number-of-forwarded-login-requests"),
-	                                                                              "login-request-forwarded",
-	                                                                              TimeUnit.SECONDS);
+	private final Meter	        numberOfForwardedLoginRequests	= Metrics
+	                                                                    .newMeter(
+	                                                                            new MetricName(
+	                                                                                    Jmx.GROUP,
+	                                                                                    TYPE,
+	                                                                                    "number-of-forwarded-login-requests"),
+	                                                                            "login-request-forwarded",
+	                                                                            TimeUnit.SECONDS);
 
-	private final MeterMetric	  numberOfForwardedLoginResponses	= Metrics
-	                                                                      .newMeter(
-	                                                                              new MetricName(
-	                                                                                      Jmx.GROUP,
-	                                                                                      TYPE,
-	                                                                                      "number-of-forwarded-login-responses"),
-	                                                                              "login-response-forwarded",
-	                                                                              TimeUnit.SECONDS);
+	private final Meter	        numberOfForwardedLoginResponses	= Metrics
+	                                                                    .newMeter(
+	                                                                            new MetricName(
+	                                                                                    Jmx.GROUP,
+	                                                                                    TYPE,
+	                                                                                    "number-of-forwarded-login-responses"),
+	                                                                            "login-response-forwarded",
+	                                                                            TimeUnit.SECONDS);
 
-	private final HistogramMetric	forwardedMessages	          = Metrics
-	                                                                      .newHistogram(new MetricName(
-	                                                                              Jmx.GROUP,
-	                                                                              TYPE,
-	                                                                              "forwarded-messages-distribution"));
+	private final Histogram	    forwardedMessages	            = Metrics
+	                                                                    .newHistogram(new MetricName(
+	                                                                            Jmx.GROUP,
+	                                                                            TYPE,
+	                                                                            "forwarded-messages-distribution"));
 
-	private final TimerMetric	  sendDuration	                  = Metrics
-	                                                                      .newTimer(
-	                                                                              new MetricName(
-	                                                                                      Jmx.GROUP,
-	                                                                                      TYPE,
-	                                                                                      "message-send-duration"),
-	                                                                              TimeUnit.MILLISECONDS,
-	                                                                              TimeUnit.SECONDS);
+	private final Timer	        sendDuration	                = Metrics
+	                                                                    .newTimer(
+	                                                                            new MetricName(
+	                                                                                    Jmx.GROUP,
+	                                                                                    TYPE,
+	                                                                                    "message-send-duration"),
+	                                                                            TimeUnit.MILLISECONDS,
+	                                                                            TimeUnit.SECONDS);
 
-	private final JmsTemplate	  jmsTemplate;
+	private final JmsTemplate	jmsTemplate;
 
 	// ------------------------------------------------------------------------
 	// Constructors

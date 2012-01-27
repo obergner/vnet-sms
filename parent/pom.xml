@@ -59,7 +59,7 @@
 		<deps.osgi.version>4.1.0</deps.osgi.version>
 		<deps.google-guava.version>11.0</deps.google-guava.version>
 		<deps.spring-security.version>3.1.0.RELEASE</deps.spring-security.version>
-		<deps.yammer-metrics.version>2.0.0-BETA18</deps.yammer-metrics.version>
+		<deps.yammer-metrics.version>2.0.0-RC0</deps.yammer-metrics.version>
 		<deps.activemq.version>5.5.1</deps.activemq.version>
 		<deps.xbean.version>2.8</deps.xbean.version>
 		<deps.xbean-spring.version>3.5</deps.xbean-spring.version>
