@@ -6,7 +6,6 @@ package vnet.sms.gateway.nettysupport.publish.outgoing;
 import static org.apache.commons.lang.Validate.notNull;
 
 import java.io.Serializable;
-import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -21,6 +20,9 @@ import org.jboss.netty.channel.ChannelFutureListener;
 import org.jboss.netty.channel.group.ChannelGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jmx.export.annotation.ManagedOperation;
+import org.springframework.jmx.export.annotation.ManagedOperationParameter;
+import org.springframework.jmx.export.annotation.ManagedOperationParameters;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
 import vnet.sms.common.messages.Sms;
@@ -133,7 +135,7 @@ public class DefaultOutgoingMessagesSender<ID extends Serializable> implements
 	public ChannelFuture sendSms(final SendSmsContainer sms) throws Exception {
 		notNull(sms, "Argument 'sms' must not be null");
 		try {
-			this.log.debug("Sending {} ...");
+			this.log.debug("Sending {} ...", sms);
 
 			final Channel channel = selectRandomChannel();
 			this.log.debug("Will send {} via {}", sms, channel);
@@ -198,10 +200,11 @@ public class DefaultOutgoingMessagesSender<ID extends Serializable> implements
 
 	// FIXME: This method does currently fill neither originator nor destination
 	// MSISDN
+	@ManagedOperation(description = "Send an SMS")
+	@ManagedOperationParameters(@ManagedOperationParameter(name = "text", description = "The text to send"))
 	public void sendSms(final String text) throws Exception {
 		this.log.info("Received request to send SMS [\"{}\"] via JMX", text);
-		final Sms sms = new Sms(text, new InetSocketAddress(0),
-		        new InetSocketAddress(1));
+		final Sms sms = new Sms(text);
 		final SendSmsContainer sendSmsContainer = new SendSmsContainer(sms);
 		final ChannelFuture smsSent = sendSms(sendSmsContainer);
 		this.log.info(
@@ -214,6 +217,7 @@ public class DefaultOutgoingMessagesSender<ID extends Serializable> implements
 	// Clean up resources
 	// ------------------------------------------------------------------------
 
+	@Override
 	@PreDestroy
 	public void close() {
 		this.log.info("Closing OutgoingMessagesSender - will remove all statistics from MBean server ...");

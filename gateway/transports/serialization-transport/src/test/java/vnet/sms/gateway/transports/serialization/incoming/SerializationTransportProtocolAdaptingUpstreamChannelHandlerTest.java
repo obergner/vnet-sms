@@ -3,8 +3,6 @@ package vnet.sms.gateway.transports.serialization.incoming;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.net.InetSocketAddress;
-
 import org.jboss.netty.channel.MessageEvent;
 import org.junit.Test;
 
@@ -37,8 +35,7 @@ public class SerializationTransportProtocolAdaptingUpstreamChannelHandlerTest {
 		                .wrap(1,
 		                        new LoginRequest(
 		                                "assertThatTransportProtocolAdapterCorrectlyConvertsPduToLoginRequest",
-		                                "secret", new InetSocketAddress(1),
-		                                new InetSocketAddress(1))));
+		                                "secret")));
 		final MessageEvent convertedPduEvent = embeddedPipeline
 		        .nextReceivedMessageEvent();
 
@@ -62,8 +59,7 @@ public class SerializationTransportProtocolAdaptingUpstreamChannelHandlerTest {
 		                LoginResponse
 		                        .accept(new LoginRequest(
 		                                "assertThatTransportProtocolAdapterCorrectlyConvertsPduToLoginRequest",
-		                                "secret", new InetSocketAddress(1),
-		                                new InetSocketAddress(1)))));
+		                                "secret"))));
 		final MessageEvent convertedPduEvent = embeddedPipeline
 		        .nextReceivedMessageEvent();
 
@@ -82,8 +78,7 @@ public class SerializationTransportProtocolAdaptingUpstreamChannelHandlerTest {
 		        this.objectUnderTest);
 
 		embeddedPipeline.receive(ReferenceableMessageContainer.wrap(1,
-		        new PingRequest(new InetSocketAddress(1),
-		                new InetSocketAddress(1))));
+		        new PingRequest()));
 		final MessageEvent convertedPduEvent = embeddedPipeline
 		        .nextReceivedMessageEvent();
 
@@ -102,8 +97,7 @@ public class SerializationTransportProtocolAdaptingUpstreamChannelHandlerTest {
 		        this.objectUnderTest);
 
 		embeddedPipeline.receive(ReferenceableMessageContainer.wrap(1,
-		        PingResponse.accept(new PingRequest(new InetSocketAddress(2),
-		                new InetSocketAddress(3)))));
+		        PingResponse.accept(new PingRequest())));
 		final MessageEvent convertedPduEvent = embeddedPipeline
 		        .nextReceivedMessageEvent();
 
@@ -121,9 +115,11 @@ public class SerializationTransportProtocolAdaptingUpstreamChannelHandlerTest {
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        this.objectUnderTest);
 
-		embeddedPipeline.receive(ReferenceableMessageContainer.wrap(1, new Sms(
-		        "assertThatTransportProtocolAdapterCorrectlyConvertsPduToSms",
-		        new InetSocketAddress(1), new InetSocketAddress(2))));
+		embeddedPipeline
+		        .receive(ReferenceableMessageContainer
+		                .wrap(1,
+		                        new Sms(
+		                                "assertThatTransportProtocolAdapterCorrectlyConvertsPduToSms")));
 		final MessageEvent convertedPduEvent = embeddedPipeline
 		        .nextReceivedMessageEvent();
 

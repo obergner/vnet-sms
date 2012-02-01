@@ -37,7 +37,6 @@ package vnet.sms.common.messages;
 import static org.apache.commons.lang.Validate.notNull;
 
 import java.io.UnsupportedEncodingException;
-import java.net.SocketAddress;
 import java.util.Random;
 
 import vnet.sms.common.messages.util.SmsPduUtil;
@@ -56,11 +55,11 @@ public class Sms extends Message {
 
 	private static final long	serialVersionUID	= 7793476003910915706L;
 
-	private static Random	  rnd_	             = new Random();
+	private static Random	  rnd	             = new Random();
 
-	private String	          text_;
+	private String	          text;
 
-	private DataCodingScheme	dcs_;
+	private DataCodingScheme	dcs;
 
 	/**
 	 * Creates an Sms with the given dcs.
@@ -70,9 +69,8 @@ public class Sms extends Message {
 	 * @param dcs
 	 *            The data coding scheme
 	 */
-	public Sms(final String msg, final DataCodingScheme dcs,
-	        final SocketAddress sender, final SocketAddress receiver) {
-		super(sender, receiver);
+	public Sms(final String msg, final DataCodingScheme dcs) {
+		super();
 		notNull(msg, "Argument 'msg' must not be null");
 		notNull(dcs, "Argument 'dcs' must not be null");
 		setText(msg, dcs);
@@ -99,10 +97,9 @@ public class Sms extends Message {
 	 * @param messageClass
 	 *            The messageclass
 	 */
-	public Sms(final String msg, final int alphabet, final int messageClass,
-	        final SocketAddress sender, final SocketAddress receiver) {
+	public Sms(final String msg, final int alphabet, final int messageClass) {
 		this(msg, DataCodingScheme.getGeneralDataCodingDcs(alphabet,
-		        messageClass), sender, receiver);
+		        messageClass));
 	}
 
 	/**
@@ -111,17 +108,16 @@ public class Sms extends Message {
 	 * @param msg
 	 *            The message
 	 */
-	public Sms(final String msg, final SocketAddress sender,
-	        final SocketAddress receiver) {
+	public Sms(final String msg) {
 		this(msg, DataCodingScheme.ALPHABET_GSM,
-		        DataCodingScheme.MSG_CLASS_UNKNOWN, sender, receiver);
+		        DataCodingScheme.MSG_CLASS_UNKNOWN);
 	}
 
 	/**
 	 * Returns the text message.
 	 */
 	public String getText() {
-		return this.text_;
+		return this.text;
 	}
 
 	/**
@@ -135,7 +131,7 @@ public class Sms extends Message {
 			        "Text cannot be null, use an empty string instead.");
 		}
 
-		this.text_ = text;
+		this.text = text;
 	}
 
 	/**
@@ -154,15 +150,15 @@ public class Sms extends Message {
 			throw new IllegalArgumentException("dcs cannot be null.");
 		}
 
-		this.text_ = text;
-		this.dcs_ = dcs;
+		this.text = text;
+		this.dcs = dcs;
 	}
 
 	/**
 	 * Returns the dcs.
 	 */
 	public DataCodingScheme getDcs() {
-		return this.dcs_;
+		return this.dcs;
 	}
 
 	/**
@@ -173,20 +169,20 @@ public class Sms extends Message {
 	public UserData getUserData() {
 		try {
 			final UserData ud;
-			switch (this.dcs_.getAlphabet()) {
+			switch (this.dcs.getAlphabet()) {
 			case DataCodingScheme.ALPHABET_GSM:
-				ud = new UserData(SmsPduUtil.getSeptets(this.text_),
-				        this.text_.length(), this.dcs_);
+				ud = new UserData(SmsPduUtil.getSeptets(this.text),
+				        this.text.length(), this.dcs);
 				break;
 
 			case DataCodingScheme.ALPHABET_8BIT:
-				ud = new UserData(this.text_.getBytes("ISO-8859-1"),
-				        this.text_.length(), this.dcs_);
+				ud = new UserData(this.text.getBytes("ISO-8859-1"),
+				        this.text.length(), this.dcs);
 				break;
 
 			case DataCodingScheme.ALPHABET_UCS2:
-				ud = new UserData(this.text_.getBytes("UTF-16BE"),
-				        this.text_.length() * 2, this.dcs_);
+				ud = new UserData(this.text.getBytes("UTF-16BE"),
+				        this.text.length() * 2, this.dcs);
 				break;
 
 			default:
@@ -251,7 +247,7 @@ public class Sms extends Message {
 		if (ud.getLength() <= nMaxChars) {
 			smsPdus = new SmsPdu[] { new SmsPdu(udhElements, ud) };
 		} else {
-			final int refno = rnd_.nextInt(256);
+			final int refno = rnd.nextInt(256);
 
 			// Calculate number of SMS needed
 			int nSms = ud.getLength() / nMaxConcatChars;
@@ -308,7 +304,7 @@ public class Sms extends Message {
 		if (ud.getLength() <= maxBytes) {
 			smsPdus = new SmsPdu[] { new SmsPdu(udhElements, ud) };
 		} else {
-			final int refno = rnd_.nextInt(256);
+			final int refno = rnd.nextInt(256);
 
 			// Calculate number of SMS needed
 			int nSms = (ud.getLength() / 2) / nMaxConcatChars;
@@ -365,7 +361,7 @@ public class Sms extends Message {
 		if (ud.getLength() <= nMaxChars) {
 			smsPdus = new SmsPdu[] { new SmsPdu(udhElements, ud) };
 		} else {
-			final int refno = rnd_.nextInt(256);
+			final int refno = rnd.nextInt(256);
 
 			// Calculate number of SMS needed
 			int nSms = ud.getLength() / nMaxConcatChars;
@@ -419,7 +415,7 @@ public class Sms extends Message {
 	public String toString() {
 		return "Sms@" + this.hashCode() + "[ID: " + this.getId()
 		        + "|creationTimestamp: " + this.getCreationTimestamp()
-		        + "|text_: " + this.text_ + "|dcs_: " + this.dcs_ + "]";
+		        + "|text: " + this.text + "|dcs: " + this.dcs + "]";
 	}
 
 }

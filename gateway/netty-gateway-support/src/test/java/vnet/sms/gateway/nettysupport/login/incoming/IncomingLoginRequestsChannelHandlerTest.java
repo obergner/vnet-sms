@@ -4,8 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import java.net.InetSocketAddress;
-
 import org.jboss.netty.channel.ChannelEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.junit.Test;
@@ -56,8 +54,7 @@ public class IncomingLoginRequestsChannelHandlerTest {
 		embeddedPipeline
 		        .receive(new LoginRequest(
 		                "assertThatLoginChannelHandlerSendsLoginRequestAcceptedEventDownstreamIfLoginSucceeds",
-		                "secret", new InetSocketAddress(0),
-		                new InetSocketAddress(0)));
+		                "secret"));
 		final MessageEvent sentReply = embeddedPipeline.nextSentMessageEvent();
 
 		assertNotNull(
@@ -89,8 +86,7 @@ public class IncomingLoginRequestsChannelHandlerTest {
 		embeddedPipeline
 		        .receive(new LoginRequest(
 		                "assertThatLoginChannelHandlerSendsLoginRequestRejectedEventDownstreamIfLoginThrowsBadCredentialsException",
-		                "secret", new InetSocketAddress(0),
-		                new InetSocketAddress(0)));
+		                "secret"));
 		Thread.sleep(negativeResponseDelayMillis + 100);
 		final MessageEvent sentReply = embeddedPipeline.nextSentMessageEvent();
 
@@ -123,8 +119,7 @@ public class IncomingLoginRequestsChannelHandlerTest {
 		embeddedPipeline
 		        .receive(new LoginRequest(
 		                "assertThatLoginChannelHandlerDelaysResponseForConfiguredNumberOfMillisecondsIfLoginRequestFails",
-		                "secret", new InetSocketAddress(0),
-		                new InetSocketAddress(0)));
+		                "secret"));
 
 		assertNull(
 		        "IncomingLoginRequestsChannelHandler did NOT delay response to failed login attempt",
@@ -152,8 +147,7 @@ public class IncomingLoginRequestsChannelHandlerTest {
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        objectUnderTest);
-		embeddedPipeline.receive(new PingRequest(new InetSocketAddress(0),
-		        new InetSocketAddress(0)));
+		embeddedPipeline.receive(new PingRequest());
 		final MessageEvent sentReply = embeddedPipeline.nextSentMessageEvent();
 
 		assertNotNull(
@@ -187,10 +181,8 @@ public class IncomingLoginRequestsChannelHandlerTest {
 		embeddedPipeline
 		        .receive(new LoginRequest(
 		                "assertThatLoginChannelHandlerSendsLoginRequestAcceptedEventDownstreamIfLoginSucceeds",
-		                "secret", new InetSocketAddress(0),
-		                new InetSocketAddress(0)));
-		embeddedPipeline.receive(new PingRequest(new InetSocketAddress(0),
-		        new InetSocketAddress(0)));
+		                "secret"));
+		embeddedPipeline.receive(new PingRequest());
 		final MessageEvent propagatedMessage = embeddedPipeline
 		        .nextReceivedMessageEvent(MessageEventFilter.FILTERS
 		                .ofType(PingRequestReceivedEvent.class));
@@ -225,8 +217,7 @@ public class IncomingLoginRequestsChannelHandlerTest {
 		embeddedPipeline
 		        .receive(new LoginRequest(
 		                "assertThatLoginChannelHandlerSendsChannelSuccessfullyAuthenticatedEventUpstreamIfLoginSucceeds",
-		                "secret", new InetSocketAddress(0),
-		                new InetSocketAddress(0)));
+		                "secret"));
 		final ChannelEvent upstreamChannelEvent = embeddedPipeline
 		        .nextUpstreamChannelEvent(new ChannelEventFilter() {
 			        @Override
@@ -262,8 +253,7 @@ public class IncomingLoginRequestsChannelHandlerTest {
 		embeddedPipeline
 		        .receive(new LoginRequest(
 		                "assertThatLoginChannelHandlerSendsChannelAuthenticationFailedEventUpstreamIfLoginFailes",
-		                "secret", new InetSocketAddress(0),
-		                new InetSocketAddress(0)));
+		                "secret"));
 		final ChannelEvent upstreamChannelEvent = embeddedPipeline
 		        .nextUpstreamChannelEvent(new ChannelEventFilter() {
 			        @Override
@@ -299,7 +289,7 @@ public class IncomingLoginRequestsChannelHandlerTest {
 		        objectUnderTest);
 		final LoginRequest loginRequest = new LoginRequest(
 		        "assertThatLoginChannelHandlerRemovesAuthenticatedUserFromMDCAfterReturning",
-		        "secret", new InetSocketAddress(0), new InetSocketAddress(0));
+		        "secret");
 		embeddedPipeline.receive(loginRequest);
 		final String currentUserInMdc = MDC
 		        .get(IncomingLoginRequestsChannelHandler.CURRENT_USER_MDC_KEY);

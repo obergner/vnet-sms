@@ -10,7 +10,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.management.ManagementFactory;
-import java.net.InetSocketAddress;
 
 import javax.management.Notification;
 
@@ -18,7 +17,6 @@ import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.ChannelEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.group.DefaultChannelGroup;
-import org.jboss.netty.channel.local.LocalAddress;
 import org.jboss.netty.handler.codec.base64.Base64Decoder;
 import org.jboss.netty.handler.codec.base64.Base64Encoder;
 import org.jboss.netty.handler.codec.frame.DelimiterBasedFrameDecoder;
@@ -248,7 +246,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 
 		final LoginRequest successfulLoginRequest = new LoginRequest(
 		        "assertThatTheProducedPipelineRespondsWithASuccessfulLoginResponseToASuccessfulLoginRequest",
-		        "whatever", new InetSocketAddress(1), new InetSocketAddress(2));
+		        "whatever");
 		embeddedPipeline.receive(SerializationUtils.serialize(1,
 		        successfulLoginRequest));
 		final MessageEvent encodedLoginResponse = embeddedPipeline
@@ -326,7 +324,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 
 		final LoginRequest failedLoginRequest = new LoginRequest(
 		        "assertThatTheProducedPipelineRespondsWithAFailedLoginResponseToAFailedLoginRequest",
-		        "whatever", new InetSocketAddress(1), new InetSocketAddress(2));
+		        "whatever");
 		embeddedPipeline.receive(SerializationUtils.serialize(1,
 		        failedLoginRequest));
 		Thread.sleep(failedLoginResponseMillis + 100);
@@ -365,7 +363,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 
 		final LoginRequest failedLoginRequest = new LoginRequest(
 		        "assertThatTheProducedPipelineRespondsWithAFailedLoginResponseToAFailedLoginRequest",
-		        "whatever", new InetSocketAddress(1), new InetSocketAddress(2));
+		        "whatever");
 		embeddedPipeline.receive(SerializationUtils.serialize(1,
 		        failedLoginRequest));
 
@@ -404,8 +402,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        objectUnderTest);
 
-		final PingRequest nonLoginRequest = new PingRequest(
-		        new InetSocketAddress(1), new InetSocketAddress(2));
+		final PingRequest nonLoginRequest = new PingRequest();
 		embeddedPipeline.receive(SerializationUtils.serialize(1,
 		        nonLoginRequest));
 		final MessageEvent encodedPingResponse = embeddedPipeline
@@ -447,8 +444,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		                embeddedPipeline.getChannel(),
 		                new LoginRequest(
 		                        "assertThatOutgoingPingChannelHandlerSendsPingAfterChannelHasBeenAuthenticatedAndPingIntervalElapsed",
-		                        "password", new LocalAddress(1),
-		                        new LocalAddress(2))));
+		                        "password")));
 
 		Thread.sleep(pingIntervalSeconds * 1000L + 100L);
 
@@ -488,7 +484,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		// PingResponse
 		final LoginRequest successfulLoginRequest = new LoginRequest(
 		        "assertThatTheProducedPipelineContinuesSendingPingRequestsAfterReceivingPingResponse",
-		        "whatever", new InetSocketAddress(1), new InetSocketAddress(2));
+		        "whatever");
 		embeddedPipeline.receive(SerializationUtils.serialize(1,
 		        successfulLoginRequest));
 		// Consume LoginResponse - we don't care about it
@@ -545,7 +541,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		// incoming messages
 		final LoginRequest successfulLoginRequest = new LoginRequest(
 		        "assertThatTheProducedPipelineIssuesNoWindowForIncomingMessageAvailableEventIfNoWindowIsAvailable",
-		        "whatever", new InetSocketAddress(1), new InetSocketAddress(2));
+		        "whatever");
 		embeddedPipeline.receive(SerializationUtils.serialize(1,
 		        successfulLoginRequest));
 		// Discard LoginResponse - we don't care
@@ -555,13 +551,11 @@ public class GatewayServerChannelPipelineFactoryTest {
 		// we don't support freeing windows yet
 		for (int i = 0; i < availableIncomingWindows - 1; i++) {
 			embeddedPipeline.receive(SerializationUtils.serialize((i + 2),
-			        new PingRequest(new InetSocketAddress(1),
-			                new InetSocketAddress(2))));
+			        new PingRequest()));
 		}
 
 		embeddedPipeline.receive(SerializationUtils.serialize(12,
-		        new PingRequest(new InetSocketAddress(5),
-		                new InetSocketAddress(6))));
+		        new PingRequest()));
 
 		final ChannelEvent propagatedMessageEvent = embeddedPipeline
 		        .nextUpstreamChannelEvent(ChannelEventFilter.FILTERS

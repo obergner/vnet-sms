@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.net.InetSocketAddress;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -74,8 +73,7 @@ public class GatewayServerIT {
 		final int messageReference = 1;
 		final LoginRequest successfulLoginRequest = new LoginRequest(
 		        "assertThatGatewayServerRespondsWithASuccessfulLoginResponseToASuccessfulLoginRequest",
-		        "whatever", new InetSocketAddress(2048), new InetSocketAddress(
-		                65000));
+		        "whatever");
 
 		this.testClient.connect();
 		final ReferenceableMessageContainer response = this.testClient
@@ -100,8 +98,7 @@ public class GatewayServerIT {
 		final int messageReference = 1;
 		final LoginRequest failedLoginRequest = new LoginRequest(
 		        "assertThatGatewayServerRespondsWithAFailedLoginResponseToAFailedLoginRequest",
-		        DummyAuthenticationProvider.REJECTED_PASSWORD,
-		        new InetSocketAddress(2048), new InetSocketAddress(65000));
+		        DummyAuthenticationProvider.REJECTED_PASSWORD);
 
 		this.testClient.connect();
 		final ReferenceableMessageContainer response = this.testClient
@@ -126,8 +123,7 @@ public class GatewayServerIT {
 		final int messageReference = 1;
 		final String username = "assertThatGatewayServerForwardsSuccessfulLoginRequestToJmsServer";
 		final LoginRequest successfulLoginRequest = new LoginRequest(username,
-		        "whatever", new InetSocketAddress(2048), new InetSocketAddress(
-		                65000));
+		        "whatever");
 
 		final JmsMessagePredicate isExpectedLoginRequest = new JmsMessagePredicate() {
 			@Override
@@ -172,8 +168,7 @@ public class GatewayServerIT {
 		final int messageReference = 1;
 		final String username = "assertThatGatewayServerForwardsFailedLoginRequestToJmsServer";
 		final LoginRequest failedLoginRequest = new LoginRequest(username,
-		        DummyAuthenticationProvider.REJECTED_PASSWORD,
-		        new InetSocketAddress(2048), new InetSocketAddress(65000));
+		        DummyAuthenticationProvider.REJECTED_PASSWORD);
 
 		final JmsMessagePredicate isExpectedLoginRequest = new JmsMessagePredicate() {
 			@Override
@@ -218,8 +213,7 @@ public class GatewayServerIT {
 		final int messageReference = 78;
 		final String username = "assertThatGatewayServerDelaysResponseToFailedLoginRequest";
 		final LoginRequest failedLoginRequest = new LoginRequest(username,
-		        DummyAuthenticationProvider.REJECTED_PASSWORD,
-		        new InetSocketAddress(2048), new InetSocketAddress(65000));
+		        DummyAuthenticationProvider.REJECTED_PASSWORD);
 
 		this.testClient.connect();
 		final long before = System.currentTimeMillis();
@@ -238,8 +232,7 @@ public class GatewayServerIT {
 	public final void assertThatGatewayServerRejectsNonLoginMessagesOnAnUnauthenticatedChannel()
 	        throws Throwable {
 		final int messageReference = 78;
-		final PingRequest nonLoginMessage = new PingRequest(
-		        new InetSocketAddress(2048), new InetSocketAddress(65000));
+		final PingRequest nonLoginMessage = new PingRequest();
 
 		this.testClient.connect();
 		final ReferenceableMessageContainer nonLoginResponse = this.testClient
@@ -328,8 +321,7 @@ public class GatewayServerIT {
 		// Send ping response
 		final CountDownLatch secondPingReceived = this.testClient
 		        .listen(matchesReceivedPingEvent);
-		this.testClient.sendMessage(2, PingResponse.accept(new PingRequest(
-		        new InetSocketAddress(2000), new InetSocketAddress(3000))));
+		this.testClient.sendMessage(2, PingResponse.accept(new PingRequest()));
 
 		assertTrue(
 		        "Expected to receive  second Ping after sending PingResponse and aiting for "

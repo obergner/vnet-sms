@@ -3,8 +3,6 @@ package vnet.sms.gateway.nettysupport.transport.outgoing;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.net.InetSocketAddress;
-
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.DownstreamMessageEvent;
 import org.jboss.netty.channel.MessageEvent;
@@ -30,8 +28,7 @@ public class TransportProtocolAdaptingDownstreamChannelHandlerTest {
 		        this.objectUnderTest,
 		        new MessageEventWrappingDownstreamChannelHandler());
 
-		embeddedPipeline.send(new PingRequest(new InetSocketAddress(1),
-		        new InetSocketAddress(2)));
+		embeddedPipeline.send(new PingRequest());
 		final MessageEvent convertedMessageEvent = embeddedPipeline
 		        .nextSentMessageEvent();
 

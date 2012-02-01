@@ -3,8 +3,6 @@ package vnet.sms.gateway.nettysupport.transport.incoming;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.net.InetSocketAddress;
-
 import org.jboss.netty.handler.codec.embedder.CodecEmbedderException;
 import org.jboss.netty.handler.codec.embedder.DecoderEmbedder;
 import org.junit.Test;
@@ -29,8 +27,7 @@ public class TransportProtocolAdaptingUpstreamChannelHandlerTest {
 		embeddedPipeline
 		        .offer(new LoginRequest(
 		                "assertThatTransportProtocolAdapterCorrectlyConvertsPduToLoginRequest",
-		                "secret", new InetSocketAddress(1),
-		                new InetSocketAddress(1)));
+		                "secret"));
 		final Message convertedPdu = embeddedPipeline.poll();
 		embeddedPipeline.finish();
 
@@ -51,8 +48,7 @@ public class TransportProtocolAdaptingUpstreamChannelHandlerTest {
 		        .offer(LoginResponse
 		                .accept(new LoginRequest(
 		                        "assertThatTransportProtocolAdapterCorrectlyConvertsPduToLoginRequest",
-		                        "secret", new InetSocketAddress(1),
-		                        new InetSocketAddress(1))));
+		                        "secret")));
 		final Message convertedPdu = embeddedPipeline.poll();
 
 		assertNotNull(
@@ -68,8 +64,7 @@ public class TransportProtocolAdaptingUpstreamChannelHandlerTest {
 		final DecoderEmbedder<Message> embeddedPipeline = new DecoderEmbedder<Message>(
 		        this.objectUnderTest);
 
-		embeddedPipeline.offer(new PingRequest(new InetSocketAddress(1),
-		        new InetSocketAddress(1)));
+		embeddedPipeline.offer(new PingRequest());
 		final Message convertedPdu = embeddedPipeline.poll();
 
 		assertNotNull(
@@ -85,8 +80,7 @@ public class TransportProtocolAdaptingUpstreamChannelHandlerTest {
 		final DecoderEmbedder<Message> embeddedPipeline = new DecoderEmbedder<Message>(
 		        this.objectUnderTest);
 
-		embeddedPipeline.offer(PingResponse.accept(new PingRequest(
-		        new InetSocketAddress(1), new InetSocketAddress(1))));
+		embeddedPipeline.offer(PingResponse.accept(new PingRequest()));
 		final Message convertedPdu = embeddedPipeline.poll();
 
 		assertNotNull(
@@ -103,8 +97,7 @@ public class TransportProtocolAdaptingUpstreamChannelHandlerTest {
 		        this.objectUnderTest);
 
 		embeddedPipeline.offer(new Sms(
-		        "assertThatTransportProtocolAdapterCorrectlyConvertsPduToSms",
-		        new InetSocketAddress(0), new InetSocketAddress(1)));
+		        "assertThatTransportProtocolAdapterCorrectlyConvertsPduToSms"));
 		final Message convertedPdu = embeddedPipeline.poll();
 
 		assertNotNull(

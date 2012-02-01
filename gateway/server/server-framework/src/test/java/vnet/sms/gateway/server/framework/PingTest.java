@@ -176,7 +176,6 @@ public class PingTest extends AbstractGatewayServerTest {
 	        throws Throwable {
 		final int messageReference = 1;
 		final LocalAddress serverAddress = new LocalAddress("test:server:9");
-		final LocalAddress clientAddress = new LocalAddress("test:client:9");
 
 		final int availableIncomingWindows = 10;
 		final long incomingWindowWaitTimeMillis = 1000L;
@@ -198,8 +197,7 @@ public class PingTest extends AbstractGatewayServerTest {
 		        channelPipelineFactory);
 		objectUnderTest.start();
 
-		final PingRequest pingRequest = new PingRequest(clientAddress,
-		        serverAddress);
+		final PingRequest pingRequest = new PingRequest();
 
 		final LocalClient client = new LocalClient(serverAddress);
 		client.connect();

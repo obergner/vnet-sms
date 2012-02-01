@@ -24,7 +24,6 @@ public class SmsTest extends AbstractGatewayServerTest {
 	public final void assertThatGatewayServerForwardsReceivedSmsToJmsServer()
 	        throws Throwable {
 		final LocalAddress serverAddress = new LocalAddress("test:server:10");
-		final LocalAddress clientAddress = new LocalAddress("test:client:10");
 
 		final int availableIncomingWindows = 1000;
 		final long incomingWindowWaitTimeMillis = 1L;
@@ -58,8 +57,7 @@ public class SmsTest extends AbstractGatewayServerTest {
 		jmsTemplate.receive();
 
 		final Sms sms = new Sms(
-		        "assertThatGatewayServerForwardsReceivedSmsToJmsServer",
-		        clientAddress, serverAddress);
+		        "assertThatGatewayServerForwardsReceivedSmsToJmsServer");
 		client.sendMessage(2, sms);
 		client.disconnect();
 		final ObjectMessage forwardedMessage = (ObjectMessage) jmsTemplate

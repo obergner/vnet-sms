@@ -31,7 +31,6 @@ public class LoginTest extends AbstractGatewayServerTest {
 	        throws Throwable {
 		final int messageReference = 1;
 		final LocalAddress serverAddress = new LocalAddress("test:server:1");
-		final LocalAddress clientAddress = new LocalAddress("test:client:1");
 
 		final int availableIncomingWindows = 10;
 		final long incomingWindowWaitTimeMillis = 1000L;
@@ -55,7 +54,7 @@ public class LoginTest extends AbstractGatewayServerTest {
 
 		final LoginRequest successfulLoginRequest = new LoginRequest(
 		        "assertThatGatewayServerRespondsWithASuccessfulLoginResponseToASuccessfulLoginRequest",
-		        "whatever", clientAddress, serverAddress);
+		        "whatever");
 
 		final LocalClient client = new LocalClient(serverAddress);
 		client.connect();
@@ -90,7 +89,6 @@ public class LoginTest extends AbstractGatewayServerTest {
 	        throws Throwable {
 		final int messageReference = 78;
 		final LocalAddress serverAddress = new LocalAddress("test:server:2");
-		final LocalAddress clientAddress = new LocalAddress("test:client:2");
 
 		final int availableIncomingWindows = 10;
 		final long incomingWindowWaitTimeMillis = 1000L;
@@ -114,7 +112,7 @@ public class LoginTest extends AbstractGatewayServerTest {
 
 		final LoginRequest failedLoginRequest = new LoginRequest(
 		        "assertThatGatewayServerRespondsWithAFailedLoginResponseToAFailedLoginRequest",
-		        "whatever", clientAddress, serverAddress);
+		        "whatever");
 
 		final LocalClient client = new LocalClient(serverAddress);
 		client.connect();
@@ -140,7 +138,6 @@ public class LoginTest extends AbstractGatewayServerTest {
 	        throws Throwable {
 		final int messageReference = 1;
 		final LocalAddress serverAddress = new LocalAddress("test:server:3");
-		final LocalAddress clientAddress = new LocalAddress("test:client:3");
 
 		final int availableIncomingWindows = 10;
 		final long incomingWindowWaitTimeMillis = 1000L;
@@ -164,7 +161,7 @@ public class LoginTest extends AbstractGatewayServerTest {
 
 		final LoginRequest successfulLoginRequest = new LoginRequest(
 		        "assertThatGatewayServerForwardsSuccessfulLoginRequestToJmsServer",
-		        "whatever", clientAddress, serverAddress);
+		        "whatever");
 
 		final LocalClient client = new LocalClient(serverAddress);
 		client.connect();
@@ -187,7 +184,6 @@ public class LoginTest extends AbstractGatewayServerTest {
 	        throws Throwable {
 		final int messageReference = 1;
 		final LocalAddress serverAddress = new LocalAddress("test:server:4");
-		final LocalAddress clientAddress = new LocalAddress("test:client:4");
 
 		final int availableIncomingWindows = 10;
 		final long incomingWindowWaitTimeMillis = 1000L;
@@ -211,7 +207,7 @@ public class LoginTest extends AbstractGatewayServerTest {
 
 		final LoginRequest failedLoginRequest = new LoginRequest(
 		        "assertThatGatewayServerForwardsFailedLoginRequestToJmsServer",
-		        "whatever", clientAddress, serverAddress);
+		        "whatever");
 
 		final LocalClient client = new LocalClient(serverAddress);
 		client.connect();
@@ -234,7 +230,6 @@ public class LoginTest extends AbstractGatewayServerTest {
 	        throws Throwable {
 		final int messageReference = 78;
 		final LocalAddress serverAddress = new LocalAddress("test:server:5");
-		final LocalAddress clientAddress = new LocalAddress("test:client:5");
 
 		final int availableIncomingWindows = 1000;
 		final long incomingWindowWaitTimeMillis = 1L;
@@ -258,7 +253,7 @@ public class LoginTest extends AbstractGatewayServerTest {
 
 		final LoginRequest failedLoginRequest = new LoginRequest(
 		        "assertThatGatewayServerRespondsWithAFailedLoginResponseToAFailedLoginRequest",
-		        "whatever", clientAddress, serverAddress);
+		        "whatever");
 
 		final LocalClient client = new LocalClient(serverAddress);
 		client.connect();
@@ -280,7 +275,6 @@ public class LoginTest extends AbstractGatewayServerTest {
 	        throws Throwable {
 		final int messageReference = 78;
 		final LocalAddress serverAddress = new LocalAddress("test:server:6");
-		final LocalAddress clientAddress = new LocalAddress("test:client:6");
 
 		final int availableIncomingWindows = 1000;
 		final long incomingWindowWaitTimeMillis = 1L;
@@ -302,8 +296,7 @@ public class LoginTest extends AbstractGatewayServerTest {
 		        channelPipelineFactory);
 		objectUnderTest.start();
 
-		final PingRequest nonLoginMessage = new PingRequest(clientAddress,
-		        serverAddress);
+		final PingRequest nonLoginMessage = new PingRequest();
 
 		final LocalClient client = new LocalClient(serverAddress);
 		client.connect();

@@ -2,8 +2,6 @@ package vnet.sms.gateway.nettysupport.logging.incoming;
 
 import static org.junit.Assert.assertNull;
 
-import java.net.InetSocketAddress;
-
 import org.junit.Test;
 import org.slf4j.MDC;
 
@@ -22,8 +20,7 @@ public class ChannelContextLoggingUpstreamChannelHandlerTest {
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        objectUnderTest);
-		final PingRequest pingRequest = new PingRequest(
-		        new InetSocketAddress(0), new InetSocketAddress(0));
+		final PingRequest pingRequest = new PingRequest();
 		embeddedPipeline.receive(pingRequest);
 		final String currentChannelInMdc = MDC
 		        .get(ChannelContextLoggingUpstreamChannelHandler.CURRENT_CHANNEL_MDC_KEY);

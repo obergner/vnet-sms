@@ -68,17 +68,17 @@ public class MessageForwardingJmsBridgeTest {
 		final Channel receivingChannel = createNiceMock(Channel.class);
 		expect(receivingChannel.getRemoteAddress()).andReturn(sender)
 		        .anyTimes();
+		expect(receivingChannel.getLocalAddress()).andReturn(receiver)
+		        .anyTimes();
 		expect(receivingChannel.getId()).andReturn(channelId).anyTimes();
+		replay(receivingChannel);
 
 		final Sms message = new Sms(
-		        "assertThatLoginRequestReceivedForwardsLoginRequestToJmsQueue",
-		        sender, receiver);
+		        "assertThatLoginRequestReceivedForwardsLoginRequestToJmsQueue");
 		final UpstreamMessageEvent upstreamMessageEvent = new UpstreamMessageEvent(
-		        receivingChannel, message, message.getSender());
+		        receivingChannel, message, receivingChannel.getRemoteAddress());
 		final SmsReceivedEvent<Integer> windowedMessageEvent = new SmsReceivedEvent<Integer>(
 		        messageReference, upstreamMessageEvent, message);
-
-		replay(receivingChannel);
 
 		objectUnderTest.smsReceived(windowedMessageEvent);
 
@@ -118,18 +118,18 @@ public class MessageForwardingJmsBridgeTest {
 		final Channel receivingChannel = createNiceMock(Channel.class);
 		expect(receivingChannel.getRemoteAddress()).andReturn(sender)
 		        .anyTimes();
+		expect(receivingChannel.getLocalAddress()).andReturn(receiver)
+		        .anyTimes();
 		expect(receivingChannel.getId()).andReturn(channelId).anyTimes();
+		replay(receivingChannel);
 
 		final LoginRequest message = new LoginRequest(
 		        "assertThatLoginRequestReceivedForwardsLoginRequestToJmsQueue",
-		        "assertThatLoginRequestReceivedForwardsLoginRequestToJmsQueue",
-		        sender, receiver);
+		        "assertThatLoginRequestReceivedForwardsLoginRequestToJmsQueue");
 		final UpstreamMessageEvent upstreamMessageEvent = new UpstreamMessageEvent(
-		        receivingChannel, message, message.getSender());
+		        receivingChannel, message, receivingChannel.getRemoteAddress());
 		final LoginRequestReceivedEvent<Integer> windowedMessageEvent = new LoginRequestReceivedEvent<Integer>(
 		        messageReference, upstreamMessageEvent, message);
-
-		replay(receivingChannel);
 
 		objectUnderTest.loginRequestReceived(windowedMessageEvent);
 
@@ -169,19 +169,19 @@ public class MessageForwardingJmsBridgeTest {
 		final Channel receivingChannel = createNiceMock(Channel.class);
 		expect(receivingChannel.getRemoteAddress()).andReturn(sender)
 		        .anyTimes();
+		expect(receivingChannel.getLocalAddress()).andReturn(receiver)
+		        .anyTimes();
 		expect(receivingChannel.getId()).andReturn(channelId).anyTimes();
+		replay(receivingChannel);
 
 		final LoginRequest loginRequest = new LoginRequest(
 		        "assertThatLoginRequestReceivedForwardsLoginRequestToJmsQueue",
-		        "assertThatLoginRequestReceivedForwardsLoginRequestToJmsQueue",
-		        sender, receiver);
+		        "assertThatLoginRequestReceivedForwardsLoginRequestToJmsQueue");
 		final LoginResponse message = LoginResponse.accept(loginRequest);
 		final UpstreamMessageEvent upstreamMessageEvent = new UpstreamMessageEvent(
-		        receivingChannel, message, message.getSender());
+		        receivingChannel, message, receivingChannel.getRemoteAddress());
 		final LoginResponseReceivedEvent<Integer> windowedMessageEvent = new LoginResponseReceivedEvent<Integer>(
 		        messageReference, upstreamMessageEvent, message);
-
-		replay(receivingChannel);
 
 		objectUnderTest.loginResponseReceived(windowedMessageEvent);
 
@@ -221,15 +221,16 @@ public class MessageForwardingJmsBridgeTest {
 		final Channel receivingChannel = createNiceMock(Channel.class);
 		expect(receivingChannel.getRemoteAddress()).andReturn(sender)
 		        .anyTimes();
+		expect(receivingChannel.getLocalAddress()).andReturn(receiver)
+		        .anyTimes();
 		expect(receivingChannel.getId()).andReturn(channelId).anyTimes();
+		replay(receivingChannel);
 
-		final PingRequest message = new PingRequest(sender, receiver);
+		final PingRequest message = new PingRequest();
 		final UpstreamMessageEvent upstreamMessageEvent = new UpstreamMessageEvent(
-		        receivingChannel, message, message.getSender());
+		        receivingChannel, message, receivingChannel.getRemoteAddress());
 		final PingRequestReceivedEvent<Integer> windowedMessageEvent = new PingRequestReceivedEvent<Integer>(
 		        messageReference, upstreamMessageEvent, message);
-
-		replay(receivingChannel);
 
 		objectUnderTest.pingRequestReceived(windowedMessageEvent);
 
@@ -266,16 +267,17 @@ public class MessageForwardingJmsBridgeTest {
 		final Channel receivingChannel = createNiceMock(Channel.class);
 		expect(receivingChannel.getRemoteAddress()).andReturn(sender)
 		        .anyTimes();
+		expect(receivingChannel.getLocalAddress()).andReturn(receiver)
+		        .anyTimes();
 		expect(receivingChannel.getId()).andReturn(channelId).anyTimes();
+		replay(receivingChannel);
 
-		final PingRequest pingRequest = new PingRequest(sender, receiver);
+		final PingRequest pingRequest = new PingRequest();
 		final PingResponse message = PingResponse.reject(pingRequest);
 		final UpstreamMessageEvent upstreamMessageEvent = new UpstreamMessageEvent(
-		        receivingChannel, message, message.getSender());
+		        receivingChannel, message, receivingChannel.getRemoteAddress());
 		final PingResponseReceivedEvent<Integer> windowedMessageEvent = new PingResponseReceivedEvent<Integer>(
 		        messageReference, upstreamMessageEvent, message);
-
-		replay(receivingChannel);
 
 		objectUnderTest.pingResponseReceived(windowedMessageEvent);
 

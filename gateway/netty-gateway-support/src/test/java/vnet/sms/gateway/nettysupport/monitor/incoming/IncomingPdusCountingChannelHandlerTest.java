@@ -2,7 +2,6 @@ package vnet.sms.gateway.nettysupport.monitor.incoming;
 
 import static org.junit.Assert.assertEquals;
 
-import java.net.InetSocketAddress;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.junit.After;
@@ -56,8 +55,7 @@ public class IncomingPdusCountingChannelHandlerTest {
 		        this.objectUnderTest);
 
 		for (int i = 0; i < numberOfReceivedPdus; i++) {
-			embeddedPipeline.receive(new PingRequest(new InetSocketAddress(1),
-			        new InetSocketAddress(1)));
+			embeddedPipeline.receive(new PingRequest());
 		}
 
 		assertEquals(

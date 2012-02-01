@@ -2,7 +2,6 @@ package vnet.sms.gateway.nettysupport.monitor.incoming;
 
 import static org.junit.Assert.assertEquals;
 
-import java.net.InetSocketAddress;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.jboss.netty.handler.codec.embedder.DecoderEmbedder;
@@ -92,8 +91,7 @@ public class IncomingMessagesMonitoringChannelHandlerTest {
 		embeddedPipeline
 		        .offer(new LoginRequest(
 		                "assertThatTransportProtocolAdapterCorrectlyConvertsPduToLoginRequest",
-		                "secret", new InetSocketAddress(1),
-		                new InetSocketAddress(1)));
+		                "secret"));
 
 		assertEquals(
 		        "IncomingMessagesMonitoringChannelHandler did not correctly count number of received login requests",
@@ -110,8 +108,7 @@ public class IncomingMessagesMonitoringChannelHandlerTest {
 		        .offer(LoginResponse
 		                .accept(new LoginRequest(
 		                        "assertThatTransportProtocolAdapterCorrectlyConvertsPduToLoginRequest",
-		                        "secret", new InetSocketAddress(1),
-		                        new InetSocketAddress(1))));
+		                        "secret")));
 
 		assertEquals(
 		        "IncomingMessagesMonitoringChannelHandler did not correctly count number of received login responses",
@@ -124,8 +121,7 @@ public class IncomingMessagesMonitoringChannelHandlerTest {
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        this.objectUnderTest);
 
-		embeddedPipeline.offer(new PingRequest(new InetSocketAddress(1),
-		        new InetSocketAddress(1)));
+		embeddedPipeline.offer(new PingRequest());
 
 		assertEquals(
 		        "IncomingMessagesMonitoringChannelHandler did not correctly count number of received ping requests",
@@ -139,8 +135,7 @@ public class IncomingMessagesMonitoringChannelHandlerTest {
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        this.objectUnderTest);
 
-		embeddedPipeline.offer(PingResponse.accept(new PingRequest(
-		        new InetSocketAddress(1), new InetSocketAddress(1))));
+		embeddedPipeline.offer(PingResponse.accept(new PingRequest()));
 
 		assertEquals(
 		        "IncomingMessagesMonitoringChannelHandler did not correctly count number of received ping responses",
@@ -154,8 +149,7 @@ public class IncomingMessagesMonitoringChannelHandlerTest {
 		        this.objectUnderTest);
 
 		embeddedPipeline.offer(new Sms(
-		        "assertThatTransportProtocolAdapterCorrectlyConvertsPduToSms",
-		        new InetSocketAddress(0), new InetSocketAddress(1)));
+		        "assertThatTransportProtocolAdapterCorrectlyConvertsPduToSms"));
 
 		assertEquals(
 		        "IncomingMessagesMonitoringChannelHandler did not correctly count number of received sms",

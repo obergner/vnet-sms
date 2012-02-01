@@ -5,7 +5,6 @@ package vnet.sms.common.messages;
 
 import static org.apache.commons.lang.Validate.notEmpty;
 
-import java.net.SocketAddress;
 import java.util.UUID;
 
 /**
@@ -21,18 +20,16 @@ public class LoginRequest extends Message {
 	private final String	  password;
 
 	public LoginRequest(final UUID id, final long creationTimestamp,
-	        final String username, final String password,
-	        final SocketAddress sender, final SocketAddress receiver) {
-		super(id, creationTimestamp, sender, receiver);
+	        final String username, final String password) {
+		super(id, creationTimestamp);
 		notEmpty(username, "Argument 'username' must not be empty");
 		notEmpty(password, "Argument 'password' must not be empty");
 		this.username = username;
 		this.password = password;
 	}
 
-	public LoginRequest(final String username, final String password,
-	        final SocketAddress sender, final SocketAddress receiver) {
-		super(sender, receiver);
+	public LoginRequest(final String username, final String password) {
+		super();
 		notEmpty(username, "Argument 'username' must not be empty");
 		notEmpty(password, "Argument 'password' must not be empty");
 		this.username = username;
@@ -49,10 +46,8 @@ public class LoginRequest extends Message {
 
 	@Override
 	public String toString() {
-		return "LoginRequest@" + this.hashCode() + "[ID: " + getId()
+		return "LoginRequest@" + hashCode() + "[ID: " + getId()
 		        + "|creationTimestamp: " + getCreationTimestamp()
-		        + "|username: " + this.username
-		        + "|password: [PROTECTED]|sender: " + getSender()
-		        + "|receiver: " + getReceiver() + "]";
+		        + "|username: " + this.username + "|password: [PROTECTED]]";
 	}
 }

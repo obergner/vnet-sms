@@ -8,7 +8,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jboss.netty.channel.ChannelEvent;
 import org.jboss.netty.channel.MessageEvent;
-import org.jboss.netty.channel.local.LocalAddress;
 import org.junit.Test;
 
 import vnet.sms.common.messages.LoginRequest;
@@ -48,8 +47,7 @@ public class OutgoingPingChannelHandlerTest {
 		                embeddedPipeline.getChannel(),
 		                new LoginRequest(
 		                        "assertThatOutgoingPingChannelHandlerSendsPingAfterChannelHasBeenAuthenticatedAndPingIntervalElapsed",
-		                        "password", new LocalAddress(1),
-		                        new LocalAddress(2))));
+		                        "password")));
 		Thread.sleep(pingIntervalSeconds * 1000 + 100);
 		final MessageEvent pingRequestCandidate = embeddedPipeline
 		        .nextSentMessageEvent();
@@ -81,8 +79,7 @@ public class OutgoingPingChannelHandlerTest {
 		                embeddedPipeline.getChannel(),
 		                new LoginRequest(
 		                        "assertThatOutgoingPingChannelHandlerSendsStarteToPingEventUpstreamAfterChannelHasBeenAuthenticatedAndPingIntervalElapsed",
-		                        "password", new LocalAddress(1),
-		                        new LocalAddress(2))));
+		                        "password")));
 		Thread.sleep(pingIntervalSeconds * 1000 + 100);
 		final ChannelEvent startedToPing = embeddedPipeline
 		        .nextUpstreamChannelEvent(new ChannelEventFilter() {
@@ -118,8 +115,7 @@ public class OutgoingPingChannelHandlerTest {
 		                embeddedPipeline.getChannel(),
 		                new LoginRequest(
 		                        "assertThatOutgoingPingChannelHandlerSendsNoPingResponseReceivedWithinTimeoutEventUpstreamIfPingResponseTimeoutExpires",
-		                        "password", new LocalAddress(1),
-		                        new LocalAddress(2))));
+		                        "password")));
 		Thread.sleep(pingIntervalSeconds * 1000 + pingTimeoutMillis + 100);
 		final MessageEvent pingRequestCandidate = embeddedPipeline
 		        .nextSentMessageEvent();
@@ -155,8 +151,7 @@ public class OutgoingPingChannelHandlerTest {
 		                embeddedPipeline.getChannel(),
 		                new LoginRequest(
 		                        "assertThatOutgoingPingChannelHandlerDoesNotSendNoPingResponseReceivedWithinTimeoutEventUpstreamIfItReceivesPingResponseWithinTimeout",
-		                        "password", new LocalAddress(1),
-		                        new LocalAddress(2))));
+		                        "password")));
 		Thread.sleep(pingIntervalSeconds * 1000 + 200);
 		final MessageEvent pingRequestCandidate = embeddedPipeline
 		        .nextSentMessageEvent();

@@ -30,7 +30,7 @@ public class UpstreamMessageEventToWindowedMessageEventConverterTest {
 	public final void assertThatConvertConvertsLoginRequestToLoginRequestReceivedEvent() {
 		final LoginRequest inputMessage = new LoginRequest(
 		        "assertThatConvertConvertsLoginRequestToLoginRequestReceivedEvent",
-		        "secret", new InetSocketAddress(1), new InetSocketAddress(1));
+		        "secret");
 		final Class<?> expectedOutputType = LoginRequestReceivedEvent.class;
 
 		assertCorrectConversion(inputMessage, expectedOutputType);
@@ -66,8 +66,7 @@ public class UpstreamMessageEventToWindowedMessageEventConverterTest {
 		final LoginResponse inputMessage = LoginResponse
 		        .accept(new LoginRequest(
 		                "assertThatConvertConvertsLoginResponseToLoginResponseReceivedEvent",
-		                "secret", new InetSocketAddress(1),
-		                new InetSocketAddress(1)));
+		                "secret"));
 		final Class<?> expectedOutputType = LoginResponseReceivedEvent.class;
 
 		assertCorrectConversion(inputMessage, expectedOutputType);
@@ -75,8 +74,7 @@ public class UpstreamMessageEventToWindowedMessageEventConverterTest {
 
 	@Test
 	public final void assertThatConvertConvertsPingRequestToPingRequestReceivedEvent() {
-		final PingRequest inputMessage = new PingRequest(new InetSocketAddress(
-		        1), new InetSocketAddress(1));
+		final PingRequest inputMessage = new PingRequest();
 		final Class<?> expectedOutputType = PingRequestReceivedEvent.class;
 
 		assertCorrectConversion(inputMessage, expectedOutputType);
@@ -84,8 +82,8 @@ public class UpstreamMessageEventToWindowedMessageEventConverterTest {
 
 	@Test
 	public final void assertThatConvertConvertsPingResponseToPingResponseReceivedEvent() {
-		final PingResponse inputMessage = PingResponse.accept(new PingRequest(
-		        new InetSocketAddress(1), new InetSocketAddress(1)));
+		final PingResponse inputMessage = PingResponse
+		        .accept(new PingRequest());
 		final Class<?> expectedOutputType = PingResponseReceivedEvent.class;
 
 		assertCorrectConversion(inputMessage, expectedOutputType);
@@ -94,8 +92,7 @@ public class UpstreamMessageEventToWindowedMessageEventConverterTest {
 	@Test
 	public final void assertThatConvertConvertsSmsToSmsReceivedEvent() {
 		final Sms inputMessage = new Sms(
-		        "assertThatConvertConvertsSmsToSmsReceivedEvent",
-		        new InetSocketAddress(0), new InetSocketAddress(1));
+		        "assertThatConvertConvertsSmsToSmsReceivedEvent");
 		final Class<?> expectedOutputType = SmsReceivedEvent.class;
 
 		assertCorrectConversion(inputMessage, expectedOutputType);

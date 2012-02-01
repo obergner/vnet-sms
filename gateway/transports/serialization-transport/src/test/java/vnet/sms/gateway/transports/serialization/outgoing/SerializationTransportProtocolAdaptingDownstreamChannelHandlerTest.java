@@ -37,8 +37,7 @@ public class SerializationTransportProtocolAdaptingDownstreamChannelHandlerTest 
 		        this.objectUnderTest,
 		        new MessageEventWrappingDownstreamChannelHandler());
 
-		embeddedPipeline.send(new PingRequest(new InetSocketAddress(1),
-		        new InetSocketAddress(1)));
+		embeddedPipeline.send(new PingRequest());
 		final MessageEvent convertedMessageEvent = embeddedPipeline
 		        .nextSentMessageEvent();
 
@@ -91,7 +90,7 @@ public class SerializationTransportProtocolAdaptingDownstreamChannelHandlerTest 
 
 		final LoginRequest acceptedLoginRequest = new LoginRequest(
 		        "assertThatTransportProtocolAdapterCorrectlyConvertsAcceptedLoginRequestToPdu",
-		        "secret", new InetSocketAddress(1), new InetSocketAddress(2));
+		        "secret");
 		final ReferenceableMessageContainer convertedMessageContainer = this.objectUnderTest
 		        .convertLoginRequestAcceptedEventToPdu(ReceivedLoginRequestAckedEvent
 		                .accept(new LoginRequestReceivedEvent<Integer>(1,
@@ -124,7 +123,7 @@ public class SerializationTransportProtocolAdaptingDownstreamChannelHandlerTest 
 
 		final LoginRequest rejectedLoginRequest = new LoginRequest(
 		        "assertThatTransportProtocolAdapterCorrectlyConvertsRejectedLoginRequestToPdu",
-		        "secret", new InetSocketAddress(1), new InetSocketAddress(2));
+		        "secret");
 		final ReferenceableMessageContainer convertedMessageContainer = this.objectUnderTest
 		        .convertLoginRequestRejectedEventToPdu(ReceivedLoginRequestNackedEvent
 		                .reject(new LoginRequestReceivedEvent<Integer>(1,

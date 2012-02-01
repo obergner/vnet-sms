@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.lang.management.ManagementFactory;
-import java.net.InetSocketAddress;
 
 import org.jboss.netty.channel.ChannelEvent;
 import org.jboss.netty.channel.MessageEvent;
@@ -35,8 +34,7 @@ public class WindowingChannelHandlerTest {
 		embeddedPipeline
 		        .receive(new LoginRequest(
 		                "assertThatWindowedChannelHandlerCorrectlyPropagatesLoginRequest",
-		                "secret", new InetSocketAddress(1),
-		                new InetSocketAddress(1)));
+		                "secret"));
 		final MessageEvent propagatedMessageEvent = embeddedPipeline
 		        .nextReceivedMessageEvent();
 
@@ -53,7 +51,7 @@ public class WindowingChannelHandlerTest {
 	        throws Throwable {
 		final LoginRequest loginRequest = new LoginRequest(
 		        "assertThatWindowedChannelHandlerIssuesNoWindowForIncomingMessageEventIfNoWindowIsAvailable",
-		        "secret", new InetSocketAddress(1), new InetSocketAddress(1));
+		        "secret");
 
 		final MBeanExporter mbeanExporter = new MBeanExporter();
 		mbeanExporter.setServer(ManagementFactory.getPlatformMBeanServer());

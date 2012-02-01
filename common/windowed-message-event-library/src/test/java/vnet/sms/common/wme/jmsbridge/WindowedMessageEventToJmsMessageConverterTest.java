@@ -62,11 +62,13 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		final Channel receivingChannel = createNiceMock(Channel.class);
 		expect(receivingChannel.getRemoteAddress()).andReturn(sender)
 		        .anyTimes();
+		expect(receivingChannel.getLocalAddress()).andReturn(receiver)
+		        .anyTimes();
 		expect(receivingChannel.getId()).andReturn(channelId).anyTimes();
 
-		final PingRequest message = new PingRequest(sender, receiver);
+		final PingRequest message = new PingRequest();
 		final UpstreamMessageEvent upstreamMessageEvent = new UpstreamMessageEvent(
-		        receivingChannel, message, message.getSender());
+		        receivingChannel, message, sender);
 		final PingRequestReceivedEvent<Integer> windowedMessageEvent = new PingRequestReceivedEvent<Integer>(
 		        messageReference, upstreamMessageEvent, message);
 
@@ -107,7 +109,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		                + ", "
 		                + jmsSession
 		                + ") returned a message NOT having the expected receiver socket address",
-		        windowedMessageEvent.getMessage().getReceiver().toString(),
+		        windowedMessageEvent.getChannel().getLocalAddress().toString(),
 		        convertedMessage
 		                .getStringProperty(Headers.RECEIVER_SOCKET_ADDRESS));
 		assertEquals(
@@ -124,7 +126,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		                + ", "
 		                + jmsSession
 		                + ") returned a message NOT having the expected sender socket address",
-		        windowedMessageEvent.getMessage().getSender().toString(),
+		        windowedMessageEvent.getChannel().getRemoteAddress().toString(),
 		        convertedMessage
 		                .getStringProperty(Headers.SENDER_SOCKET_ADDRESS));
 	}
@@ -392,12 +394,14 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		final Channel receivingChannel = createNiceMock(Channel.class);
 		expect(receivingChannel.getRemoteAddress()).andReturn(sender)
 		        .anyTimes();
+		expect(receivingChannel.getLocalAddress()).andReturn(receiver)
+		        .anyTimes();
 		expect(receivingChannel.getId()).andReturn(channelId).anyTimes();
 
-		final PingRequest pingRequest = new PingRequest(sender, receiver);
+		final PingRequest pingRequest = new PingRequest();
 		final PingResponse message = PingResponse.accept(pingRequest);
 		final UpstreamMessageEvent upstreamMessageEvent = new UpstreamMessageEvent(
-		        receivingChannel, message, message.getSender());
+		        receivingChannel, message, sender);
 		final PingResponseReceivedEvent<Integer> windowedMessageEvent = new PingResponseReceivedEvent<Integer>(
 		        messageReference, upstreamMessageEvent, message);
 
@@ -438,7 +442,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		                + ", "
 		                + jmsSession
 		                + ") returned a message NOT having the expected receiver socket address",
-		        windowedMessageEvent.getMessage().getReceiver().toString(),
+		        windowedMessageEvent.getChannel().getLocalAddress().toString(),
 		        convertedMessage
 		                .getStringProperty(Headers.RECEIVER_SOCKET_ADDRESS));
 		assertEquals(
@@ -455,7 +459,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		                + ", "
 		                + jmsSession
 		                + ") returned a message NOT having the expected sender socket address",
-		        windowedMessageEvent.getMessage().getSender().toString(),
+		        windowedMessageEvent.getChannel().getRemoteAddress().toString(),
 		        convertedMessage
 		                .getStringProperty(Headers.SENDER_SOCKET_ADDRESS));
 	}
@@ -476,14 +480,15 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		final Channel receivingChannel = createNiceMock(Channel.class);
 		expect(receivingChannel.getRemoteAddress()).andReturn(sender)
 		        .anyTimes();
+		expect(receivingChannel.getLocalAddress()).andReturn(receiver)
+		        .anyTimes();
 		expect(receivingChannel.getId()).andReturn(channelId).anyTimes();
 
 		final LoginRequest message = new LoginRequest(
 		        "assertThatToMessageCorrectlyConvertsLoginRequestReceivedEvent",
-		        "assertThatToMessageCorrectlyConvertsLoginRequestReceivedEvent",
-		        sender, receiver);
+		        "assertThatToMessageCorrectlyConvertsLoginRequestReceivedEvent");
 		final UpstreamMessageEvent upstreamMessageEvent = new UpstreamMessageEvent(
-		        receivingChannel, message, message.getSender());
+		        receivingChannel, message, sender);
 		final LoginRequestReceivedEvent<Integer> windowedMessageEvent = new LoginRequestReceivedEvent<Integer>(
 		        messageReference, upstreamMessageEvent, message);
 
@@ -524,7 +529,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		                + ", "
 		                + jmsSession
 		                + ") returned a message NOT having the expected receiver socket address",
-		        windowedMessageEvent.getMessage().getReceiver().toString(),
+		        windowedMessageEvent.getChannel().getLocalAddress().toString(),
 		        convertedMessage
 		                .getStringProperty(Headers.RECEIVER_SOCKET_ADDRESS));
 		assertEquals(
@@ -541,7 +546,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		                + ", "
 		                + jmsSession
 		                + ") returned a message NOT having the expected sender socket address",
-		        windowedMessageEvent.getMessage().getSender().toString(),
+		        windowedMessageEvent.getChannel().getRemoteAddress().toString(),
 		        convertedMessage
 		                .getStringProperty(Headers.SENDER_SOCKET_ADDRESS));
 	}
@@ -562,15 +567,16 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		final Channel receivingChannel = createNiceMock(Channel.class);
 		expect(receivingChannel.getRemoteAddress()).andReturn(sender)
 		        .anyTimes();
+		expect(receivingChannel.getLocalAddress()).andReturn(receiver)
+		        .anyTimes();
 		expect(receivingChannel.getId()).andReturn(channelId).anyTimes();
 
 		final LoginRequest loginRequest = new LoginRequest(
 		        "assertThatToMessageCorrectlyConvertsLoginRequestRejectedEvent",
-		        "assertThatToMessageCorrectlyConvertsLoginRequestRejectedEvent",
-		        sender, receiver);
+		        "assertThatToMessageCorrectlyConvertsLoginRequestRejectedEvent");
 		final LoginResponse message = LoginResponse.reject(loginRequest);
 		final UpstreamMessageEvent upstreamMessageEvent = new UpstreamMessageEvent(
-		        receivingChannel, message, message.getSender());
+		        receivingChannel, message, sender);
 		final LoginResponseReceivedEvent<Integer> windowedMessageEvent = new LoginResponseReceivedEvent<Integer>(
 		        messageReference, upstreamMessageEvent, message);
 
@@ -611,7 +617,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		                + ", "
 		                + jmsSession
 		                + ") returned a message NOT having the expected receiver socket address",
-		        windowedMessageEvent.getMessage().getReceiver().toString(),
+		        windowedMessageEvent.getChannel().getLocalAddress().toString(),
 		        convertedMessage
 		                .getStringProperty(Headers.RECEIVER_SOCKET_ADDRESS));
 		assertEquals(
@@ -628,7 +634,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		                + ", "
 		                + jmsSession
 		                + ") returned a message NOT having the expected sender socket address",
-		        windowedMessageEvent.getMessage().getSender().toString(),
+		        windowedMessageEvent.getChannel().getRemoteAddress().toString(),
 		        convertedMessage
 		                .getStringProperty(Headers.SENDER_SOCKET_ADDRESS));
 	}
@@ -649,13 +655,14 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		final Channel receivingChannel = createNiceMock(Channel.class);
 		expect(receivingChannel.getRemoteAddress()).andReturn(sender)
 		        .anyTimes();
+		expect(receivingChannel.getLocalAddress()).andReturn(receiver)
+		        .anyTimes();
 		expect(receivingChannel.getId()).andReturn(channelId).anyTimes();
 
 		final Sms message = new Sms(
-		        "assertThatToMessageCorrectlyConvertsSmsReceivedEvent", sender,
-		        receiver);
+		        "assertThatToMessageCorrectlyConvertsSmsReceivedEvent");
 		final UpstreamMessageEvent upstreamMessageEvent = new UpstreamMessageEvent(
-		        receivingChannel, message, message.getSender());
+		        receivingChannel, message, sender);
 		final SmsReceivedEvent<Integer> windowedMessageEvent = new SmsReceivedEvent<Integer>(
 		        messageReference, upstreamMessageEvent, message);
 
@@ -696,7 +703,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		                + ", "
 		                + jmsSession
 		                + ") returned a message NOT having the expected receiver socket address",
-		        windowedMessageEvent.getMessage().getReceiver().toString(),
+		        windowedMessageEvent.getChannel().getLocalAddress().toString(),
 		        convertedMessage
 		                .getStringProperty(Headers.RECEIVER_SOCKET_ADDRESS));
 		assertEquals(
@@ -713,7 +720,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		                + ", "
 		                + jmsSession
 		                + ") returned a message NOT having the expected sender socket address",
-		        windowedMessageEvent.getMessage().getSender().toString(),
+		        windowedMessageEvent.getChannel().getRemoteAddress().toString(),
 		        convertedMessage
 		                .getStringProperty(Headers.SENDER_SOCKET_ADDRESS));
 	}
@@ -765,8 +772,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 	public final void assertThatFromMessageCorrectlyConvertsSendSmsMessage()
 	        throws JMSException {
 		final Sms sms = new Sms(
-		        "assertThatFromMessageCorrectlyConvertsSendSmsMessage",
-		        new InetSocketAddress(0), new InetSocketAddress(1));
+		        "assertThatFromMessageCorrectlyConvertsSendSmsMessage");
 		final ObjectMessage smsMessage = new MockObjectMessage(sms);
 		smsMessage.setStringProperty(Headers.EVENT_TYPE,
 		        MessageType.SEND_SMS.name());
@@ -798,8 +804,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 	public final void assertThatFromMessageRejectsReceivedSmsAckedMessageWithoutReceivingChannelId()
 	        throws JMSException {
 		final Sms ackedSms = new Sms(
-		        "assertThatFromMessageRejectsReceivedSmsAckMessageWithoutReceivingChannelId",
-		        new InetSocketAddress(0), new InetSocketAddress(1));
+		        "assertThatFromMessageRejectsReceivedSmsAckMessageWithoutReceivingChannelId");
 		final ObjectMessage receivedSmsAckedMessage = new MockObjectMessage(
 		        ackedSms);
 		receivedSmsAckedMessage.setStringProperty(Headers.EVENT_TYPE,
@@ -814,8 +819,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 	public final void assertThatFromMessageRejectsReceivedSmsAckedMessageWithoutMessageReference()
 	        throws JMSException {
 		final Sms ackedSms = new Sms(
-		        "assertThatFromMessageRejectsReceivedSmsAckedMessageWithoutMessageReference",
-		        new InetSocketAddress(0), new InetSocketAddress(1));
+		        "assertThatFromMessageRejectsReceivedSmsAckedMessageWithoutMessageReference");
 		final ObjectMessage receivedSmsAckedMessage = new MockObjectMessage(
 		        ackedSms);
 		receivedSmsAckedMessage.setStringProperty(Headers.EVENT_TYPE,
@@ -832,8 +836,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		final String messageReference = "1";
 
 		final Sms ackedSms = new Sms(
-		        "assertThatFromMessageCorrectlyConvertsReceivedSmsAckedMessage",
-		        new InetSocketAddress(0), new InetSocketAddress(1));
+		        "assertThatFromMessageCorrectlyConvertsReceivedSmsAckedMessage");
 		final ObjectMessage receivedSmsAckedMessage = new MockObjectMessage(
 		        ackedSms);
 		receivedSmsAckedMessage.setStringProperty(Headers.EVENT_TYPE,
@@ -872,8 +875,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 	public final void assertThatFromMessageRejectsReceivedSmsNAckedMessageWithoutReceivingChannelId()
 	        throws JMSException {
 		final Sms nackedSms = new Sms(
-		        "assertThatFromMessageRejectsReceivedSmsNAckedMessageWithoutReceivingChannelId",
-		        new InetSocketAddress(0), new InetSocketAddress(1));
+		        "assertThatFromMessageRejectsReceivedSmsNAckedMessageWithoutReceivingChannelId");
 		final ObjectMessage receivedSmsNAckedMessage = new MockObjectMessage(
 		        nackedSms);
 		receivedSmsNAckedMessage.setStringProperty(Headers.EVENT_TYPE,
@@ -892,8 +894,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 	public final void assertThatFromMessageRejectsReceivedSmsNAckedMessageWithoutMessageReference()
 	        throws JMSException {
 		final Sms nackedSms = new Sms(
-		        "assertThatFromMessageRejectsReceivedSmsNAckedMessageWithoutMessageReference",
-		        new InetSocketAddress(0), new InetSocketAddress(1));
+		        "assertThatFromMessageRejectsReceivedSmsNAckedMessageWithoutMessageReference");
 		final ObjectMessage receivedSmsNAckedMessage = new MockObjectMessage(
 		        nackedSms);
 		receivedSmsNAckedMessage.setStringProperty(Headers.EVENT_TYPE,
@@ -912,8 +913,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 	public final void assertThatFromMessageRejectsReceivedSmsNAckedMessageWithoutErrorCode()
 	        throws JMSException {
 		final Sms nackedSms = new Sms(
-		        "assertThatFromMessageRejectsReceivedSmsNAckedMessageWithoutErrorCode",
-		        new InetSocketAddress(0), new InetSocketAddress(1));
+		        "assertThatFromMessageRejectsReceivedSmsNAckedMessageWithoutErrorCode");
 		final ObjectMessage receivedSmsNAckedMessage = new MockObjectMessage(
 		        nackedSms);
 		receivedSmsNAckedMessage.setStringProperty(Headers.EVENT_TYPE,
@@ -934,8 +934,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 	public final void assertThatFromMessageRejectsReceivedSmsNAckedMessageWithoutErrorDescription()
 	        throws JMSException {
 		final Sms nackedSms = new Sms(
-		        "assertThatFromMessageRejectsReceivedSmsNAckedMessageWithoutErrorDescription",
-		        new InetSocketAddress(0), new InetSocketAddress(1));
+		        "assertThatFromMessageRejectsReceivedSmsNAckedMessageWithoutErrorDescription");
 		final ObjectMessage receivedSmsNAckedMessage = new MockObjectMessage(
 		        nackedSms);
 		receivedSmsNAckedMessage.setStringProperty(Headers.EVENT_TYPE,
@@ -959,8 +958,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		final String errorDescription = "assertThatFromMessageCorrectlyConvertsReceivedSmsNAckedMessage";
 
 		final Sms nackedSms = new Sms(
-		        "assertThatFromMessageCorrectlyConvertsReceivedSmsNAckedMessage",
-		        new InetSocketAddress(0), new InetSocketAddress(1));
+		        "assertThatFromMessageCorrectlyConvertsReceivedSmsNAckedMessage");
 		final ObjectMessage receivedSmsNAckedMessage = new MockObjectMessage(
 		        nackedSms);
 		receivedSmsNAckedMessage.setStringProperty(Headers.EVENT_TYPE,

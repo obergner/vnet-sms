@@ -45,4 +45,9 @@ public interface OutgoingMessagesSender<ID extends Serializable> {
 	 * @throws Exception
 	 */
 	ChannelFuture sendSms(SendSmsContainer sms) throws Exception;
+
+	/**
+	 * 
+	 */
+	void close();
 }

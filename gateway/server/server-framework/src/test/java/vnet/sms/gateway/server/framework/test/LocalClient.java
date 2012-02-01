@@ -144,8 +144,7 @@ public class LocalClient {
 
 	public void login(final int messageReference, final String username,
 	        final String password) throws Throwable {
-		final LoginRequest loginRequest = new LoginRequest(username, password,
-		        this.serverConnection.getLocalAddress(), this.serverAddress);
+		final LoginRequest loginRequest = new LoginRequest(username, password);
 		final ReferenceableMessageContainer loginResponseContainer = sendMessageAndWaitForResponse(
 		        messageReference, loginRequest);
 		final Message response = loginResponseContainer.getMessage();

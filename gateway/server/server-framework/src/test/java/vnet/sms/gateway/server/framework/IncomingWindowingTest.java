@@ -26,9 +26,6 @@ public class IncomingWindowingTest extends AbstractGatewayServerTest {
 	        throws Throwable {
 		final LocalAddress serverAddress = new LocalAddress(
 		        "test:server:assertThatGatewayServerForwardsUpToWindowSizeManySmsToJmsServer");
-		final LocalAddress clientAddress = new LocalAddress(
-		        "test:client:assertThatGatewayServerForwardsUpToWindowSizeManySmsToJmsServer");
-
 		final int availableIncomingWindows = 101;
 		final long incomingWindowWaitTimeMillis = 1L;
 		final long failedLoginResponseMillis = 100L;
@@ -65,7 +62,7 @@ public class IncomingWindowingTest extends AbstractGatewayServerTest {
 		for (int i = 2; i <= availableIncomingWindows; i++) {
 			final Sms sms = new Sms(
 			        "assertThatGatewayServerForwardsUpToWindowSizeManySmsToJmsServer-"
-			                + i, clientAddress, serverAddress);
+			                + i);
 			client.sendMessage(i, sms);
 		}
 		client.disconnect();
@@ -98,8 +95,6 @@ public class IncomingWindowingTest extends AbstractGatewayServerTest {
 	        throws Throwable {
 		final LocalAddress serverAddress = new LocalAddress(
 		        "test:server:assertThatGatewayServerDoesNotForwardMoreThanWindowSizeManySmsToJmsServer");
-		final LocalAddress clientAddress = new LocalAddress(
-		        "test:client:assertThatGatewayServerDoesNotForwardMoreThanWindowSizeManySmsToJmsServer");
 
 		final int availableIncomingWindows = 101;
 		final long incomingWindowWaitTimeMillis = 1L;
@@ -137,7 +132,7 @@ public class IncomingWindowingTest extends AbstractGatewayServerTest {
 		for (int i = 2; i <= availableIncomingWindows; i++) {
 			final Sms sms = new Sms(
 			        "assertThatGatewayServerDoesNotForwardMoreThanWindowSizeManySmsToJmsServer-"
-			                + i, clientAddress, serverAddress);
+			                + i);
 			client.sendMessage(i, sms);
 		}
 		client.disconnect();

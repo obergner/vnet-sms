@@ -53,10 +53,12 @@ public class WindowedMessageEventToJmsMessageConverter implements
 		        windowedMessageEvent.getChannel().getId());
 		converted.setLongProperty(Headers.RECEIVE_TIMESTAMP,
 		        windowedMessageEvent.getMessage().getCreationTimestamp());
-		converted.setStringProperty(Headers.SENDER_SOCKET_ADDRESS,
-		        windowedMessageEvent.getMessage().getSender().toString());
+		converted
+		        .setStringProperty(Headers.SENDER_SOCKET_ADDRESS,
+		                windowedMessageEvent.getChannel().getRemoteAddress()
+		                        .toString());
 		converted.setStringProperty(Headers.RECEIVER_SOCKET_ADDRESS,
-		        windowedMessageEvent.getMessage().getReceiver().toString());
+		        windowedMessageEvent.getChannel().getLocalAddress().toString());
 
 		return converted;
 	}

@@ -6,7 +6,6 @@ package vnet.sms.common.messages;
 import static org.apache.commons.lang.Validate.notNull;
 
 import java.io.Serializable;
-import java.net.SocketAddress;
 import java.util.Date;
 import java.util.UUID;
 
@@ -18,27 +17,18 @@ public abstract class Message implements Serializable, Comparable<Message> {
 
 	private static final long	serialVersionUID	= 2543387338512341954L;
 
-	private final UUID	        id;
+	private final UUID	      id;
 
-	private final long	        creationTimestamp;
+	private final long	      creationTimestamp;
 
-	private final SocketAddress	sender;
-
-	private final SocketAddress	receiver;
-
-	protected Message(final SocketAddress sender, final SocketAddress receiver) {
-		this(UUID.randomUUID(), System.currentTimeMillis(), sender, receiver);
+	protected Message() {
+		this(UUID.randomUUID(), System.currentTimeMillis());
 	}
 
-	protected Message(final UUID id, final long creationTimestamp,
-	        final SocketAddress sender, final SocketAddress receiver) {
+	protected Message(final UUID id, final long creationTimestamp) {
 		notNull(id, "Argument 'id' must not be null");
-		notNull(sender, "Argument 'sender' must not be null");
-		notNull(receiver, "Argument 'receiver' must not be null");
 		this.id = id;
 		this.creationTimestamp = creationTimestamp;
-		this.sender = sender;
-		this.receiver = receiver;
 	}
 
 	public final UUID getId() {
@@ -51,14 +41,6 @@ public abstract class Message implements Serializable, Comparable<Message> {
 
 	public final Date getCreationTime() {
 		return new Date(this.creationTimestamp);
-	}
-
-	public final SocketAddress getSender() {
-		return this.sender;
-	}
-
-	public final SocketAddress getReceiver() {
-		return this.receiver;
 	}
 
 	/**

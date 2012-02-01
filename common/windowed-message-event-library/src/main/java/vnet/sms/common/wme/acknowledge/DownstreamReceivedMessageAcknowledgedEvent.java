@@ -43,7 +43,7 @@ public class DownstreamReceivedMessageAcknowledgedEvent<ID extends Serializable,
 	        final MessageType acknowledgedMessageType, final Channel channel,
 	        final ChannelFuture future, final Object message,
 	        final Acknowledgement acknowledgement) {
-		super(channel, future, message, ((M) message).getReceiver());
+		super(channel, future, message, channel.getRemoteAddress());
 		notNull(acknowledgedMessageReference,
 		        "Argument 'acknowledgedMessageReference' must not be null");
 		notNull(acknowledgedMessageType,

@@ -8,7 +8,6 @@ import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.net.InetSocketAddress;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -52,8 +51,7 @@ public class IncomingWindowStoreConcurrentTest {
 		final Set<IdPlusMessage> backup = new HashSet<IdPlusMessage>(capacity);
 		for (long key = 0; key < capacity; key++) {
 			final IdPlusMessage idPlusMessage = new IdPlusMessage(key, new Sms(
-			        "assertThatStoreMessageFillsWindowStoreToCapacity",
-			        new InetSocketAddress(0), new InetSocketAddress(1)));
+			        "assertThatStoreMessageFillsWindowStoreToCapacity"));
 			queue.put(idPlusMessage);
 			backup.add(idPlusMessage);
 		}
@@ -167,8 +165,7 @@ public class IncomingWindowStoreConcurrentTest {
 			        numberOfMessagesToStore);
 			for (long key = 0; key < numberOfMessagesToStore; key++) {
 				final IdPlusMessage idPlusMessage = new IdPlusMessage(key,
-				        new Sms(String.valueOf(key), new InetSocketAddress(0),
-				                new InetSocketAddress(1)));
+				        new Sms(String.valueOf(key)));
 				queue.put(idPlusMessage);
 			}
 

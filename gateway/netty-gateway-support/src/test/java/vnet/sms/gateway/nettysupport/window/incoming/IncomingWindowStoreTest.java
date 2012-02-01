@@ -36,8 +36,7 @@ public class IncomingWindowStoreTest {
 		final Channel mockChannel = createNiceMock(Channel.class);
 		replay(mockChannel);
 		for (int i = 1; i <= expectedNumberOfMessages; i++) {
-			final PingRequest pingRequest = new PingRequest(
-			        new InetSocketAddress(0), new InetSocketAddress(0));
+			final PingRequest pingRequest = new PingRequest();
 			objectUnderTest
 			        .tryAcquireWindow(new PingRequestReceivedEvent<Integer>(
 			                Integer.valueOf(i), new UpstreamMessageEvent(
@@ -61,8 +60,7 @@ public class IncomingWindowStoreTest {
 		final Channel mockChannel = createNiceMock(Channel.class);
 		replay(mockChannel);
 		for (int i = 1; i < windowStoreCapacity; i++) {
-			final PingRequest pingRequest = new PingRequest(
-			        new InetSocketAddress(0), new InetSocketAddress(0));
+			final PingRequest pingRequest = new PingRequest();
 			objectUnderTest
 			        .tryAcquireWindow(new PingRequestReceivedEvent<Integer>(
 			                Integer.valueOf(i), new UpstreamMessageEvent(
@@ -70,8 +68,7 @@ public class IncomingWindowStoreTest {
 			                        new InetSocketAddress(0)), pingRequest));
 		}
 
-		final PingRequest pingRequest = new PingRequest(
-		        new InetSocketAddress(0), new InetSocketAddress(0));
+		final PingRequest pingRequest = new PingRequest();
 		final boolean windowAcquired = objectUnderTest
 		        .tryAcquireWindow(new PingRequestReceivedEvent<Integer>(Integer
 		                .valueOf(windowStoreCapacity),
@@ -99,8 +96,7 @@ public class IncomingWindowStoreTest {
 		final Channel mockChannel = createNiceMock(Channel.class);
 		replay(mockChannel);
 		for (int i = 1; i <= windowStoreCapacity; i++) {
-			final PingRequest pingRequest = new PingRequest(
-			        new InetSocketAddress(0), new InetSocketAddress(0));
+			final PingRequest pingRequest = new PingRequest();
 			objectUnderTest
 			        .tryAcquireWindow(new PingRequestReceivedEvent<Integer>(
 			                Integer.valueOf(i), new UpstreamMessageEvent(
@@ -108,8 +104,7 @@ public class IncomingWindowStoreTest {
 			                        new InetSocketAddress(0)), pingRequest));
 		}
 
-		final PingRequest pingRequest = new PingRequest(
-		        new InetSocketAddress(0), new InetSocketAddress(0));
+		final PingRequest pingRequest = new PingRequest();
 		final boolean windowAcquired = objectUnderTest
 		        .tryAcquireWindow(new PingRequestReceivedEvent<Integer>(Integer
 		                .valueOf(windowStoreCapacity + 1),
@@ -140,8 +135,7 @@ public class IncomingWindowStoreTest {
 		final Channel mockChannel = createNiceMock(Channel.class);
 		replay(mockChannel);
 		for (int i = 1; i <= windowStoreCapacity; i++) {
-			final PingRequest pingRequest = new PingRequest(
-			        new InetSocketAddress(0), new InetSocketAddress(0));
+			final PingRequest pingRequest = new PingRequest();
 			objectUnderTest
 			        .tryAcquireWindow(new PingRequestReceivedEvent<Integer>(
 			                Integer.valueOf(i), new UpstreamMessageEvent(
@@ -149,8 +143,7 @@ public class IncomingWindowStoreTest {
 			                        new InetSocketAddress(0)), pingRequest));
 		}
 
-		final PingRequest pingRequest = new PingRequest(
-		        new InetSocketAddress(0), new InetSocketAddress(0));
+		final PingRequest pingRequest = new PingRequest();
 		final boolean windowAcquired = objectUnderTest
 		        .tryAcquireWindow(new PingRequestReceivedEvent<Integer>(Integer
 		                .valueOf(windowStoreCapacity + 1),
@@ -182,8 +175,7 @@ public class IncomingWindowStoreTest {
 		final Channel mockChannel = createNiceMock(Channel.class);
 		replay(mockChannel);
 		for (int i = 1; i <= windowStoreCapacity; i++) {
-			final PingRequest pingRequest = new PingRequest(
-			        new InetSocketAddress(0), new InetSocketAddress(0));
+			final PingRequest pingRequest = new PingRequest();
 			objectUnderTest
 			        .tryAcquireWindow(new PingRequestReceivedEvent<Integer>(
 			                Integer.valueOf(i), new UpstreamMessageEvent(
@@ -191,8 +183,7 @@ public class IncomingWindowStoreTest {
 			                        new InetSocketAddress(0)), pingRequest));
 		}
 
-		final PingRequest pingRequest = new PingRequest(
-		        new InetSocketAddress(0), new InetSocketAddress(0));
+		final PingRequest pingRequest = new PingRequest();
 		final long before = System.currentTimeMillis();
 		objectUnderTest.tryAcquireWindow(new PingRequestReceivedEvent<Integer>(
 		        Integer.valueOf(windowStoreCapacity + 1),
@@ -216,8 +207,7 @@ public class IncomingWindowStoreTest {
 		final Channel mockChannel = createNiceMock(Channel.class);
 		replay(mockChannel);
 		for (int i = 1; i <= windowStoreCapacity; i++) {
-			final PingRequest pingRequest = new PingRequest(
-			        new InetSocketAddress(0), new InetSocketAddress(0));
+			final PingRequest pingRequest = new PingRequest();
 			objectUnderTest
 			        .tryAcquireWindow(new PingRequestReceivedEvent<Integer>(
 			                Integer.valueOf(i), new UpstreamMessageEvent(
@@ -227,8 +217,7 @@ public class IncomingWindowStoreTest {
 
 		objectUnderTest.releaseWindow(freedWindowId);
 
-		final PingRequest pingRequest = new PingRequest(
-		        new InetSocketAddress(0), new InetSocketAddress(0));
+		final PingRequest pingRequest = new PingRequest();
 		final boolean windowAcquired = objectUnderTest
 		        .tryAcquireWindow(new PingRequestReceivedEvent<Integer>(
 		                freedWindowId, new UpstreamMessageEvent(mockChannel,
@@ -250,8 +239,7 @@ public class IncomingWindowStoreTest {
 		final Channel mockChannel = createNiceMock(Channel.class);
 		replay(mockChannel);
 		for (int i = 1; i <= windowStoreCapacity; i++) {
-			final PingRequest pingRequest = new PingRequest(
-			        new InetSocketAddress(0), new InetSocketAddress(0));
+			final PingRequest pingRequest = new PingRequest();
 			objectUnderTest
 			        .tryAcquireWindow(new PingRequestReceivedEvent<Integer>(
 			                Integer.valueOf(i), new UpstreamMessageEvent(

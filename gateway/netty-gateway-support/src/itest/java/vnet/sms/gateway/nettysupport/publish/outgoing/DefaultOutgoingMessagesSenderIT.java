@@ -2,7 +2,6 @@ package vnet.sms.gateway.nettysupport.publish.outgoing;
 
 import static org.junit.Assert.assertEquals;
 
-import java.net.InetSocketAddress;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -46,9 +45,7 @@ public class DefaultOutgoingMessagesSenderIT {
 	@Test(timeout = 2000)
 	public final void assertThatSendSmsDoesSendSmsToConnectedServer()
 	        throws Exception {
-		final Sms sms = new Sms(
-		        "assertThatSendSmsDoesSendSmsToConnectedServer",
-		        new InetSocketAddress(0), new InetSocketAddress(1));
+		final Sms sms = new Sms("assertThatSendSmsDoesSendSmsToConnectedServer");
 		final SendSmsContainer smsContainer = new SendSmsContainer(sms);
 
 		final AtomicReference<Object> receivedMessage = new AtomicReference<Object>();
@@ -80,8 +77,7 @@ public class DefaultOutgoingMessagesSenderIT {
 	public final void assertThatSendSmsThrowsIllegalStateExceptionIfNoChannelIsConnected()
 	        throws Exception {
 		final Sms sms = new Sms(
-		        "assertThatSendSmsDoesSendSmsToConnectedServer",
-		        new InetSocketAddress(0), new InetSocketAddress(1));
+		        "assertThatSendSmsThrowsIllegalStateExceptionIfNoChannelIsConnected");
 		final SendSmsContainer smsContainer = new SendSmsContainer(sms);
 
 		final ChannelGroup connectedChannels = this.testClient.connect(0,
@@ -96,8 +92,7 @@ public class DefaultOutgoingMessagesSenderIT {
 	public final void assertThatSendSmsCallsListenerIfNoChannelIsConnected()
 	        throws Exception {
 		final Sms sms = new Sms(
-		        "assertThatSendSmsDoesSendSmsToConnectedServer",
-		        new InetSocketAddress(0), new InetSocketAddress(1));
+		        "assertThatSendSmsCallsListenerIfNoChannelIsConnected");
 		final SendSmsContainer smsContainer = new SendSmsContainer(sms);
 
 		final CountDownLatch listenerCalled = new CountDownLatch(1);

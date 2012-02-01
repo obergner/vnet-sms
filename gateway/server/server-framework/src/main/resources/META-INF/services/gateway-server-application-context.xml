@@ -60,6 +60,12 @@
 		p:threadNamePrefix="New I/O TCP Worker" />
 	<!-- END-SNIPPET: gateway server -->
 
+	<!-- START-SNIPPET: Outgoing messages sender -->
+	<bean id="vnet.sms.gateway.server.server-framework.outgoingMessagesSender"
+		class="vnet.sms.gateway.nettysupport.publish.outgoing.spring.OutgoingMessagesSenderFactory"
+		p:allConnectedChannels-ref="vnet.sms.gateway.server.server-framework.allConnectedChannels" />
+	<!-- END-SNIPPET: Outgoing messages sender -->
+
 	<!-- START-SNIPPET: gateway server channel pipeline factory -->
 	<bean
 		id="vnet.sms.gateway.server.server-framework.gatewayServerChannelPipelineFactory"

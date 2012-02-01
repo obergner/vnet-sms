@@ -27,7 +27,7 @@ public class PingResponse extends Message {
 
 	private PingResponse(final Acknowledgement ack,
 	        final PingRequest pingRequest) {
-		super(pingRequest.getReceiver(), pingRequest.getSender());
+		super();
 		notNull(ack, "Argument 'ack' must not be null");
 		notNull(pingRequest, "Argument 'pingRequest' must not be null");
 		this.ack = ack;
@@ -49,7 +49,6 @@ public class PingResponse extends Message {
 	@Override
 	public String toString() {
 		return "PingResponse@" + this.hashCode() + "[ack: " + this.ack
-		        + "|pingRequest: " + this.pingRequest + "|sender: "
-		        + getSender() + "|receiver: " + getReceiver() + "]";
+		        + "|pingRequest: " + this.pingRequest + "]";
 	}
 }

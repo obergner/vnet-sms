@@ -36,7 +36,7 @@ public abstract class DownstreamWindowedMessageEvent<ID extends Serializable, M 
 	protected DownstreamWindowedMessageEvent(final ID messageReference,
 	        final MessageType type, final Channel channel,
 	        final ChannelFuture future, final Object message) {
-		super(channel, future, message, ((M) message).getReceiver());
+		super(channel, future, message, channel.getRemoteAddress());
 		notNull(messageReference,
 		        "Argument 'messageReference' must not be null");
 		notNull(channel, "Argument 'channel' must not be null");

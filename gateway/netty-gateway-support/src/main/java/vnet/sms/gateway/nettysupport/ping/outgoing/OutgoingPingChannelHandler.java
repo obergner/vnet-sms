@@ -175,9 +175,7 @@ public class OutgoingPingChannelHandler<ID extends Serializable> extends
 		}
 
 		private SendPingRequestEvent<ID> createSendPingRequestEvent() {
-			final PingRequest pingRequest = new PingRequest(this.ctx
-			        .getChannel().getLocalAddress(), this.ctx.getChannel()
-			        .getRemoteAddress());
+			final PingRequest pingRequest = new PingRequest();
 			return new SendPingRequestEvent<ID>(
 			        OutgoingPingChannelHandler.this.windowIdGenerator
 			                .nextMessageReference(),
