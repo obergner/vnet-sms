@@ -7,6 +7,10 @@ import java.io.Serializable;
 
 import org.jboss.netty.channel.ChannelFuture;
 
+import vnet.sms.common.messages.Message;
+import vnet.sms.common.wme.acknowledge.MessageAcknowledgementContainer;
+import vnet.sms.common.wme.acknowledge.ReceivedSmsAckedContainer;
+import vnet.sms.common.wme.acknowledge.ReceivedSmsNackedContainer;
 import vnet.sms.common.wme.send.SendSmsContainer;
 
 /**
@@ -19,9 +23,13 @@ public interface OutgoingMessagesSender<ID extends Serializable> {
 	// Listener
 	// ------------------------------------------------------------------------
 
-	public interface Listener {
+	public interface Listener<ID extends Serializable> {
 
 		void sendSmsFailed(final SendSmsContainer failedSms,
+		        final Throwable error);
+
+		void acknowldgeReceivedSmsFailed(
+		        final MessageAcknowledgementContainer<ID, ? extends Message> acknowledgement,
 		        final Throwable error);
 	}
 
@@ -29,14 +37,14 @@ public interface OutgoingMessagesSender<ID extends Serializable> {
 	// Managing listeners
 	// ------------------------------------------------------------------------
 
-	boolean addListener(Listener listener);
+	boolean addListener(Listener<ID> listener);
 
-	boolean removeListener(Listener listener);
+	boolean removeListener(Listener<ID> listener);
 
 	void clearListeners();
 
 	// ------------------------------------------------------------------------
-	//
+	// Sending messages
 	// ------------------------------------------------------------------------
 
 	/**
@@ -45,6 +53,26 @@ public interface OutgoingMessagesSender<ID extends Serializable> {
 	 * @throws Exception
 	 */
 	ChannelFuture sendSms(SendSmsContainer sms) throws Exception;
+
+	/**
+	 * @param ack
+	 * @return
+	 * @throws Exception
+	 */
+	ChannelFuture ackReceivedSms(ReceivedSmsAckedContainer<ID> ack)
+	        throws Exception;
+
+	/**
+	 * @param nack
+	 * @return
+	 * @throws Exception
+	 */
+	ChannelFuture nackReceivedSms(ReceivedSmsNackedContainer<ID> nack)
+	        throws Exception;
+
+	// ------------------------------------------------------------------------
+	// Resource management
+	// ------------------------------------------------------------------------
 
 	/**
 	 * 

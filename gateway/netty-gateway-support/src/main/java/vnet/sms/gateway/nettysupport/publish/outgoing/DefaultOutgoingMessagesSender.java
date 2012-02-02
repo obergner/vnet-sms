@@ -25,7 +25,11 @@ import org.springframework.jmx.export.annotation.ManagedOperationParameter;
 import org.springframework.jmx.export.annotation.ManagedOperationParameters;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
+import vnet.sms.common.messages.Message;
 import vnet.sms.common.messages.Sms;
+import vnet.sms.common.wme.acknowledge.MessageAcknowledgementContainer;
+import vnet.sms.common.wme.acknowledge.ReceivedSmsAckedContainer;
+import vnet.sms.common.wme.acknowledge.ReceivedSmsNackedContainer;
 import vnet.sms.common.wme.send.SendSmsContainer;
 import vnet.sms.gateway.nettysupport.Jmx;
 
@@ -48,44 +52,62 @@ public class DefaultOutgoingMessagesSender<ID extends Serializable> implements
 	// Static
 	// ------------------------------------------------------------------------
 
-	private static final String	                       TYPE	           = "OutgoingMessagesSender";
+	private static final String	                           TYPE	                        = "OutgoingMessagesSender";
 
-	private static final String	                       NAME	           = "DEFAULT";
+	private static final String	                           NAME	                        = "DEFAULT";
 
-	static final String	                               OBJECT_NAME	   = Jmx.GROUP
-	                                                                           + ":type="
-	                                                                           + TYPE
-	                                                                           + ",name="
-	                                                                           + NAME;
+	static final String	                                   OBJECT_NAME	                = Jmx.GROUP
+	                                                                                            + ":type="
+	                                                                                            + TYPE
+	                                                                                            + ",name="
+	                                                                                            + NAME;
 
 	// ------------------------------------------------------------------------
 	// Instance
 	// ------------------------------------------------------------------------
 
-	private final Logger	                           log	           = LoggerFactory
-	                                                                           .getLogger(getClass());
+	private final Logger	                               log	                        = LoggerFactory
+	                                                                                            .getLogger(getClass());
 
-	private final Set<OutgoingMessagesSender.Listener>	listeners	   = new CopyOnWriteArraySet<OutgoingMessagesSender.Listener>();
+	private final Set<OutgoingMessagesSender.Listener<ID>>	listeners	                = new CopyOnWriteArraySet<OutgoingMessagesSender.Listener<ID>>();
 
-	private final Meter	                               numberOfSentSms	= Metrics
-	                                                                           .newMeter(
-	                                                                                   new MetricName(
-	                                                                                           Jmx.GROUP,
-	                                                                                           TYPE,
-	                                                                                           "sms-send-count"),
-	                                                                                   "sms-sent",
-	                                                                                   TimeUnit.SECONDS);
+	private final Meter	                                   numberOfSentSms	            = Metrics
+	                                                                                            .newMeter(
+	                                                                                                    new MetricName(
+	                                                                                                            Jmx.GROUP,
+	                                                                                                            TYPE,
+	                                                                                                            "acknowledgement-send-count"),
+	                                                                                                    "acknowledgement-sent",
+	                                                                                                    TimeUnit.SECONDS);
 
-	private final Timer	                               smsSendDuration	= Metrics
-	                                                                           .newTimer(
-	                                                                                   new MetricName(
-	                                                                                           Jmx.GROUP,
-	                                                                                           TYPE,
-	                                                                                           "sms-send-duration"),
-	                                                                                   TimeUnit.MILLISECONDS,
-	                                                                                   TimeUnit.SECONDS);
+	private final Timer	                                   smsSendDuration	            = Metrics
+	                                                                                            .newTimer(
+	                                                                                                    new MetricName(
+	                                                                                                            Jmx.GROUP,
+	                                                                                                            TYPE,
+	                                                                                                            "acknowledgement-send-duration"),
+	                                                                                                    TimeUnit.MILLISECONDS,
+	                                                                                                    TimeUnit.SECONDS);
 
-	private final ChannelGroup	                       allConnectedChannels;
+	private final Meter	                                   numberOfSentAcknowledgements	= Metrics
+	                                                                                            .newMeter(
+	                                                                                                    new MetricName(
+	                                                                                                            Jmx.GROUP,
+	                                                                                                            TYPE,
+	                                                                                                            "acknowledgement-send-count"),
+	                                                                                                    "acknowledgement-sent",
+	                                                                                                    TimeUnit.SECONDS);
+
+	private final Timer	                                   acknowledgementSendDuration	= Metrics
+	                                                                                            .newTimer(
+	                                                                                                    new MetricName(
+	                                                                                                            Jmx.GROUP,
+	                                                                                                            TYPE,
+	                                                                                                            "acknowledgement-send-duration"),
+	                                                                                                    TimeUnit.MILLISECONDS,
+	                                                                                                    TimeUnit.SECONDS);
+
+	private final ChannelGroup	                           allConnectedChannels;
 
 	// ------------------------------------------------------------------------
 	// Constructors
@@ -106,14 +128,14 @@ public class DefaultOutgoingMessagesSender<ID extends Serializable> implements
 
 	@Override
 	public boolean addListener(
-	        final vnet.sms.gateway.nettysupport.publish.outgoing.OutgoingMessagesSender.Listener listener) {
+	        final OutgoingMessagesSender.Listener<ID> listener) {
 		this.log.info("Added listener {}", listener);
 		return this.listeners.add(listener);
 	}
 
 	@Override
 	public boolean removeListener(
-	        final vnet.sms.gateway.nettysupport.publish.outgoing.OutgoingMessagesSender.Listener listener) {
+	        final OutgoingMessagesSender.Listener<ID> listener) {
 		this.log.info("Removed listener {}", listener);
 		return this.listeners.remove(listener);
 	}
@@ -125,7 +147,7 @@ public class DefaultOutgoingMessagesSender<ID extends Serializable> implements
 	}
 
 	// ------------------------------------------------------------------------
-	// API
+	// Sending messages
 	// ------------------------------------------------------------------------
 
 	/**
@@ -133,7 +155,7 @@ public class DefaultOutgoingMessagesSender<ID extends Serializable> implements
 	 */
 	@Override
 	public ChannelFuture sendSms(final SendSmsContainer sms) throws Exception {
-		notNull(sms, "Argument 'sms' must not be null");
+		notNull(sms, "Argument 'acknowledgement' must not be null");
 		try {
 			this.log.debug("Sending {} ...", sms);
 
@@ -162,7 +184,7 @@ public class DefaultOutgoingMessagesSender<ID extends Serializable> implements
 
 	private void fireSmsSendFailed(final SendSmsContainer failedSms,
 	        final Throwable error) {
-		for (final Listener listener : this.listeners) {
+		for (final Listener<ID> listener : this.listeners) {
 			listener.sendSmsFailed(failedSms, error);
 		}
 	}
@@ -190,7 +212,111 @@ public class DefaultOutgoingMessagesSender<ID extends Serializable> implements
 				DefaultOutgoingMessagesSender.this.log.debug(
 				        "Successfully sent {} via {}", this.sms,
 				        future.getChannel());
+				DefaultOutgoingMessagesSender.this.numberOfSentSms.mark();
 			}
+		}
+	}
+
+	@Override
+	public ChannelFuture ackReceivedSms(final ReceivedSmsAckedContainer<ID> ack)
+	        throws Exception {
+		notNull(ack, "Argument 'ack' must not be null");
+		try {
+			this.log.debug("Sending {} ...", ack);
+
+			final Channel channel = replyChannelFor(ack);
+			this.log.debug("Will send {} via {}", ack, channel);
+
+			final TimerContext ackSendTimer = this.acknowledgementSendDuration
+			        .time();
+			final ChannelFuture ackHasBeenSent = channel.write(ack);
+			ackHasBeenSent.addListener(new AcknowledgeReceivedSmsFuture(ack,
+			        ackSendTimer));
+
+			return ackHasBeenSent;
+		} catch (final Exception e) {
+			fireAcknowledgeReceivedSmsFailed(ack, e);
+			throw e;
+		}
+	}
+
+	private Channel replyChannelFor(
+	        final MessageAcknowledgementContainer<ID, ? extends Message> acknowledgement) {
+		final Channel replyChannel = this.allConnectedChannels
+		        .find(acknowledgement.getReceivingChannelId());
+		if (replyChannel == null) {
+			throw new IllegalStateException(
+			        "Cannot send acknowledgement "
+			                + acknowledgement
+			                + " for previously received message "
+			                + acknowledgement.getAcknowledgedMessage()
+			                + " via channel having ID = ["
+			                + acknowledgement.getReceivingChannelId()
+			                + "] (the channel on which the acknowledged message has been received) since this channel is not connected anymore");
+		}
+		return replyChannel;
+	}
+
+	private final class AcknowledgeReceivedSmsFuture implements
+	        ChannelFutureListener {
+		private final MessageAcknowledgementContainer<ID, Sms>	acknowledgement;
+		private final TimerContext		                       acknowledgementSendTimer;
+
+		private AcknowledgeReceivedSmsFuture(
+		        final MessageAcknowledgementContainer<ID, Sms> acknowledgement,
+		        final TimerContext acknowledgementSendTimer) {
+			this.acknowledgement = acknowledgement;
+			this.acknowledgementSendTimer = acknowledgementSendTimer;
+		}
+
+		@Override
+		public void operationComplete(final ChannelFuture future)
+		        throws Exception {
+			this.acknowledgementSendTimer.stop();
+			if (!future.isSuccess()) {
+				DefaultOutgoingMessagesSender.this.log.error(
+				        "Sending {} failed: " + future.getCause().getMessage(),
+				        future.getCause());
+				fireAcknowledgeReceivedSmsFailed(this.acknowledgement,
+				        future.getCause());
+			} else {
+				DefaultOutgoingMessagesSender.this.log.debug(
+				        "Successfully sent {} via {}", this.acknowledgement,
+				        future.getChannel());
+				DefaultOutgoingMessagesSender.this.numberOfSentAcknowledgements
+				        .mark();
+			}
+		}
+	}
+
+	private void fireAcknowledgeReceivedSmsFailed(
+	        final MessageAcknowledgementContainer<ID, Sms> failedAcknowledgement,
+	        final Throwable error) {
+		for (final Listener<ID> listener : this.listeners) {
+			listener.acknowldgeReceivedSmsFailed(failedAcknowledgement, error);
+		}
+	}
+
+	@Override
+	public ChannelFuture nackReceivedSms(
+	        final ReceivedSmsNackedContainer<ID> nack) throws Exception {
+		notNull(nack, "Argument 'nack' must not be null");
+		try {
+			this.log.debug("Sending {} ...", nack);
+
+			final Channel channel = replyChannelFor(nack);
+			this.log.debug("Will send {} via {}", nack, channel);
+
+			final TimerContext ackSendTimer = this.acknowledgementSendDuration
+			        .time();
+			final ChannelFuture ackHasBeenSent = channel.write(nack);
+			ackHasBeenSent.addListener(new AcknowledgeReceivedSmsFuture(nack,
+			        ackSendTimer));
+
+			return ackHasBeenSent;
+		} catch (final Exception e) {
+			fireAcknowledgeReceivedSmsFailed(nack, e);
+			throw e;
 		}
 	}
 
@@ -225,6 +351,10 @@ public class DefaultOutgoingMessagesSender<ID extends Serializable> implements
 		        metricNameOf(this.numberOfSentSms));
 		Metrics.defaultRegistry().removeMetric(
 		        metricNameOf(this.smsSendDuration));
+		Metrics.defaultRegistry().removeMetric(
+		        metricNameOf(this.numberOfSentAcknowledgements));
+		Metrics.defaultRegistry().removeMetric(
+		        metricNameOf(this.acknowledgementSendDuration));
 		this.log.info("OutgoingMessagesSender closed - all statistics have been removed from MBean server");
 	}
 
