@@ -18,7 +18,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 
 import vnet.sms.common.spring.jmx.MBeanExportOperationsAware;
 import vnet.sms.gateway.nettysupport.monitor.incoming.InitialChannelEventsMonitor;
-import vnet.sms.gateway.server.framework.jmsbridge.MessageForwardingJmsBridge;
+import vnet.sms.gateway.server.framework.jmsbridge.IncomingMessagesForwardingJmsBridge;
 import vnet.sms.gateway.transport.plugin.TransportProtocolExtensionPoint;
 import vnet.sms.gateway.transport.plugin.context.TransportProtocolPluginInjector;
 import vnet.sms.gateway.transport.spi.TransportProtocolPlugin;
@@ -55,7 +55,7 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 
 	private ChannelGroup	                            allConnectedChannels;
 
-	private MessageForwardingJmsBridge<ID>	            messageForwardingJmsBridge;
+	private IncomingMessagesForwardingJmsBridge<ID>	    messageForwardingJmsBridge;
 
 	private InitialChannelEventsMonitor	                initialChannelEventsMonitor;
 
@@ -179,7 +179,7 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 	 */
 	@Required
 	public final void setMessageForwardingJmsBridge(
-	        final MessageForwardingJmsBridge<ID> messageForwardingJmsBridge) {
+	        final IncomingMessagesForwardingJmsBridge<ID> messageForwardingJmsBridge) {
 		notNull(messageForwardingJmsBridge,
 		        "Argument 'messageForwardingJmsBridge' must not be null");
 		this.messageForwardingJmsBridge = messageForwardingJmsBridge;

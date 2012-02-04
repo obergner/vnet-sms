@@ -40,7 +40,7 @@ public class MessageForwardingJmsBridgeTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public final void assertThatConstructorRejectsNullJmsTemplate() {
-		new MessageForwardingJmsBridge<Integer>(null);
+		new IncomingMessagesForwardingJmsBridge<Integer>(null);
 	}
 
 	@Test
@@ -57,7 +57,7 @@ public class MessageForwardingJmsBridgeTest {
 		jmsTemplate
 		        .setMessageConverter(new WindowedMessageEventToJmsMessageConverter());
 
-		final MessageForwardingJmsBridge<Integer> objectUnderTest = new MessageForwardingJmsBridge<Integer>(
+		final IncomingMessagesForwardingJmsBridge<Integer> objectUnderTest = new IncomingMessagesForwardingJmsBridge<Integer>(
 		        jmsTemplate);
 
 		final InetSocketAddress sender = new InetSocketAddress(1);
@@ -86,10 +86,10 @@ public class MessageForwardingJmsBridgeTest {
 		        .cast(jmsTemplate.receive());
 
 		assertNotNull(
-		        "MessageForwardingJmsBridge did not forward SMS to JMS queue",
+		        "IncomingMessagesForwardingJmsBridge did not forward SMS to JMS queue",
 		        forwardedMessage);
 		assertEquals(
-		        "MessageForwardingJmsBridge did not forward SMS but rather a different message",
+		        "IncomingMessagesForwardingJmsBridge did not forward SMS but rather a different message",
 		        message, forwardedMessage.getObject());
 	}
 
@@ -107,7 +107,7 @@ public class MessageForwardingJmsBridgeTest {
 		jmsTemplate
 		        .setMessageConverter(new WindowedMessageEventToJmsMessageConverter());
 
-		final MessageForwardingJmsBridge<Integer> objectUnderTest = new MessageForwardingJmsBridge<Integer>(
+		final IncomingMessagesForwardingJmsBridge<Integer> objectUnderTest = new IncomingMessagesForwardingJmsBridge<Integer>(
 		        jmsTemplate);
 
 		final InetSocketAddress sender = new InetSocketAddress(1);
@@ -137,10 +137,10 @@ public class MessageForwardingJmsBridgeTest {
 		        .cast(jmsTemplate.receive());
 
 		assertNotNull(
-		        "MessageForwardingJmsBridge did not forward LoginRequest to JMS queue",
+		        "IncomingMessagesForwardingJmsBridge did not forward LoginRequest to JMS queue",
 		        forwardedMessage);
 		assertEquals(
-		        "MessageForwardingJmsBridge did not forward LoginRequest but rather a different message",
+		        "IncomingMessagesForwardingJmsBridge did not forward LoginRequest but rather a different message",
 		        message, forwardedMessage.getObject());
 	}
 
@@ -158,7 +158,7 @@ public class MessageForwardingJmsBridgeTest {
 		jmsTemplate
 		        .setMessageConverter(new WindowedMessageEventToJmsMessageConverter());
 
-		final MessageForwardingJmsBridge<Integer> objectUnderTest = new MessageForwardingJmsBridge<Integer>(
+		final IncomingMessagesForwardingJmsBridge<Integer> objectUnderTest = new IncomingMessagesForwardingJmsBridge<Integer>(
 		        jmsTemplate);
 
 		final InetSocketAddress sender = new InetSocketAddress(1);
@@ -189,10 +189,10 @@ public class MessageForwardingJmsBridgeTest {
 		        .cast(jmsTemplate.receive());
 
 		assertNotNull(
-		        "MessageForwardingJmsBridge did not forward LoginResponse to JMS queue",
+		        "IncomingMessagesForwardingJmsBridge did not forward LoginResponse to JMS queue",
 		        forwardedMessage);
 		assertEquals(
-		        "MessageForwardingJmsBridge did not forward LoginResponse but rather a different message",
+		        "IncomingMessagesForwardingJmsBridge did not forward LoginResponse but rather a different message",
 		        message, forwardedMessage.getObject());
 	}
 
@@ -210,7 +210,7 @@ public class MessageForwardingJmsBridgeTest {
 		jmsTemplate
 		        .setMessageConverter(new WindowedMessageEventToJmsMessageConverter());
 
-		final MessageForwardingJmsBridge<Integer> objectUnderTest = new MessageForwardingJmsBridge<Integer>(
+		final IncomingMessagesForwardingJmsBridge<Integer> objectUnderTest = new IncomingMessagesForwardingJmsBridge<Integer>(
 		        jmsTemplate);
 
 		final InetSocketAddress sender = new InetSocketAddress(1);
@@ -238,7 +238,7 @@ public class MessageForwardingJmsBridgeTest {
 		        .cast(jmsTemplate.receive());
 
 		assertNull(
-		        "MessageForwardingJmsBridge DID forward PingRequest to JMS queue - it shouldn't have done so",
+		        "IncomingMessagesForwardingJmsBridge DID forward PingRequest to JMS queue - it shouldn't have done so",
 		        forwardedMessage);
 	}
 
@@ -256,7 +256,7 @@ public class MessageForwardingJmsBridgeTest {
 		jmsTemplate
 		        .setMessageConverter(new WindowedMessageEventToJmsMessageConverter());
 
-		final MessageForwardingJmsBridge<Integer> objectUnderTest = new MessageForwardingJmsBridge<Integer>(
+		final IncomingMessagesForwardingJmsBridge<Integer> objectUnderTest = new IncomingMessagesForwardingJmsBridge<Integer>(
 		        jmsTemplate);
 
 		final InetSocketAddress sender = new InetSocketAddress(1);
@@ -285,7 +285,7 @@ public class MessageForwardingJmsBridgeTest {
 		        .cast(jmsTemplate.receive());
 
 		assertNull(
-		        "MessageForwardingJmsBridge DID forward PingResponse to JMS queue - it shouldn't have done so",
+		        "IncomingMessagesForwardingJmsBridge DID forward PingResponse to JMS queue - it shouldn't have done so",
 		        forwardedMessage);
 	}
 }

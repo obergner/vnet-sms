@@ -16,6 +16,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -33,6 +34,7 @@ import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles("itest")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @ContextConfiguration({
         "classpath:META-INF/services/gateway-server-application-context.xml",
         "classpath:META-INF/services/gateway-server-authentication-manager-context.xml",
@@ -41,8 +43,9 @@ import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;
         "classpath:META-INF/itest/itest-gateway-server-embedded-activemq-broker-context.xml",
         "classpath:META-INF/itest/itest-serialization-transport-plugin-context.xml",
         "classpath:META-INF/itest/itest-test-client-context.xml",
+        "classpath:META-INF/itest/itest-test-jms-listener-context.xml",
         "classpath:META-INF/itest/itest-gateway-server-description-context.xml" })
-public class GatewayServerIT {
+public class ReceiveIncomingMessagesIT {
 
 	@Autowired
 	private IntegrationTestClient	                              testClient;

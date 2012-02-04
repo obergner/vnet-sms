@@ -7,6 +7,7 @@ import vnet.sms.common.messages.PingResponse;
 import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestAckedEvent;
 import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestNackedEvent;
 import vnet.sms.common.wme.send.SendPingRequestEvent;
+import vnet.sms.common.wme.send.SendSmsEvent;
 import vnet.sms.gateway.nettysupport.login.incoming.NonLoginMessageReceivedOnUnauthenticatedChannelEvent;
 import vnet.sms.gateway.nettysupport.transport.outgoing.TransportProtocolAdaptingDownstreamChannelHandler;
 import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;
@@ -53,5 +54,14 @@ public class SerializationTransportProtocolAdaptingDownstreamChannelHandler
 		}
 		return ReferenceableMessageContainer.wrap(
 		        e.getAcknowledgedMessageReference(), nack);
+	}
+
+	@Override
+	protected ReferenceableMessageContainer convertSendSmsEventToPdu(
+	        final SendSmsEvent e) {
+		// FIXME: Replace message reference with proper value as soon as we
+		// support outgoing windowing
+		return ReferenceableMessageContainer.wrap(Integer.MIN_VALUE,
+		        e.getMessage());
 	}
 }

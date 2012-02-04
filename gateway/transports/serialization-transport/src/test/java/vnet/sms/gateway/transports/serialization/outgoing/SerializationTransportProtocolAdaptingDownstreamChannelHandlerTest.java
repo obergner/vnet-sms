@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import java.net.InetSocketAddress;
 
 import org.jboss.netty.channel.ChannelHandlerContext;
+import org.jboss.netty.channel.Channels;
 import org.jboss.netty.channel.DownstreamMessageEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelDownstreamHandler;
@@ -17,11 +18,14 @@ import org.junit.Test;
 import vnet.sms.common.messages.LoginRequest;
 import vnet.sms.common.messages.LoginResponse;
 import vnet.sms.common.messages.PingRequest;
+import vnet.sms.common.messages.Sms;
 import vnet.sms.common.wme.WindowedMessageEvent;
 import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestAckedEvent;
 import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestNackedEvent;
 import vnet.sms.common.wme.receive.LoginRequestReceivedEvent;
 import vnet.sms.common.wme.send.SendPingRequestEvent;
+import vnet.sms.common.wme.send.SendSmsContainer;
+import vnet.sms.common.wme.send.SendSmsEvent;
 import vnet.sms.gateway.nettytest.ChannelPipelineEmbedder;
 import vnet.sms.gateway.nettytest.DefaultChannelPipelineEmbedder;
 import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;
@@ -145,5 +149,29 @@ public class SerializationTransportProtocolAdaptingDownstreamChannelHandlerTest 
 		assertFalse(
 		        "OutgoingMessagesMonitoringChannelHandler did not convert rejected LoginRequest to FAILED LoginResponse",
 		        loginResponse.loginSucceeded());
+	}
+
+	@Test
+	public final void assertThatTransportProtocolAdapterCorrectlyConvertsSendSmsEventToPdu()
+	        throws Throwable {
+		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
+		        this.objectUnderTest,
+		        new MessageEventWrappingDownstreamChannelHandler());
+
+		final Sms moSms = new Sms(
+		        "assertThatTransportProtocolAdapterCorrectlyConvertsSendSmsEventToPdu");
+		final ReferenceableMessageContainer convertedMessageContainer = this.objectUnderTest
+		        .convertSendSmsEventToPdu(SendSmsEvent
+		                .convert(new DownstreamMessageEvent(embeddedPipeline
+		                        .getChannel(), Channels.future(embeddedPipeline
+		                        .getChannel()), new SendSmsContainer(moSms),
+		                        null)));
+
+		assertNotNull(
+		        "OutgoingMessagesMonitoringChannelHandler converted SendSmsEvent to null output",
+		        convertedMessageContainer);
+		assertEquals(
+		        "OutgoingMessagesMonitoringChannelHandler did not convert SendSmsEvent to Sms",
+		        Sms.class, convertedMessageContainer.getMessage().getClass());
 	}
 }

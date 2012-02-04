@@ -13,7 +13,7 @@
 	<bean id="vnet.sms.gateway.server.server-framework.jmsTemplate"
 		class="org.springframework.jms.core.JmsTemplate"
 		p:connectionFactory-ref="vnet.sms.gateway.server.server-framework.pooledJmsConnectionFactory"
-		p:defaultDestination-ref="vnet.sms.gateway.server.server-framework.t1000IncomingMessagesQueue"
+		p:defaultDestination-ref="vnet.sms.gateway.server.server-framework.t1000IncomingMtSms"
 		p:messageConverter-ref="vnet.sms.gateway.server.server-framework.windowedMessageEventConverter" />
 	<!-- END-SNIPPET: Spring JMS template -->
 
@@ -22,6 +22,31 @@
 		id="vnet.sms.gateway.server.server-framework.windowedMessageEventConverter"
 		class="vnet.sms.common.wme.jmsbridge.WindowedMessageEventToJmsMessageConverter" />
 	<!-- END-SNIPPET: Spring JMS message converter -->
+
+	<!-- START-SNIPPET: Spring JMS message listener container -->
+	<jms:listener-container acknowledge="auto"
+		cache="auto" concurrency="10-20"
+		connection-factory="vnet.sms.gateway.server.server-framework.pooledJmsConnectionFactory"
+		container-type="default" destination-type="queue">
+		<jms:listener destination="${gateway.server.jmsserver.queues.outgoingMoSms}"
+			ref="vnet.sms.gateway.server.server-framework.outgoingMessagesListenerAdapter" />
+		<jms:listener destination="${gateway.server.jmsserver.queues.outgoingMtSmsAck}"
+			ref="vnet.sms.gateway.server.server-framework.outgoingMessagesListenerAdapter" />
+		<jms:listener destination="${gateway.server.jmsserver.queues.outgoingMtSmsNack}"
+			ref="vnet.sms.gateway.server.server-framework.outgoingMessagesListenerAdapter" />
+	</jms:listener-container>
+
+	<bean
+		id="vnet.sms.gateway.server.server-framework.outgoingMessagesListenerAdapter"
+		class="org.springframework.jms.listener.adapter.MessageListenerAdapter"
+		p:delegate-ref="vnet.sms.gateway.server.server-framework.outgoingMessagesSendingMessageListener"
+		p:messageConverter-ref="vnet.sms.gateway.server.server-framework.windowedMessageEventConverter" />
+
+	<bean
+		id="vnet.sms.gateway.server.server-framework.outgoingMessagesSendingMessageListener"
+		class="vnet.sms.gateway.server.framework.jmsbridge.OutgoingMessagesSendingJmsMessageListener"
+		c:outgoingMessagesSender-ref="vnet.sms.gateway.server.server-framework.outgoingMessagesSender" />
+	<!-- END-SNIPPET: Spring JMS message listener container -->
 
 	<!-- START-SNIPPET: JMS connection factory -->
 	<bean
@@ -38,8 +63,20 @@
 
 	<!-- START-SNIPPET: queues -->
 	<amq:queue
-		id="vnet.sms.gateway.server.server-framework.t1000IncomingMessagesQueue"
-		physicalName="${gateway.server.jmsserver.incomingMessagesQueue}" />
+		id="vnet.sms.gateway.server.server-framework.t1000IncomingMtSms"
+		physicalName="${gateway.server.jmsserver.queues.incomingMtSms}" />
+
+	<amq:queue
+		id="vnet.sms.gateway.server.server-framework.t1000OutgoingMoSms"
+		physicalName="${gateway.server.jmsserver.queues.outgoingMoSms}" />
+
+	<amq:queue
+		id="vnet.sms.gateway.server.server-framework.t1000OutgoingMtSmsAck"
+		physicalName="${gateway.server.jmsserver.queues.outgoingMtSmsAck}" />
+
+	<amq:queue
+		id="vnet.sms.gateway.server.server-framework.t1000OutgoingMtSmsNack"
+		physicalName="${gateway.server.jmsserver.queues.outgoingMtSmsNack}" />
 	<!-- END-SNIPPET: queues -->
 
 </beans>

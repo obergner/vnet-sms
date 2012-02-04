@@ -3,9 +3,11 @@
  */
 package vnet.sms.common.wme.send;
 
-import org.jboss.netty.channel.Channel;
-import org.jboss.netty.channel.Channels;
+import static org.apache.commons.lang.Validate.isTrue;
+import static org.apache.commons.lang.Validate.notNull;
+
 import org.jboss.netty.channel.DownstreamMessageEvent;
+import org.jboss.netty.channel.MessageEvent;
 
 import vnet.sms.common.messages.Sms;
 
@@ -15,7 +17,26 @@ import vnet.sms.common.messages.Sms;
  */
 public final class SendSmsEvent extends DownstreamMessageEvent {
 
-	public SendSmsEvent(final Channel channel, final Sms message) {
-		super(channel, Channels.future(channel, false), message, null);
+	public static final SendSmsEvent convert(
+	        final MessageEvent sendSmsMessageEvent) {
+		notNull(sendSmsMessageEvent,
+		        "Argument 'sendSmsMessageEvent' must not be null");
+		isTrue(sendSmsMessageEvent.getMessage() instanceof SendSmsContainer,
+		        "Can only conver MessageEvents having a SendSmsContainer as their payload. Got: "
+		                + sendSmsMessageEvent.getMessage());
+		return new SendSmsEvent(sendSmsMessageEvent, SendSmsContainer.class
+		        .cast(sendSmsMessageEvent.getMessage()).getMessage());
+	}
+
+	private SendSmsEvent(final MessageEvent sendSmsMessageEvent,
+	        final Sms message) {
+		super(sendSmsMessageEvent.getChannel(),
+		        sendSmsMessageEvent.getFuture(), message, sendSmsMessageEvent
+		                .getRemoteAddress());
+	}
+
+	@Override
+	public Sms getMessage() {
+		return (Sms) super.getMessage();
 	}
 }

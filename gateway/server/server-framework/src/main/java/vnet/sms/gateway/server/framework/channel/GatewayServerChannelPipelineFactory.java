@@ -40,7 +40,7 @@ import vnet.sms.gateway.nettysupport.window.WindowingChannelHandler;
 import vnet.sms.gateway.nettysupport.window.incoming.IncomingWindowStore;
 import vnet.sms.gateway.nettysupport.window.spi.MessageReferenceGenerator;
 import vnet.sms.gateway.server.framework.Jmx;
-import vnet.sms.gateway.server.framework.jmsbridge.MessageForwardingJmsBridge;
+import vnet.sms.gateway.server.framework.jmsbridge.IncomingMessagesForwardingJmsBridge;
 
 /**
  * @author obergner
@@ -104,7 +104,7 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 	        final OneToOneEncoder encoder,
 	        final TransportProtocolAdaptingUpstreamChannelHandler<ID, TP> upstreamTransportProtocolAdapter,
 	        final TransportProtocolAdaptingDownstreamChannelHandler<ID, TP> downstreamTransportProtocolAdapter,
-	        final MessageForwardingJmsBridge<ID> messageForwardingJmsBridge,
+	        final IncomingMessagesForwardingJmsBridge<ID> messageForwardingJmsBridge,
 	        final int availableIncomingWindows,
 	        final long incomingWindowWaitTimeMillis,
 	        final AuthenticationManager authenticationManager,

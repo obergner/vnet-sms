@@ -11,6 +11,7 @@ import org.jboss.netty.channel.DownstreamMessageEvent;
 import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestAckedEvent;
 import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestNackedEvent;
 import vnet.sms.common.wme.send.SendPingRequestEvent;
+import vnet.sms.common.wme.send.SendSmsEvent;
 import vnet.sms.gateway.nettysupport.WindowedChannelHandler;
 import vnet.sms.gateway.nettysupport.login.incoming.NonLoginMessageReceivedOnUnauthenticatedChannelEvent;
 
@@ -62,6 +63,15 @@ public abstract class TransportProtocolAdaptingDownstreamChannelHandler<ID exten
 		        .getFuture(), pdu, e.getRemoteAddress()));
 	}
 
+	@Override
+	protected void writeSmsRequested(final ChannelHandlerContext ctx,
+	        final SendSmsEvent e) throws Exception {
+		final TP pdu = convertSendSmsEventToPdu(e);
+		getLog().trace("{} converted to {}", e, pdu);
+		ctx.sendDownstream(new DownstreamMessageEvent(ctx.getChannel(), e
+		        .getFuture(), pdu, e.getRemoteAddress()));
+	}
+
 	protected abstract TP convertSendPingRequestEventToPdu(
 	        final SendPingRequestEvent<ID> e);
 
@@ -73,4 +83,6 @@ public abstract class TransportProtocolAdaptingDownstreamChannelHandler<ID exten
 
 	protected abstract TP convertNonLoginMessageReceivedOnUnauthenticatedChannelEventToPdu(
 	        final NonLoginMessageReceivedOnUnauthenticatedChannelEvent<ID, ?> e);
+
+	protected abstract TP convertSendSmsEventToPdu(final SendSmsEvent e);
 }

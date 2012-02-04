@@ -16,7 +16,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import vnet.sms.common.wme.jmsbridge.WindowedMessageEventToJmsMessageConverter;
 import vnet.sms.gateway.nettysupport.monitor.incoming.InitialChannelEventsMonitor;
 import vnet.sms.gateway.server.framework.channel.GatewayServerChannelPipelineFactory;
-import vnet.sms.gateway.server.framework.jmsbridge.MessageForwardingJmsBridge;
+import vnet.sms.gateway.server.framework.jmsbridge.IncomingMessagesForwardingJmsBridge;
 import vnet.sms.gateway.server.framework.spi.GatewayServerDescription;
 import vnet.sms.gateway.server.framework.test.AcceptAllAuthenticationManager;
 import vnet.sms.gateway.server.framework.test.SerialIntegersMessageReferenceGenerator;
@@ -104,7 +104,7 @@ public class GatewayServerControllerTest {
 		        new ObjectEncoder(),
 		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(),
-		        new MessageForwardingJmsBridge<Integer>(jmsTemplate),
+		        new IncomingMessagesForwardingJmsBridge<Integer>(jmsTemplate),
 		        availableIncomingWindows, incomingWindowWaitTimeMillis,
 		        authenticationManager, failedLoginResponseMillis,
 		        new SerialIntegersMessageReferenceGenerator(),

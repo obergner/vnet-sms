@@ -15,6 +15,7 @@ import org.jboss.netty.channel.ChannelStateEvent;
 import org.jboss.netty.channel.ChannelUpstreamHandler;
 import org.jboss.netty.channel.ChildChannelStateEvent;
 import org.jboss.netty.channel.ExceptionEvent;
+import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.WriteCompletionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,8 @@ import vnet.sms.common.wme.receive.PingRequestReceivedEvent;
 import vnet.sms.common.wme.receive.PingResponseReceivedEvent;
 import vnet.sms.common.wme.receive.SmsReceivedEvent;
 import vnet.sms.common.wme.send.SendPingRequestEvent;
+import vnet.sms.common.wme.send.SendSmsContainer;
+import vnet.sms.common.wme.send.SendSmsEvent;
 import vnet.sms.gateway.nettysupport.login.incoming.ChannelAuthenticationFailedEvent;
 import vnet.sms.gateway.nettysupport.login.incoming.ChannelSuccessfullyAuthenticatedEvent;
 import vnet.sms.gateway.nettysupport.login.incoming.NonLoginMessageReceivedOnUnauthenticatedChannelEvent;
@@ -127,8 +130,9 @@ public class WindowedChannelHandler<ID extends Serializable> implements
 			exceptionCaught(ctx, (ExceptionEvent) e);
 		} else {
 			throw new IllegalStateException("Unsupported ChannelEvent [" + e
+			        + "] of type [" + e.getClass().getName()
 			        + "] - please add a handler method in "
-			        + UpstreamWindowedChannelHandler.class.getName());
+			        + WindowedChannelHandler.class.getName());
 		}
 		getLog().debug("Finished processing {}", e);
 	}
@@ -382,6 +386,13 @@ public class WindowedChannelHandler<ID extends Serializable> implements
 			        (NonLoginMessageReceivedOnUnauthenticatedChannelEvent<ID, ?>) e);
 		} else if (e instanceof SendPingRequestEvent) {
 			writePingRequestRequested(ctx, (SendPingRequestEvent<ID>) e);
+		} else if ((e instanceof MessageEvent)
+		        && (MessageEvent.class.cast(e).getMessage() instanceof SendSmsContainer)) {
+			final SendSmsEvent sendSmsEvent = SendSmsEvent
+			        .convert(MessageEvent.class.cast(e));
+			ctx.sendDownstream(sendSmsEvent);
+		} else if (e instanceof SendSmsEvent) {
+			writeSmsRequested(ctx, (SendSmsEvent) e);
 		} else if (e instanceof ChannelStateEvent) {
 			final ChannelStateEvent evt = (ChannelStateEvent) e;
 			switch (evt.getState()) {
@@ -412,8 +423,9 @@ public class WindowedChannelHandler<ID extends Serializable> implements
 			}
 		} else {
 			throw new IllegalStateException("Unsupported ChannelEvent [" + e
+			        + "] of type [" + e.getClass().getName()
 			        + "] - please add a handler method in "
-			        + DownstreamWindowedChannelHandler.class.getName());
+			        + WindowedChannelHandler.class.getName());
 		}
 		getLog().debug("Finished processing {}", e);
 	}
@@ -459,6 +471,16 @@ public class WindowedChannelHandler<ID extends Serializable> implements
 	        final ChannelHandlerContext ctx,
 	        final NonLoginMessageReceivedOnUnauthenticatedChannelEvent<ID, ?> e)
 	        throws Exception {
+		ctx.sendDownstream(e);
+	}
+
+	/**
+	 * @param ctx
+	 * @param e
+	 * @throws Exception
+	 */
+	protected void writeSmsRequested(final ChannelHandlerContext ctx,
+	        final SendSmsEvent e) throws Exception {
 		ctx.sendDownstream(e);
 	}
 

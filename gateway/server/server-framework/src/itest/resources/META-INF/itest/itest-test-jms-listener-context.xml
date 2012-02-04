@@ -10,8 +10,15 @@
        http://www.springframework.org/schema/jms/spring-jms-3.1.xsd"
 	profile="itest">
 
-	<bean id="vnet.sms.gateway.server.server-framework.itest.testClient"
-		class="vnet.sms.gateway.server.framework.test.IntegrationTestClient"
-		c:host="${gateway.server.host}" c:port="${gateway.server.port}" />
+	<jms:listener-container destination-type="queue"
+		connection-factory="vnet.sms.gateway.server.server-framework.pooledJmsConnectionFactory"
+		container-type="default">
+		<jms:listener destination="${gateway.server.jmsserver.queues.incomingMtSms}"
+			ref="vnet.sms.gateway.server.server-framework.itest.testJmsMessageListener" />
+	</jms:listener-container>
+
+	<bean
+		id="vnet.sms.gateway.server.server-framework.itest.testJmsMessageListener"
+		class="vnet.sms.gateway.server.framework.test.ForwardingJmsMessageListener" />
 
 </beans>

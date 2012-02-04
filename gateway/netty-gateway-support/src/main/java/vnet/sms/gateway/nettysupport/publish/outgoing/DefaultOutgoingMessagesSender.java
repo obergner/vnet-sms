@@ -204,9 +204,9 @@ public class DefaultOutgoingMessagesSender<ID extends Serializable> implements
 		        throws Exception {
 			this.smsSendTimer.stop();
 			if (!future.isSuccess()) {
-				DefaultOutgoingMessagesSender.this.log.error(
-				        "Sending {} failed: " + future.getCause().getMessage(),
-				        future.getCause());
+				DefaultOutgoingMessagesSender.this.log.error("Sending "
+				        + this.sms + " failed: "
+				        + future.getCause().getMessage(), future.getCause());
 				fireSmsSendFailed(this.sms, future.getCause());
 			} else {
 				DefaultOutgoingMessagesSender.this.log.debug(
@@ -274,9 +274,9 @@ public class DefaultOutgoingMessagesSender<ID extends Serializable> implements
 		        throws Exception {
 			this.acknowledgementSendTimer.stop();
 			if (!future.isSuccess()) {
-				DefaultOutgoingMessagesSender.this.log.error(
-				        "Sending {} failed: " + future.getCause().getMessage(),
-				        future.getCause());
+				DefaultOutgoingMessagesSender.this.log.error("Sending "
+				        + this.acknowledgement + " failed: "
+				        + future.getCause().getMessage(), future.getCause());
 				fireAcknowledgeReceivedSmsFailed(this.acknowledgement,
 				        future.getCause());
 			} else {

@@ -37,8 +37,8 @@ import com.yammer.metrics.core.Timer;
  * @author obergner
  * 
  */
-@ManagedResource(objectName = MessageForwardingJmsBridge.OBJECT_NAME)
-public class MessageForwardingJmsBridge<ID extends java.io.Serializable>
+@ManagedResource(objectName = IncomingMessagesForwardingJmsBridge.OBJECT_NAME)
+public class IncomingMessagesForwardingJmsBridge<ID extends java.io.Serializable>
         implements IncomingMessagesListener<ID> {
 
 	private static final String	TYPE	                        = "JMSBridge";
@@ -105,7 +105,7 @@ public class MessageForwardingJmsBridge<ID extends java.io.Serializable>
 	/**
 	 * @param jmsTemplate
 	 */
-	public MessageForwardingJmsBridge(final JmsTemplate jmsTemplate) {
+	public IncomingMessagesForwardingJmsBridge(final JmsTemplate jmsTemplate) {
 		notNull(jmsTemplate, "Argument 'jmsTemplate' must not be null");
 		this.jmsTemplate = jmsTemplate;
 	}

@@ -41,7 +41,7 @@ import vnet.sms.gateway.nettysupport.window.NoWindowForIncomingMessageAvailableE
 import vnet.sms.gateway.nettytest.ChannelEventFilter;
 import vnet.sms.gateway.nettytest.ChannelPipelineEmbedder;
 import vnet.sms.gateway.nettytest.DefaultChannelPipelineEmbedder;
-import vnet.sms.gateway.server.framework.jmsbridge.MessageForwardingJmsBridge;
+import vnet.sms.gateway.server.framework.jmsbridge.IncomingMessagesForwardingJmsBridge;
 import vnet.sms.gateway.server.framework.test.AcceptAllAuthenticationManager;
 import vnet.sms.gateway.server.framework.test.DenyAllAuthenticationManager;
 import vnet.sms.gateway.server.framework.test.SerialIntegersMessageReferenceGenerator;
@@ -63,8 +63,8 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new Base64Encoder(),
 		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(),
-		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
-		        1000L, new AcceptAllAuthenticationManager(), 1000L,
+		        new IncomingMessagesForwardingJmsBridge<Integer>(jmsTemplate),
+		        10, 1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
 		        new MBeanExporter(), new InitialChannelEventsMonitor(),
 		        new DefaultChannelGroup());
@@ -81,8 +81,8 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new Base64Encoder(),
 		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(),
-		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
-		        1000L, new AcceptAllAuthenticationManager(), 1000L,
+		        new IncomingMessagesForwardingJmsBridge<Integer>(jmsTemplate),
+		        10, 1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
 		        new MBeanExporter(), new InitialChannelEventsMonitor(),
 		        new DefaultChannelGroup());
@@ -99,8 +99,8 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        null,
 		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(),
-		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
-		        1000L, new AcceptAllAuthenticationManager(), 1000L,
+		        new IncomingMessagesForwardingJmsBridge<Integer>(jmsTemplate),
+		        10, 1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
 		        new MBeanExporter(), new InitialChannelEventsMonitor(),
 		        new DefaultChannelGroup());
@@ -117,8 +117,8 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new Base64Encoder(),
 		        null,
 		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(),
-		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
-		        1000L, new AcceptAllAuthenticationManager(), 1000L,
+		        new IncomingMessagesForwardingJmsBridge<Integer>(jmsTemplate),
+		        10, 1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
 		        new MBeanExporter(), new InitialChannelEventsMonitor(),
 		        new DefaultChannelGroup());
@@ -134,8 +134,9 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new Base64Decoder(),
 		        new Base64Encoder(),
 		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(),
-		        null, new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
-		        1000L, new AcceptAllAuthenticationManager(), 1000L,
+		        null, new IncomingMessagesForwardingJmsBridge<Integer>(
+		                jmsTemplate), 10, 1000L,
+		        new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
 		        new MBeanExporter(), new InitialChannelEventsMonitor(),
 		        new DefaultChannelGroup());
@@ -152,8 +153,8 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new Base64Encoder(),
 		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(),
-		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
-		        1000L, null, 1000L,
+		        new IncomingMessagesForwardingJmsBridge<Integer>(jmsTemplate),
+		        10, 1000L, null, 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
 		        new MBeanExporter(), new InitialChannelEventsMonitor(),
 		        new DefaultChannelGroup());
@@ -170,10 +171,10 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new Base64Encoder(),
 		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(),
-		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
-		        1000L, new AcceptAllAuthenticationManager(), 1000L, null, 2,
-		        2000L, new MBeanExporter(), new InitialChannelEventsMonitor(),
-		        new DefaultChannelGroup());
+		        new IncomingMessagesForwardingJmsBridge<Integer>(jmsTemplate),
+		        10, 1000L, new AcceptAllAuthenticationManager(), 1000L, null,
+		        2, 2000L, new MBeanExporter(),
+		        new InitialChannelEventsMonitor(), new DefaultChannelGroup());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -187,8 +188,8 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new Base64Encoder(),
 		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(),
-		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
-		        1000L, new AcceptAllAuthenticationManager(), 1000L,
+		        new IncomingMessagesForwardingJmsBridge<Integer>(jmsTemplate),
+		        10, 1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L, null,
 		        new InitialChannelEventsMonitor(), new DefaultChannelGroup());
 	}
@@ -204,8 +205,8 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new Base64Encoder(),
 		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(),
-		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
-		        1000L, new AcceptAllAuthenticationManager(), 1000L,
+		        new IncomingMessagesForwardingJmsBridge<Integer>(jmsTemplate),
+		        10, 1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
 		        new MBeanExporter(), new InitialChannelEventsMonitor(), null);
 	}
@@ -221,8 +222,8 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new Base64Encoder(),
 		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(),
-		        new MessageForwardingJmsBridge<Integer>(jmsTemplate), 10,
-		        1000L, new AcceptAllAuthenticationManager(), 1000L,
+		        new IncomingMessagesForwardingJmsBridge<Integer>(jmsTemplate),
+		        10, 1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
 		        new MBeanExporter(), null, new DefaultChannelGroup());
 	}
@@ -297,7 +298,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new ObjectEncoder(),
 		        new SerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        new SerializationTransportProtocolAdaptingDownstreamChannelHandler(),
-		        new MessageForwardingJmsBridge<Integer>(jmsTemplate),
+		        new IncomingMessagesForwardingJmsBridge<Integer>(jmsTemplate),
 		        availableIncomingWindows, incomingWindowWaitTimeMillis,
 		        authenticationManager, failedLoginResponseMillis,
 		        new SerialIntegersMessageReferenceGenerator(),

@@ -97,7 +97,7 @@
 	<!-- START-SNIPPET: message forwarding JMS bridge -->
 	<bean
 		id="vnet.sms.gateway.server.server-framework.messageForwardingJmsBridge"
-		class="vnet.sms.gateway.server.framework.jmsbridge.MessageForwardingJmsBridge"
+		class="vnet.sms.gateway.server.framework.jmsbridge.IncomingMessagesForwardingJmsBridge"
 		c:jmsTemplate-ref="vnet.sms.gateway.server.server-framework.jmsTemplate" />
 	<!-- END-SNIPPET: message forwarding JMS bridge -->
 

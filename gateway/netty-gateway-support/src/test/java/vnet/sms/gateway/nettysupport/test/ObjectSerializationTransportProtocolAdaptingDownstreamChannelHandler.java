@@ -4,6 +4,7 @@ import vnet.sms.common.messages.Message;
 import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestAckedEvent;
 import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestNackedEvent;
 import vnet.sms.common.wme.send.SendPingRequestEvent;
+import vnet.sms.common.wme.send.SendSmsEvent;
 import vnet.sms.gateway.nettysupport.login.incoming.NonLoginMessageReceivedOnUnauthenticatedChannelEvent;
 import vnet.sms.gateway.nettysupport.transport.outgoing.TransportProtocolAdaptingDownstreamChannelHandler;
 
@@ -32,6 +33,11 @@ public class ObjectSerializationTransportProtocolAdaptingDownstreamChannelHandle
 	@Override
 	protected Message convertNonLoginMessageReceivedOnUnauthenticatedChannelEventToPdu(
 	        final NonLoginMessageReceivedOnUnauthenticatedChannelEvent<Integer, ?> e) {
+		return e.getMessage();
+	}
+
+	@Override
+	protected Message convertSendSmsEventToPdu(final SendSmsEvent e) {
 		return e.getMessage();
 	}
 }
