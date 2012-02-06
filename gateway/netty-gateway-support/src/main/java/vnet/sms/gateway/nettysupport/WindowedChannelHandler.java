@@ -20,8 +20,13 @@ import org.jboss.netty.channel.WriteCompletionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import vnet.sms.common.messages.Message;
 import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestAckedEvent;
 import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestNackedEvent;
+import vnet.sms.common.wme.acknowledge.ReceivedSmsAckedContainer;
+import vnet.sms.common.wme.acknowledge.ReceivedSmsAckedEvent;
+import vnet.sms.common.wme.acknowledge.ReceivedSmsNackedContainer;
+import vnet.sms.common.wme.acknowledge.ReceivedSmsNackedEvent;
 import vnet.sms.common.wme.receive.LoginRequestReceivedEvent;
 import vnet.sms.common.wme.receive.LoginResponseReceivedEvent;
 import vnet.sms.common.wme.receive.PingRequestReceivedEvent;
@@ -35,6 +40,7 @@ import vnet.sms.gateway.nettysupport.login.incoming.ChannelSuccessfullyAuthentic
 import vnet.sms.gateway.nettysupport.login.incoming.NonLoginMessageReceivedOnUnauthenticatedChannelEvent;
 import vnet.sms.gateway.nettysupport.ping.outgoing.PingResponseTimeoutExpiredEvent;
 import vnet.sms.gateway.nettysupport.ping.outgoing.StartedToPingEvent;
+import vnet.sms.gateway.nettysupport.window.FailedToReleaseAcknowledgedMessageEvent;
 import vnet.sms.gateway.nettysupport.window.NoWindowForIncomingMessageAvailableEvent;
 import vnet.sms.gateway.nettysupport.window.PendingWindowedMessagesDiscardedEvent;
 
@@ -86,6 +92,10 @@ public class WindowedChannelHandler<ID extends Serializable> implements
 		} else if (e instanceof PendingWindowedMessagesDiscardedEvent) {
 			pendingWindowedMessagesDiscarded(ctx,
 			        (PendingWindowedMessagesDiscardedEvent<ID>) e);
+		} else if (e instanceof FailedToReleaseAcknowledgedMessageEvent) {
+			failedToReleaseAcknowledgedMessage(
+			        ctx,
+			        (FailedToReleaseAcknowledgedMessageEvent<ID, ? extends Message>) e);
 		} else if (e instanceof WriteCompletionEvent) {
 			final WriteCompletionEvent evt = (WriteCompletionEvent) e;
 			writeComplete(ctx, evt);
@@ -246,6 +256,18 @@ public class WindowedChannelHandler<ID extends Serializable> implements
 	}
 
 	/**
+	 * @param ctx
+	 * @param e
+	 * @throws Exception
+	 */
+	protected void failedToReleaseAcknowledgedMessage(
+	        final ChannelHandlerContext ctx,
+	        final FailedToReleaseAcknowledgedMessageEvent<ID, ? extends Message> e)
+	        throws Exception {
+		ctx.sendUpstream(e);
+	}
+
+	/**
 	 * Invoked when a {@link Channel} is open, but not bound nor connected. <br/>
 	 * 
 	 * <strong>Be aware that this event is fired from within the Boss-Thread so
@@ -393,6 +415,20 @@ public class WindowedChannelHandler<ID extends Serializable> implements
 			ctx.sendDownstream(sendSmsEvent);
 		} else if (e instanceof SendSmsEvent) {
 			writeSmsRequested(ctx, (SendSmsEvent) e);
+		} else if ((e instanceof MessageEvent)
+		        && (MessageEvent.class.cast(e).getMessage() instanceof ReceivedSmsAckedContainer)) {
+			final ReceivedSmsAckedEvent<ID> receivedSmsAckedEvent = ReceivedSmsAckedEvent
+			        .convert(MessageEvent.class.cast(e));
+			ctx.sendDownstream(receivedSmsAckedEvent);
+		} else if (e instanceof ReceivedSmsAckedEvent) {
+			writeReceivedSmsAckedRequested(ctx, (ReceivedSmsAckedEvent) e);
+		} else if ((e instanceof MessageEvent)
+		        && (MessageEvent.class.cast(e).getMessage() instanceof ReceivedSmsNackedContainer)) {
+			final ReceivedSmsNackedEvent<ID> receivedSmsNackedEvent = ReceivedSmsNackedEvent
+			        .convert(MessageEvent.class.cast(e));
+			ctx.sendDownstream(receivedSmsNackedEvent);
+		} else if (e instanceof ReceivedSmsNackedEvent) {
+			writeReceivedSmsNackedRequested(ctx, (ReceivedSmsNackedEvent) e);
 		} else if (e instanceof ChannelStateEvent) {
 			final ChannelStateEvent evt = (ChannelStateEvent) e;
 			switch (evt.getState()) {
@@ -481,6 +517,28 @@ public class WindowedChannelHandler<ID extends Serializable> implements
 	 */
 	protected void writeSmsRequested(final ChannelHandlerContext ctx,
 	        final SendSmsEvent e) throws Exception {
+		ctx.sendDownstream(e);
+	}
+
+	/**
+	 * @param ctx
+	 * @param e
+	 * @throws Exception
+	 */
+	protected void writeReceivedSmsAckedRequested(
+	        final ChannelHandlerContext ctx, final ReceivedSmsAckedEvent<ID> e)
+	        throws Exception {
+		ctx.sendDownstream(e);
+	}
+
+	/**
+	 * @param ctx
+	 * @param e
+	 * @throws Exception
+	 */
+	protected void writeReceivedSmsNackedRequested(
+	        final ChannelHandlerContext ctx, final ReceivedSmsNackedEvent<ID> e)
+	        throws Exception {
 		ctx.sendDownstream(e);
 	}
 

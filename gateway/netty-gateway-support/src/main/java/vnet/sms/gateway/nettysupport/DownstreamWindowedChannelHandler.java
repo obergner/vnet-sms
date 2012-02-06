@@ -17,6 +17,10 @@ import org.slf4j.LoggerFactory;
 
 import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestAckedEvent;
 import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestNackedEvent;
+import vnet.sms.common.wme.acknowledge.ReceivedSmsAckedContainer;
+import vnet.sms.common.wme.acknowledge.ReceivedSmsAckedEvent;
+import vnet.sms.common.wme.acknowledge.ReceivedSmsNackedContainer;
+import vnet.sms.common.wme.acknowledge.ReceivedSmsNackedEvent;
 import vnet.sms.common.wme.send.SendPingRequestEvent;
 import vnet.sms.common.wme.send.SendSmsContainer;
 import vnet.sms.common.wme.send.SendSmsEvent;
@@ -61,6 +65,20 @@ public abstract class DownstreamWindowedChannelHandler<ID extends Serializable>
 			ctx.sendDownstream(sendSmsEvent);
 		} else if (e instanceof SendSmsEvent) {
 			writeSmsRequested(ctx, (SendSmsEvent) e);
+		} else if ((e instanceof MessageEvent)
+		        && (MessageEvent.class.cast(e).getMessage() instanceof ReceivedSmsAckedContainer)) {
+			final ReceivedSmsAckedEvent<ID> receivedSmsAckedEvent = ReceivedSmsAckedEvent
+			        .convert(MessageEvent.class.cast(e));
+			ctx.sendDownstream(receivedSmsAckedEvent);
+		} else if (e instanceof ReceivedSmsAckedEvent) {
+			writeReceivedSmsAckedRequested(ctx, (ReceivedSmsAckedEvent) e);
+		} else if ((e instanceof MessageEvent)
+		        && (MessageEvent.class.cast(e).getMessage() instanceof ReceivedSmsNackedContainer)) {
+			final ReceivedSmsNackedEvent<ID> receivedSmsNackedEvent = ReceivedSmsNackedEvent
+			        .convert(MessageEvent.class.cast(e));
+			ctx.sendDownstream(receivedSmsNackedEvent);
+		} else if (e instanceof ReceivedSmsNackedEvent) {
+			writeReceivedSmsNackedRequested(ctx, (ReceivedSmsNackedEvent) e);
 		} else if (e instanceof ChannelStateEvent) {
 			final ChannelStateEvent evt = (ChannelStateEvent) e;
 			switch (evt.getState()) {
@@ -149,6 +167,28 @@ public abstract class DownstreamWindowedChannelHandler<ID extends Serializable>
 	 */
 	protected void writeSmsRequested(final ChannelHandlerContext ctx,
 	        final SendSmsEvent e) throws Exception {
+		ctx.sendDownstream(e);
+	}
+
+	/**
+	 * @param ctx
+	 * @param e
+	 * @throws Exception
+	 */
+	protected void writeReceivedSmsAckedRequested(
+	        final ChannelHandlerContext ctx, final ReceivedSmsAckedEvent<ID> e)
+	        throws Exception {
+		ctx.sendDownstream(e);
+	}
+
+	/**
+	 * @param ctx
+	 * @param e
+	 * @throws Exception
+	 */
+	protected void writeReceivedSmsNackedRequested(
+	        final ChannelHandlerContext ctx, final ReceivedSmsNackedEvent<ID> e)
+	        throws Exception {
 		ctx.sendDownstream(e);
 	}
 

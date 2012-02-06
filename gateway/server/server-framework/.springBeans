@@ -13,6 +13,8 @@
 		<config>src/itest/resources/META-INF/itest/itest-gateway-server-embedded-activemq-broker-context.xml</config>
 		<config>src/itest/resources/META-INF/itest/itest-serialization-transport-plugin-context.xml</config>
 		<config>src/itest/resources/META-INF/itest/itest-test-client-context.xml</config>
+		<config>src/itest/resources/META-INF/itest/itest-gateway-server-description-context.xml</config>
+		<config>src/itest/resources/META-INF/itest/itest-test-jms-listener-context.xml</config>
 	</configs>
 	<configSets>
 		<configSet>
@@ -38,6 +40,8 @@
 				<config>src/main/resources/META-INF/services/gateway-server-authentication-manager-context.xml</config>
 				<config>src/main/resources/META-INF/services/gateway-server-jms-client-context.xml</config>
 				<config>src/itest/resources/META-INF/itest/itest-test-client-context.xml</config>
+				<config>src/itest/resources/META-INF/itest/itest-gateway-server-description-context.xml</config>
+				<config>src/itest/resources/META-INF/itest/itest-test-jms-listener-context.xml</config>
 			</configs>
 			<profiles>
 				<profile><![CDATA[itest]]></profile>

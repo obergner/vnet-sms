@@ -16,9 +16,6 @@ import vnet.sms.common.wme.MessageType;
 public final class ReceivedSmsAckedContainer<ID extends Serializable> extends
         AbstractMessageAcknowledgementContainer<ID, Sms> {
 
-	/**
-     * 
-     */
 	private static final long	serialVersionUID	= -8271142626779985541L;
 
 	public ReceivedSmsAckedContainer(final ID acknowledgedMessageReference,

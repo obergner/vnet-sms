@@ -3,6 +3,8 @@ package vnet.sms.gateway.nettysupport.test;
 import vnet.sms.common.messages.Message;
 import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestAckedEvent;
 import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestNackedEvent;
+import vnet.sms.common.wme.acknowledge.ReceivedSmsAckedEvent;
+import vnet.sms.common.wme.acknowledge.ReceivedSmsNackedEvent;
 import vnet.sms.common.wme.send.SendPingRequestEvent;
 import vnet.sms.common.wme.send.SendSmsEvent;
 import vnet.sms.gateway.nettysupport.login.incoming.NonLoginMessageReceivedOnUnauthenticatedChannelEvent;
@@ -39,5 +41,17 @@ public class ObjectSerializationTransportProtocolAdaptingDownstreamChannelHandle
 	@Override
 	protected Message convertSendSmsEventToPdu(final SendSmsEvent e) {
 		return e.getMessage();
+	}
+
+	@Override
+	protected Message convertReceivedSmsAckedEventToPdu(
+	        final ReceivedSmsAckedEvent<Integer> e) {
+		return e.getAcknowledgement();
+	}
+
+	@Override
+	protected Message convertReceivedSmsNackedEventToPdu(
+	        final ReceivedSmsNackedEvent<Integer> e) {
+		return e.getAcknowledgement();
 	}
 }

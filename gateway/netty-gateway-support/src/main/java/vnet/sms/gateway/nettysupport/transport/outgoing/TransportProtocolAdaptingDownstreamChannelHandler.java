@@ -10,6 +10,8 @@ import org.jboss.netty.channel.DownstreamMessageEvent;
 
 import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestAckedEvent;
 import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestNackedEvent;
+import vnet.sms.common.wme.acknowledge.ReceivedSmsAckedEvent;
+import vnet.sms.common.wme.acknowledge.ReceivedSmsNackedEvent;
 import vnet.sms.common.wme.send.SendPingRequestEvent;
 import vnet.sms.common.wme.send.SendSmsEvent;
 import vnet.sms.gateway.nettysupport.WindowedChannelHandler;
@@ -72,6 +74,26 @@ public abstract class TransportProtocolAdaptingDownstreamChannelHandler<ID exten
 		        .getFuture(), pdu, e.getRemoteAddress()));
 	}
 
+	@Override
+	protected void writeReceivedSmsAckedRequested(
+	        final ChannelHandlerContext ctx, final ReceivedSmsAckedEvent<ID> e)
+	        throws Exception {
+		final TP pdu = convertReceivedSmsAckedEventToPdu(e);
+		getLog().trace("{} converted to {}", e, pdu);
+		ctx.sendDownstream(new DownstreamMessageEvent(ctx.getChannel(), e
+		        .getFuture(), pdu, e.getRemoteAddress()));
+	}
+
+	@Override
+	protected void writeReceivedSmsNackedRequested(
+	        final ChannelHandlerContext ctx, final ReceivedSmsNackedEvent<ID> e)
+	        throws Exception {
+		final TP pdu = convertReceivedSmsNackedEventToPdu(e);
+		getLog().trace("{} converted to {}", e, pdu);
+		ctx.sendDownstream(new DownstreamMessageEvent(ctx.getChannel(), e
+		        .getFuture(), pdu, e.getRemoteAddress()));
+	}
+
 	protected abstract TP convertSendPingRequestEventToPdu(
 	        final SendPingRequestEvent<ID> e);
 
@@ -85,4 +107,10 @@ public abstract class TransportProtocolAdaptingDownstreamChannelHandler<ID exten
 	        final NonLoginMessageReceivedOnUnauthenticatedChannelEvent<ID, ?> e);
 
 	protected abstract TP convertSendSmsEventToPdu(final SendSmsEvent e);
+
+	protected abstract TP convertReceivedSmsAckedEventToPdu(
+	        final ReceivedSmsAckedEvent<ID> e);
+
+	protected abstract TP convertReceivedSmsNackedEventToPdu(
+	        final ReceivedSmsNackedEvent<ID> e);
 }

@@ -548,9 +548,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		// Discard LoginResponse - we don't care
 		embeddedPipeline.nextSentMessageEvent();
 
-		// We already consumed one window for our LoginRequest - remember that
-		// we don't support freeing windows yet
-		for (int i = 0; i < availableIncomingWindows - 1; i++) {
+		for (int i = 0; i < availableIncomingWindows; i++) {
 			embeddedPipeline.receive(SerializationUtils.serialize((i + 2),
 			        new PingRequest()));
 		}

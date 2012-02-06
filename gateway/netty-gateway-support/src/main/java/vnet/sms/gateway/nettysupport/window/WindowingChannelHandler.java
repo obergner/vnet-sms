@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import vnet.sms.common.messages.Message;
 import vnet.sms.common.wme.WindowedMessageEvent;
+import vnet.sms.common.wme.acknowledge.ReceivedMessageAcknowledgedEvent;
 import vnet.sms.gateway.nettysupport.window.incoming.IncomingWindowStore;
 
 /**
@@ -41,6 +42,10 @@ public class WindowingChannelHandler<ID extends Serializable> extends
 		this.incomingWindowStore = incomingWindowStore;
 	}
 
+	// ------------------------------------------------------------------------
+	// Store incoming windowed messages in window store
+	// ------------------------------------------------------------------------
+
 	@Override
 	public final void messageReceived(final ChannelHandlerContext ctx,
 	        final MessageEvent e) throws Exception {
@@ -52,7 +57,7 @@ public class WindowingChannelHandler<ID extends Serializable> extends
 		        (WindowedMessageEvent<ID, ? extends Message>) e);
 	}
 
-	public void windowedMessageReceived(final ChannelHandlerContext ctx,
+	private void windowedMessageReceived(final ChannelHandlerContext ctx,
 	        final WindowedMessageEvent<ID, ? extends Message> e)
 	        throws IllegalArgumentException, InterruptedException {
 		this.log.trace("Processing {} ...", e);
@@ -69,6 +74,64 @@ public class WindowingChannelHandler<ID extends Serializable> extends
 			                .getWaitTimeMillis()));
 		}
 	}
+
+	// ------------------------------------------------------------------------
+	// Release previously stored windowed messages when receiving Acks/Nacks
+	// ------------------------------------------------------------------------
+
+	/**
+	 * @see org.jboss.netty.channel.SimpleChannelHandler#writeRequested(org.jboss.netty.channel.ChannelHandlerContext,
+	 *      org.jboss.netty.channel.MessageEvent)
+	 */
+	@Override
+	public void writeRequested(final ChannelHandlerContext ctx,
+	        final MessageEvent e) throws Exception {
+		this.log.debug("Processing {} ...", e);
+		if (e instanceof ReceivedMessageAcknowledgedEvent) {
+			final ReceivedMessageAcknowledgedEvent<ID, ? extends Message> acknowledgedEvent = (ReceivedMessageAcknowledgedEvent<ID, ? extends Message>) e;
+			releaseAcknowledgedMessage(ctx, acknowledgedEvent);
+			ctx.sendDownstream(acknowledgedEvent);
+		} else {
+			super.writeRequested(ctx, e);
+		}
+		this.log.debug("Finished processing {}", e);
+	}
+
+	private void releaseAcknowledgedMessage(
+	        final ChannelHandlerContext ctx,
+	        final ReceivedMessageAcknowledgedEvent<ID, ? extends Message> acknowledgedEvent) {
+		try {
+			final Message acknowledgedMessage = acknowledgedEvent.getMessage();
+			this.log.debug(
+			        "Received acknowledgement {} for message {} - will release said message from incoming windowing store",
+			        acknowledgedEvent.getAcknowledgement(), acknowledgedMessage);
+			final ID acknowledgedMessageRef = acknowledgedEvent
+			        .getAcknowledgedMessageReference();
+			final Message releasedMessage = this.incomingWindowStore
+			        .releaseWindow(acknowledgedMessageRef);
+			if (!acknowledgedMessage.equals(releasedMessage)) {
+				throw new IllegalArgumentException(
+				        "The acknowledged message "
+				                + acknowledgedMessage
+				                + " is not the message "
+				                + releasedMessage
+				                + " that has been stored in this incoming windowing store under the same message reference ["
+				                + acknowledgedMessageRef + "]");
+			}
+			this.log.debug("Released message {} from incoming windowing store",
+			        releasedMessage);
+		} catch (final Exception ex) {
+			this.log.error("Failed to release acknowledged message "
+			        + acknowledgedEvent.getMessage()
+			        + " from incoming windowing store: " + ex.getMessage(), ex);
+			ctx.sendUpstream(FailedToReleaseAcknowledgedMessageEvent.fail(
+			        acknowledgedEvent, ex));
+		}
+	}
+
+	// ------------------------------------------------------------------------
+	// Lifecycle
+	// ------------------------------------------------------------------------
 
 	@Override
 	public void channelConnected(final ChannelHandlerContext ctx,

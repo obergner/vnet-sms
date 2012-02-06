@@ -57,7 +57,7 @@
 		<deps.camel.version>2.9.0</deps.camel.version>
 		<deps.netty.version>3.2.7.Final</deps.netty.version>
 		<deps.osgi.version>4.1.0</deps.osgi.version>
-		<deps.google-guava.version>11.0</deps.google-guava.version>
+		<deps.google-guava.version>11.0.1</deps.google-guava.version>
 		<deps.spring-security.version>3.1.0.RELEASE</deps.spring-security.version>
 		<deps.yammer-metrics.version>2.0.0-RC0</deps.yammer-metrics.version>
 		<deps.activemq.version>5.5.1</deps.activemq.version>
@@ -65,7 +65,7 @@
 		<deps.xbean-spring.version>3.5</deps.xbean-spring.version>
 		<!-- Testing -->
 		<deps.junit.version>4.10</deps.junit.version>
-		<deps.arquillian.version>1.0.0.Alpha4</deps.arquillian.version>
+		<deps.arquillian.version>1.0.0.CR7</deps.arquillian.version>
 		<deps.easymock.version>3.1</deps.easymock.version>
 		<deps.mockrunner.version>0.3.1</deps.mockrunner.version>
 		<!-- ######################################################### -->
@@ -78,24 +78,24 @@
 		<plugins.resources.version>2.5</plugins.resources.version>
 		<plugins.surefire.version>2.11</plugins.surefire.version>
 		<plugins.build-helper.version>1.7</plugins.build-helper.version>
-		<plugins.failsafe.version>2.11</plugins.failsafe.version>
-		<plugins.jar.version>2.3.2</plugins.jar.version>
+		<plugins.failsafe.version>2.12</plugins.failsafe.version>
+		<plugins.jar.version>2.4</plugins.jar.version>
 		<plugins.dependency.version>2.4</plugins.dependency.version>
 		<plugins.plugin.version>2.9</plugins.plugin.version>
 		<plugins.source.version>2.1.2</plugins.source.version>
 		<plugins.jxr.version>2.3</plugins.jxr.version>
 		<plugins.cobertura.version>2.5.1</plugins.cobertura.version>
 		<plugins.license.version>1.8.0</plugins.license.version>
-		<plugins.assembly.version>2.2.2</plugins.assembly.version>
+		<plugins.assembly.version>2.3</plugins.assembly.version>
 		<plugins.gmaven.version>1.4</plugins.gmaven.version>
 		<plugins.buildnumber.version>1.0</plugins.buildnumber.version>
 		<!-- ######################################################### -->
 		<!-- Reporting plugin versions -->
 		<!-- ######################################################### -->
 		<plugins.site.version>3.0</plugins.site.version>
-		<plugins.javadoc.version>2.8</plugins.javadoc.version>
+		<plugins.javadoc.version>2.8.1</plugins.javadoc.version>
 		<plugins.surefire-reports.version>2.11</plugins.surefire-reports.version>
-		<plugins.pmd.version>2.6</plugins.pmd.version>
+		<plugins.pmd.version>2.7</plugins.pmd.version>
 		<plugins.project-info-reports.version>2.4</plugins.project-info-reports.version>
 	</properties>
 

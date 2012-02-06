@@ -1,6 +1,10 @@
 package vnet.sms.gateway.server.framework.test;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.jms.Message;
@@ -41,7 +45,8 @@ public class ForwardingJmsMessageListener implements MessageListener {
 		return this.delegate.getAndSet(new LoggingMessageListener());
 	}
 
-	public CountDownLatch waitForMessage(final JmsMessagePredicate predicate) {
+	public CountDownLatch awaitMatchingMessage(
+	        final JmsMessagePredicate predicate) {
 		final CountDownLatch matchingMessageReceived = new CountDownLatch(1);
 		final MessageListener waitForMatchingMessage = new MessageListener() {
 
@@ -61,5 +66,72 @@ public class ForwardingJmsMessageListener implements MessageListener {
 		};
 		setDelegate(waitForMatchingMessage);
 		return matchingMessageReceived;
+	}
+
+	public Future<Message> receiveMatchingMessage(
+	        final JmsMessagePredicate predicate) {
+		final CountDownLatch matchingMessageReceived = new CountDownLatch(1);
+		final AtomicReference<Message> receivedMatchingMessage = new AtomicReference<Message>();
+		final MessageListener waitForMatchingMessage = new MessageListener() {
+
+			@Override
+			public void onMessage(final Message arg0) {
+				LOG.debug("Testing if received message {} satisfies {} ...",
+				        arg0, predicate);
+				if (predicate.evaluate(arg0)) {
+					LOG.info("Received message {} DOES satisfy {}", arg0,
+					        predicate);
+					receivedMatchingMessage.set(arg0);
+					matchingMessageReceived.countDown();
+				} else {
+					LOG.debug("Received message {} does NOT satisfy {}", arg0,
+					        predicate);
+				}
+			}
+		};
+		setDelegate(waitForMatchingMessage);
+
+		return new JmsMessageFuture(matchingMessageReceived,
+		        receivedMatchingMessage);
+	}
+
+	private final class JmsMessageFuture implements Future<Message> {
+		private final CountDownLatch		   matchingMessageReceived;
+		private final AtomicReference<Message>	receivedMatchingMessage;
+
+		private JmsMessageFuture(final CountDownLatch matchingMessageReceived,
+		        final AtomicReference<Message> receivedMatchingMessage) {
+			this.matchingMessageReceived = matchingMessageReceived;
+			this.receivedMatchingMessage = receivedMatchingMessage;
+		}
+
+		@Override
+		public boolean cancel(final boolean arg0) {
+			return false;
+		}
+
+		@Override
+		public Message get() throws InterruptedException, ExecutionException {
+			this.matchingMessageReceived.await();
+			return this.receivedMatchingMessage.get();
+		}
+
+		@Override
+		public Message get(final long arg0, final TimeUnit arg1)
+		        throws InterruptedException, ExecutionException,
+		        TimeoutException {
+			this.matchingMessageReceived.await(arg0, arg1);
+			return this.receivedMatchingMessage.get();
+		}
+
+		@Override
+		public boolean isCancelled() {
+			return false;
+		}
+
+		@Override
+		public boolean isDone() {
+			return this.matchingMessageReceived.getCount() == 0;
+		}
 	}
 }

@@ -17,6 +17,7 @@ import org.jboss.netty.channel.WriteCompletionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import vnet.sms.common.messages.Message;
 import vnet.sms.common.wme.receive.LoginRequestReceivedEvent;
 import vnet.sms.common.wme.receive.LoginResponseReceivedEvent;
 import vnet.sms.common.wme.receive.PingRequestReceivedEvent;
@@ -26,6 +27,7 @@ import vnet.sms.gateway.nettysupport.login.incoming.ChannelAuthenticationFailedE
 import vnet.sms.gateway.nettysupport.login.incoming.ChannelSuccessfullyAuthenticatedEvent;
 import vnet.sms.gateway.nettysupport.ping.outgoing.PingResponseTimeoutExpiredEvent;
 import vnet.sms.gateway.nettysupport.ping.outgoing.StartedToPingEvent;
+import vnet.sms.gateway.nettysupport.window.FailedToReleaseAcknowledgedMessageEvent;
 import vnet.sms.gateway.nettysupport.window.NoWindowForIncomingMessageAvailableEvent;
 import vnet.sms.gateway.nettysupport.window.PendingWindowedMessagesDiscardedEvent;
 
@@ -73,6 +75,10 @@ public abstract class UpstreamWindowedChannelHandler<ID extends Serializable>
 		} else if (e instanceof PendingWindowedMessagesDiscardedEvent) {
 			pendingWindowedMessagesDiscarded(ctx,
 			        (PendingWindowedMessagesDiscardedEvent<ID>) e);
+		} else if (e instanceof FailedToReleaseAcknowledgedMessageEvent) {
+			failedToReleaseAcknowledgedMessage(
+			        ctx,
+			        (FailedToReleaseAcknowledgedMessageEvent<ID, ? extends Message>) e);
 		} else if (e instanceof WriteCompletionEvent) {
 			final WriteCompletionEvent evt = (WriteCompletionEvent) e;
 			writeComplete(ctx, evt);
@@ -228,6 +234,18 @@ public abstract class UpstreamWindowedChannelHandler<ID extends Serializable>
 	protected void pendingWindowedMessagesDiscarded(
 	        final ChannelHandlerContext ctx,
 	        final PendingWindowedMessagesDiscardedEvent<ID> e) throws Exception {
+		ctx.sendUpstream(e);
+	}
+
+	/**
+	 * @param ctx
+	 * @param e
+	 * @throws Exception
+	 */
+	protected void failedToReleaseAcknowledgedMessage(
+	        final ChannelHandlerContext ctx,
+	        final FailedToReleaseAcknowledgedMessageEvent<ID, ? extends Message> e)
+	        throws Exception {
 		ctx.sendUpstream(e);
 	}
 

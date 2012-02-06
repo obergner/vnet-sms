@@ -38,10 +38,10 @@ public class DownstreamReceivedMessageAcknowledgedEvent<ID extends Serializable,
 		        Channels.future(channel, false), message, acknowledgement);
 	}
 
-	private DownstreamReceivedMessageAcknowledgedEvent(
+	protected DownstreamReceivedMessageAcknowledgedEvent(
 	        final ID acknowledgedMessageReference,
 	        final MessageType acknowledgedMessageType, final Channel channel,
-	        final ChannelFuture future, final Object message,
+	        final ChannelFuture future, final M message,
 	        final Acknowledgement acknowledgement) {
 		super(channel, future, message, channel.getRemoteAddress());
 		notNull(acknowledgedMessageReference,

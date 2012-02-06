@@ -153,7 +153,7 @@ public class ReceiveIncomingMessagesIT {
 		};
 
 		final CountDownLatch expectedLoginRequestDelivered = this.incomingMessagesListener
-		        .waitForMessage(isExpectedLoginRequest);
+		        .awaitMatchingMessage(isExpectedLoginRequest);
 
 		this.testClient.connect();
 		this.testClient.sendMessageAndWaitForResponse(messageReference,
@@ -198,7 +198,7 @@ public class ReceiveIncomingMessagesIT {
 		};
 
 		final CountDownLatch expectedLoginRequestDelivered = this.incomingMessagesListener
-		        .waitForMessage(isExpectedLoginRequest);
+		        .awaitMatchingMessage(isExpectedLoginRequest);
 
 		this.testClient.connect();
 		this.testClient.sendMessageAndWaitForResponse(messageReference,

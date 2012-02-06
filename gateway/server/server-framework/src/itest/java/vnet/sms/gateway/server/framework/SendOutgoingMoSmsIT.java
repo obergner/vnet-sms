@@ -11,6 +11,8 @@ import javax.jms.ObjectMessage;
 import javax.jms.Session;
 
 import org.jboss.netty.channel.MessageEvent;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import vnet.sms.common.messages.Sms;
 import vnet.sms.common.wme.MessageType;
 import vnet.sms.common.wme.jmsbridge.Headers;
+import vnet.sms.gateway.nettysupport.monitor.MonitoringChannelGroup;
 import vnet.sms.gateway.server.framework.test.IntegrationTestClient;
 import vnet.sms.gateway.server.framework.test.MessageEventPredicate;
 import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;
@@ -38,6 +41,7 @@ import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;
         "classpath:META-INF/itest/itest-gateway-server-embedded-activemq-broker-context.xml",
         "classpath:META-INF/itest/itest-serialization-transport-plugin-context.xml",
         "classpath:META-INF/itest/itest-test-client-context.xml",
+        "classpath:META-INF/itest/itest-test-jms-listener-context.xml",
         "classpath:META-INF/itest/itest-gateway-server-description-context.xml" })
 public class SendOutgoingMoSmsIT {
 
@@ -45,11 +49,23 @@ public class SendOutgoingMoSmsIT {
 	private IntegrationTestClient	testClient;
 
 	@Autowired
-	private JmsTemplate	          jmsClient;
+	private JmsTemplate	           jmsClient;
+
+	@Autowired
+	private MonitoringChannelGroup	allConnectedChannels;
 
 	@Value("#{ '${gateway.server.jmsserver.queues.outgoingMoSms}' }")
-	private String	              outgoingMoSmsQueueName;
+	private String	               outgoingMoSmsQueueName;
 
+	@Before
+	public void connectTestClient() throws Throwable {
+		this.testClient.connect();
+		while (this.allConnectedChannels.size() < 1) {
+			Thread.sleep(10L);
+		}
+	}
+
+	@After
 	public void disconnectTestClient() throws Throwable {
 		this.testClient.disconnect();
 	}
@@ -60,7 +76,6 @@ public class SendOutgoingMoSmsIT {
 		final Sms moSms = new Sms(
 		        "assertThatGatewayServerSendsMoSmsReceivedViaJmsToConnectedClient");
 
-		this.testClient.connect();
 		final MessageEventPredicate moSmsReceived = new MessageEventPredicate() {
 			@Override
 			public boolean evaluate(final MessageEvent e) {
