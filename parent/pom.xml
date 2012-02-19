@@ -53,16 +53,17 @@
 		<!-- Proprietary -->
 		<deps.slf4j.version>1.6.4</deps.slf4j.version>
 		<deps.logback.version>1.0.0</deps.logback.version>
-		<deps.spring.version>3.1.0.RELEASE</deps.spring.version>
+		<deps.spring.version>3.1.1.RELEASE</deps.spring.version>
 		<deps.camel.version>2.9.0</deps.camel.version>
 		<deps.netty.version>3.2.7.Final</deps.netty.version>
 		<deps.osgi.version>4.1.0</deps.osgi.version>
 		<deps.google-guava.version>11.0.1</deps.google-guava.version>
 		<deps.spring-security.version>3.1.0.RELEASE</deps.spring-security.version>
-		<deps.yammer-metrics.version>2.0.0-RC0</deps.yammer-metrics.version>
+		<deps.yammer-metrics.version>2.0.2</deps.yammer-metrics.version>
 		<deps.activemq.version>5.5.1</deps.activemq.version>
 		<deps.xbean.version>2.8</deps.xbean.version>
 		<deps.xbean-spring.version>3.5</deps.xbean-spring.version>
+		<deps.logback-gelf.version>0.9.6</deps.logback-gelf.version>
 		<!-- Testing -->
 		<deps.junit.version>4.10</deps.junit.version>
 		<deps.arquillian.version>1.0.0.CR7</deps.arquillian.version>
@@ -162,15 +163,17 @@
 	<!-- Additional repositories -->
 	<!-- =================================================== -->
 
-	<!-- TODO: Remove this as soon as 3.1.0.GA is out -->
 	<repositories>
 		<repository>
+			<id>me.moocar.logbackGelfRepository</id>
+			<name>Moocar Logback Gelf Repository</name>
+			<url>http://moocar.me/maven2</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
-			<id>org.springsource.milestoneRepository</id>
-			<name>Spring Framework Milestone Repository</name>
-			<url>http://maven.springframework.org/milestone</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
 		</repository>
 	</repositories>
 
@@ -341,6 +344,12 @@
 				<groupId>ch.qos.logback</groupId>
 				<artifactId>logback-classic</artifactId>
 				<version>${deps.logback.version}</version>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>me.moocar</groupId>
+				<artifactId>logback-gelf</artifactId>
+				<version>${deps.logback-gelf.version}</version>
 				<type>jar</type>
 			</dependency>
 			<dependency>
@@ -681,6 +690,11 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>jcl-over-slf4j</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>me.moocar</groupId>
+			<artifactId>logback-gelf</artifactId>
 			<scope>runtime</scope>
 		</dependency>
 		<!-- =========================================== -->
