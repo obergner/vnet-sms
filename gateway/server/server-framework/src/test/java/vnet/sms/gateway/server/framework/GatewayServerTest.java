@@ -8,7 +8,7 @@ import org.jboss.netty.channel.local.LocalAddress;
 import org.junit.Test;
 import org.springframework.jms.core.JmsTemplate;
 
-import vnet.sms.gateway.server.framework.channel.GatewayServerChannelPipelineFactory;
+import vnet.sms.gateway.server.framework.internal.channel.GatewayServerChannelPipelineFactory;
 import vnet.sms.gateway.server.framework.spi.GatewayServerDescription;
 import vnet.sms.gateway.server.framework.test.AcceptAllAuthenticationManager;
 import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;

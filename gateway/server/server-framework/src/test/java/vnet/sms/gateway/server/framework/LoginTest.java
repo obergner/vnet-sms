@@ -17,7 +17,7 @@ import vnet.sms.common.messages.LoginRequest;
 import vnet.sms.common.messages.LoginResponse;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.PingResponse;
-import vnet.sms.gateway.server.framework.channel.GatewayServerChannelPipelineFactory;
+import vnet.sms.gateway.server.framework.internal.channel.GatewayServerChannelPipelineFactory;
 import vnet.sms.gateway.server.framework.spi.GatewayServerDescription;
 import vnet.sms.gateway.server.framework.test.AcceptAllAuthenticationManager;
 import vnet.sms.gateway.server.framework.test.DenyAllAuthenticationManager;

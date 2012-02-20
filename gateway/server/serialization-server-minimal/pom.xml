@@ -25,7 +25,7 @@
 
 	<groupId>vnet.sms.gateway.server</groupId>
 	<artifactId>serialization-server-minimal</artifactId>
-	<packaging>jar</packaging>
+	<packaging>bundle</packaging>
 	<name>SMS :: Gateway :: Server :: Minimal Serialization Server</name>
 	<description>A minimal server implementation using the serialization pseudo transport</description>
 

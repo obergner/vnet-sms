@@ -25,7 +25,7 @@
 
 	<groupId>vnet.sms.common</groupId>
 	<artifactId>message-library</artifactId>
-	<packaging>jar</packaging>
+	<packaging>bundle</packaging>
 	<name>SMS :: Common :: Message Library</name>
 	<description>Transport agnostic message types</description>
 

@@ -25,7 +25,7 @@
 
 	<groupId>vnet.sms.gateway</groupId>
 	<artifactId>netty-gateway-support</artifactId>
-	<packaging>jar</packaging>
+	<packaging>bundle</packaging>
 	<name>SMS :: Gateway :: Netty Gateway Support</name>
 	<description>Netty components (channel handlers) for realizing additional functionality needed by vnet.routing</description>
 

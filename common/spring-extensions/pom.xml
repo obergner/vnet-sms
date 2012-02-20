@@ -25,7 +25,7 @@
 
 	<groupId>vnet.sms.common</groupId>
 	<artifactId>spring-extensions</artifactId>
-	<packaging>jar</packaging>
+	<packaging>bundle</packaging>
 	<name>SMS :: Common :: Spring Extensions</name>
 	<description>Extensions for the Spring Framework</description>
 

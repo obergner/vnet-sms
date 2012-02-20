@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.springframework.context.support.StaticApplicationContext;
 
 import vnet.sms.gateway.server.framework.GatewayServerDescriptionAware;
+import vnet.sms.gateway.server.framework.internal.description.GatewayServerDescriptionInjector;
 import vnet.sms.gateway.server.framework.spi.GatewayServerDescription;
 
 /**

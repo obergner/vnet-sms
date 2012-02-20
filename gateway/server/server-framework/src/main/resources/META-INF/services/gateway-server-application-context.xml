@@ -22,7 +22,7 @@
 	<!-- START-SNIPPET: custom bean post processors -->
 	<bean
 		id="vnet.sms.gateway.server.server-framework.gatewayServerDescriptionInjector"
-		class="vnet.sms.gateway.server.framework.description.GatewayServerDescriptionInjector" />
+		class="vnet.sms.gateway.server.framework.internal.description.GatewayServerDescriptionInjector" />
 	<!-- END-SNIPPET: custom bean post processors -->
 
 	<!-- START-SNIPPET: gateway server controller -->
@@ -48,7 +48,7 @@
 		p:threadFactory-ref="vnet.sms.gateway.server.server-framework.bossThreadFactory" />
 
 	<bean id="vnet.sms.gateway.server.server-framework.bossThreadFactory"
-		class="vnet.sms.gateway.server.framework.executor.GatewayServerDescriptionMdcThreadFactoryBuilder"
+		class="vnet.sms.gateway.server.framework.internal.executor.GatewayServerDescriptionMdcThreadFactoryBuilder"
 		p:threadNamePrefix="New I/O TCP Acceptor" />
 
 	<bean id="vnet.sms.gateway.server.server-framework.workerExecutor"
@@ -56,7 +56,7 @@
 		p:threadFactory-ref="vnet.sms.gateway.server.server-framework.workerThreadFactory" />
 
 	<bean id="vnet.sms.gateway.server.server-framework.workerThreadFactory"
-		class="vnet.sms.gateway.server.framework.executor.GatewayServerDescriptionMdcThreadFactoryBuilder"
+		class="vnet.sms.gateway.server.framework.internal.executor.GatewayServerDescriptionMdcThreadFactoryBuilder"
 		p:threadNamePrefix="New I/O TCP Worker" />
 	<!-- END-SNIPPET: gateway server -->
 
@@ -69,7 +69,7 @@
 	<!-- START-SNIPPET: gateway server channel pipeline factory -->
 	<bean
 		id="vnet.sms.gateway.server.server-framework.gatewayServerChannelPipelineFactory"
-		class="vnet.sms.gateway.server.framework.channel.GatewayServerChannelPipelineFactoryBuilder">
+		class="vnet.sms.gateway.server.framework.internal.channel.GatewayServerChannelPipelineFactoryBuilder">
 		<property name="gatewayServerInstanceId" value="${gateway.server.instanceId}" />
 		<property name="authenticationManager"
 			ref="vnet.sms.gateway.server.server-framework.authenticationManager" />
@@ -97,7 +97,7 @@
 	<!-- START-SNIPPET: message forwarding JMS bridge -->
 	<bean
 		id="vnet.sms.gateway.server.server-framework.messageForwardingJmsBridge"
-		class="vnet.sms.gateway.server.framework.jmsbridge.IncomingMessagesForwardingJmsBridge"
+		class="vnet.sms.gateway.server.framework.internal.jmsbridge.IncomingMessagesForwardingJmsBridge"
 		c:jmsTemplate-ref="vnet.sms.gateway.server.server-framework.jmsTemplate" />
 	<!-- END-SNIPPET: message forwarding JMS bridge -->
 
@@ -109,7 +109,7 @@
 
 	<!-- START-SNIPPET: ChannelGroup storing all connected channels -->
 	<bean id="vnet.sms.gateway.server.server-framework.allConnectedChannels"
-		class="vnet.sms.gateway.server.framework.channel.ChannelGroupFactory" />
+		class="vnet.sms.gateway.server.framework.internal.channel.ChannelGroupFactory" />
 	<!-- END-SNIPPET: ChannelGroup storing all connected channels -->
 
 </beans>

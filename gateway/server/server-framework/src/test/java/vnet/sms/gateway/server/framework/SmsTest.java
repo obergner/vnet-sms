@@ -12,7 +12,7 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 
 import vnet.sms.common.messages.Sms;
-import vnet.sms.gateway.server.framework.channel.GatewayServerChannelPipelineFactory;
+import vnet.sms.gateway.server.framework.internal.channel.GatewayServerChannelPipelineFactory;
 import vnet.sms.gateway.server.framework.spi.GatewayServerDescription;
 import vnet.sms.gateway.server.framework.test.AcceptAllAuthenticationManager;
 import vnet.sms.gateway.server.framework.test.LocalClient;

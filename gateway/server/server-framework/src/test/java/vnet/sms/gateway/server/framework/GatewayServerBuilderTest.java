@@ -15,8 +15,8 @@ import org.springframework.jmx.export.MBeanExporter;
 
 import vnet.sms.common.wme.jmsbridge.WindowedMessageEventToJmsMessageConverter;
 import vnet.sms.gateway.nettysupport.monitor.incoming.InitialChannelEventsMonitor;
-import vnet.sms.gateway.server.framework.channel.GatewayServerChannelPipelineFactory;
-import vnet.sms.gateway.server.framework.jmsbridge.IncomingMessagesForwardingJmsBridge;
+import vnet.sms.gateway.server.framework.internal.channel.GatewayServerChannelPipelineFactory;
+import vnet.sms.gateway.server.framework.internal.jmsbridge.IncomingMessagesForwardingJmsBridge;
 import vnet.sms.gateway.server.framework.spi.GatewayServerDescription;
 import vnet.sms.gateway.server.framework.test.DenyAllAuthenticationManager;
 import vnet.sms.gateway.server.framework.test.SerialIntegersMessageReferenceGenerator;

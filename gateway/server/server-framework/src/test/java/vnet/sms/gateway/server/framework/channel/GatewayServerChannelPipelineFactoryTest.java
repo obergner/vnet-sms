@@ -41,7 +41,8 @@ import vnet.sms.gateway.nettysupport.window.NoWindowForIncomingMessageAvailableE
 import vnet.sms.gateway.nettytest.ChannelEventFilter;
 import vnet.sms.gateway.nettytest.ChannelPipelineEmbedder;
 import vnet.sms.gateway.nettytest.DefaultChannelPipelineEmbedder;
-import vnet.sms.gateway.server.framework.jmsbridge.IncomingMessagesForwardingJmsBridge;
+import vnet.sms.gateway.server.framework.internal.channel.GatewayServerChannelPipelineFactory;
+import vnet.sms.gateway.server.framework.internal.jmsbridge.IncomingMessagesForwardingJmsBridge;
 import vnet.sms.gateway.server.framework.test.AcceptAllAuthenticationManager;
 import vnet.sms.gateway.server.framework.test.DenyAllAuthenticationManager;
 import vnet.sms.gateway.server.framework.test.SerialIntegersMessageReferenceGenerator;

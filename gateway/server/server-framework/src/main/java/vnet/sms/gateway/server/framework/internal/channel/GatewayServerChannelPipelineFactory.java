@@ -1,7 +1,7 @@
 /**
  * 
  */
-package vnet.sms.gateway.server.framework.channel;
+package vnet.sms.gateway.server.framework.internal.channel;
 
 import static org.apache.commons.lang.Validate.notEmpty;
 import static org.apache.commons.lang.Validate.notNull;
@@ -40,7 +40,7 @@ import vnet.sms.gateway.nettysupport.window.WindowingChannelHandler;
 import vnet.sms.gateway.nettysupport.window.incoming.IncomingWindowStore;
 import vnet.sms.gateway.nettysupport.window.spi.MessageReferenceGenerator;
 import vnet.sms.gateway.server.framework.Jmx;
-import vnet.sms.gateway.server.framework.jmsbridge.IncomingMessagesForwardingJmsBridge;
+import vnet.sms.gateway.server.framework.internal.jmsbridge.IncomingMessagesForwardingJmsBridge;
 
 /**
  * @author obergner

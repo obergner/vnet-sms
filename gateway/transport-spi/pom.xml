@@ -25,7 +25,7 @@
 
 	<groupId>vnet.sms.gateway</groupId>
 	<artifactId>transport-spi</artifactId>
-	<packaging>jar</packaging>
+	<packaging>bundle</packaging>
 	<name>SMS :: Gateway :: Transport SPI</name>
 	<description>Service Provider Interface for different transport protocols (UCP, SMPP, ...)</description>
 

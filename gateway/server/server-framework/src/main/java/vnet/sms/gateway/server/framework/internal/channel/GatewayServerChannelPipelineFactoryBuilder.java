@@ -1,7 +1,7 @@
 /**
  * 
  */
-package vnet.sms.gateway.server.framework.channel;
+package vnet.sms.gateway.server.framework.internal.channel;
 
 import static org.apache.commons.lang.Validate.notNull;
 
@@ -18,7 +18,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 
 import vnet.sms.common.spring.jmx.MBeanExportOperationsAware;
 import vnet.sms.gateway.nettysupport.monitor.incoming.InitialChannelEventsMonitor;
-import vnet.sms.gateway.server.framework.jmsbridge.IncomingMessagesForwardingJmsBridge;
+import vnet.sms.gateway.server.framework.internal.jmsbridge.IncomingMessagesForwardingJmsBridge;
 import vnet.sms.gateway.transport.plugin.TransportProtocolExtensionPoint;
 import vnet.sms.gateway.transport.plugin.context.TransportProtocolPluginInjector;
 import vnet.sms.gateway.transport.spi.TransportProtocolPlugin;

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package vnet.sms.gateway.server.framework.jmsbridge;
+package vnet.sms.gateway.server.framework.internal.jmsbridge;
 
 import static org.apache.commons.lang.Validate.notNull;
 

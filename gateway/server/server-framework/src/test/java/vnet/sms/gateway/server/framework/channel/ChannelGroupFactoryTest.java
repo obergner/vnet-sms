@@ -7,6 +7,7 @@ import org.jboss.netty.channel.group.ChannelGroup;
 import org.junit.Test;
 import org.springframework.jmx.export.MBeanExporter;
 
+import vnet.sms.gateway.server.framework.internal.channel.ChannelGroupFactory;
 import vnet.sms.gateway.server.framework.spi.GatewayServerDescription;
 import vnet.sms.gateway.server.framework.spi.Version;
 

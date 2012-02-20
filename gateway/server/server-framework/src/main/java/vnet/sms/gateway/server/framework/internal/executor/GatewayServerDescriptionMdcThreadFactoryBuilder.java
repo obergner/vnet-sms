@@ -1,7 +1,7 @@
 /**
  * 
  */
-package vnet.sms.gateway.server.framework.executor;
+package vnet.sms.gateway.server.framework.internal.executor;
 
 import static org.apache.commons.lang.Validate.notEmpty;
 import static org.apache.commons.lang.Validate.notNull;

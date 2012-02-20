@@ -25,7 +25,7 @@
 
 	<groupId>vnet.sms.common</groupId>
 	<artifactId>executor-support</artifactId>
-	<packaging>jar</packaging>
+	<packaging>bundle</packaging>
 	<name>SMS :: Common :: Executor Support</name>
 	<description>Extensions to java's executor framework</description>
 

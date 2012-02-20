@@ -25,7 +25,7 @@
 
 	<groupId>vnet.sms.gateway.transports</groupId>
 	<artifactId>serialization-transport</artifactId>
-	<packaging>jar</packaging>
+	<packaging>bundle</packaging>
 	<name>SMS :: Gateway :: Transports :: Serialization</name>
 	<description>Support for a pseudo transport protocol based on java's serialization mechanism</description>
 

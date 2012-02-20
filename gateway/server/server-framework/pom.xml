@@ -25,7 +25,7 @@
 
 	<groupId>vnet.sms.gateway.server</groupId>
 	<artifactId>server-framework</artifactId>
-	<packaging>jar</packaging>
+	<packaging>bundle</packaging>
 	<name>SMS :: Gateway :: Server :: Framework</name>
 	<description>A transport protocol-agnostic framework for implementing gateway servers</description>
 

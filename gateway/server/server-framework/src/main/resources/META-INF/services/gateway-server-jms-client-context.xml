@@ -44,7 +44,7 @@
 
 	<bean
 		id="vnet.sms.gateway.server.server-framework.outgoingMessagesSendingMessageListener"
-		class="vnet.sms.gateway.server.framework.jmsbridge.OutgoingMessagesSendingJmsMessageListener"
+		class="vnet.sms.gateway.server.framework.internal.jmsbridge.OutgoingMessagesSendingJmsMessageListener"
 		c:outgoingMessagesSender-ref="vnet.sms.gateway.server.server-framework.outgoingMessagesSender" />
 	<!-- END-SNIPPET: Spring JMS message listener container -->
 

@@ -77,10 +77,10 @@
 		<plugins.deploy.version>2.7</plugins.deploy.version>
 		<plugins.install.version>2.3.1</plugins.install.version>
 		<plugins.resources.version>2.5</plugins.resources.version>
-		<plugins.surefire.version>2.11</plugins.surefire.version>
+		<plugins.surefire.version>2.12</plugins.surefire.version>
 		<plugins.build-helper.version>1.7</plugins.build-helper.version>
 		<plugins.failsafe.version>2.12</plugins.failsafe.version>
-		<plugins.jar.version>2.4</plugins.jar.version>
+		<plugins.bundle.version>2.3.7</plugins.bundle.version>
 		<plugins.dependency.version>2.4</plugins.dependency.version>
 		<plugins.plugin.version>2.9</plugins.plugin.version>
 		<plugins.source.version>2.1.2</plugins.source.version>
@@ -95,8 +95,8 @@
 		<!-- ######################################################### -->
 		<plugins.site.version>3.0</plugins.site.version>
 		<plugins.javadoc.version>2.8.1</plugins.javadoc.version>
-		<plugins.surefire-reports.version>2.11</plugins.surefire-reports.version>
-		<plugins.pmd.version>2.7</plugins.pmd.version>
+		<plugins.surefire-reports.version>2.12</plugins.surefire-reports.version>
+		<plugins.pmd.version>2.7.1</plugins.pmd.version>
 		<plugins.project-info-reports.version>2.4</plugins.project-info-reports.version>
 	</properties>
 
@@ -921,9 +921,11 @@
 					</configuration>
 				</plugin>
 				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-jar-plugin</artifactId>
-					<version>${plugins.jar.version}</version>
+					<groupId>org.apache.felix</groupId>
+					<artifactId>maven-bundle-plugin</artifactId>
+					<version>${plugins.bundle.version}</version>
+					<extensions>true</extensions>
+					<inherited>true</inherited>
 					<configuration>
 						<archive>
 							<index>true</index>
@@ -932,6 +934,8 @@
 								<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
 							</manifest>
 							<manifestEntries>
+								<!-- FIXME: These properties do not get substituted in the generated 
+									MANIFEST.MF. They used to when still using maven-jar-plugin. -->
 								<Implementation-MajorVersion>${parsedVersion.majorVersion}</Implementation-MajorVersion>
 								<Implementation-MinorVersion>${parsedVersion.minorVersion}</Implementation-MinorVersion>
 								<Implementation-IncrementalVersion>${parsedVersion.incrementalVersion}</Implementation-IncrementalVersion>
@@ -1034,8 +1038,8 @@
 				<artifactId>buildnumber-maven-plugin</artifactId>
 			</plugin>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -1125,10 +1129,12 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-project-info-reports-plugin
-                </artifactId>
-				<version>${plugins.project-info-reports.version}
-                </version>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>${plugins.project-info-reports.version}</version>
+				<configuration>
+					<!-- Speeds up generation of 'dependencies' report IMMENSELY -->
+					<dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+				</configuration>
 				<reportSets>
 					<reportSet>
 						<reports>

@@ -25,7 +25,7 @@
 
 	<groupId>vnet.sms.common</groupId>
 	<artifactId>windowed-message-event-library</artifactId>
-	<packaging>jar</packaging>
+	<packaging>bundle</packaging>
 	<name>SMS :: Common :: Windowed Message Event Library</name>
 	<description>Types of message events carrying a message reference</description>
 

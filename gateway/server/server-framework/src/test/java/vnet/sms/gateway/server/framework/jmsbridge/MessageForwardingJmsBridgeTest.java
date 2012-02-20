@@ -29,6 +29,7 @@ import vnet.sms.common.wme.receive.LoginResponseReceivedEvent;
 import vnet.sms.common.wme.receive.PingRequestReceivedEvent;
 import vnet.sms.common.wme.receive.PingResponseReceivedEvent;
 import vnet.sms.common.wme.receive.SmsReceivedEvent;
+import vnet.sms.gateway.server.framework.internal.jmsbridge.IncomingMessagesForwardingJmsBridge;
 
 import com.mockrunner.jms.ConfigurationManager;
 import com.mockrunner.jms.DestinationManager;
