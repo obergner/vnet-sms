@@ -45,6 +45,8 @@
 		<module.gateway.server.version>1.0.0-SNAPSHOT</module.gateway.server.version>
 		<module.gateway.server.server-framework.version>1.0.0-SNAPSHOT</module.gateway.server.server-framework.version>
 		<module.gateway.server.serialization-server-minimal.version>1.0.0-SNAPSHOT</module.gateway.server.serialization-server-minimal.version>
+		<module.routing.version>1.0.0-SNAPSHOT</module.routing.version>
+		<module.routing.routing-engine.version>1.0.0-SNAPSHOT</module.routing.routing-engine.version>
 		<!-- Standard javax apis -->
 		<deps.jta.version>1.1</deps.jta.version>
 		<deps.jms.version>1.1</deps.jms.version>
@@ -64,6 +66,8 @@
 		<deps.xbean.version>2.8</deps.xbean.version>
 		<deps.xbean-spring.version>3.5</deps.xbean-spring.version>
 		<deps.logback-gelf.version>0.9.6</deps.logback-gelf.version>
+		<deps.karaf.version>2.2.5</deps.karaf.version>
+		<deps.activemq.version>5.5.1</deps.activemq.version>
 		<!-- Testing -->
 		<deps.junit.version>4.10</deps.junit.version>
 		<deps.arquillian.version>1.0.0.CR7</deps.arquillian.version>
@@ -90,6 +94,7 @@
 		<plugins.assembly.version>2.3</plugins.assembly.version>
 		<plugins.gmaven.version>1.4</plugins.gmaven.version>
 		<plugins.buildnumber.version>1.0</plugins.buildnumber.version>
+		<plugins.karaf.version>2.2.5</plugins.karaf.version>
 		<!-- ######################################################### -->
 		<!-- Reporting plugin versions -->
 		<!-- ######################################################### -->
@@ -276,6 +281,18 @@
 				<version>${module.gateway.server.serialization-server-minimal.version}</version>
 				<type>jar</type>
 			</dependency>
+			<dependency>
+				<groupId>vnet.sms</groupId>
+				<artifactId>routing</artifactId>
+				<version>${module.routing.version}</version>
+				<type>pom</type>
+			</dependency>
+			<dependency>
+				<groupId>vnet.sms.routing</groupId>
+				<artifactId>routing-engine</artifactId>
+				<version>${module.routing.routing-engine.version}</version>
+				<type>jar</type>
+			</dependency>
 			<!-- =========================================== -->
 			<!-- Standard Javax APIs -->
 			<!-- =========================================== -->
@@ -413,6 +430,28 @@
 				<artifactId>camel-test</artifactId>
 				<version>${deps.camel.version}</version>
 				<type>jar</type>
+			</dependency>
+			<!-- Apache Karaf -->
+			<dependency>
+				<groupId>org.apache.karaf</groupId>
+				<artifactId>apache-karaf</artifactId>
+				<version>${deps.karaf.version}</version>
+				<type>tar.gz</type>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.karaf.assemblies.features</groupId>
+				<artifactId>enterprise</artifactId>
+				<version>${deps.karaf.version}</version>
+				<type>xml</type>
+				<classifier>features</classifier>
+			</dependency>
+			<!-- Apache ActiveMQ -->
+			<dependency>
+				<groupId>org.apache.activemq</groupId>
+				<artifactId>activemq-karaf</artifactId>
+				<version>${deps.activemq.version}</version>
+				<type>xml</type>
+				<classifier>features</classifier>
 			</dependency>
 			<!-- JBoss Netty -->
 			<dependency>
@@ -996,11 +1035,10 @@
 					<artifactId>maven-site-plugin</artifactId>
 					<version>${plugins.site.version}</version>
 				</plugin>
-				<!-- allows the route to be ran via 'mvn camel:run' -->
 				<plugin>
-					<groupId>org.apache.camel</groupId>
-					<artifactId>camel-maven-plugin</artifactId>
-					<version>${deps.camel.version}</version>
+					<groupId>org.apache.karaf.tooling</groupId>
+					<artifactId>features-maven-plugin</artifactId>
+					<version>${plugins.karaf.version}</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -1159,8 +1197,9 @@
 	<!-- =================================================== -->
 
 	<modules>
-		<module>../gateway</module>
 		<module>../common</module>
+		<module>../gateway</module>
+		<module>../routing</module>
 	</modules>
 
 </project>

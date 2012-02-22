@@ -32,6 +32,11 @@
 			<locationURI>VNET_SMS_HOME/gateway/pom.xml</locationURI>
 		</link>
 		<link>
+			<name>poms/routing/pom.xml</name>
+			<type>1</type>
+			<locationURI>VNET_SMS_HOME/routing/pom.xml</locationURI>
+		</link>
+		<link>
 			<name>poms/gateway/server/pom.xml</name>
 			<type>1</type>
 			<locationURI>VNET_SMS_HOME/gateway/server/pom.xml</locationURI>

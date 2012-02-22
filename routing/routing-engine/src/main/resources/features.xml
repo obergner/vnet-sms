@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<features>
+
+	<repository><![CDATA[mvn:org.apache.karaf.assemblies.features/enterprise/${deps.karaf.version}/xml/features]]></repository>
+
+	<feature name="routing-engine" version="${project.version}">
+		<bundle><![CDATA[mvn:vnet.sms.common/message-library/${module.common.message-library.version}]]></bundle>
+	</feature>
+
+</features>
