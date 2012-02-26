@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<features name="routing-engine-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://karaf.apache.org/xmlns/features/v1.0.0 http://karaf.apache.org/xmlns/features/v1.0.0">
+
+	<repository><![CDATA[mvn:org.apache.karaf.assemblies.features/enterprise/${deps.karaf.version}/xml/features]]></repository>
+
+	<feature name="routing-engine-core" version="${project.version}"
+		description="VNET :: SMS' core routing engine" resolver="(obr)">
+		<bundle dependency="true" start-level="30"><![CDATA[mvn:commons-lang/commons-lang/2.6]]></bundle>
+		<bundle start-level="30"><![CDATA[mvn:org.apache.activemq/activemq-camel/${deps.activemq.version}]]></bundle>
+		<bundle start-level="30"><![CDATA[mvn:org.ops4j.pax.logging/pax-logging-api/1.6.3]]></bundle>
+		<bundle start-level="30"><![CDATA[mvn:vnet.sms.common/message-library/${module.common.message-library.version}]]></bundle>
+	</feature>
+
+	<!-- Default broker configuration -->
+	<feature name="routing-engine-broker" version="${project.version}"
+		resolver="(obr)">
+		<feature version="0.3">transaction</feature>
+		<feature version="${deps.activemq.version}">activemq-blueprint</feature>
+		<bundle start-level="30">blueprint:file:etc/routing-engine-broker.xml</bundle>
+	</feature>
+
+</features>

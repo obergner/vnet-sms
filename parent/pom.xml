@@ -45,8 +45,10 @@
 		<module.gateway.server.version>1.0.0-SNAPSHOT</module.gateway.server.version>
 		<module.gateway.server.server-framework.version>1.0.0-SNAPSHOT</module.gateway.server.server-framework.version>
 		<module.gateway.server.serialization-server-minimal.version>1.0.0-SNAPSHOT</module.gateway.server.serialization-server-minimal.version>
-		<module.routing.version>1.0.0-SNAPSHOT</module.routing.version>
-		<module.routing.routing-engine.version>1.0.0-SNAPSHOT</module.routing.routing-engine.version>
+		<module.routing-engine.version>1.0.0-SNAPSHOT</module.routing-engine.version>
+		<module.routing-engine.core.version>1.0.0-SNAPSHOT</module.routing-engine.core.version>
+		<module.routing-engine.branding.version>1.0.0-SNAPSHOT</module.routing-engine.branding.version>
+		<module.routing-engine.distribution.version>1.0.0-SNAPSHOT</module.routing-engine.distribution.version>
 		<!-- Standard javax apis -->
 		<deps.jta.version>1.1</deps.jta.version>
 		<deps.jms.version>1.1</deps.jms.version>
@@ -283,15 +285,27 @@
 			</dependency>
 			<dependency>
 				<groupId>vnet.sms</groupId>
-				<artifactId>routing</artifactId>
-				<version>${module.routing.version}</version>
+				<artifactId>routing-engine</artifactId>
+				<version>${module.routing-engine.version}</version>
 				<type>pom</type>
 			</dependency>
 			<dependency>
-				<groupId>vnet.sms.routing</groupId>
-				<artifactId>routing-engine</artifactId>
-				<version>${module.routing.routing-engine.version}</version>
+				<groupId>vnet.sms.routing-engine</groupId>
+				<artifactId>core</artifactId>
+				<version>${module.routing-engine.core.version}</version>
 				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>vnet.sms.routing-engine</groupId>
+				<artifactId>branding</artifactId>
+				<version>${module.routing-engine.branding.version}</version>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>vnet.sms.routing-engine</groupId>
+				<artifactId>distribution</artifactId>
+				<version>${module.routing-engine.distribution.version}</version>
+				<type>pom</type>
 			</dependency>
 			<!-- =========================================== -->
 			<!-- Standard Javax APIs -->
@@ -431,7 +445,20 @@
 				<version>${deps.camel.version}</version>
 				<type>jar</type>
 			</dependency>
+			<dependency>
+				<groupId>org.apache.camel.karaf</groupId>
+				<artifactId>apache-camel</artifactId>
+				<version>${deps.camel.version}</version>
+				<type>xml</type>
+				<classifier>features</classifier>
+			</dependency>
 			<!-- Apache Karaf -->
+			<dependency>
+				<groupId>org.apache.karaf</groupId>
+				<artifactId>karaf</artifactId>
+				<version>${deps.karaf.version}</version>
+				<type>pom</type>
+			</dependency>
 			<dependency>
 				<groupId>org.apache.karaf</groupId>
 				<artifactId>apache-karaf</artifactId>
@@ -441,6 +468,13 @@
 			<dependency>
 				<groupId>org.apache.karaf.assemblies.features</groupId>
 				<artifactId>enterprise</artifactId>
+				<version>${deps.karaf.version}</version>
+				<type>xml</type>
+				<classifier>features</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.karaf.assemblies.features</groupId>
+				<artifactId>standard</artifactId>
 				<version>${deps.karaf.version}</version>
 				<type>xml</type>
 				<classifier>features</classifier>
@@ -1199,7 +1233,7 @@
 	<modules>
 		<module>../common</module>
 		<module>../gateway</module>
-		<module>../routing</module>
+		<module>../routing-engine</module>
 	</modules>
 
 </project>

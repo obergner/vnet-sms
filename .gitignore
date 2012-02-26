@@ -10,3 +10,6 @@ poms/
 # Ignore generated buildnumber file
 buildNumber.properties
 
+# Ignore for the time being our puppet modules
+/infrastructure
+

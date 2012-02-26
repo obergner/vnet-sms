@@ -5,6 +5,7 @@
 	<id>routing-engine-distribution</id>
 
 	<formats>
+		<format>dir</format>
 		<format>tar.gz</format>
 	</formats>
 
@@ -17,6 +18,7 @@
 			<excludes>
 				<exclude>**/demos/**</exclude>
 				<exclude>bin/**</exclude>
+				<exclude>etc/custom.properties</exclude>
 				<exclude>etc/system.properties</exclude>
 				<exclude>etc/users.properties</exclude>
 				<exclude>etc/org.apache.karaf.features.cfg</exclude>
@@ -58,14 +60,16 @@
 
 	</fileSets>
 
-	<files>
-		<file>
-			<source>${project.basedir}/target/classes/features.xml</source>
-			<outputDirectory>/system/vnet/sms/routing/${project.artifactId}/${project.version}</outputDirectory>
-			<destName>${project.artifactId}-${project.version}-features.xml</destName>
+	<dependencySets>
+		<dependencySet>
+			<outputDirectory>/lib</outputDirectory>
+			<outputFileNameMapping>routing-engine-version.jar</outputFileNameMapping>
 			<fileMode>0644</fileMode>
-			<lineEnding>unix</lineEnding>
-		</file>
-	</files>
+			<includes>
+				<include>vnet.sms.routing-engine:branding</include>
+			</includes>
+			<useTransitiveDependencies>false</useTransitiveDependencies>
+		</dependencySet>
+	</dependencySets>
 
 </assembly>

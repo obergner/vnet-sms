@@ -1,0 +1,130 @@
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0"
+	xmlns:ext="http://aries.apache.org/blueprint/xmlns/blueprint-ext/v1.0.0"
+	xmlns:amq="http://activemq.apache.org/schema/core"
+	xsi:schemaLocation="
+	   http://activemq.apache.org/schema/core
+	   http://activemq.apache.org/schema/core/activemq-core-5.5.0.xsd">
+
+	<!-- ================================================================================================= -->
+	<!-- Metadata -->
+	<!-- ================================================================================================= -->
+
+	<manifest>
+		Export-Service = javax.jms.ConnectionFactory
+    </manifest>
+
+	<reference id="vnet.sms.routing-engine.distribution.transactionManager"
+		interface="javax.transaction.TransactionManager" />
+
+	<service ref="vnet.sms.routing-engine.distribution.pooledConnectionFactory"
+		interface="javax.jms.ConnectionFactory">
+		<service-properties>
+			<entry key="name" value="vnet.sms.routing-engine" />
+		</service-properties>
+	</service>
+
+	<!-- Allows us to use system properties as variables in this configuration 
+		file -->
+	<ext:property-placeholder />
+
+	<!-- Property place holder -->
+	<!-- <cm:property-placeholder persistent-id="vnet.sms.routing-engine.broker"> -->
+	<!-- <cm:default-properties> -->
+	<!-- <cm:property name="openwire" value="6549" /> -->
+	<!-- <cm:property name="stomp" value="6550" /> -->
+	<!-- </cm:default-properties> -->
+	<!-- </cm:property-placeholder> -->
+
+	<!-- ================================================================================================= -->
+	<!-- Broker definition -->
+	<!-- ================================================================================================= -->
+
+	<amq:broker brokerName="vnet.sms.routing-engine.broker"
+		dataDirectory="${karaf.data}/activemq/default" useShutdownHook="false">
+
+		<!-- For better performances use VM cursor and small memory limit. For 
+			more information, see: http://activemq.apache.org/message-cursors.html Also, 
+			if your producer is "hanging", it's probably due to producer flow control. 
+			For more information, see: http://activemq.apache.org/producer-flow-control.html -->
+
+		<amq:destinationPolicy>
+			<amq:policyMap>
+				<amq:policyEntries>
+					<amq:policyEntry topic=">" producerFlowControl="true"
+						memoryLimit="1mb">
+						<amq:pendingSubscriberPolicy>
+							<amq:vmCursor />
+						</amq:pendingSubscriberPolicy>
+					</amq:policyEntry>
+					<amq:policyEntry queue=">" producerFlowControl="true"
+						memoryLimit="1mb">
+						<!-- Use VM cursor for better latency For more information, see: http://activemq.apache.org/message-cursors.html 
+							<pendingQueuePolicy> <vmQueueCursor/> </pendingQueuePolicy> -->
+					</amq:policyEntry>
+				</amq:policyEntries>
+			</amq:policyMap>
+		</amq:destinationPolicy>
+
+		<amq:destinations>
+			<amq:queue name="vnet.sms.routing-engine.distribution.incomingMtSms"
+				physicalName="QUEUE.T1000.INCOMING_MT_SMS" />
+			<amq:queue name="vnet.sms.routing-engine.distribution.outgoingMtSmsAck"
+				physicalName="QUEUE.T1000.OUTGOING_MT_SMS_ACK" />
+			<amq:queue name="vnet.sms.routing-engine.distribution.outgoingMtSmsNack"
+				physicalName="QUEUE.T1000.OUTGOING_MT_SMS_NACK" />
+			<amq:queue name="vnet.sms.routing-engine.distribution.outgoingMoSms"
+				physicalName="QUEUE.T1000.OUTGOING_MO_SMS" />
+		</amq:destinations>
+
+		<!-- Use the following to configure how ActiveMQ is exposed in JMX -->
+		<amq:managementContext>
+			<amq:managementContext createConnector="true" />
+		</amq:managementContext>
+
+		<!-- Configure message persistence for the broker. The default persistence 
+			mechanism is the KahaDB store (identified by the kahaDB tag). For more information, 
+			see: http://activemq.apache.org/persistence.html -->
+		<amq:persistenceAdapter>
+			<amq:kahaDB directory="${karaf.data}/activemq/default/kahadb" />
+		</amq:persistenceAdapter>
+
+		<!-- The systemUsage controls the maximum amount of space the broker will 
+			use before slowing down producers. For more information, see: http://activemq.apache.org/producer-flow-control.html 
+			<systemUsage> <systemUsage> <memoryUsage> <memoryUsage limit="20 mb"/> </memoryUsage> 
+			<storeUsage> <storeUsage limit="1 gb" name="foo"/> </storeUsage> <tempUsage> 
+			<tempUsage limit="100 mb"/> </tempUsage> </systemUsage> </systemUsage> -->
+
+		<!-- The transport connectors ActiveMQ will listen to -->
+		<amq:transportConnectors>
+			<amq:transportConnector name="openwire" uri="${activemq.url}" />
+			<amq:transportConnector name="stomp"
+				uri="stomp://localhost:61613" />
+		</amq:transportConnectors>
+
+	</amq:broker>
+
+	<bean id="vnet.sms.routing-engine.distribution.activemqConnectionFactory"
+		class="org.apache.activemq.ActiveMQConnectionFactory">
+		<property name="brokerURL"
+			value="vm://vnet.sms.routing-engine.broker?create=false&amp;waitForStart=10000" />
+	</bean>
+
+	<bean id="vnet.sms.routing-engine.distribution.pooledConnectionFactory"
+		class="org.apache.activemq.pool.PooledConnectionFactory">
+		<property name="maxConnections" value="8" />
+		<property name="connectionFactory"
+			ref="vnet.sms.routing-engine.distribution.activemqConnectionFactory" />
+	</bean>
+
+	<bean id="vnet.sms.routing-engine.distribution.resourceManager"
+		class="org.apache.activemq.pool.ActiveMQResourceManager" init-method="recoverResource">
+		<property name="transactionManager"
+			ref="vnet.sms.routing-engine.distribution.transactionManager" />
+		<property name="connectionFactory"
+			ref="vnet.sms.routing-engine.distribution.activemqConnectionFactory" />
+		<property name="resourceName" value="activemq.vnet.sms.routing-engine.broker" />
+	</bean>
+
+</blueprint>
