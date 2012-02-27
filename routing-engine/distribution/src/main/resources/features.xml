@@ -6,7 +6,7 @@
 
 	<repository><![CDATA[mvn:org.apache.karaf.assemblies.features/enterprise/${deps.karaf.version}/xml/features]]></repository>
 
-	<feature name="routing-engine-core" version="${project.version}"
+	<feature name="routing-engine-core" version="${module.routing-engine.core.version}"
 		description="VNET :: SMS' core routing engine" resolver="(obr)">
 		<bundle dependency="true" start-level="30"><![CDATA[mvn:commons-lang/commons-lang/2.6]]></bundle>
 		<bundle start-level="30"><![CDATA[mvn:org.apache.activemq/activemq-camel/${deps.activemq.version}]]></bundle>
@@ -15,11 +15,15 @@
 	</feature>
 
 	<!-- Default broker configuration -->
-	<feature name="routing-engine-broker" version="${project.version}"
+	<feature name="routing-engine-broker" version="${module.routing-engine.jms-broker.version}"
 		resolver="(obr)">
+		<details>
+            This feature provides Routing Engine's ActiveMQ support, defining connectors and queues.
+        </details>
 		<feature version="0.3">transaction</feature>
 		<feature version="${deps.activemq.version}">activemq-blueprint</feature>
-		<bundle start-level="30">blueprint:file:etc/routing-engine-broker.xml</bundle>
+		<bundle start-level="30"><![CDATA[mvn:vnet.sms.routing-engine/jms-broker/${module.routing-engine.jms-broker.version}]]></bundle>
+		<configfile finalname="/etc/vnet.sms.routing_engine.jms_broker.cfg">mvn:vnet.sms.routing-engine/jms-broker/${module.routing-engine.jms-broker.version}/cfg</configfile>
 	</feature>
 
 </features>

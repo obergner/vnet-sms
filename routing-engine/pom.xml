@@ -41,7 +41,8 @@
 	</dependencies>
 
 	<modules>
-		<module>core</module>
+		<!-- <module>core</module> -->
+		<module>jms-broker</module>
 		<module>branding</module>
 		<module>distribution</module>
 	</modules>

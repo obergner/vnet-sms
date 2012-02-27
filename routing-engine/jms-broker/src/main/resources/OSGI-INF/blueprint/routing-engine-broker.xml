@@ -1,19 +1,23 @@
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-	xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0"
+	xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
 	xmlns:ext="http://aries.apache.org/blueprint/xmlns/blueprint-ext/v1.0.0"
 	xmlns:amq="http://activemq.apache.org/schema/core"
 	xsi:schemaLocation="
 	   http://activemq.apache.org/schema/core
-	   http://activemq.apache.org/schema/core/activemq-core-5.5.0.xsd">
+	   http://activemq.apache.org/schema/core/activemq-core-5.5.0.xsd
+	   http://www.osgi.org/xmlns/blueprint/v1.0.0
+	   http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
+       http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0
+       http://svn.apache.org/repos/asf/aries/trunk/blueprint/blueprint-cm/src/main/resources/org/apache/aries/blueprint/compendium/cm/blueprint-cm-1.1.0.xsd
+       http://aries.apache.org/blueprint/xmlns/blueprint-ext/v1.0.0
+       http://svn.apache.org/repos/asf/aries/trunk/blueprint/blueprint-core/src/main/resources/org/apache/aries/blueprint/ext/impl/blueprint-ext.xsd">
 
 	<!-- ================================================================================================= -->
 	<!-- Metadata -->
 	<!-- ================================================================================================= -->
 
-	<manifest>
-		Export-Service = javax.jms.ConnectionFactory
-    </manifest>
+	<description><![CDATA[VNET::SMS - ActiveMQ JMS broker]]></description>
 
 	<reference id="vnet.sms.routing-engine.distribution.transactionManager"
 		interface="javax.transaction.TransactionManager" />
@@ -27,22 +31,38 @@
 
 	<!-- Allows us to use system properties as variables in this configuration 
 		file -->
-	<ext:property-placeholder />
+	<ext:property-placeholder id="vnet.sms.routing-engine.jms-broker.ext"
+		system-properties="override" placeholder-prefix="$("
+		placeholder-suffix=")" />
 
 	<!-- Property place holder -->
-	<!-- <cm:property-placeholder persistent-id="vnet.sms.routing-engine.broker"> -->
-	<!-- <cm:default-properties> -->
-	<!-- <cm:property name="openwire" value="6549" /> -->
-	<!-- <cm:property name="stomp" value="6550" /> -->
-	<!-- </cm:default-properties> -->
-	<!-- </cm:property-placeholder> -->
+	<cm:property-placeholder id="vnet.sms.routing-engine.jms-broker.cm"
+		persistent-id="vnet.sms.routing_engine.jms_broker" update-strategy="reload"
+		placeholder-prefix="${" placeholder-suffix="}">
+		<cm:default-properties>
+			<cm:property name="routing-engine.activemq.host" value="localhost" />
+			<cm:property name="routing-engine.activemq.openwire.port"
+				value="65432" />
+			<cm:property name="routing-engine.activemq.stomp.port"
+				value="54321" />
+			<cm:property name="routing-engine.activemq.queue.incomingMtSms"
+				value="Q1" />
+			<cm:property name="routing-engine.activemq.queue.outgoingMtSmsAck"
+				value="Q2" />
+			<cm:property name="routing-engine.activemq.queue.outgoingMtSmsNack"
+				value="Q3" />
+			<cm:property name="routing-engine.activemq.queue.outgoingMoSms"
+				value="Q4" />
+		</cm:default-properties>
+	</cm:property-placeholder>
 
 	<!-- ================================================================================================= -->
 	<!-- Broker definition -->
 	<!-- ================================================================================================= -->
 
 	<amq:broker brokerName="vnet.sms.routing-engine.broker"
-		dataDirectory="${karaf.data}/activemq/default" useShutdownHook="false">
+		dataDirectory="$(karaf.home)/data/vnet.sms.routing-engine.broker/default"
+		useShutdownHook="false">
 
 		<!-- For better performances use VM cursor and small memory limit. For 
 			more information, see: http://activemq.apache.org/message-cursors.html Also, 
@@ -69,13 +89,13 @@
 
 		<amq:destinations>
 			<amq:queue name="vnet.sms.routing-engine.distribution.incomingMtSms"
-				physicalName="QUEUE.T1000.INCOMING_MT_SMS" />
+				physicalName="${routing-engine.activemq.queue.incomingMtSms}" />
 			<amq:queue name="vnet.sms.routing-engine.distribution.outgoingMtSmsAck"
-				physicalName="QUEUE.T1000.OUTGOING_MT_SMS_ACK" />
+				physicalName="${routing-engine.activemq.queue.outgoingMtSmsAck}" />
 			<amq:queue name="vnet.sms.routing-engine.distribution.outgoingMtSmsNack"
-				physicalName="QUEUE.T1000.OUTGOING_MT_SMS_NACK" />
+				physicalName="${routing-engine.activemq.queue.outgoingMtSmsNack}" />
 			<amq:queue name="vnet.sms.routing-engine.distribution.outgoingMoSms"
-				physicalName="QUEUE.T1000.OUTGOING_MO_SMS" />
+				physicalName="${routing-engine.activemq.queue.outgoingMoSms}" />
 		</amq:destinations>
 
 		<!-- Use the following to configure how ActiveMQ is exposed in JMX -->
@@ -87,7 +107,8 @@
 			mechanism is the KahaDB store (identified by the kahaDB tag). For more information, 
 			see: http://activemq.apache.org/persistence.html -->
 		<amq:persistenceAdapter>
-			<amq:kahaDB directory="${karaf.data}/activemq/default/kahadb" />
+			<amq:kahaDB
+				directory="$(karaf.home)/data/activemq/vnet.sms.routing-engine.broker/kahadb" />
 		</amq:persistenceAdapter>
 
 		<!-- The systemUsage controls the maximum amount of space the broker will 
@@ -98,9 +119,10 @@
 
 		<!-- The transport connectors ActiveMQ will listen to -->
 		<amq:transportConnectors>
-			<amq:transportConnector name="openwire" uri="${activemq.url}" />
+			<amq:transportConnector name="openwire"
+				uri="tcp://${routing-engine.activemq.host}:${routing-engine.activemq.openwire.port}" />
 			<amq:transportConnector name="stomp"
-				uri="stomp://localhost:61613" />
+				uri="stomp://${routing-engine.activemq.host}:${routing-engine.activemq.stomp.port}" />
 		</amq:transportConnectors>
 
 	</amq:broker>

@@ -47,6 +47,7 @@
 		<module.gateway.server.serialization-server-minimal.version>1.0.0-SNAPSHOT</module.gateway.server.serialization-server-minimal.version>
 		<module.routing-engine.version>1.0.0-SNAPSHOT</module.routing-engine.version>
 		<module.routing-engine.core.version>1.0.0-SNAPSHOT</module.routing-engine.core.version>
+		<module.routing-engine.jms-broker.version>1.0.0-SNAPSHOT</module.routing-engine.jms-broker.version>
 		<module.routing-engine.branding.version>1.0.0-SNAPSHOT</module.routing-engine.branding.version>
 		<module.routing-engine.distribution.version>1.0.0-SNAPSHOT</module.routing-engine.distribution.version>
 		<!-- Standard javax apis -->
@@ -91,7 +92,8 @@
 		<plugins.plugin.version>2.9</plugins.plugin.version>
 		<plugins.source.version>2.1.2</plugins.source.version>
 		<plugins.jxr.version>2.3</plugins.jxr.version>
-		<plugins.cobertura.version>2.5.1</plugins.cobertura.version>
+		<!-- Use 2.5 instead of 2.5.1 because of http://jira.codehaus.org/browse/MCOBERTURA-151 -->
+		<plugins.cobertura.version>2.5</plugins.cobertura.version>
 		<plugins.license.version>1.8.0</plugins.license.version>
 		<plugins.assembly.version>2.3</plugins.assembly.version>
 		<plugins.gmaven.version>1.4</plugins.gmaven.version>
@@ -293,6 +295,12 @@
 				<groupId>vnet.sms.routing-engine</groupId>
 				<artifactId>core</artifactId>
 				<version>${module.routing-engine.core.version}</version>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>vnet.sms.routing-engine</groupId>
+				<artifactId>jms-broker</artifactId>
+				<version>${module.routing-engine.jms-broker.version}</version>
 				<type>jar</type>
 			</dependency>
 			<dependency>
@@ -858,6 +866,7 @@
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>build-helper-maven-plugin</artifactId>
 					<version>${plugins.build-helper.version}</version>
+					<inherited>true</inherited>
 					<executions>
 						<execution>
 							<id>parse-version</id>
@@ -882,7 +891,7 @@
 							</configuration>
 						</execution>
 						<execution>
-							<id>add-resource</id>
+							<id>add-test-resource</id>
 							<phase>validate</phase>
 							<goals>
 								<goal>add-test-resource</goal>

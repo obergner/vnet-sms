@@ -85,6 +85,11 @@
 			<artifactId>branding</artifactId>
 			<scope>runtime</scope>
 		</dependency>
+		<dependency>
+			<groupId>vnet.sms.routing-engine</groupId>
+			<artifactId>jms-broker</artifactId>
+			<scope>runtime</scope>
+		</dependency>
 		<!-- *************************************************************** -->
 		<!-- Test -->
 		<!-- *************************************************************** -->
@@ -172,8 +177,8 @@
 								<feature>camel-spring/${deps.camel.version}</feature>
 								<feature>camel-jms/${deps.camel.version}</feature>
 								<feature>camel-blueprint/${deps.camel.version}</feature>
-								<feature>routing-engine-broker/${project.version}</feature>
-								<feature>routing-engine-core/${project.version}</feature>
+								<feature>routing-engine-broker/${module.routing-engine.jms-broker.version}</feature>
+								<feature>routing-engine-core/${module.routing-engine.core.version}</feature>
 							</features>
 							<copyFileBasedDescriptors>
 								<copyFileBasedDescriptor>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<MetaData xmlns="http://www.osgi.org/xmlns/metadata/v1.1.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+         http://www.osgi.org/xmlns/metadata/v1.1.0 
+         http://www.osgi.org/xmlns/metatype/v1.1.0/metatype.xsd">
+
+	<OCD description="VNET::SMS' embedded ActiveMQ broker" name="vnet.sms.routing_engine.jms_broker"
+		id="vnet.sms.routing_engine.jms_broker">
+		<AD name="routing-engine.activemq.host" id="routing-engine.activemq.host"
+			required="true" type="String" default="localhost"
+			description="The host ActiveMQ is running on" />
+		<AD name="routing-engine.activemq.openwire.port" id="routing-engine.activemq.openwire.port"
+			required="true" type="Integer" default="61616"
+			description="The port ActiveMQ is listening on (openwire protocol)" />
+		<AD name="routing-engine.activemq.stomp.port" id="routing-engine.activemq.stomp.port"
+			required="true" type="Integer" default="61614"
+			description="The port ActiveMQ is listening on (stomp protocol)" />
+		<AD name="routing-engine.activemq.queue.incomingMtSms" id="routing-engine.activemq.queue.incomingMtSms"
+			required="true" type="String" default="QUEUE.T1000.INCOMING_MT_SMS"
+			description="The physical name of the queue that receives incoming MT SMS" />
+		<AD name="routing-engine.activemq.queue.outgoingMtSmsAck" id="routing-engine.activemq.queue.outgoingMtSmsAck"
+			required="true" type="String" default="QUEUE.T1000.OUTGOING_MT_SMS_ACK"
+			description="The physical name of the queue that publishes outgoing MT SMS acks (positive acknowledgements)" />
+		<AD name="routing-engine.activemq.queue.outgoingMtSmsNack" id="routing-engine.activemq.queue.outgoingMtSmsNack"
+			required="true" type="String" default="QUEUE.T1000.OUTGOING_MT_SMS_NACK"
+			description="The physical name of the queue that publishes outgoing MT SMS nacks (negative acknowledgements)" />
+		<AD name="routing-engine.activemq.queue.outgoingMoSms" id="routing-engine.activemq.queue.outgoingMoSms"
+			required="true" type="String" default="QUEUE.T1000.OUTGOING_MO_SMS"
+			description="The physical name of the queue that publishes outgoing MO SMS" />
+	</OCD>
+
+	<Designate pid="vnet.sms.routing_engine.jms_broker">
+		<Object ocdref="vnet.sms.routing_engine.jms_broker" />
+	</Designate>
+
+</MetaData>
