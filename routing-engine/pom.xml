@@ -41,6 +41,7 @@
 	</dependencies>
 
 	<modules>
+		<module>log4j-gelf-appender-fragment</module>
 		<!-- <module>core</module> -->
 		<module>jms-broker</module>
 		<module>branding</module>

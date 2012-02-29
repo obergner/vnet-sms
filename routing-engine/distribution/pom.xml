@@ -85,9 +85,16 @@
 			<artifactId>branding</artifactId>
 			<scope>runtime</scope>
 		</dependency>
+		<!-- Our embedded JMS broker -->
 		<dependency>
 			<groupId>vnet.sms.routing-engine</groupId>
 			<artifactId>jms-broker</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<!-- GELF log appender -->
+		<dependency>
+			<groupId>vnet.sms.routing-engine</groupId>
+			<artifactId>log4j-gelf-appender-fragment</artifactId>
 			<scope>runtime</scope>
 		</dependency>
 		<!-- *************************************************************** -->
@@ -177,6 +184,7 @@
 								<feature>camel-spring/${deps.camel.version}</feature>
 								<feature>camel-jms/${deps.camel.version}</feature>
 								<feature>camel-blueprint/${deps.camel.version}</feature>
+								<feature>routing-engine-framework/${project.version}</feature>
 								<feature>routing-engine-broker/${module.routing-engine.jms-broker.version}</feature>
 								<feature>routing-engine-core/${module.routing-engine.core.version}</feature>
 							</features>

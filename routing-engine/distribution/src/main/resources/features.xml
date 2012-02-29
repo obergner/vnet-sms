@@ -6,6 +6,14 @@
 
 	<repository><![CDATA[mvn:org.apache.karaf.assemblies.features/enterprise/${deps.karaf.version}/xml/features]]></repository>
 
+	<feature name="routing-engine-framework" version="${project.version}"
+		description="VNET :: SMS' routing engine framework" resolver="(obr)">
+		<details>
+            This feature provides a collection of bundles that make up VNET :: SMS' routing engine's framework.
+        </details>
+		<bundle start-level="30"><![CDATA[mvn:vnet.sms.routing-engine/log4j-gelf-appender-fragment/${module.routing-engine.log4j-gelf-appender-fragment.version}]]></bundle>
+	</feature>
+
 	<feature name="routing-engine-core" version="${module.routing-engine.core.version}"
 		description="VNET :: SMS' core routing engine" resolver="(obr)">
 		<bundle dependency="true" start-level="30"><![CDATA[mvn:commons-lang/commons-lang/2.6]]></bundle>

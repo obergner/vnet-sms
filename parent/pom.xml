@@ -46,6 +46,7 @@
 		<module.gateway.server.server-framework.version>1.0.0-SNAPSHOT</module.gateway.server.server-framework.version>
 		<module.gateway.server.serialization-server-minimal.version>1.0.0-SNAPSHOT</module.gateway.server.serialization-server-minimal.version>
 		<module.routing-engine.version>1.0.0-SNAPSHOT</module.routing-engine.version>
+		<module.routing-engine.log4j-gelf-appender-fragment.version>1.0.0-SNAPSHOT</module.routing-engine.log4j-gelf-appender-fragment.version>
 		<module.routing-engine.core.version>1.0.0-SNAPSHOT</module.routing-engine.core.version>
 		<module.routing-engine.jms-broker.version>1.0.0-SNAPSHOT</module.routing-engine.jms-broker.version>
 		<module.routing-engine.branding.version>1.0.0-SNAPSHOT</module.routing-engine.branding.version>
@@ -71,6 +72,7 @@
 		<deps.logback-gelf.version>0.9.6</deps.logback-gelf.version>
 		<deps.karaf.version>2.2.5</deps.karaf.version>
 		<deps.activemq.version>5.5.1</deps.activemq.version>
+		<deps.groovy.version>1.7.8</deps.groovy.version>
 		<!-- Testing -->
 		<deps.junit.version>4.10</deps.junit.version>
 		<deps.arquillian.version>1.0.0.CR7</deps.arquillian.version>
@@ -293,6 +295,12 @@
 			</dependency>
 			<dependency>
 				<groupId>vnet.sms.routing-engine</groupId>
+				<artifactId>log4j-gelf-appender-fragment</artifactId>
+				<version>${module.routing-engine.log4j-gelf-appender-fragment.version}</version>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>vnet.sms.routing-engine</groupId>
 				<artifactId>core</artifactId>
 				<version>${module.routing-engine.core.version}</version>
 				<type>jar</type>
@@ -487,14 +495,6 @@
 				<type>xml</type>
 				<classifier>features</classifier>
 			</dependency>
-			<!-- Apache ActiveMQ -->
-			<dependency>
-				<groupId>org.apache.activemq</groupId>
-				<artifactId>activemq-karaf</artifactId>
-				<version>${deps.activemq.version}</version>
-				<type>xml</type>
-				<classifier>features</classifier>
-			</dependency>
 			<!-- JBoss Netty -->
 			<dependency>
 				<groupId>org.jboss.netty</groupId>
@@ -666,6 +666,13 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
+			<dependency>
+				<groupId>org.apache.activemq</groupId>
+				<artifactId>activemq-karaf</artifactId>
+				<version>${deps.activemq.version}</version>
+				<type>xml</type>
+				<classifier>features</classifier>
+			</dependency>
 			<!-- Apache XBean -->
 			<dependency>
 				<groupId>org.apache.xbean</groupId>
@@ -694,6 +701,13 @@
 						<artifactId>commons-logging</artifactId>
 					</exclusion>
 				</exclusions>
+			</dependency>
+			<!-- Groovy -->
+			<dependency>
+				<groupId>org.codehaus.groovy</groupId>
+				<artifactId>groovy-all</artifactId>
+				<version>${deps.groovy.version}</version>
+				<type>jar</type>
 			</dependency>
 			<!-- =========================================== -->
 			<!-- Test dependencies -->
