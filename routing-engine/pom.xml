@@ -41,10 +41,11 @@
 	</dependencies>
 
 	<modules>
+		<module>branding</module>
 		<module>log4j-gelf-appender-fragment</module>
 		<!-- <module>core</module> -->
 		<module>jms-broker</module>
-		<module>branding</module>
+		<module>platform</module>
 		<module>distribution</module>
 	</modules>
 

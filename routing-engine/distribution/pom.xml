@@ -97,6 +97,14 @@
 			<artifactId>log4j-gelf-appender-fragment</artifactId>
 			<scope>runtime</scope>
 		</dependency>
+		<!-- Routing Engine Platform -->
+		<dependency>
+			<groupId>vnet.sms.routing-engine</groupId>
+			<artifactId>platform</artifactId>
+			<scope>runtime</scope>
+			<type>xml</type>
+			<classifier>features</classifier>
+		</dependency>
 		<!-- *************************************************************** -->
 		<!-- Test -->
 		<!-- *************************************************************** -->
@@ -124,28 +132,6 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>attach-artifacts</id>
-						<phase>package</phase>
-						<goals>
-							<goal>attach-artifact</goal>
-						</goals>
-						<configuration>
-							<artifacts>
-								<artifact>
-									<file>${project.build.outputDirectory}/features.xml</file>
-									<type>xml</type>
-									<classifier>features</classifier>
-								</artifact>
-							</artifacts>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
 				<groupId>org.apache.karaf.tooling</groupId>
 				<artifactId>features-maven-plugin</artifactId>
 				<executions>
@@ -157,11 +143,7 @@
 						</goals>
 						<configuration>
 							<descriptors>
-								<descriptor>mvn:org.apache.karaf.assemblies.features/standard/${deps.karaf.version}/xml/features</descriptor>
-								<descriptor>mvn:org.apache.karaf.assemblies.features/enterprise/${deps.karaf.version}/xml/features</descriptor>
-								<descriptor>mvn:org.apache.activemq/activemq-karaf/${deps.activemq.version}/xml/features</descriptor>
-								<descriptor>mvn:org.apache.camel.karaf/apache-camel/${deps.camel.version}/xml/features</descriptor>
-								<descriptor>file:${project.build.outputDirectory}/features.xml</descriptor>
+								<descriptor>mvn:vnet.sms.routing-engine/platform/${module.routing-engine.platform.version}/xml/features</descriptor>
 							</descriptors>
 							<features>
 								<feature>karaf-framework/${deps.karaf.version}</feature>
@@ -184,17 +166,10 @@
 								<feature>camel-spring/${deps.camel.version}</feature>
 								<feature>camel-jms/${deps.camel.version}</feature>
 								<feature>camel-blueprint/${deps.camel.version}</feature>
-								<feature>routing-engine-framework/${project.version}</feature>
+								<feature>routing-engine-platform/${module.routing-engine.platform.version}</feature>
 								<feature>routing-engine-broker/${module.routing-engine.jms-broker.version}</feature>
-								<feature>routing-engine-core/${module.routing-engine.core.version}</feature>
+								<!-- <feature>routing-engine-core/${module.routing-engine.core.version}</feature> -->
 							</features>
-							<copyFileBasedDescriptors>
-								<copyFileBasedDescriptor>
-									<sourceFile>${project.build.outputDirectory}/features.xml</sourceFile>
-									<targetDirectory>vnet/sms/routing-engine/${project.artifactId}/${project.version}</targetDirectory>
-									<targetFileName>${project.artifactId}-${project.version}-features.xml</targetFileName>
-								</copyFileBasedDescriptor>
-							</copyFileBasedDescriptors>
 							<includeMvnBasedDescriptors>true</includeMvnBasedDescriptors>
 							<repository>${project.build.directory}/features-repo</repository>
 							<failOnArtifactResolutionError>true</failOnArtifactResolutionError>

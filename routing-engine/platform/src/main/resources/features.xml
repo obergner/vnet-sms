@@ -1,0 +1,1081 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<features name="VNET::SMS Routing Engine Platform ${project.version}"
+	xmlns="http://karaf.apache.org/xmlns/features/v1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://karaf.apache.org/xmlns/features/v1.0.0 http://karaf.apache.org/xmlns/features/v1.0.0">
+
+	<!-- ============================================================================================================================= -->
+	<!-- Karaf Standard -->
+	<!-- ============================================================================================================================= -->
+
+	<feature name="karaf-framework" version="2.2.5" resolver="(obr)">
+		<bundle start-level="5">mvn:org.ops4j.pax.url/pax-url-mvn/1.2.8</bundle>
+		<bundle start-level="5">mvn:org.ops4j.pax.url/pax-url-wrap/1.2.8</bundle>
+		<bundle start-level="8">mvn:org.ops4j.pax.logging/pax-logging-api/1.6.3</bundle>
+		<bundle start-level="8">mvn:org.ops4j.pax.logging/pax-logging-service/1.6.3</bundle>
+		<bundle start-level="10">mvn:org.apache.felix/org.apache.felix.configadmin/1.2.8</bundle>
+		<bundle start-level="11">mvn:org.apache.felix/org.apache.felix.fileinstall/3.1.10</bundle>
+		<bundle start-level="20">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.asm/3.3_2</bundle>
+		<bundle start-level="20">mvn:org.apache.aries/org.apache.aries.util/0.3</bundle>
+		<bundle start-level="20">mvn:org.apache.aries.proxy/org.apache.aries.proxy/0.3</bundle>
+		<bundle start-level="20">mvn:org.apache.aries.blueprint/org.apache.aries.blueprint/0.3.1</bundle>
+		<bundle start-level="30">mvn:org.apache.karaf.shell/org.apache.karaf.shell.console/2.2.5</bundle>
+		<bundle start-level="30">mvn:org.apache.karaf.shell/org.apache.karaf.shell.osgi/2.2.5</bundle>
+		<bundle start-level="30">mvn:org.apache.karaf.shell/org.apache.karaf.shell.log/2.2.5</bundle>
+		<bundle start-level="30">mvn:org.apache.karaf.shell/org.apache.karaf.shell.packages/2.2.5</bundle>
+		<bundle start-level="30">mvn:org.apache.karaf.shell/org.apache.karaf.shell.commands/2.2.5</bundle>
+		<bundle start-level="30">mvn:org.apache.karaf.shell/org.apache.karaf.shell.dev/2.2.5</bundle>
+		<bundle start-level="30">mvn:org.apache.karaf.jaas/org.apache.karaf.jaas.config/2.2.5</bundle>
+		<bundle start-level="30">mvn:org.apache.karaf.jaas/org.apache.karaf.jaas.modules/2.2.5</bundle>
+		<bundle start-level="30">mvn:org.apache.karaf.jaas/org.apache.karaf.jaas.command/2.2.5</bundle>
+		<bundle start-level="25">mvn:org.apache.karaf.features/org.apache.karaf.features.core/2.2.5</bundle>
+		<bundle start-level="30">mvn:org.apache.karaf.features/org.apache.karaf.features.command/2.2.5</bundle>
+		<bundle start-level="30">mvn:org.apache.karaf.features/org.apache.karaf.features.management/2.2.5</bundle>
+		<bundle start-level="30">mvn:org.apache.karaf.management/org.apache.karaf.management.server/2.2.5</bundle>
+		<bundle start-level="30">mvn:org.apache.aries.jmx/org.apache.aries.jmx/0.3</bundle>
+		<bundle start-level="30">mvn:org.apache.aries.jmx/org.apache.aries.jmx.blueprint/0.3</bundle>
+	</feature>
+
+	<feature name="spring" version="3.0.6.RELEASE" resolver="(obr)">
+		<bundle dependency="true" start-level="30">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.aopalliance/1.0_5</bundle>
+		<bundle start-level="30">mvn:org.springframework/spring-core/3.0.6.RELEASE</bundle>
+		<bundle start-level="30">mvn:org.springframework/spring-asm/3.0.6.RELEASE</bundle>
+		<bundle start-level="30">mvn:org.springframework/spring-expression/3.0.6.RELEASE</bundle>
+		<bundle start-level="30">mvn:org.springframework/spring-beans/3.0.6.RELEASE</bundle>
+		<bundle start-level="30">mvn:org.springframework/spring-aop/3.0.6.RELEASE</bundle>
+		<bundle start-level="30">mvn:org.springframework/spring-context/3.0.6.RELEASE</bundle>
+		<bundle start-level="30">mvn:org.springframework/spring-context-support/3.0.6.RELEASE</bundle>
+	</feature>
+
+	<feature name="spring-aspects" version="3.0.6.RELEASE"
+		resolver="(obr)">
+		<feature version="3.0.6.RELEASE">spring</feature>
+		<bundle start-level="30">mvn:org.springframework/spring-aspects/3.0.6.RELEASE</bundle>
+	</feature>
+
+	<feature name="spring-dm" version="1.2.1" resolver="(obr)">
+		<feature version="[2.5.6,4)">spring</feature>
+		<bundle dependency="true" start-level="30">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.cglib/2.1_3_7</bundle>
+		<bundle start-level="30">mvn:org.springframework.osgi/spring-osgi-io/1.2.1</bundle>
+		<bundle start-level="30">mvn:org.springframework.osgi/spring-osgi-core/1.2.1</bundle>
+		<bundle start-level="30">mvn:org.springframework.osgi/spring-osgi-extender/1.2.1</bundle>
+		<bundle start-level="30">mvn:org.springframework.osgi/spring-osgi-annotation/1.2.1</bundle>
+		<bundle start-level="30">mvn:org.apache.karaf.deployer/org.apache.karaf.deployer.spring/2.2.5</bundle>
+	</feature>
+
+	<feature name="spring-dm-web" version="1.2.1" resolver="(obr)">
+		<feature version="1.2.1">spring-dm</feature>
+		<feature version="[2.5.6,4)">spring-web</feature>
+		<feature version="2.2.5">http</feature>
+		<bundle start-level="30">mvn:org.springframework.osgi/spring-osgi-web/1.2.1</bundle>
+	</feature>
+
+	<feature name="spring-instrument" version="3.0.6.RELEASE"
+		resolver="(obr)">
+		<feature version="3.0.6.RELEASE">spring</feature>
+		<bundle start-level="30">mvn:org.springframework/spring-instrument/3.0.6.RELEASE</bundle>
+	</feature>
+
+	<feature name="spring-jdbc" version="3.0.6.RELEASE" resolver="(obr)">
+		<feature version="3.0.6.RELEASE">spring-tx</feature>
+		<bundle start-level="30">mvn:org.springframework/spring-jdbc/3.0.6.RELEASE</bundle>
+	</feature>
+
+	<feature name="spring-jms" version="3.0.6.RELEASE" resolver="(obr)">
+		<feature version="3.0.6.RELEASE">spring-web</feature>
+		<bundle start-level="10">mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/1.1.1</bundle>
+		<bundle start-level="10">mvn:org.apache.geronimo.specs/geronimo-jms_1.1_spec/1.1.1</bundle>
+		<bundle start-level="30">mvn:org.springframework/spring-jms/3.0.6.RELEASE</bundle>
+		<bundle start-level="30">mvn:org.springframework/spring-tx/3.0.6.RELEASE</bundle>
+	</feature>
+
+	<feature name="spring-test" version="3.0.6.RELEASE" resolver="(obr)">
+		<feature version="3.0.6.RELEASE">spring</feature>
+		<bundle start-level="30">mvn:org.springframework/spring-test/3.0.6.RELEASE</bundle>
+	</feature>
+
+	<feature name="spring-orm" version="3.0.6.RELEASE" resolver="(obr)">
+		<feature version="3.0.6.RELEASE">spring-jdbc</feature>
+		<bundle start-level="30">mvn:org.springframework/spring-orm/3.0.6.RELEASE</bundle>
+	</feature>
+
+	<feature name="spring-oxm" version="3.0.6.RELEASE" resolver="(obr)">
+		<feature version="3.0.6.RELEASE">spring</feature>
+		<bundle start-level="30">mvn:org.springframework/spring-oxm/3.0.6.RELEASE</bundle>
+	</feature>
+
+	<feature name="spring-tx" version="3.0.6.RELEASE" resolver="(obr)">
+		<feature version="3.0.6.RELEASE">spring</feature>
+		<bundle start-level="30">mvn:org.springframework/spring-tx/3.0.6.RELEASE</bundle>
+	</feature>
+
+	<feature name="spring-web" version="3.0.6.RELEASE" resolver="(obr)">
+		<feature version="3.0.6.RELEASE">spring</feature>
+		<feature version="2.2.5">http</feature>
+		<bundle start-level="30">mvn:org.springframework/spring-web/3.0.6.RELEASE</bundle>
+		<bundle start-level="30">mvn:org.springframework/spring-webmvc/3.0.6.RELEASE</bundle>
+	</feature>
+
+	<feature name="wrapper" version="2.2.5">
+		<bundle>mvn:org.apache.karaf.shell/org.apache.karaf.shell.wrapper/2.2.5</bundle>
+	</feature>
+
+	<feature name="obr" version="2.2.5">
+		<bundle start-level="30">mvn:org.apache.felix/org.osgi.service.obr/1.0.2</bundle>
+		<bundle start-level="30">mvn:org.apache.felix/org.apache.felix.bundlerepository/1.6.4</bundle>
+		<bundle start-level="30">mvn:org.apache.karaf.shell/org.apache.karaf.shell.obr/2.2.5</bundle>
+		<bundle start-level="30">mvn:org.apache.karaf.features/org.apache.karaf.features.obr/2.2.5</bundle>
+		<bundle start-level="30">mvn:org.apache.karaf.management.mbeans/org.apache.karaf.management.mbeans.obr/2.2.5</bundle>
+		<bundle start-level="30">mvn:org.ops4j.pax.url/pax-url-obr/1.2.8</bundle>
+	</feature>
+
+	<feature name="config" version="2.2.5">
+		<bundle start-level="30">mvn:org.apache.karaf.shell/org.apache.karaf.shell.config/2.2.5</bundle>
+	</feature>
+
+	<feature name="jetty" version="7.5.4.v20111024" resolver="(obr)">
+		<bundle dependency="true" start-level="30">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.activation-api-1.1/1.9.0</bundle>
+		<bundle dependency="true" start-level="30">mvn:org.apache.geronimo.specs/geronimo-servlet_2.5_spec/1.1.2</bundle>
+		<bundle dependency="true" start-level="30">mvn:javax.mail/mail/1.4.4</bundle>
+		<bundle dependency="true" start-level="30">mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/1.1.1</bundle>
+		<bundle start-level="30">mvn:org.eclipse.jetty/jetty-util/7.5.4.v20111024</bundle>
+		<bundle start-level="30">mvn:org.eclipse.jetty/jetty-io/7.5.4.v20111024</bundle>
+		<bundle start-level="30">mvn:org.eclipse.jetty/jetty-http/7.5.4.v20111024</bundle>
+		<bundle start-level="30">mvn:org.eclipse.jetty/jetty-client/7.5.4.v20111024</bundle>
+		<bundle start-level="30">mvn:org.eclipse.jetty/jetty-continuation/7.5.4.v20111024</bundle>
+		<bundle start-level="30">mvn:org.eclipse.jetty/jetty-jmx/7.5.4.v20111024</bundle>
+		<bundle start-level="30">mvn:org.eclipse.jetty/jetty-server/7.5.4.v20111024</bundle>
+		<bundle start-level="30">mvn:org.eclipse.jetty/jetty-security/7.5.4.v20111024</bundle>
+		<bundle start-level="30">mvn:org.eclipse.jetty/jetty-servlet/7.5.4.v20111024</bundle>
+		<bundle start-level="30">mvn:org.eclipse.jetty/jetty-servlets/7.5.4.v20111024</bundle>
+		<bundle start-level="30">mvn:org.eclipse.jetty/jetty-xml/7.5.4.v20111024</bundle>
+		<bundle start-level="30">mvn:org.eclipse.jetty/jetty-webapp/7.5.4.v20111024</bundle>
+		<bundle start-level="30">mvn:org.eclipse.jetty/jetty-jndi/7.5.4.v20111024</bundle>
+		<bundle start-level="30">mvn:org.eclipse.jetty/jetty-plus/7.5.4.v20111024</bundle>
+	</feature>
+
+	<feature name="http" version="2.2.5" resolver="(obr)">
+		<configfile finalname="/etc/jetty.xml">mvn:org.apache.karaf/apache-karaf/2.2.5/xml/jettyconfig</configfile>
+		<config name="org.ops4j.pax.web">
+            org.osgi.service.http.port=8181
+            javax.servlet.context.tempdir=${karaf.data}/pax-web-jsp
+            org.ops4j.pax.web.config.file=${karaf.base}/etc/jetty.xml
+        </config>
+		<feature version="[7.0,8.0)">jetty</feature>
+		<bundle start-level="30">mvn:org.ops4j.pax.web/pax-web-api/1.0.8</bundle>
+		<bundle start-level="30">mvn:org.ops4j.pax.web/pax-web-spi/1.0.8</bundle>
+		<bundle start-level="30">mvn:org.ops4j.pax.web/pax-web-runtime/1.0.8</bundle>
+		<bundle start-level="30">mvn:org.ops4j.pax.web/pax-web-jetty/1.0.8</bundle>
+	</feature>
+
+	<feature name="war" version="2.2.5" resolver="(obr)">
+		<config name="org.ops4j.pax.url.war">
+            org.ops4j.pax.url.war.importPaxLoggingPackages=true
+        </config>
+		<feature>http</feature>
+		<bundle start-level="30">mvn:org.apache.karaf.shell/org.apache.karaf.shell.web/2.2.5</bundle>
+		<bundle start-level="30">mvn:org.apache.karaf.management.mbeans/org.apache.karaf.management.mbeans.web/2.2.5</bundle>
+		<bundle start-level="30">mvn:org.ops4j.pax.web/pax-web-jsp/1.0.8</bundle>
+		<bundle start-level="30">mvn:org.ops4j.pax.web/pax-web-extender-war/1.0.8</bundle>
+		<bundle start-level="30">mvn:org.ops4j.pax.web/pax-web-extender-whiteboard/1.0.8</bundle>
+		<bundle start-level="30">mvn:org.ops4j.pax.web/pax-web-deployer/1.0.8</bundle>
+		<bundle start-level="30">mvn:org.ops4j.pax.url/pax-url-war/1.2.8</bundle>
+	</feature>
+
+	<feature name="kar" version="2.2.5">
+		<bundle start-level="30">mvn:org.apache.karaf.deployer/org.apache.karaf.deployer.kar/2.2.5</bundle>
+	</feature>
+
+	<feature name="webconsole-base" version="2.2.5">
+		<config name="org.apache.karaf.webconsole">
+            realm=karaf
+            role=${karaf.admin.role}
+        </config>
+		<feature>http</feature>
+		<bundle start-level="30">mvn:org.apache.felix/org.apache.felix.metatype/1.0.4</bundle>
+		<bundle start-level="30">mvn:org.apache.karaf.webconsole/org.apache.karaf.webconsole.branding/2.2.5</bundle>
+		<bundle start-level="30">mvn:org.apache.karaf.webconsole/org.apache.karaf.webconsole.console/2.2.5</bundle>
+	</feature>
+
+	<feature name="webconsole" version="2.2.5">
+		<feature version="2.2.5">webconsole-base</feature>
+		<bundle start-level="30">mvn:org.apache.karaf.webconsole/org.apache.karaf.webconsole.admin/2.2.5</bundle>
+		<bundle start-level="30">mvn:org.apache.karaf.webconsole/org.apache.karaf.webconsole.features/2.2.5</bundle>
+		<bundle start-level="30">mvn:org.apache.karaf.webconsole/org.apache.karaf.webconsole.gogo/2.2.5</bundle>
+		<bundle start-level="30">mvn:org.apache.felix/org.apache.felix.webconsole.plugins.event/1.0.2</bundle>
+	</feature>
+
+	<feature name="ssh" version="2.2.5">
+		<config name="org.apache.karaf.shell">
+            sshPort=8101
+            sshHost=0.0.0.0
+            sshRealm=karaf
+            hostKey=${karaf.base}/etc/host.key
+        </config>
+		<bundle start-level="30" dependency="true">mvn:org.apache.mina/mina-core/2.0.1</bundle>
+		<bundle start-level="30" dependency="true">mvn:org.apache.sshd/sshd-core/0.5.0</bundle>
+		<bundle start-level="30">mvn:org.apache.karaf.shell/org.apache.karaf.shell.ssh/2.2.5</bundle>
+	</feature>
+
+	<feature name="management" version="2.2.5">
+		<bundle start-level="30">mvn:org.apache.karaf.management/org.apache.karaf.management.server/2.2.5</bundle>
+		<bundle start-level="30">mvn:org.apache.aries.jmx/org.apache.aries.jmx/0.3</bundle>
+		<bundle start-level="30">mvn:org.apache.aries.jmx/org.apache.aries.jmx.blueprint/0.3</bundle>
+		<bundle start-level="30">mvn:org.apache.karaf.management.mbeans/org.apache.karaf.management.mbeans.system/2.2.5</bundle>
+		<bundle start-level="30">mvn:org.apache.karaf.management.mbeans/org.apache.karaf.management.mbeans.bundles/2.2.5</bundle>
+		<bundle start-level="30">mvn:org.apache.karaf.management.mbeans/org.apache.karaf.management.mbeans.services/2.2.5</bundle>
+		<bundle start-level="30">mvn:org.apache.karaf.management.mbeans/org.apache.karaf.management.mbeans.config/2.2.5</bundle>
+		<bundle start-level="30">mvn:org.apache.karaf.management.mbeans/org.apache.karaf.management.mbeans.log/2.2.5</bundle>
+		<bundle start-level="30">mvn:org.apache.karaf.management.mbeans/org.apache.karaf.management.mbeans.packages/2.2.5</bundle>
+		<bundle start-level="30">mvn:org.apache.karaf.management.mbeans/org.apache.karaf.management.mbeans.dev/2.2.5</bundle>
+	</feature>
+
+	<feature name="eventadmin" version="2.2.5">
+		<bundle start-level="30">mvn:org.apache.felix/org.apache.felix.eventadmin/1.2.12</bundle>
+	</feature>
+
+	<feature name="jasypt-encryption" version="2.2.5" resolver="(obr)">
+		<bundle dependency="true" start-level="30">mvn:commons-codec/commons-codec/1.6</bundle>
+		<bundle dependency="true" start-level="30">mvn:commons-lang/commons-lang/2.6</bundle>
+		<bundle dependency="true" start-level="30">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jasypt/1.8_1</bundle>
+		<bundle start-level="30">mvn:org.apache.karaf.jaas/org.apache.karaf.jaas.jasypt/2.2.5</bundle>
+	</feature>
+
+	<!-- ============================================================================================================================= -->
+	<!-- Karaf Enterprise -->
+	<!-- ============================================================================================================================= -->
+
+	<feature name="transaction" description="OSGi Transaction Manager"
+		version="0.3" resolver="(obr)">
+		<details>The Aries JTA</details>
+		<bundle dependency="true" start-level="30">mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/1.1.1</bundle>
+		<bundle start-level="30">mvn:org.apache.aries.transaction/org.apache.aries.transaction.blueprint/0.3</bundle>
+		<bundle start-level="30">mvn:org.apache.aries.transaction/org.apache.aries.transaction.manager/0.3</bundle>
+		<bundle start-level="30">mvn:org.apache.aries.transaction/org.apache.aries.transaction.wrappers/0.3</bundle>
+	</feature>
+
+	<feature name="jpa" description="OSGi Persistence Container"
+		version="0.3" resolver="(obr)">
+		<bundle dependency="true" start-level="30">mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/1.1.1</bundle>
+		<bundle dependency="true" start-level="30">mvn:org.apache.geronimo.specs/geronimo-jpa_2.0_spec/1.1</bundle>
+		<bundle start-level="30">mvn:org.apache.aries/org.apache.aries.util/0.3</bundle>
+		<bundle start-level="30">mvn:org.apache.aries.jpa/org.apache.aries.jpa.api/0.3</bundle>
+		<bundle start-level="30">mvn:org.apache.aries.jpa/org.apache.aries.jpa.blueprint.aries/0.3</bundle>
+		<bundle start-level="30">mvn:org.apache.aries.jpa/org.apache.aries.jpa.container/0.3</bundle>
+		<bundle start-level="30">mvn:org.apache.aries.jpa/org.apache.aries.jpa.container.context/0.3</bundle>
+	</feature>
+
+	<feature name="jndi" description="OSGi Service Registry JNDI access"
+		version="0.3" resolver="(obr)">
+		<bundle start-level="30">mvn:org.apache.aries/org.apache.aries.util/0.3</bundle>
+		<bundle start-level="30">mvn:org.apache.aries.jndi/org.apache.aries.jndi.api/0.3</bundle>
+		<bundle start-level="30">mvn:org.apache.aries.jndi/org.apache.aries.jndi.core/0.3</bundle>
+		<bundle start-level="30">mvn:org.apache.aries.jndi/org.apache.aries.jndi.rmi/0.3</bundle>
+		<bundle start-level="30">mvn:org.apache.aries.jndi/org.apache.aries.jndi.url/0.3</bundle>
+		<bundle start-level="30">mvn:org.apache.aries.jndi/org.apache.aries.jndi.legacy.support/0.3</bundle>
+	</feature>
+
+	<feature name="application-without-isolation" version="0.3">
+		<!-- pre-requisites -->
+		<bundle dependency="true" start-level="20">mvn:org.apache.aries.blueprint/org.apache.aries.blueprint/0.3.1</bundle>
+		<bundle dependency="true" start-level="20">mvn:org.apache.aries.proxy/org.apache.aries.proxy/0.3</bundle>
+		<bundle dependency="true" start-level="20">mvn:org.apache.aries/org.apache.aries.util/0.3</bundle>
+		<feature version="2.2.5">obr</feature>
+		<!-- commom -->
+		<bundle start-level="30">mvn:org.apache.aries.application/org.apache.aries.application.resolver.obr/0.3</bundle>
+		<bundle start-level="30">mvn:org.apache.aries.application/org.apache.aries.application.install/0.3</bundle>
+		<bundle start-level="30">mvn:org.apache.aries.application/org.apache.aries.application.api/0.3</bundle>
+		<bundle start-level="30">mvn:org.apache.aries.application/org.apache.aries.application.management/0.3</bundle>
+		<bundle start-level="30">mvn:org.apache.aries.application/org.apache.aries.application.utils/0.3</bundle>
+		<bundle start-level="30">mvn:org.apache.aries.application/org.apache.aries.application.modeller/0.3</bundle>
+		<bundle start-level="30">mvn:org.apache.aries.application/org.apache.aries.application.default.local.platform/0.3</bundle>
+		<bundle start-level="30">mvn:org.apache.aries.application/org.apache.aries.application.noop.platform.repo/0.3</bundle>
+		<bundle start-level="30">mvn:org.apache.aries.application/org.apache.aries.application.noop.postresolve.process/0.3</bundle>
+		<bundle start-level="30">mvn:org.apache.aries.application/org.apache.aries.application.deployment.management/0.3</bundle>
+		<!-- without isolation -->
+		<bundle start-level="30">mvn:org.apache.aries.application/org.apache.aries.application.runtime/0.3</bundle>
+	</feature>
+
+	<!-- ============================================================================================================================= -->
+	<!-- ActiveMQ -->
+	<!-- ============================================================================================================================= -->
+
+	<feature name="activemq" version="5.5.1" resolver="(obr)">
+		<bundle start-level="40" dependency="true">mvn:org.apache.geronimo.specs/geronimo-annotation_1.0_spec/1.1.1</bundle>
+		<bundle start-level="40" dependency="true">mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/1.1.1</bundle>
+		<bundle start-level="40" dependency="true">mvn:org.apache.geronimo.specs/geronimo-jms_1.1_spec/1.1.1</bundle>
+		<bundle start-level="40" dependency="true">mvn:org.apache.geronimo.specs/geronimo-j2ee-management_1.1_spec/1.0.1</bundle>
+		<bundle start-level="40" dependency="true">mvn:commons-pool/commons-pool/1.5.4</bundle>
+		<bundle start-level="40" dependency="true">mvn:commons-collections/commons-collections/3.2.1</bundle>
+		<bundle start-level="40" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-lang/2.4_3</bundle>
+		<bundle start-level="40" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-codec/1.3_3</bundle>
+		<bundle start-level="40" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.oro/2.0.8_3</bundle>
+		<bundle start-level="40" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.velocity/1.6.2_3</bundle>
+		<bundle start-level="40" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jasypt/1.6_1</bundle>
+		<bundle start-level="40">mvn:org.apache.activemq/activemq-core/5.5.1</bundle>
+		<bundle start-level="40">mvn:org.apache.activemq/kahadb/5.5.1</bundle>
+		<bundle start-level="40">mvn:org.apache.activemq/activemq-console/5.5.1</bundle>
+		<bundle start-level="40">mvn:org.apache.activemq/activemq-ra/5.5.1</bundle>
+		<bundle start-level="40">mvn:org.apache.activemq/activemq-pool/5.5.1</bundle>
+		<bundle start-level="40">mvn:org.apache.activemq/activemq-karaf/5.5.1</bundle>
+		<bundle start-level="40">mvn:org.apache.aries.transaction/org.apache.aries.transaction.manager/0.3</bundle>
+	</feature>
+
+	<feature name="activemq-spring" version="5.5.1" resolver="(obr)">
+		<feature version="[1,2)">spring-dm</feature>
+		<feature version="5.5.1">activemq</feature>
+		<bundle start-level="40" dependency="true">mvn:org.apache.xbean/xbean-spring/3.7</bundle>
+		<bundle start-level="40">mvn:org.apache.activemq/activemq-spring/5.5.1</bundle>
+	</feature>
+
+	<feature name="activemq-blueprint" version="5.5.1" resolver="(obr)">
+		<feature version="5.5.1">activemq</feature>
+		<bundle start-level="40" dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.scripting-api-1.0/1.5.0</bundle>
+		<bundle start-level="40" dependency="true">mvn:org.apache.commons/commons-jexl/2.0.1</bundle>
+		<bundle start-level="40" dependency="true">mvn:org.apache.xbean/xbean-blueprint/3.7</bundle>
+		<bundle start-level="40">mvn:org.apache.activemq/activemq-blueprint/5.5.1</bundle>
+	</feature>
+
+	<!-- do "features:install war" before installing this one -->
+	<feature name="activemq-web-console" version="5.5.1" resolver="(obr)">
+		<feature version="[2,3)">war</feature>
+		<bundle start-level="40">mvn:org.apache.activemq/activemq-web-console/5.5.1/war?Webapp-Context=activemq-web-console</bundle>
+	</feature>
+
+	<!-- ============================================================================================================================= -->
+	<!-- Camel -->
+	<!-- ============================================================================================================================= -->
+
+	<feature name="xml-specs-api" version="1.9.0" resolver="(obr)">
+		<bundle start-level="10" dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.activation-api-1.1/1.9.0</bundle>
+		<bundle start-level="10" dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.stax-api-1.0/1.9.0</bundle>
+		<bundle start-level="10" dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jaxb-api-2.2/1.9.0</bundle>
+		<bundle start-level="10" dependency="true">mvn:org.codehaus.woodstox/stax2-api/3.1.1</bundle>
+		<bundle start-level="10" dependency="true">mvn:org.codehaus.woodstox/woodstox-core-asl/4.1.1</bundle>
+		<bundle start-level="10" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jaxb-impl/2.2.1.1_1</bundle>
+	</feature>
+	<feature name="camel" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<feature version="2.9.0">camel-spring</feature>
+	</feature>
+	<feature name="camel-core" version="2.9.0" resolver="(obr)">
+		<feature version="[3,4)">spring</feature>
+		<feature version="1.9.0">xml-specs-api</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-core/2.9.0</bundle>
+		<bundle start-level="50">mvn:org.apache.camel.karaf/camel-karaf-commands/2.9.0</bundle>
+	</feature>
+	<feature name="camel-spring" version="2.9.0" resolver="(obr)">
+		<bundle start-level="50" dependency="true">mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/1.1.1</bundle>
+		<feature version="[3,4)">spring</feature>
+		<feature version="[1.2,2)">spring-dm</feature>
+		<feature version="[3,4)">spring-tx</feature>
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-spring/2.9.0</bundle>
+	</feature>
+	<feature name="camel-blueprint" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-blueprint/2.9.0</bundle>
+	</feature>
+	<feature name="camel-test" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-spring</feature>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.junit/4.7_1</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-test/2.9.0</bundle>
+	</feature>
+	<feature name="camel-cxf" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-spring</feature>
+		<feature>jetty</feature>
+		<feature version="[2.4,2.6)">cxf</feature>
+		<!-- Added cxf-specs feature to workaround the karaf feature validate issue -->
+		<feature version="[2.4,2.6)">cxf-specs</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-cxf-transport/2.9.0</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-cxf/2.9.0</bundle>
+	</feature>
+	<feature name="camel-cache" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ehcache/2.4.3_1</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/1.1_4</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-cache/2.9.0</bundle>
+	</feature>
+	<feature name="camel-castor" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.oro/2.0.8_5</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.regexp/1.3_2</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.castor/1.3.1_2</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-castor/2.9.0</bundle>
+	</feature>
+	<feature name="camel-crypto" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50" dependency="true">mvn:commons-codec/commons-codec/1.4</bundle>
+		<bundle start-level="50" dependency="true">mvn:commons-io/commons-io/1.4</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.bcpg-jdk16/1.46_1</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-crypto/2.9.0</bundle>
+	</feature>
+	<feature name="camel-http" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-httpclient/3.1_6</bundle>
+		<bundle start-level="50" dependency="true">mvn:commons-codec/commons-codec/1.4</bundle>
+		<!-- the jetty feature provides the geronimo-servlet_2.5_spec -->
+		<!-- TODO replace the jetty feature by a Karaf spec feature -->
+		<feature>jetty</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-http/2.9.0</bundle>
+	</feature>
+	<feature name="camel-http4" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50" dependency="true">mvn:org.apache.httpcomponents/httpcore-osgi/4.1.2</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.httpcomponents/httpclient-osgi/4.1.2</bundle>
+		<!-- the jetty feature provides the geronimo-servlet_2.5_spec -->
+		<!-- TODO replace the jetty feature by a Karaf spec feature -->
+		<feature>jetty</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-http4/2.9.0</bundle>
+	</feature>
+	<feature name="camel-mina" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.mina/1.1.7_5</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-mina/2.9.0</bundle>
+	</feature>
+	<feature name="camel-jetty" version="2.9.0" resolver="(obr)">
+		<feature>jetty</feature>
+		<feature version="2.9.0">camel-core</feature>
+		<feature version="2.9.0">camel-http</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-jetty/2.9.0</bundle>
+	</feature>
+	<feature name="camel-servlet" version="2.9.0" resolver="(obr)">
+		<!-- camel-servlet need to access the http OSGi services -->
+		<feature>http</feature>
+		<feature version="2.9.0">camel-http</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-servlet/2.9.0</bundle>
+	</feature>
+	<feature name="camel-jms" version="2.9.0" resolver="(obr)">
+		<feature version="[3,4)">spring</feature>
+		<bundle start-level="50" dependency="true">mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/1.1.1</bundle>
+		<bundle start-level="50" dependency="true">mvn:commons-pool/commons-pool/1.5.6</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.geronimo.specs/geronimo-jms_1.1_spec/1.1.1</bundle>
+		<feature version="[3,4)">spring-jms</feature>
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-jms/2.9.0</bundle>
+	</feature>
+	<feature name="camel-jmx" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-jmx/2.9.0</bundle>
+	</feature>
+	<feature name="camel-ahc" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50" dependency="true">mvn:com.ning/async-http-client/1.6.5</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-ahc/2.9.0</bundle>
+	</feature>
+	<feature name="camel-amqp" version="2.9.0" resolver="(obr)">
+		<bundle start-level="50" dependency="true">mvn:commons-lang/commons-lang/2.6</bundle>
+		<bundle start-level="50" dependency="true">mvn:commons-collections/commons-collections/3.2.1</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.mina/1.1.7_5</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.qpid/0.12_1</bundle>
+		<feature version="2.9.0">camel-jms</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-amqp/2.9.0</bundle>
+	</feature>
+	<!-- TODO: apns bundle does not work - SMX4-857 apn has the depenency of 
+		mina 2.0, we need to provide that bundle in servicemix <feature name="camel-apns" 
+		version="2.9.0" resolver="(obr)" start-level="50"> <feature version="2.9.0">camel-core</feature> 
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.mina/1.1.7_5</bundle> 
+		<bundle start-level="50" dependency="true">mvn:org.codehaus.jackson/jackson-core-asl/1.9.2</bundle> 
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.java-apns/0.1.6_2</bundle> 
+		<bundle start-level="50">mvn:org.apache.camel/camel-apns/2.9.0</bundle> </feature -->
+	<feature name="camel-atom" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50" dependency="true">mvn:javax.mail/mail/1.4.4</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.ws.commons.axiom/axiom-impl/1.2.12</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.ws.commons.axiom/axiom-api/1.2.12</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.abdera/abdera-core/1.1.2</bundle>
+		<!--bundle dependency="true">mvn:org.apache.abdera/abdera-extensions-json/1.1.2</bundle -->
+		<bundle start-level="50" dependency="true">mvn:org.apache.abdera/abdera-extensions-main/1.1.2</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.abdera/abdera-i18n/1.1.2</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.abdera/abdera-parser/1.1.2</bundle>
+		<bundle start-level="50" dependency="true">mvn:commons-codec/commons-codec/1.4</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-atom/2.9.0</bundle>
+	</feature>
+	<feature name="camel-aws" version="2.9.0" resolver="(obr)">
+		<bundle start-level="50" dependency="true">mvn:org.apache.httpcomponents/httpcore-osgi/4.1.2</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.httpcomponents/httpclient-osgi/4.1.2</bundle>
+		<bundle start-level="50" dependency="true">mvn:commons-codec/commons-codec/1.4</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.stax-api-1.0/1.9.0</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.codehaus.jackson/jackson-core-asl/1.9.2</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.aws-java-sdk/1.2.12_1</bundle>
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-aws/2.9.0</bundle>
+	</feature>
+	<feature name="camel-bam" version="2.9.0" resolver="(obr)">
+		<feature version="[3,4)">spring-tx</feature>
+		<feature version="[3,4)">spring-web</feature>
+		<bundle start-level="50" dependency="true">mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/1.1.1</bundle>
+		<feature version="[3,4)">spring-jdbc</feature>
+		<bundle start-level="50" dependency="true">mvn:commons-pool/commons-pool/1.5.6</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-dbcp/1.4_1</bundle>
+		<bundle start-level="50" dependency="true">mvn:commons-lang/commons-lang/2.6</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.geronimo.specs/geronimo-jms_1.1_spec/1.1.1</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.cglib/2.1_3_6</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.java-persistence-api-1.1.1/1.9.0</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.oscache/2.4_5</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ibatis-sqlmap/2.3.4.726_2</bundle>
+		<feature version="[3,4)">spring-orm</feature>
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-bam/2.9.0</bundle>
+	</feature>
+	<feature name="camel-bean-validator" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jsr303-api-1.0.0/1.9.0</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.scripting-api-1.0/1.9.0</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.hibernate-validator/4.1.0.Final_2</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-bean-validator/2.9.0</bundle>
+	</feature>
+	<feature name="camel-bindy" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-bindy/2.9.0</bundle>
+	</feature>
+	<feature name="camel-cometd" version="2.9.0" resolver="(obr)">
+		<feature>jetty</feature>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.cometd-java-server/2.3.1_1</bundle>
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-cometd/2.9.0</bundle>
+	</feature>
+	<feature name="camel-csv" version="2.9.0" resolver="(obr)">
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-csv/1.0-r706899_3</bundle>
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-csv/2.9.0</bundle>
+	</feature>
+	<!-- dnsjava dependens on the sun.net.spi.nameservice and junit.framework, 
+		we need to find a way to support it -->
+	<!--feature name="camel-dns" version="2.9.0" resolver="(obr)" start-level="50"> 
+		<bundle start-level="50" dependency="true">mvn:dnsjava/dnsjava/2.1.1</bundle> 
+		<feature version="2.9.0">camel-core</feature> <bundle start-level="50">mvn:org.apache.camel/camel-dns/2.9.0</bundle> 
+		</feature -->
+	<feature name="camel-dozer" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<feature>war</feature>
+		<bundle start-level="50" dependency="true">mvn:net.sf.dozer/dozer-osgi/5.3.2</bundle>
+		<bundle start-level="50" dependency="true">mvn:commons-lang/commons-lang/2.6</bundle>
+		<bundle start-level="50" dependency="true">mvn:commons-collections/commons-collections/3.2.1</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlbeans/2.5.0_2</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-beanutils/1.7.0_3</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-dozer/2.9.0</bundle>
+	</feature>
+	<feature name="camel-eventadmin" version="2.9.0" resolver="(obr)">
+		<feature>eventadmin</feature>
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-eventadmin/2.9.0</bundle>
+	</feature>
+	<feature name="camel-exec" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50" dependency="true">mvn:org.apache.commons/commons-exec/1.0.1</bundle>
+		<bundle start-level="50" dependency="true">mvn:commons-io/commons-io/1.4</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-exec/2.9.0</bundle>
+	</feature>
+	<feature name="camel-flatpack" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/1.1_4</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jexcelapi/2.4.2_4</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.flatpack/3.2.0_2</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-flatpack/2.9.0</bundle>
+	</feature>
+	<feature name="camel-freemarker" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.freemarker/2.3.18_1</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-freemarker/2.9.0</bundle>
+	</feature>
+	<feature name="camel-ftp" version="2.9.0" resolver="(obr)">
+		<bundle start-level="50" dependency="true">mvn:commons-net/commons-net/2.2</bundle>
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jsch/0.1.44_2</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-ftp/2.9.0</bundle>
+	</feature>
+	<feature name="camel-guice" version="2.9.0" resolver="(obr)">
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.guice/2.0_2</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.geronimo.specs/geronimo-annotation_1.0_spec/1.1.1</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.aopalliance/1.0_5</bundle>
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-guice/2.9.0</bundle>
+	</feature>
+	<feature name="camel-groovy" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ant/1.7.0_5</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.scripting-api-1.0/1.9.0</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.codehaus.groovy/groovy-all/1.8.5</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-groovy/2.9.0</bundle>
+	</feature>
+	<feature name="camel-hazelcast" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50" dependency="true">mvn:com.hazelcast/hazelcast/1.9.4.4</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-hazelcast/2.9.0</bundle>
+	</feature>
+	<feature name="camel-hawtdb" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50" dependency="true">mvn:org.fusesource.hawtdb/hawtdb/1.6</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.fusesource.hawtbuf/hawtbuf/1.7</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-hawtdb/2.9.0</bundle>
+	</feature>
+	<feature name="camel-hdfs" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<feature>war</feature>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jaxws-api-2.2/1.9.0</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.saaj-api-1.3/1.9.0</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/1.1.1</bundle>
+		<bundle start-level="50" dependency="true">mvn:javax.mail/mail/1.4.4</bundle>
+		<bundle start-level="50" dependency="true">mvn:commons-codec/commons-codec/1.4</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-beanutils/1.7.0_3</bundle>
+		<bundle start-level="50" dependency="true">mvn:commons-collections/commons-collections/3.2.1</bundle>
+		<bundle start-level="50" dependency="true">mvn:commons-digester/commons-digester/2.1</bundle>
+		<bundle start-level="50" dependency="true">mvn:commons-jxpath/commons-jxpath/1.3</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/1.1_4</bundle>
+		<bundle start-level="50" dependency="true">mvn:commons-lang/commons-lang/2.6</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ant/1.7.0_5</bundle>
+		<bundle start-level="50" dependency="true">mvn:commons-configuration/commons-configuration/1.6</bundle>
+		<bundle start-level="50" dependency="true">mvn:commons-daemon/commons-daemon/1.0.5</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-httpclient/3.1_6</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.commons/commons-math/2.2</bundle>
+		<bundle start-level="50" dependency="true">mvn:commons-net/commons-net/2.2</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.codehaus.jackson/jackson-core-asl/1.9.2</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.codehaus.jackson/jackson-mapper-asl/1.9.2</bundle>
+		<bundle start-level="50">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jetty/6.1.26_3</bundle>
+		<bundle start-level="50">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.hadoop-core/0.20.203.0_1</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-hdfs/2.9.0</bundle>
+	</feature>
+	<feature name="camel-hl7" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlresolver/1.2_4</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/1.1.1</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.geronimo.specs/geronimo-jms_1.1_spec/1.1.1</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.bcel/5.2_4</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xerces/2.9.1_5</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/1.1_4</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xalan/2.7.1_4</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.mina/1.1.7_5</bundle>
+		<bundle start-level="50" dependency="true">mvn:ca.uhn.hapi/hapi-osgi-base/1.2</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-hl7/2.9.0</bundle>
+	</feature>
+	<feature name="camel-ibatis" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50" dependency="true">mvn:commons-pool/commons-pool/1.5.6</bundle>
+		<!-- the jetty feature provides the geronimo-servlet_2.5_spec -->
+		<!-- TODO replace the jetty feature by a Karaf spec feature -->
+		<feature>jetty</feature>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-dbcp/1.4_1</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.oscache/2.4_5</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.cglib/2.1_3_6</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ibatis-sqlmap/2.3.4.726_2</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-ibatis/2.9.0</bundle>
+	</feature>
+	<feature name="camel-irc" version="2.9.0" resolver="(obr)">
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.irclib/1.10_4</bundle>
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-irc/2.9.0</bundle>
+	</feature>
+	<feature name="camel-jackson" version="2.9.0" resolver="(obr)">
+		<bundle start-level="50" dependency="true">mvn:org.codehaus.jackson/jackson-core-asl/1.9.2</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.codehaus.jackson/jackson-mapper-asl/1.9.2</bundle>
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-jackson/2.9.0</bundle>
+	</feature>
+	<feature name="camel-jasypt" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-jasypt/2.9.0</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jasypt/1.7_3</bundle>
+	</feature>
+	<feature name="camel-jaxb" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-jaxb/2.9.0</bundle>
+	</feature>
+	<feature name="camel-jclouds" version="2.9.0" resolver="(obr)">
+		<!-- Added jclouds feature to workaround the karaf feature validate issue -->
+		<feature version="1.2.2">jclouds</feature>
+		<feature version="1.2.2">jclouds-compute</feature>
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-jclouds/2.9.0</bundle>
+	</feature>
+	<feature name="camel-jcr" version="2.9.0" resolver="(obr)">
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jcr-api-2.0/1.9.0</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.jackrabbit/jackrabbit-jcr-commons/2.2.4</bundle>
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-jcr/2.9.0</bundle>
+	</feature>
+	<feature name="camel-jing" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ant/1.7.0_5</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.isorelax/20050913_4</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jing/20030619_4</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-jing/2.9.0</bundle>
+	</feature>
+	<feature name="camel-jibx" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-jibx/2.9.0</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.jibx/jibx-run/1.2.3</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.bcel/5.2_4</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xpp3/1.1.4c_5</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.joda-time/1.5.2_2</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/1.1_4</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.dom4j/1.6.1_4</bundle>
+	</feature>
+	<feature name="camel-jdbc" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-jdbc/2.9.0</bundle>
+	</feature>
+	<feature name="camel-josql" version="2.9.0" resolver="(obr)">
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.josql/1.5_5</bundle>
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-josql/2.9.0</bundle>
+	</feature>
+	<feature name="camel-jpa" version="2.9.0" resolver="(obr)">
+		<bundle start-level="50" dependency="true">mvn:org.apache.geronimo.specs/geronimo-annotation_1.0_spec/1.1.1</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.geronimo.specs/geronimo-jpa_2.0_spec/1.1</bundle>
+		<feature version="[3,4)">spring-tx</feature>
+		<bundle start-level="50" dependency="true">mvn:org.apache.geronimo.specs/geronimo-el_1.0_spec/1.0.1</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/1.1.1</bundle>
+		<feature version="[3,4)">spring-jdbc</feature>
+		<bundle start-level="50" dependency="true">mvn:commons-lang/commons-lang/2.6</bundle>
+		<bundle start-level="50" dependency="true">mvn:commons-collections/commons-collections/3.2.1</bundle>
+		<bundle start-level="50" dependency="true">mvn:commons-pool/commons-pool/1.5.6</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-dbcp/1.4_1</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ant/1.7.0_5</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.serp/1.13.1_4</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.geronimo.specs/geronimo-jms_1.1_spec/1.1.1</bundle>
+		<bundle start-level="50">mvn:org.apache.openjpa/openjpa/2.1.1</bundle>
+		<feature version="[3,4)">spring-orm</feature>
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-jpa/2.9.0</bundle>
+	</feature>
+	<feature name="camel-jxpath" version="2.9.0" resolver="(obr)">
+		<!-- All those bundles should be optional I think, but the commons-jxpath 
+			osgi metadata is not really good -->
+		<feature>war</feature>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-beanutils/1.7.0_3</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/1.1_4</bundle>
+		<bundle start-level="50" dependency="true">mvn:commons-jxpath/commons-jxpath/1.3</bundle>
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-jxpath/2.9.0</bundle>
+	</feature>
+	<feature name="camel-juel" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<feature>war</feature>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.juel/2.1.2_2</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-juel/2.9.0</bundle>
+	</feature>
+	<feature name="camel-kestrel" version="2.9.0" resolver="(obr)">
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.spymemcached/2.5_2</bundle>
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-kestrel/2.9.0</bundle>
+	</feature>
+	<feature name="camel-krati" version="2.9.0" resolver="(obr)">
+		<bundle start-level="50" dependency="true">mvn:com.sna-projects.krati/krati/0.4.1</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-krati/2.9.0</bundle>
+		<feature version="2.9.0">camel-core</feature>
+	</feature>
+	<feature name="camel-ldap" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-ldap/2.9.0</bundle>
+	</feature>
+	<feature name="camel-lucene" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.lucene/3.0.3_1</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-lucene/2.9.0</bundle>
+	</feature>
+	<feature name="camel-mail" version="2.9.0" resolver="(obr)">
+		<bundle start-level="50" dependency="true">mvn:javax.mail/mail/1.4.4</bundle>
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-mail/2.9.0</bundle>
+	</feature>
+	<feature name="camel-msv" version="2.9.0" resolver="(obr)">
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlresolver/1.2_4</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xerces/2.9.1_5</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ant/1.7.0_5</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.isorelax/20050913_4</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-msv/2.9.0</bundle>
+		<feature version="2.9.0">camel-core</feature>
+	</feature>
+	<feature name="camel-mvel" version="2.9.0" resolver="(obr)">
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.mvel/2.0.18_2</bundle>
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-mvel/2.9.0</bundle>
+	</feature>
+	<feature name="camel-mybatis" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50" dependency="true">mvn:commons-pool/commons-pool/1.5.6</bundle>
+		<!-- the jetty feature provides the geronimo-servlet_2.5_spec -->
+		<!-- TODO replace the jetty feature by a Karaf spec feature -->
+		<feature>jetty</feature>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-dbcp/1.4_1</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.cglib/2.1_3_6</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.mybatis/mybatis/3.0.6</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-mybatis/2.9.0</bundle>
+	</feature>
+	<feature name="camel-nagios" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jsendnsca-core/1.3.1_1</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-nagios/2.9.0</bundle>
+	</feature>
+	<feature name="camel-netty" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.netty/3.2.6.Final_1</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-netty/2.9.0</bundle>
+	</feature>
+	<feature name="camel-ognl" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ognl/3.0.2_1</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.javassist/3.12.1.GA_2</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-ognl/2.9.0</bundle>
+	</feature>
+	<feature name="camel-paxlogging" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-paxlogging/2.9.0</bundle>
+	</feature>
+	<feature name="camel-printer" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-printer/2.9.0</bundle>
+	</feature>
+	<feature name="camel-protobuf" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.protobuf-java/2.3.0_1</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-protobuf/2.9.0</bundle>
+	</feature>
+	<feature name="camel-quartz" version="2.9.0" resolver="(obr)">
+		<bundle start-level="50" dependency="true">mvn:commons-collections/commons-collections/3.2.1</bundle>
+		<bundle start-level="50" dependency="true">mvn:commons-pool/commons-pool/1.5.6</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-dbcp/1.4_1</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/1.1.1</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-beanutils/1.7.0_3</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.quartz/1.8.5_1</bundle>
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-quartz/2.9.0</bundle>
+	</feature>
+	<feature name="camel-quickfix" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.quickfix/1.5.1_1</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-quickfix/2.9.0</bundle>
+	</feature>
+	<feature name="camel-restlet" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50" dependency="true">mvn:http://maven.restlet.org!org.restlet.jse/org.restlet/2.0.10</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-restlet/2.9.0</bundle>
+	</feature>
+	<feature name="camel-rmi" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-rmi/2.9.0</bundle>
+	</feature>
+	<feature name="camel-routebox" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-routebox/2.9.0</bundle>
+	</feature>
+	<feature name="camel-ruby" version="2.9.0">
+		<feature version="2.9.0">camel-script</feature>
+		<bundle start-level="50">mvn:org.jruby/jruby/1.6.5</bundle>
+	</feature>
+	<feature name="camel-rss" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-atom</feature>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/1.1_4</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.rome/1.0_2</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-rss/2.9.0</bundle>
+	</feature>
+	<feature name="camel-saxon" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.saxon/9.1.0.8_2</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-saxon/2.9.0</bundle>
+	</feature>
+	<feature name="camel-scala" version="2.9.0" resolver="(obr)">
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.scala-library/2.9.1_1</bundle>
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-scala/2.9.0</bundle>
+	</feature>
+	<feature name="camel-script-jruby" version="2.9.0" resolver="(obr)">
+		<bundle start-level="50">mvn:http://scriptengines.googlecode.com/svn/m2-repo/!com.google.code.scriptengines/scriptengines-jruby/1.1</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.jruby/jruby/1.6.5</bundle>
+	</feature>
+	<feature name="camel-script-javascript" version="2.9.0"
+		resolver="(obr)">
+		<bundle start-level="50">mvn:http://scriptengines.googlecode.com/svn/m2-repo/!com.google.code.scriptengines/scriptengines-javascript/1.1</bundle>
+		<bundle start-level="50">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.rhino/1.7R2_2</bundle>
+	</feature>
+	<feature name="camel-script-groovy" version="2.9.0" resolver="(obr)">
+		<bundle start-level="50">mvn:http://scriptengines.googlecode.com/svn/m2-repo/!com.google.code.scriptengines/scriptengines-groovy/1.1</bundle>
+		<bundle start-level="50">mvn:org.codehaus.groovy/groovy-all/1.8.5</bundle>
+	</feature>
+	<feature name="camel-script" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.scripting-api-1.0/1.9.0</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.asm/2.2.3_4</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.antlr/2.7.7_2</bundle>
+		<bundle start-level="50">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.rhino/1.7R2_2</bundle>
+		<bundle start-level="50">mvn:org.codehaus.groovy/groovy-all/1.8.5</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.jruby/jruby/1.6.5</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-script/2.9.0</bundle>
+	</feature>
+	<feature name="camel-sip" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jain-sip-api-1.2/1.9.0</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jain-sip-ri/1.2.154_2</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-sip/2.9.0</bundle>
+	</feature>
+	<feature name="camel-shiro" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-beanutils/1.7.0_3</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.shiro/1.1.0_2</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-shiro/2.9.0</bundle>
+	</feature>
+	<feature name="camel-smpp" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jsmpp/2.1.0_3</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-smpp/2.9.0</bundle>
+	</feature>
+	<feature name="camel-snmp" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.snmp4j/1.8.1_5</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-snmp/2.9.0</bundle>
+	</feature>
+	<feature name="camel-soap" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-jaxb</feature>
+		<bundle start-level="50" dependency="true">mvn:org.apache.geronimo.specs/geronimo-ws-metadata_2.0_spec/1.1.3</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jaxws-api-2.2/1.9.0</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.saaj-api-1.3/1.9.0</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-soap/2.9.0</bundle>
+	</feature>
+	<feature name="camel-solr" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.solr-solrj/3.5.0_1</bundle>
+		<bundle start-level="50" dependency="true">mvn:commons-codec/commons-codec/1.4</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-httpclient/3.1_6</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-solr/2.9.0</bundle>
+	</feature>
+	<feature name="camel-spring-integration" version="2.9.0"
+		resolver="(obr)">
+		<bundle start-level="50" dependency="true">mvn:org.springframework.integration/spring-integration-core/2.0.5.RELEASE</bundle>
+		<feature version="2.9.0">camel-spring</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-spring-integration/2.9.0</bundle>
+	</feature>
+	<feature name="camel-spring-javaconfig" version="2.9.0"
+		resolver="(obr)">
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.cglib/2.1_3_6</bundle>
+		<feature version="2.9.0">camel-spring</feature>
+		<feature version="[3,4)">spring-test</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-spring-javaconfig/2.9.0</bundle>
+	</feature>
+	<feature name="camel-spring-security" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-spring</feature>
+		<bundle start-level="50" dependency="true">mvn:org.springframework.security/spring-security-core/3.0.7.RELEASE</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.springframework.security/spring-security-config/3.0.7.RELEASE</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-spring-security/2.9.0</bundle>
+	</feature>
+	<feature name="camel-spring-ws" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-spring</feature>
+		<bundle start-level="50" dependency="true">mvn:javax.mail/mail/1.4.4</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.geronimo.specs/geronimo-jms_1.1_spec/1.1.1</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.smack/3.2.0_1</bundle>
+		<feature version="[3,4)">spring-jms</feature>
+		<feature version="[3,4)">spring-web</feature>
+		<feature version="[3,4)">spring-oxm</feature>
+		<bundle start-level="50" dependency="true">mvn:org.springframework.ws/spring-xml/2.0.3.RELEASE</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.springframework.ws/spring-ws-core/2.0.3.RELEASE</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.springframework.ws/spring-ws-support/2.0.3.RELEASE</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-spring-ws/2.9.0</bundle>
+	</feature>
+	<feature name="camel-sql" version="2.9.0" resolver="(obr)">
+		<feature version="[3,4)">spring-tx</feature>
+		<bundle start-level="50" dependency="true">mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/1.1.1</bundle>
+		<feature version="[3,4)">spring-jdbc</feature>
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-sql/2.9.0</bundle>
+	</feature>
+	<feature name="camel-stax" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-stax/2.9.0</bundle>
+	</feature>
+	<feature name="camel-stream" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-stream/2.9.0</bundle>
+	</feature>
+	<feature name="camel-string-template" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.antlr/2.7.7_2</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.stringtemplate/3.2_5</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-stringtemplate/2.9.0</bundle>
+	</feature>
+	<feature name="camel-syslog" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-syslog/2.9.0</bundle>
+	</feature>
+	<feature name="camel-tagsoup" version="2.9.0" resolver="(obr)">
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.tagsoup/1.2_5</bundle>
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-tagsoup/2.9.0</bundle>
+	</feature>
+	<feature name="camel-velocity" version="2.9.0" resolver="(obr)">
+		<!-- the jetty feature provides the geronimo-servlet_2.5_spec -->
+		<!-- TODO replace the jetty feature by a Karaf spec feature -->
+		<feature>jetty</feature>
+		<bundle start-level="50" dependency="true">mvn:commons-lang/commons-lang/2.6</bundle>
+		<bundle start-level="50" dependency="true">mvn:commons-collections/commons-collections/3.2.1</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/1.1_4</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ant/1.7.0_5</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.antlr/2.7.7_2</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.werken-xpath/0.9.4_5</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.oro/2.0.8_5</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.velocity/1.7_3</bundle>
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-velocity/2.9.0</bundle>
+	</feature>
+	<feature name="camel-xmlbeans" version="2.9.0" resolver="(obr)">
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ant/1.7.0_5</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlbeans/2.5.0_2</bundle>
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-xmlbeans/2.9.0</bundle>
+	</feature>
+	<feature name="camel-xmlsecurity" version="2.9.0" resolver="(obr)">
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xalan/2.7.1_4</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlsec/1.4.5_1</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xerces/2.9.1_5</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlresolver/1.2_4</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.bcel/5.2_4</bundle>
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-xmlsecurity/2.9.0</bundle>
+	</feature>
+	<feature name="camel-xmpp" version="2.9.0" resolver="(obr)">
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xpp3/1.1.4c_5</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.smack/3.2.0_1</bundle>
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50">mvn:org.apache.camel/camel-xmpp/2.9.0</bundle>
+	</feature>
+	<feature name="camel-xstream" version="2.9.0" resolver="(obr)">
+		<bundle start-level="50" dependency="true">mvn:org.codehaus.jettison/jettison/1.3</bundle>
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xpp3/1.1.4c_5</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.joda-time/1.5.2_2</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/1.1_4</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.dom4j/1.6.1_4</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.kxml2/2.3.0_1</bundle>
+		<bundle start-level="50" dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xstream/1.4.1_1</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-xstream/2.9.0</bundle>
+	</feature>
+	<feature name="camel-zookeeper" version="2.9.0" resolver="(obr)">
+		<feature version="2.9.0">camel-core</feature>
+		<bundle start-level="50" dependency="true">mvn:org.apache.zookeeper/zookeeper/3.3.4</bundle>
+		<bundle start-level="50">mvn:org.apache.camel/camel-zookeeper/2.9.0</bundle>
+	</feature>
+
+	<!-- ============================================================================================================================= -->
+	<!-- Routing Engine Platform -->
+	<!-- ============================================================================================================================= -->
+
+	<feature name="routing-engine-platform" version="${project.version}"
+		description="VNET :: SMS' routing engine platform" resolver="(obr)">
+		<details>
+            This feature provides a collection of bundles that make up VNET :: SMS' routing engine's framework.
+        </details>
+		<bundle start-level="10"><![CDATA[mvn:vnet.sms.routing-engine/log4j-gelf-appender-fragment/${module.routing-engine.log4j-gelf-appender-fragment.version}]]></bundle>
+	</feature>
+
+	<!-- Default broker configuration -->
+	<feature name="routing-engine-broker" version="${module.routing-engine.jms-broker.version}"
+		resolver="(obr)">
+		<details>
+            This feature provides Routing Engine's ActiveMQ support, defining connectors and queues.
+        </details>
+		<feature version="0.3">transaction</feature>
+		<feature version="${deps.activemq.version}">activemq-blueprint</feature>
+		<bundle start-level="50"><![CDATA[mvn:vnet.sms.routing-engine/jms-broker/${module.routing-engine.jms-broker.version}]]></bundle>
+		<configfile finalname="/etc/vnet.sms.routing_engine.jms_broker.cfg">mvn:vnet.sms.routing-engine/jms-broker/${module.routing-engine.jms-broker.version}/cfg</configfile>
+	</feature>
+
+</features>

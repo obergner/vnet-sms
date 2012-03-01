@@ -50,6 +50,7 @@
 		<module.routing-engine.core.version>1.0.0-SNAPSHOT</module.routing-engine.core.version>
 		<module.routing-engine.jms-broker.version>1.0.0-SNAPSHOT</module.routing-engine.jms-broker.version>
 		<module.routing-engine.branding.version>1.0.0-SNAPSHOT</module.routing-engine.branding.version>
+		<module.routing-engine.platform.version>1.0.0-SNAPSHOT</module.routing-engine.platform.version>
 		<module.routing-engine.distribution.version>1.0.0-SNAPSHOT</module.routing-engine.distribution.version>
 		<!-- Standard javax apis -->
 		<deps.jta.version>1.1</deps.jta.version>
@@ -316,6 +317,19 @@
 				<artifactId>branding</artifactId>
 				<version>${module.routing-engine.branding.version}</version>
 				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>vnet.sms.routing-engine</groupId>
+				<artifactId>platform</artifactId>
+				<version>${module.routing-engine.platform.version}</version>
+				<type>pom</type>
+			</dependency>
+			<dependency>
+				<groupId>vnet.sms.routing-engine</groupId>
+				<artifactId>platform</artifactId>
+				<version>${module.routing-engine.platform.version}</version>
+				<type>xml</type>
+				<classifier>features</classifier>
 			</dependency>
 			<dependency>
 				<groupId>vnet.sms.routing-engine</groupId>
