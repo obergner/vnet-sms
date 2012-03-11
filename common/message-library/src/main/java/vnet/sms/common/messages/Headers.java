@@ -1,7 +1,7 @@
 /**
  * 
  */
-package vnet.sms.common.wme.jmsbridge;
+package vnet.sms.common.messages;
 
 /**
  * @author obergner

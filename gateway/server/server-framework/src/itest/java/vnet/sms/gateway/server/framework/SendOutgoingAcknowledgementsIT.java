@@ -25,11 +25,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import vnet.sms.common.messages.Acknowledgement;
+import vnet.sms.common.messages.Headers;
 import vnet.sms.common.messages.LoginRequest;
 import vnet.sms.common.messages.LoginResponse;
+import vnet.sms.common.messages.MessageEventType;
 import vnet.sms.common.messages.Sms;
-import vnet.sms.common.wme.MessageType;
-import vnet.sms.common.wme.jmsbridge.Headers;
 import vnet.sms.gateway.server.framework.test.ForwardingJmsMessageListener;
 import vnet.sms.gateway.server.framework.test.IntegrationTestClient;
 import vnet.sms.gateway.server.framework.test.JmsMessagePredicate;
@@ -154,7 +154,7 @@ public class SendOutgoingAcknowledgementsIT {
 				                .createObjectMessage(mtSms);
 				        mtSmsAckObjectMessage.setStringProperty(
 				                Headers.EVENT_TYPE,
-				                MessageType.RECEIVED_SMS_ACKED.name());
+				                MessageEventType.RECEIVED_SMS_ACKED.name());
 				        mtSmsAckObjectMessage.setIntProperty(
 				                Headers.RECEIVING_CHANNEL_ID,
 				                receivingChannelId);
@@ -248,7 +248,7 @@ public class SendOutgoingAcknowledgementsIT {
 				                .createObjectMessage(mtSms);
 				        mtSmsNackObjectMessage.setStringProperty(
 				                Headers.EVENT_TYPE,
-				                MessageType.RECEIVED_SMS_NACKED.name());
+				                MessageEventType.RECEIVED_SMS_NACKED.name());
 				        mtSmsNackObjectMessage.setIntProperty(
 				                Headers.RECEIVING_CHANNEL_ID,
 				                receivingChannelId);

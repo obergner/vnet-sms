@@ -12,7 +12,7 @@ import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.DownstreamMessageEvent;
 
 import vnet.sms.common.messages.Message;
-import vnet.sms.common.wme.MessageType;
+import vnet.sms.common.messages.MessageEventType;
 import vnet.sms.common.wme.WindowedMessageEvent;
 
 /**
@@ -22,19 +22,19 @@ import vnet.sms.common.wme.WindowedMessageEvent;
 public abstract class DownstreamWindowedMessageEvent<ID extends Serializable, M extends Message>
         extends DownstreamMessageEvent implements WindowedMessageEvent<ID, M> {
 
-	private final ID	      messageReference;
+	private final ID	           messageReference;
 
-	private final MessageType	type;
+	private final MessageEventType	type;
 
 	protected DownstreamWindowedMessageEvent(final ID messageReference,
-	        final MessageType type,
+	        final MessageEventType type,
 	        final DownstreamMessageEvent downstreamMessageEvent, final M message) {
 		this(messageReference, type, downstreamMessageEvent.getChannel(),
 		        downstreamMessageEvent.getFuture(), message);
 	}
 
 	protected DownstreamWindowedMessageEvent(final ID messageReference,
-	        final MessageType type, final Channel channel,
+	        final MessageEventType type, final Channel channel,
 	        final ChannelFuture future, final Object message) {
 		super(channel, future, message, channel.getRemoteAddress());
 		notNull(messageReference,
@@ -58,7 +58,7 @@ public abstract class DownstreamWindowedMessageEvent<ID extends Serializable, M 
 	 * @see vnet.sms.common.wme.WindowedMessageEvent#getMessageType()
 	 */
 	@Override
-	public MessageType getMessageType() {
+	public MessageEventType getMessageType() {
 		return this.type;
 	}
 

@@ -1,10 +1,10 @@
-package vnet.sms.common.wme;
+package vnet.sms.common.messages;
 
 /**
  * @author obergner
  * 
  */
-public enum MessageType {
+public enum MessageEventType {
 
 	LOGIN_REQUEST_RECEIVED,
 

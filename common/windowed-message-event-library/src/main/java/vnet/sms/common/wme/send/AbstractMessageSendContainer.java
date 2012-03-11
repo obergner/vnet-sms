@@ -5,7 +5,7 @@ import static org.apache.commons.lang.Validate.notNull;
 import java.io.Serializable;
 
 import vnet.sms.common.messages.Message;
-import vnet.sms.common.wme.MessageType;
+import vnet.sms.common.messages.MessageEventType;
 
 /**
  * @author obergner
@@ -15,20 +15,21 @@ import vnet.sms.common.wme.MessageType;
 abstract class AbstractMessageSendContainer<M extends Message> implements
         MessageSendContainer<M>, Serializable {
 
-	private static final long	serialVersionUID	= -662855539360676935L;
+	private static final long	   serialVersionUID	= -662855539360676935L;
 
-	private final MessageType	messageType;
+	private final MessageEventType	messageEventType;
 
-	private final M	          message;
+	private final M	               message;
 
 	/**
 	 * @param message
 	 */
-	protected AbstractMessageSendContainer(final MessageType messageType,
-	        final M message) {
-		notNull(messageType, "Argument 'messageType' must not be null");
+	protected AbstractMessageSendContainer(
+	        final MessageEventType messageEventType, final M message) {
+		notNull(messageEventType,
+		        "Argument 'messageEventType' must not be null");
 		notNull(message, "Argument 'message' must not be null");
-		this.messageType = messageType;
+		this.messageEventType = messageEventType;
 		this.message = message;
 	}
 
@@ -44,8 +45,8 @@ abstract class AbstractMessageSendContainer<M extends Message> implements
 	 * @see vnet.sms.common.wme.send.MessageSendContainer#getMessageType()
 	 */
 	@Override
-	public MessageType getMessageType() {
-		return this.messageType;
+	public MessageEventType getMessageType() {
+		return this.messageEventType;
 	}
 
 	@Override

@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 import vnet.sms.common.messages.Acknowledgement;
 import vnet.sms.common.messages.Message;
-import vnet.sms.common.wme.MessageType;
+import vnet.sms.common.messages.MessageEventType;
 
 /**
  * @author obergner
@@ -18,17 +18,17 @@ import vnet.sms.common.wme.MessageType;
 abstract class AbstractMessageAcknowledgementContainer<ID extends Serializable, M extends Message>
         implements MessageAcknowledgementContainer<ID, M>, Serializable {
 
-	private static final long	  serialVersionUID	= 2256764884947681256L;
+	private static final long	   serialVersionUID	= 2256764884947681256L;
 
-	private final MessageType	  acknowledgedMessageType;
+	private final MessageEventType	acknowledgedMessageType;
 
 	private final Acknowledgement	acknowledgement;
 
-	private final ID	          acknowledgedMessageReference;
+	private final ID	           acknowledgedMessageReference;
 
-	private final int	          receivingChannelId;
+	private final int	           receivingChannelId;
 
-	private final M	              acknowledgedMessage;
+	private final M	               acknowledgedMessage;
 
 	/**
 	 * @param acknowledgedMessageType
@@ -37,7 +37,7 @@ abstract class AbstractMessageAcknowledgementContainer<ID extends Serializable, 
 	 * @param acknowledgedMessage
 	 */
 	protected AbstractMessageAcknowledgementContainer(
-	        final MessageType acknowledgedMessageType,
+	        final MessageEventType acknowledgedMessageType,
 	        final Acknowledgement acknowledgement,
 	        final ID acknowledgedMessageReference,
 	        final int receivingChannelId, final M acknowledgedMessage) {
@@ -59,7 +59,7 @@ abstract class AbstractMessageAcknowledgementContainer<ID extends Serializable, 
 	 * @see vnet.sms.common.wme.acknowledge.MessageAcknowledgementContainer#getAcknowledgedMessageType()
 	 */
 	@Override
-	public MessageType getAcknowledgedMessageType() {
+	public MessageEventType getAcknowledgedMessageType() {
 		return this.acknowledgedMessageType;
 	}
 

@@ -5,8 +5,8 @@ package vnet.sms.common.wme.acknowledge;
 
 import java.io.Serializable;
 
+import vnet.sms.common.messages.MessageEventType;
 import vnet.sms.common.messages.Sms;
-import vnet.sms.common.wme.MessageType;
 
 /**
  * @author obergner
@@ -21,7 +21,7 @@ public final class ReceivedSmsNackedContainer<ID extends Serializable> extends
 	        final String errorDescription,
 	        final ID acknowledgedMessageReference,
 	        final int receivingChannelId, final Sms acknowledgedMessage) {
-		super(errorKey, errorDescription, MessageType.RECEIVED_SMS_NACKED,
+		super(errorKey, errorDescription, MessageEventType.RECEIVED_SMS_NACKED,
 		        acknowledgedMessageReference, receivingChannelId,
 		        acknowledgedMessage);
 	}

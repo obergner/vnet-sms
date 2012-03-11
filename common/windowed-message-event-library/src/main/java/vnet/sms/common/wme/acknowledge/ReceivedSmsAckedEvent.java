@@ -13,8 +13,8 @@ import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.MessageEvent;
 
 import vnet.sms.common.messages.Acknowledgement;
+import vnet.sms.common.messages.MessageEventType;
 import vnet.sms.common.messages.Sms;
-import vnet.sms.common.wme.MessageType;
 
 /**
  * @author obergner
@@ -41,7 +41,7 @@ public class ReceivedSmsAckedEvent<ID extends Serializable> extends
 
 	private ReceivedSmsAckedEvent(final ID messageReference,
 	        final Channel channel, final ChannelFuture future, final Sms message) {
-		super(messageReference, MessageType.RECEIVED_SMS_ACKED, channel,
+		super(messageReference, MessageEventType.RECEIVED_SMS_ACKED, channel,
 		        message, Acknowledgement.ack());
 	}
 }

@@ -6,8 +6,8 @@ package vnet.sms.common.wme.acknowledge;
 import java.io.Serializable;
 
 import vnet.sms.common.messages.Acknowledgement;
+import vnet.sms.common.messages.MessageEventType;
 import vnet.sms.common.messages.Sms;
-import vnet.sms.common.wme.MessageType;
 
 /**
  * @author obergner
@@ -20,7 +20,7 @@ public final class ReceivedSmsAckedContainer<ID extends Serializable> extends
 
 	public ReceivedSmsAckedContainer(final ID acknowledgedMessageReference,
 	        final int receivingChannelId, final Sms acknowledgedMessage) {
-		super(MessageType.RECEIVED_SMS_ACKED, Acknowledgement.ack(),
+		super(MessageEventType.RECEIVED_SMS_ACKED, Acknowledgement.ack(),
 		        acknowledgedMessageReference, receivingChannelId,
 		        acknowledgedMessage);
 	}

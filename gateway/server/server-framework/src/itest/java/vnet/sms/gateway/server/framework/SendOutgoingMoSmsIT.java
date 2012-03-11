@@ -23,9 +23,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import vnet.sms.common.messages.Headers;
+import vnet.sms.common.messages.MessageEventType;
 import vnet.sms.common.messages.Sms;
-import vnet.sms.common.wme.MessageType;
-import vnet.sms.common.wme.jmsbridge.Headers;
 import vnet.sms.gateway.nettysupport.monitor.MonitoringChannelGroup;
 import vnet.sms.gateway.server.framework.test.IntegrationTestClient;
 import vnet.sms.gateway.server.framework.test.MessageEventPredicate;
@@ -96,7 +96,7 @@ public class SendOutgoingMoSmsIT {
 				final ObjectMessage moSmsObjectMessage = session
 				        .createObjectMessage(moSms);
 				moSmsObjectMessage.setStringProperty(Headers.EVENT_TYPE,
-				        MessageType.SEND_SMS.name());
+				        MessageEventType.SEND_SMS.name());
 				return moSmsObjectMessage;
 			}
 		});

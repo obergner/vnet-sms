@@ -4,7 +4,7 @@
 package vnet.sms.common.wme.send;
 
 import vnet.sms.common.messages.Message;
-import vnet.sms.common.wme.MessageType;
+import vnet.sms.common.messages.MessageEventType;
 
 /**
  * @author obergner
@@ -12,7 +12,7 @@ import vnet.sms.common.wme.MessageType;
  */
 public interface MessageSendContainer<M extends Message> {
 
-	MessageType getMessageType();
+	MessageEventType getMessageType();
 
 	M getMessage();
 }

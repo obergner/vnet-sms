@@ -7,8 +7,8 @@ import java.io.Serializable;
 
 import org.jboss.netty.channel.UpstreamMessageEvent;
 
+import vnet.sms.common.messages.MessageEventType;
 import vnet.sms.common.messages.PingResponse;
-import vnet.sms.common.wme.MessageType;
 
 /**
  * @author obergner
@@ -20,7 +20,7 @@ public class PingResponseReceivedEvent<ID extends Serializable> extends
 	public PingResponseReceivedEvent(final ID messageReference,
 	        final UpstreamMessageEvent upstreamMessageEvent,
 	        final PingResponse pingResponse) {
-		super(messageReference, MessageType.PING_RESPONSE_RECEIVED,
+		super(messageReference, MessageEventType.PING_RESPONSE_RECEIVED,
 		        upstreamMessageEvent, pingResponse);
 	}
 }

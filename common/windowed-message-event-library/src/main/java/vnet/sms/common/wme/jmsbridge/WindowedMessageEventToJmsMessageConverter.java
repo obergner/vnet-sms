@@ -14,9 +14,10 @@ import org.springframework.jms.support.JmsUtils;
 import org.springframework.jms.support.converter.MessageConversionException;
 import org.springframework.jms.support.converter.MessageConverter;
 
+import vnet.sms.common.messages.Headers;
 import vnet.sms.common.messages.Message;
+import vnet.sms.common.messages.MessageEventType;
 import vnet.sms.common.messages.Sms;
-import vnet.sms.common.wme.MessageType;
 import vnet.sms.common.wme.WindowedMessageEvent;
 import vnet.sms.common.wme.acknowledge.ReceivedSmsAckedContainer;
 import vnet.sms.common.wme.acknowledge.ReceivedSmsNackedContainer;
@@ -69,8 +70,8 @@ public class WindowedMessageEventToJmsMessageConverter implements
 		validateReceivedMessage(message);
 
 		final ObjectMessage objectMessage = ObjectMessage.class.cast(message);
-		final MessageType eventType = MessageType.valueOf(objectMessage
-		        .getStringProperty(Headers.EVENT_TYPE));
+		final MessageEventType eventType = MessageEventType
+		        .valueOf(objectMessage.getStringProperty(Headers.EVENT_TYPE));
 
 		final Object converted;
 		switch (eventType) {
@@ -126,8 +127,9 @@ public class WindowedMessageEventToJmsMessageConverter implements
 			notNull(objectMessage.getStringProperty(Headers.EVENT_TYPE),
 			        "No header '" + Headers.EVENT_TYPE
 			                + "' has been set on message " + objectMessage);
-			final MessageType eventType = MessageType.valueOf(objectMessage
-			        .getStringProperty(Headers.EVENT_TYPE));
+			final MessageEventType eventType = MessageEventType
+			        .valueOf(objectMessage
+			                .getStringProperty(Headers.EVENT_TYPE));
 			switch (eventType) {
 			case SEND_SMS:
 				validateSendSms(objectMessage, messagePayload);
@@ -150,7 +152,7 @@ public class WindowedMessageEventToJmsMessageConverter implements
 	private void validateSendSms(final ObjectMessage jmsMessage,
 	        final Serializable messagePayload) {
 		isTrue(Sms.class.isInstance(messagePayload), "Message '" + jmsMessage
-		        + "' is of type " + MessageType.SEND_SMS
+		        + "' is of type " + MessageEventType.SEND_SMS
 		        + ", yet it does not contain an SMS but rather "
 		        + messagePayload);
 	}
@@ -158,7 +160,7 @@ public class WindowedMessageEventToJmsMessageConverter implements
 	private void validateReceivedSmsAcked(final ObjectMessage jmsMessage,
 	        final Serializable messagePayload) throws JMSException {
 		isTrue(Sms.class.isInstance(messagePayload), "Message '" + jmsMessage
-		        + "' is of type " + MessageType.RECEIVED_SMS_ACKED
+		        + "' is of type " + MessageEventType.RECEIVED_SMS_ACKED
 		        + ", yet it does not contain an SMS but rather "
 		        + messagePayload);
 		isTrue(jmsMessage.getObjectProperty(Headers.RECEIVING_CHANNEL_ID) != null,
@@ -173,7 +175,7 @@ public class WindowedMessageEventToJmsMessageConverter implements
 	private void validateReceivedSmsNacked(final ObjectMessage jmsMessage,
 	        final Serializable messagePayload) throws JMSException {
 		isTrue(Sms.class.isInstance(messagePayload), "Message '" + jmsMessage
-		        + "' is of type " + MessageType.RECEIVED_SMS_NACKED
+		        + "' is of type " + MessageEventType.RECEIVED_SMS_NACKED
 		        + ", yet it does not contain an SMS but rather "
 		        + messagePayload);
 		isTrue(jmsMessage.getObjectProperty(Headers.RECEIVING_CHANNEL_ID) != null,

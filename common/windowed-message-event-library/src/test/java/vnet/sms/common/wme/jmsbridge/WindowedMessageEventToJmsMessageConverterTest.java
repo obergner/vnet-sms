@@ -24,12 +24,13 @@ import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.UpstreamMessageEvent;
 import org.junit.Test;
 
+import vnet.sms.common.messages.Headers;
 import vnet.sms.common.messages.LoginRequest;
 import vnet.sms.common.messages.LoginResponse;
+import vnet.sms.common.messages.MessageEventType;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.PingResponse;
 import vnet.sms.common.messages.Sms;
-import vnet.sms.common.wme.MessageType;
 import vnet.sms.common.wme.acknowledge.ReceivedSmsAckedContainer;
 import vnet.sms.common.wme.acknowledge.ReceivedSmsNackedContainer;
 import vnet.sms.common.wme.receive.LoginRequestReceivedEvent;
@@ -752,7 +753,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 	        throws JMSException {
 		final ObjectMessage smsMessage = new MockObjectMessage();
 		smsMessage.setStringProperty(Headers.EVENT_TYPE,
-		        MessageType.SEND_SMS.name());
+		        MessageEventType.SEND_SMS.name());
 
 		this.objectUnderTest.fromMessage(smsMessage);
 	}
@@ -763,7 +764,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		final ObjectMessage smsMessage = new MockObjectMessage(
 		        "assertThatFromMessageRejectsSmsMessageWithWrongPayload");
 		smsMessage.setStringProperty(Headers.EVENT_TYPE,
-		        MessageType.SEND_SMS.name());
+		        MessageEventType.SEND_SMS.name());
 
 		this.objectUnderTest.fromMessage(smsMessage);
 	}
@@ -775,7 +776,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		        "assertThatFromMessageCorrectlyConvertsSendSmsMessage");
 		final ObjectMessage smsMessage = new MockObjectMessage(sms);
 		smsMessage.setStringProperty(Headers.EVENT_TYPE,
-		        MessageType.SEND_SMS.name());
+		        MessageEventType.SEND_SMS.name());
 
 		final Object converted = this.objectUnderTest.fromMessage(smsMessage);
 
@@ -795,7 +796,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		final ObjectMessage receivedSmsAckedMessage = new MockObjectMessage(
 		        "assertThatFromMessageRejectsReceivedSmsAckMessageWithWrongPayload");
 		receivedSmsAckedMessage.setStringProperty(Headers.EVENT_TYPE,
-		        MessageType.RECEIVED_SMS_ACKED.name());
+		        MessageEventType.RECEIVED_SMS_ACKED.name());
 
 		this.objectUnderTest.fromMessage(receivedSmsAckedMessage);
 	}
@@ -808,7 +809,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		final ObjectMessage receivedSmsAckedMessage = new MockObjectMessage(
 		        ackedSms);
 		receivedSmsAckedMessage.setStringProperty(Headers.EVENT_TYPE,
-		        MessageType.RECEIVED_SMS_ACKED.name());
+		        MessageEventType.RECEIVED_SMS_ACKED.name());
 		receivedSmsAckedMessage.setObjectProperty(Headers.MESSAGE_REFERENCE,
 		        "1");
 
@@ -823,7 +824,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		final ObjectMessage receivedSmsAckedMessage = new MockObjectMessage(
 		        ackedSms);
 		receivedSmsAckedMessage.setStringProperty(Headers.EVENT_TYPE,
-		        MessageType.RECEIVED_SMS_ACKED.name());
+		        MessageEventType.RECEIVED_SMS_ACKED.name());
 		receivedSmsAckedMessage.setIntProperty(Headers.RECEIVING_CHANNEL_ID, 1);
 
 		this.objectUnderTest.fromMessage(receivedSmsAckedMessage);
@@ -840,7 +841,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		final ObjectMessage receivedSmsAckedMessage = new MockObjectMessage(
 		        ackedSms);
 		receivedSmsAckedMessage.setStringProperty(Headers.EVENT_TYPE,
-		        MessageType.RECEIVED_SMS_ACKED.name());
+		        MessageEventType.RECEIVED_SMS_ACKED.name());
 		receivedSmsAckedMessage.setObjectProperty(Headers.MESSAGE_REFERENCE,
 		        messageReference);
 		receivedSmsAckedMessage.setIntProperty(Headers.RECEIVING_CHANNEL_ID,
@@ -879,7 +880,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		final ObjectMessage receivedSmsNAckedMessage = new MockObjectMessage(
 		        nackedSms);
 		receivedSmsNAckedMessage.setStringProperty(Headers.EVENT_TYPE,
-		        MessageType.RECEIVED_SMS_NACKED.name());
+		        MessageEventType.RECEIVED_SMS_NACKED.name());
 		receivedSmsNAckedMessage.setObjectProperty(Headers.MESSAGE_REFERENCE,
 		        "1");
 		receivedSmsNAckedMessage.setIntProperty(Headers.ERROR_KEY, 1);
@@ -898,7 +899,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		final ObjectMessage receivedSmsNAckedMessage = new MockObjectMessage(
 		        nackedSms);
 		receivedSmsNAckedMessage.setStringProperty(Headers.EVENT_TYPE,
-		        MessageType.RECEIVED_SMS_NACKED.name());
+		        MessageEventType.RECEIVED_SMS_NACKED.name());
 		receivedSmsNAckedMessage
 		        .setIntProperty(Headers.RECEIVING_CHANNEL_ID, 1);
 		receivedSmsNAckedMessage.setIntProperty(Headers.ERROR_KEY, 1);
@@ -917,7 +918,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		final ObjectMessage receivedSmsNAckedMessage = new MockObjectMessage(
 		        nackedSms);
 		receivedSmsNAckedMessage.setStringProperty(Headers.EVENT_TYPE,
-		        MessageType.RECEIVED_SMS_NACKED.name());
+		        MessageEventType.RECEIVED_SMS_NACKED.name());
 		receivedSmsNAckedMessage
 		        .setIntProperty(Headers.RECEIVING_CHANNEL_ID, 1);
 		receivedSmsNAckedMessage
@@ -938,7 +939,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		final ObjectMessage receivedSmsNAckedMessage = new MockObjectMessage(
 		        nackedSms);
 		receivedSmsNAckedMessage.setStringProperty(Headers.EVENT_TYPE,
-		        MessageType.RECEIVED_SMS_NACKED.name());
+		        MessageEventType.RECEIVED_SMS_NACKED.name());
 		receivedSmsNAckedMessage
 		        .setIntProperty(Headers.RECEIVING_CHANNEL_ID, 1);
 		receivedSmsNAckedMessage
@@ -962,7 +963,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		final ObjectMessage receivedSmsNAckedMessage = new MockObjectMessage(
 		        nackedSms);
 		receivedSmsNAckedMessage.setStringProperty(Headers.EVENT_TYPE,
-		        MessageType.RECEIVED_SMS_NACKED.name());
+		        MessageEventType.RECEIVED_SMS_NACKED.name());
 		receivedSmsNAckedMessage.setObjectProperty(Headers.MESSAGE_REFERENCE,
 		        messageReference);
 		receivedSmsNAckedMessage.setIntProperty(Headers.RECEIVING_CHANNEL_ID,

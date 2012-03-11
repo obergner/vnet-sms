@@ -14,7 +14,7 @@ import org.jboss.netty.channel.DownstreamMessageEvent;
 
 import vnet.sms.common.messages.Acknowledgement;
 import vnet.sms.common.messages.Message;
-import vnet.sms.common.wme.MessageType;
+import vnet.sms.common.messages.MessageEventType;
 
 /**
  * @author obergner
@@ -24,24 +24,25 @@ public class DownstreamReceivedMessageAcknowledgedEvent<ID extends Serializable,
         extends DownstreamMessageEvent implements
         ReceivedMessageAcknowledgedEvent<ID, M> {
 
-	private final ID	          acknowledgedMessageReference;
+	private final ID	           acknowledgedMessageReference;
 
-	private final MessageType	  acknowledgedMessageType;
+	private final MessageEventType	acknowledgedMessageType;
 
 	private final Acknowledgement	acknowledgement;
 
 	protected DownstreamReceivedMessageAcknowledgedEvent(
 	        final ID acknowledgedMessageReference,
-	        final MessageType acknowledgedMessageType, final Channel channel,
-	        final M message, final Acknowledgement acknowledgement) {
+	        final MessageEventType acknowledgedMessageType,
+	        final Channel channel, final M message,
+	        final Acknowledgement acknowledgement) {
 		this(acknowledgedMessageReference, acknowledgedMessageType, channel,
 		        Channels.future(channel, false), message, acknowledgement);
 	}
 
 	protected DownstreamReceivedMessageAcknowledgedEvent(
 	        final ID acknowledgedMessageReference,
-	        final MessageType acknowledgedMessageType, final Channel channel,
-	        final ChannelFuture future, final M message,
+	        final MessageEventType acknowledgedMessageType,
+	        final Channel channel, final ChannelFuture future, final M message,
 	        final Acknowledgement acknowledgement) {
 		super(channel, future, message, channel.getRemoteAddress());
 		notNull(acknowledgedMessageReference,
@@ -61,7 +62,7 @@ public class DownstreamReceivedMessageAcknowledgedEvent<ID extends Serializable,
 	 * @see vnet.sms.common.wme.acknowledge.ReceivedMessageAcknowledgedEvent#getAcknowledgedMessageType()
 	 */
 	@Override
-	public MessageType getAcknowledgedMessageType() {
+	public MessageEventType getAcknowledgedMessageType() {
 		return this.acknowledgedMessageType;
 	}
 

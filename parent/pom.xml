@@ -46,6 +46,7 @@
 		<module.gateway.server.server-framework.version>1.0.0-SNAPSHOT</module.gateway.server.server-framework.version>
 		<module.gateway.server.serialization-server-minimal.version>1.0.0-SNAPSHOT</module.gateway.server.serialization-server-minimal.version>
 		<module.routing-engine.version>1.0.0-SNAPSHOT</module.routing-engine.version>
+		<module.routing-engine.blueprint-test-support.version>1.0.0-SNAPSHOT</module.routing-engine.blueprint-test-support.version>
 		<module.routing-engine.log4j-gelf-appender-fragment.version>1.0.0-SNAPSHOT</module.routing-engine.log4j-gelf-appender-fragment.version>
 		<module.routing-engine.core.version>1.0.0-SNAPSHOT</module.routing-engine.core.version>
 		<module.routing-engine.jms-broker.version>1.0.0-SNAPSHOT</module.routing-engine.jms-broker.version>
@@ -63,7 +64,8 @@
 		<deps.spring.version>3.1.1.RELEASE</deps.spring.version>
 		<deps.camel.version>2.9.0</deps.camel.version>
 		<deps.netty.version>3.2.7.Final</deps.netty.version>
-		<deps.osgi.version>4.1.0</deps.osgi.version>
+		<deps.osgi-core.version>4.3.0</deps.osgi-core.version>
+		<deps.osgi-compendium.version>4.2.0</deps.osgi-compendium.version>
 		<deps.google-guava.version>11.0.1</deps.google-guava.version>
 		<deps.spring-security.version>3.1.0.RELEASE</deps.spring-security.version>
 		<deps.yammer-metrics.version>2.0.2</deps.yammer-metrics.version>
@@ -74,6 +76,10 @@
 		<deps.karaf.version>2.2.5</deps.karaf.version>
 		<deps.activemq.version>5.5.1</deps.activemq.version>
 		<deps.groovy.version>1.7.8</deps.groovy.version>
+		<deps.aries.version>0.3</deps.aries.version>
+		<deps.pax-swissbox-tinybundles.version>1.3.1</deps.pax-swissbox-tinybundles.version>
+		<deps.pojosr.version>0.1.8</deps.pojosr.version>
+		<deps.felix-configadmin.version>1.2.8</deps.felix-configadmin.version>
 		<!-- Testing -->
 		<deps.junit.version>4.10</deps.junit.version>
 		<deps.arquillian.version>1.0.0.CR7</deps.arquillian.version>
@@ -296,6 +302,12 @@
 			</dependency>
 			<dependency>
 				<groupId>vnet.sms.routing-engine</groupId>
+				<artifactId>blueprint-test-support</artifactId>
+				<version>${module.routing-engine.blueprint-test-support.version}</version>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>vnet.sms.routing-engine</groupId>
 				<artifactId>log4j-gelf-appender-fragment</artifactId>
 				<version>${module.routing-engine.log4j-gelf-appender-fragment.version}</version>
 				<type>jar</type>
@@ -371,7 +383,7 @@
 			<!-- =========================================== -->
 			<!-- Proprietary -->
 			<!-- =========================================== -->
-			<!-- Apache -->
+			<!-- Apache Commons -->
 			<dependency>
 				<groupId>commons-lang</groupId>
 				<artifactId>commons-lang</artifactId>
@@ -435,7 +447,12 @@
 			<dependency>
 				<groupId>org.osgi</groupId>
 				<artifactId>org.osgi.core</artifactId>
-				<version>${deps.osgi.version}</version>
+				<version>${deps.osgi-core.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.osgi</groupId>
+				<artifactId>org.osgi.compendium</artifactId>
+				<version>${deps.osgi-compendium.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.camel</groupId>
@@ -472,6 +489,12 @@
 			<dependency>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-test</artifactId>
+				<version>${deps.camel.version}</version>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-blueprint</artifactId>
 				<version>${deps.camel.version}</version>
 				<type>jar</type>
 			</dependency>
@@ -682,6 +705,12 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.activemq</groupId>
+				<artifactId>activemq-blueprint</artifactId>
+				<version>${deps.activemq.version}</version>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.activemq</groupId>
 				<artifactId>activemq-karaf</artifactId>
 				<version>${deps.activemq.version}</version>
 				<type>xml</type>
@@ -716,6 +745,32 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
+			<!-- Apache Aries -->
+			<dependency>
+				<groupId>org.apache.aries.blueprint</groupId>
+				<artifactId>org.apache.aries.blueprint</artifactId>
+				<version>${deps.aries.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.aries</groupId>
+				<artifactId>org.apache.aries.util</artifactId>
+				<version>${deps.aries.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.aries.proxy</groupId>
+				<artifactId>org.apache.aries.proxy.impl</artifactId>
+				<version>${deps.aries.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.aries.proxy</groupId>
+				<artifactId>org.apache.aries.proxy.api</artifactId>
+				<version>${deps.aries.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.aries.transaction</groupId>
+				<artifactId>org.apache.aries.transaction.manager</artifactId>
+				<version>${deps.aries.version}</version>
+			</dependency>
 			<!-- Groovy -->
 			<dependency>
 				<groupId>org.codehaus.groovy</groupId>
@@ -747,6 +802,7 @@
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-test</artifactId>
 				<version>${deps.spring.version}</version>
+				<scope>test</scope>
 				<type>jar</type>
 			</dependency>
 			<!-- Mockrunner: mock JMS server -->
@@ -754,6 +810,30 @@
 				<groupId>com.mockrunner</groupId>
 				<artifactId>mockrunner</artifactId>
 				<version>${deps.mockrunner.version}</version>
+				<scope>test</scope>
+				<type>jar</type>
+			</dependency>
+			<!-- PojoSR: mock OSGi container without the module layer -->
+			<dependency>
+				<groupId>com.googlecode.pojosr</groupId>
+				<artifactId>de.kalpatec.pojosr.framework</artifactId>
+				<version>${deps.pojosr.version}</version>
+				<scope>test</scope>
+				<type>jar</type>
+			</dependency>
+			<!-- TinyBundles: create a test bundle on the fly -->
+			<dependency>
+				<groupId>org.ops4j.pax.swissbox</groupId>
+				<artifactId>pax-swissbox-tinybundles</artifactId>
+				<version>${deps.pax-swissbox-tinybundles.version}</version>
+				<scope>test</scope>
+				<type>jar</type>
+			</dependency>
+			<!-- TinyBundles: create a test bundle on the fly -->
+			<dependency>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>org.apache.felix.configadmin</artifactId>
+				<version>${deps.felix-configadmin.version}</version>
 				<scope>test</scope>
 				<type>jar</type>
 			</dependency>

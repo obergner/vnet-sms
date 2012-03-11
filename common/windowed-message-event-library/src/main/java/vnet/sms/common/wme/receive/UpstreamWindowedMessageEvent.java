@@ -10,7 +10,7 @@ import java.io.Serializable;
 import org.jboss.netty.channel.UpstreamMessageEvent;
 
 import vnet.sms.common.messages.Message;
-import vnet.sms.common.wme.MessageType;
+import vnet.sms.common.messages.MessageEventType;
 import vnet.sms.common.wme.WindowedMessageEvent;
 
 /**
@@ -20,12 +20,12 @@ import vnet.sms.common.wme.WindowedMessageEvent;
 public abstract class UpstreamWindowedMessageEvent<ID extends Serializable, M extends Message>
         extends UpstreamMessageEvent implements WindowedMessageEvent<ID, M> {
 
-	private final ID	      messageReference;
+	private final ID	           messageReference;
 
-	private final MessageType	type;
+	private final MessageEventType	type;
 
 	protected UpstreamWindowedMessageEvent(final ID messageReference,
-	        final MessageType type,
+	        final MessageEventType type,
 	        final UpstreamMessageEvent upstreamMessageEvent, final M message) {
 		super(upstreamMessageEvent.getChannel(), message, upstreamMessageEvent
 		        .getRemoteAddress());
@@ -48,7 +48,7 @@ public abstract class UpstreamWindowedMessageEvent<ID extends Serializable, M ex
 	 * @see vnet.sms.common.wme.WindowedMessageEvent#getMessageType()
 	 */
 	@Override
-	public MessageType getMessageType() {
+	public MessageEventType getMessageType() {
 		return this.type;
 	}
 

@@ -42,9 +42,79 @@
 		<!-- *************************************************************** -->
 		<!-- Runtime -->
 		<!-- *************************************************************** -->
+		<dependency>
+			<groupId>javax.jms</groupId>
+			<artifactId>jms</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.activemq</groupId>
+			<artifactId>activemq-core</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.activemq</groupId>
+			<artifactId>activemq-pool</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.activemq</groupId>
+			<artifactId>activemq-blueprint</artifactId>
+			<scope>runtime</scope>
+		</dependency>
 		<!-- *************************************************************** -->
 		<!-- Test -->
 		<!-- *************************************************************** -->
+		<dependency>
+			<groupId>vnet.sms.routing-engine</groupId>
+			<artifactId>blueprint-test-support</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- FIXME: Why is this dependency not pulled in transitively via blueprint-test-support? -->
+		<dependency>
+			<groupId>com.googlecode.pojosr</groupId>
+			<artifactId>de.kalpatec.pojosr.framework</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- FIXME: Why is this dependency not pulled in transitively via blueprint-test-support? -->
+		<dependency>
+			<groupId>org.ops4j.pax.swissbox</groupId>
+			<artifactId>pax-swissbox-tinybundles</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.felix</groupId>
+			<artifactId>org.apache.felix.configadmin</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.aries.transaction</groupId>
+			<artifactId>org.apache.aries.transaction.manager</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.aries.blueprint</groupId>
+			<artifactId>org.apache.aries.blueprint</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.aries</groupId>
+			<artifactId>org.apache.aries.util</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.aries.proxy</groupId>
+			<artifactId>org.apache.aries.proxy.impl</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.aries.proxy</groupId>
+			<artifactId>org.apache.aries.proxy.api</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -89,6 +159,18 @@
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+			<!-- We need to append ";blueprint.aries.xml-validation:=false" to our 
+				bundle's symbolic name in order to instruct Aries Blueprint not to validate 
+				our xml blueprint context. What unknown reasons, this fails. -->
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<configuration>
+					<instructions>
+						<Bundle-SymbolicName>${project.groupId}.${project.artifactId};blueprint.aries.xml-validation:=false</Bundle-SymbolicName>
+					</instructions>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

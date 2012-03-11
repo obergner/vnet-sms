@@ -11,7 +11,7 @@ import org.jboss.netty.channel.Channel;
 
 import vnet.sms.common.messages.Acknowledgement;
 import vnet.sms.common.messages.LoginRequest;
-import vnet.sms.common.wme.MessageType;
+import vnet.sms.common.messages.MessageEventType;
 import vnet.sms.common.wme.receive.LoginRequestReceivedEvent;
 
 /**
@@ -33,7 +33,7 @@ public class ReceivedLoginRequestAckedEvent<ID extends Serializable> extends
 
 	private ReceivedLoginRequestAckedEvent(final ID messageReference,
 	        final Channel channel, final LoginRequest message) {
-		super(messageReference, MessageType.RECEIVED_LOGIN_REQUEST_ACKED,
+		super(messageReference, MessageEventType.RECEIVED_LOGIN_REQUEST_ACKED,
 		        channel, message, Acknowledgement.ack());
 	}
 }

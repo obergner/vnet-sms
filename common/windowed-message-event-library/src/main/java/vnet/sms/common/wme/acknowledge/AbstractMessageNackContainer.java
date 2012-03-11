@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 import vnet.sms.common.messages.Acknowledgement;
 import vnet.sms.common.messages.Message;
-import vnet.sms.common.wme.MessageType;
+import vnet.sms.common.messages.MessageEventType;
 
 /**
  * @author obergner
@@ -30,7 +30,7 @@ abstract class AbstractMessageNackContainer<ID extends Serializable, M extends M
 
 	protected AbstractMessageNackContainer(final int errorKey,
 	        final String errorDescription,
-	        final MessageType acknowledgedMessageType,
+	        final MessageEventType acknowledgedMessageType,
 	        final ID acknowledgedMessageReference,
 	        final int receivingChannelId, final M acknowledgedMessage) {
 		super(acknowledgedMessageType, Acknowledgement.nack(),

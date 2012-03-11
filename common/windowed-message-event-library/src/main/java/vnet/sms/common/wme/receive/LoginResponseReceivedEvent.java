@@ -8,7 +8,7 @@ import java.io.Serializable;
 import org.jboss.netty.channel.UpstreamMessageEvent;
 
 import vnet.sms.common.messages.LoginResponse;
-import vnet.sms.common.wme.MessageType;
+import vnet.sms.common.messages.MessageEventType;
 
 /**
  * @author obergner
@@ -20,7 +20,7 @@ public class LoginResponseReceivedEvent<ID extends Serializable> extends
 	public LoginResponseReceivedEvent(final ID messageReference,
 	        final UpstreamMessageEvent upstreamMessageEvent,
 	        final LoginResponse loginResponse) {
-		super(messageReference, MessageType.LOGIN_RESPONSE_RECEIVED,
+		super(messageReference, MessageEventType.LOGIN_RESPONSE_RECEIVED,
 		        upstreamMessageEvent, loginResponse);
 	}
 }

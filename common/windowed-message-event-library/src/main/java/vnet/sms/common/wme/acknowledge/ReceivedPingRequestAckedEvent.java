@@ -10,8 +10,8 @@ import java.io.Serializable;
 import org.jboss.netty.channel.Channel;
 
 import vnet.sms.common.messages.Acknowledgement;
+import vnet.sms.common.messages.MessageEventType;
 import vnet.sms.common.messages.PingRequest;
-import vnet.sms.common.wme.MessageType;
 import vnet.sms.common.wme.receive.PingRequestReceivedEvent;
 
 /**
@@ -33,7 +33,8 @@ public class ReceivedPingRequestAckedEvent<ID extends Serializable> extends
 
 	private ReceivedPingRequestAckedEvent(final ID messageReference,
 	        final Channel channel, final PingRequest message) {
-		super(messageReference, MessageType.RECEIVED_PING_REQUEST_ACKNOWLEDGED,
-		        channel, message, Acknowledgement.ack());
+		super(messageReference,
+		        MessageEventType.RECEIVED_PING_REQUEST_ACKNOWLEDGED, channel,
+		        message, Acknowledgement.ack());
 	}
 }
