@@ -192,6 +192,7 @@
 								<artifact>
 									<file>${project.build.directory}/features/features.xml</file>
 									<type>xml</type>
+									<classifier>features</classifier>
 								</artifact>
 								<artifact>
 									<file>${project.build.directory}/etc/${project.groupId}.${project.artifactId}.cfg</file>

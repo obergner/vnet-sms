@@ -49,46 +49,38 @@
 		<!-- *************************************************************** -->
 		<!-- Runtime -->
 		<!-- *************************************************************** -->
-		<dependency>
-			<groupId>org.apache.karaf.assemblies.features</groupId>
-			<artifactId>enterprise</artifactId>
-			<scope>runtime</scope>
-			<type>xml</type>
-			<classifier>features</classifier>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.karaf.assemblies.features</groupId>
-			<artifactId>standard</artifactId>
-			<scope>runtime</scope>
-			<type>xml</type>
-			<classifier>features</classifier>
-		</dependency>
-		<!-- Apache ActiveMQ -->
-		<dependency>
-			<groupId>org.apache.activemq</groupId>
-			<artifactId>activemq-karaf</artifactId>
-			<scope>runtime</scope>
-			<type>xml</type>
-			<classifier>features</classifier>
-		</dependency>
-		<!-- Apache Camel -->
-		<dependency>
-			<groupId>org.apache.camel.karaf</groupId>
-			<artifactId>apache-camel</artifactId>
-			<scope>runtime</scope>
-			<type>xml</type>
-			<classifier>features</classifier>
-		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>org.apache.karaf.assemblies.features</groupId> -->
+		<!-- <artifactId>enterprise</artifactId> -->
+		<!-- <scope>runtime</scope> -->
+		<!-- <type>xml</type> -->
+		<!-- <classifier>features</classifier> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.apache.karaf.assemblies.features</groupId> -->
+		<!-- <artifactId>standard</artifactId> -->
+		<!-- <scope>runtime</scope> -->
+		<!-- <type>xml</type> -->
+		<!-- <classifier>features</classifier> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.apache.activemq</groupId> -->
+		<!-- <artifactId>activemq-karaf</artifactId> -->
+		<!-- <scope>runtime</scope> -->
+		<!-- <type>xml</type> -->
+		<!-- <classifier>features</classifier> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.apache.camel.karaf</groupId> -->
+		<!-- <artifactId>apache-camel</artifactId> -->
+		<!-- <scope>runtime</scope> -->
+		<!-- <type>xml</type> -->
+		<!-- <classifier>features</classifier> -->
+		<!-- </dependency> -->
 		<!-- Our branding bundle used to customize Karaf's console -->
 		<dependency>
 			<groupId>vnet.sms.routing-engine</groupId>
 			<artifactId>branding</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-		<!-- Our embedded JMS broker -->
-		<dependency>
-			<groupId>vnet.sms.routing-engine</groupId>
-			<artifactId>jms-broker</artifactId>
 			<scope>runtime</scope>
 		</dependency>
 		<!-- GELF log appender -->
@@ -101,6 +93,20 @@
 		<dependency>
 			<groupId>vnet.sms.routing-engine</groupId>
 			<artifactId>platform</artifactId>
+			<scope>runtime</scope>
+			<type>xml</type>
+			<classifier>features</classifier>
+		</dependency>
+		<!-- Our embedded JMS broker -->
+		<dependency>
+			<groupId>vnet.sms.routing-engine</groupId>
+			<artifactId>jms-broker</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<!-- Our core routing engine -->
+		<dependency>
+			<groupId>vnet.sms.routing-engine</groupId>
+			<artifactId>core</artifactId>
 			<scope>runtime</scope>
 			<type>xml</type>
 			<classifier>features</classifier>
@@ -144,6 +150,7 @@
 						<configuration>
 							<descriptors>
 								<descriptor>mvn:vnet.sms.routing-engine/platform/${module.routing-engine.platform.version}/xml/features</descriptor>
+								<descriptor>mvn:vnet.sms.routing-engine/core/${module.routing-engine.core.version}/xml/features</descriptor>
 							</descriptors>
 							<features>
 								<feature>karaf-framework/${deps.karaf.version}</feature>
@@ -168,7 +175,7 @@
 								<feature>camel-blueprint/${deps.camel.version}</feature>
 								<feature>routing-engine-platform/${module.routing-engine.platform.version}</feature>
 								<feature>routing-engine-broker/${module.routing-engine.jms-broker.version}</feature>
-								<!-- <feature>routing-engine-core/${module.routing-engine.core.version}</feature> -->
+								<feature>routing-engine-core/${module.routing-engine.core.version}</feature>
 							</features>
 							<includeMvnBasedDescriptors>true</includeMvnBasedDescriptors>
 							<repository>${project.build.directory}/features-repo</repository>

@@ -148,10 +148,6 @@
 						<configuration>
 							<artifacts>
 								<artifact>
-									<file>target/classes/features.xml</file>
-									<type>xml</type>
-								</artifact>
-								<artifact>
 									<file>${project.build.directory}/etc/${project.groupId}.${project.artifactId}.cfg</file>
 									<type>cfg</type>
 								</artifact>

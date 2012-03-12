@@ -1068,10 +1068,12 @@
 
 	<!-- Default broker configuration -->
 	<feature name="routing-engine-broker" version="${module.routing-engine.jms-broker.version}"
+		description="VNET :: SMS' routing engine JMS broker (ActiveMQ)"
 		resolver="(obr)">
 		<details>
             This feature provides Routing Engine's ActiveMQ support, defining connectors and queues.
         </details>
+		<feature version="${project.version}">routing-engine-platform</feature>
 		<feature version="0.3">transaction</feature>
 		<feature version="${deps.activemq.version}">activemq-blueprint</feature>
 		<bundle start-level="50"><![CDATA[mvn:vnet.sms.routing-engine/jms-broker/${module.routing-engine.jms-broker.version}]]></bundle>

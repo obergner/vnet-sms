@@ -320,6 +320,13 @@
 			</dependency>
 			<dependency>
 				<groupId>vnet.sms.routing-engine</groupId>
+				<artifactId>core</artifactId>
+				<version>${module.routing-engine.core.version}</version>
+				<type>xml</type>
+				<classifier>features</classifier>
+			</dependency>
+			<dependency>
+				<groupId>vnet.sms.routing-engine</groupId>
 				<artifactId>jms-broker</artifactId>
 				<version>${module.routing-engine.jms-broker.version}</version>
 				<type>jar</type>

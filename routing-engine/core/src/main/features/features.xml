@@ -1,15 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<features name="Routing Engine ${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<features name="VNET::SMS Routing Engine Core ${project.version}"
+	xmlns="http://karaf.apache.org/xmlns/features/v1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://karaf.apache.org/xmlns/features/v1.0.0 http://karaf.apache.org/xmlns/features/v1.0.0">
 
 	<feature name="routing-engine-core" version="${module.routing-engine.core.version}"
 		description="VNET :: SMS' core routing engine" resolver="(obr)">
+		<details>
+            This feature provides VNET :: SMS' core routing engine'.
+        </details>
+		<feature version="${module.routing-engine.platform.version}">routing-engine-platform</feature>
+		<feature version="${module.routing-engine.jms-broker.version}">routing-engine-broker</feature>
+		<feature version="${deps.camel.version}">camel-blueprint</feature>
 		<bundle dependency="true" start-level="30"><![CDATA[mvn:commons-lang/commons-lang/2.6]]></bundle>
-		<bundle start-level="30"><![CDATA[mvn:org.apache.activemq/activemq-camel/${deps.activemq.version}]]></bundle>
-		<bundle start-level="30"><![CDATA[mvn:org.ops4j.pax.logging/pax-logging-api/1.6.3]]></bundle>
-		<bundle start-level="30"><![CDATA[mvn:vnet.sms.common/message-library/${module.common.message-library.version}]]></bundle>
+		<bundle dependency="true" start-level="30"><![CDATA[mvn:vnet.sms.common/message-library/${module.common.message-library.version}]]></bundle>
+		<bundle dependency="true" start-level="30"><![CDATA[mvn:org.apache.activemq/activemq-camel/${deps.activemq.version}]]></bundle>
+		<bundle dependency="true" start-level="30"><![CDATA[mvn:org.ops4j.pax.logging/pax-logging-api/1.6.3]]></bundle>
+		<bundle start-level="60"><![CDATA[mvn:vnet.sms.routing-engine/core/${module.routing-engine.core.version}]]></bundle>
+		<configfile finalname="/etc/vnet.sms.routing_engine.core.cfg">mvn:vnet.sms.routing-engine/core/${module.routing-engine.core.version}/cfg</configfile>
 	</feature>
 
 </features>
