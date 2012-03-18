@@ -379,7 +379,6 @@
 										</mapping>
 										<mapping>
 											<directory>/usr/share/routing-engine-${project.version}/bin</directory>
-											<directoryIncluded>false</directoryIncluded>
 											<filemode>664</filemode>
 											<username>routing</username>
 											<groupname>routing</groupname>
@@ -426,7 +425,6 @@
 										<mapping>
 											<directory>/usr/share/routing-engine-${project.version}/system</directory>
 											<directoryIncluded>true</directoryIncluded>
-											<recurseDirectories>true</recurseDirectories>
 											<filemode>664</filemode>
 											<username>routing</username>
 											<groupname>routing</groupname>
