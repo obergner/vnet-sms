@@ -252,6 +252,8 @@
 									<group>Development/Servers</group>
 									<packager>Olaf Bergner</packager>
 									<targetVendor>CentOS</targetVendor>
+									<needarch>x86_64</needarch>
+									<release>${buildNumber}</release>
 									<defineStatements>
 										<defineStatement><![CDATA[workdir /var/lib/routing-engine-${project.version}]]></defineStatement>
 									</defineStatements>
@@ -379,12 +381,6 @@
 										</mapping>
 										<mapping>
 											<directory>/usr/share/routing-engine-${project.version}/bin</directory>
-											<filemode>664</filemode>
-											<username>routing</username>
-											<groupname>routing</groupname>
-										</mapping>
-										<mapping>
-											<directory>/usr/share/routing-engine-${project.version}/bin</directory>
 											<directoryIncluded>true</directoryIncluded>
 											<filemode>755</filemode>
 											<username>routing</username>
@@ -404,7 +400,6 @@
 										<mapping>
 											<directory>/usr/share/routing-engine-${project.version}/lib</directory>
 											<directoryIncluded>true</directoryIncluded>
-											<recurseDirectories>true</recurseDirectories>
 											<filemode>664</filemode>
 											<username>routing</username>
 											<groupname>routing</groupname>
