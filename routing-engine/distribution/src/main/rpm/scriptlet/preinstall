@@ -1,4 +1,2 @@
 /usr/sbin/groupadd -r routing &>/dev/null || :
-# SUSE version had -o here, but in Fedora -o isn't allowed without -u
-/usr/sbin/useradd -g routing -s /bin/false -r -c "VNET::SMS routing engine" \
-    -d "%{workdir}" routing &>/dev/null || :
+/usr/sbin/useradd -g routing -s /bin/false -r -c "VNET/SMS routing engine" -d "%{workdir}" routing &>/dev/null || :

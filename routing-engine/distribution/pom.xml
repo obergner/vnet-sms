@@ -256,7 +256,8 @@
 									<release>${buildNumber}</release>
 									<defineStatements>
 										<defineStatement><![CDATA[workdir /var/lib/routing-engine-${project.version}]]></defineStatement>
-										<!-- Do not run /usr/lib/rpm/redhat/brp-java-repack-jars as this will corrupt karaf-wrapper-main.jar -->
+										<!-- Do not run /usr/lib/rpm/redhat/brp-java-repack-jars as this 
+											will corrupt karaf-wrapper-main.jar -->
 										<defineStatement><![CDATA[__jar_repack 0]]></defineStatement>
 									</defineStatements>
 									<mappings>
@@ -307,6 +308,7 @@
 														<exclude>org.apache.felix.fileinstall-deploy.cfg</exclude>
 														<exclude>org.apache.karaf.features.cfg</exclude>
 														<exclude>org.ops4j.pax.logging.cfg</exclude>
+														<exclude>startup.properties</exclude>
 														<exclude>system.properties</exclude>
 														<exclude>users.properties</exclude>
 													</excludes>
@@ -418,6 +420,11 @@
 													</includes>
 												</source>
 											</sources>
+											<dependency>
+												<includes>
+													<include>vnet.sms.routing-engine:branding</include>
+												</includes>
+											</dependency>
 										</mapping>
 										<mapping>
 											<directory>/usr/share/routing-engine-${project.version}/system</directory>
