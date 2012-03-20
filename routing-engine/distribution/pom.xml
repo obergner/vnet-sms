@@ -247,9 +247,10 @@
 									<goal>attached-rpm</goal>
 								</goals>
 								<configuration>
+									<group>VNET SMS/Servers</group>
+									<name>routing-engine</name>
 									<copyright>2012, Olaf Bergner</copyright>
-									<distribution>Stardom 2012</distribution>
-									<group>Development/Servers</group>
+									<distribution>Routing Engine 2012</distribution>
 									<packager>Olaf Bergner</packager>
 									<targetVendor>CentOS</targetVendor>
 									<needarch>x86_64</needarch>
