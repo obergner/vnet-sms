@@ -224,6 +224,10 @@
 
 			<properties>
 				<rpm.filtered.dir>${project.build.directory}/rpm-filtered</rpm.filtered.dir>
+				<java.min.mem>128m</java.min.mem>
+				<java.max.mem>512m</java.max.mem>
+				<java.min.perm>64m</java.min.perm>
+				<java.max.perm>128m</java.max.perm>
 			</properties>
 
 			<build>
@@ -269,6 +273,17 @@
 											<groupname>routing</groupname>
 										</mapping>
 										<mapping>
+											<directory>/var/lib/routing-engine</directory>
+											<filemode>664</filemode>
+											<username>routing</username>
+											<groupname>routing</groupname>
+											<sources>
+												<softlinkSource>
+													<location>/var/lib/routing-engine-${project.version}</location>
+												</softlinkSource>
+											</sources>
+										</mapping>
+										<mapping>
 											<directory>/var/lib/routing-engine-${project.version}/data</directory>
 											<filemode>664</filemode>
 											<username>routing</username>
@@ -287,10 +302,32 @@
 											<groupname>routing</groupname>
 										</mapping>
 										<mapping>
+											<directory>/var/log/routing-engine</directory>
+											<filemode>664</filemode>
+											<username>routing</username>
+											<groupname>routing</groupname>
+											<sources>
+												<softlinkSource>
+													<location>/var/log/routing-engine-${project.version}</location>
+												</softlinkSource>
+											</sources>
+										</mapping>
+										<mapping>
 											<directory>/var/run/routing-engine-${project.version}</directory>
 											<filemode>664</filemode>
 											<username>routing</username>
 											<groupname>routing</groupname>
+										</mapping>
+										<mapping>
+											<directory>/var/run/routing-engine</directory>
+											<filemode>664</filemode>
+											<username>routing</username>
+											<groupname>routing</groupname>
+											<sources>
+												<softlinkSource>
+													<location>/var/run/routing-engine-${project.version}</location>
+												</softlinkSource>
+											</sources>
 										</mapping>
 										<mapping>
 											<directory>/etc/routing-engine-${project.version}</directory>
@@ -320,6 +357,17 @@
 											</sources>
 										</mapping>
 										<mapping>
+											<directory>/etc/routing-engine</directory>
+											<filemode>664</filemode>
+											<username>routing</username>
+											<groupname>routing</groupname>
+											<sources>
+												<softlinkSource>
+													<location>/etc/routing-engine-${project.version}</location>
+												</softlinkSource>
+											</sources>
+										</mapping>
+										<mapping>
 											<directory>/etc/init.d</directory>
 											<directoryIncluded>false</directoryIncluded>
 											<filemode>755</filemode>
@@ -339,6 +387,17 @@
 											<filemode>664</filemode>
 											<username>routing</username>
 											<groupname>routing</groupname>
+										</mapping>
+										<mapping>
+											<directory>/usr/share/routing-engine</directory>
+											<filemode>664</filemode>
+											<username>routing</username>
+											<groupname>routing</groupname>
+											<sources>
+												<softlinkSource>
+													<location>/usr/share/routing-engine-${project.version}</location>
+												</softlinkSource>
+											</sources>
 										</mapping>
 										<mapping>
 											<directory>/usr/share/routing-engine-${project.version}/etc</directory>
@@ -424,6 +483,7 @@
 											<dependency>
 												<includes>
 													<include>vnet.sms.routing-engine:branding</include>
+													<include>vnet.sms.routing-engine:log4j-gelf-appender-fragment</include>
 												</includes>
 											</dependency>
 										</mapping>
