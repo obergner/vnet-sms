@@ -359,8 +359,8 @@
 										<mapping>
 											<directory>/etc/routing-engine</directory>
 											<filemode>664</filemode>
-											<username>routing</username>
-											<groupname>routing</groupname>
+											<username>root</username>
+											<groupname>root</groupname>
 											<sources>
 												<softlinkSource>
 													<location>/etc/routing-engine-${project.version}</location>
