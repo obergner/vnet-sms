@@ -12,15 +12,24 @@
        http://www.springframework.org/schema/util
        http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
-	<!-- 
-        Main entry point 
+    <!-- 
+        Injector for ClamshellLauncher.Factory 
+    -->
+
+    <bean
+        id="vnet.sms.common.shell.clamshellspring.clamshellLauncherFactoryInjector"
+        class="vnet.sms.common.shell.clamshellspring.internal.ClamshellLauncherFactoryInjector"
+        p:clamshellLauncherFactory-ref="vnet.sms.common.shell.clamshellspring.clamshellLauncherFactory" />
+
+    <!-- 
+        ClamshellLauncher.Factory
     -->
 
     <bean
         id="vnet.sms.common.shell.clamshellspring.clamshellLauncherFactory"
         class="vnet.sms.common.shell.clamshellspring.internal.EmbeddedClamshellLauncherFactory"
         p:contextFactory-ref="vnet.sms.common.shell.clamshellspring.staticContextFactory" />
-
+        
 	<!-- 
         Configuration 
     -->
