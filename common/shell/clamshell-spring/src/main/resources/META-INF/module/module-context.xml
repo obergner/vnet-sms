@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans
+    xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:c="http://www.springframework.org/schema/c"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="
+       http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       http://www.springframework.org/schema/util
+       http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+
+	<!-- 
+        Main entry point 
+    -->
+
+    <bean
+        id="vnet.sms.common.shell.clamshellspring.clamshellLauncherFactory"
+        class="vnet.sms.common.shell.clamshellspring.internal.EmbeddedClamshellLauncherFactory"
+        p:contextFactory-ref="vnet.sms.common.shell.clamshellspring.staticContextFactory" />
+
+	<!-- 
+        Configuration 
+    -->
+
+    <util:map
+        id="vnet.sms.common.shell.clamshellspring.propertiesMap" />
+
+    <util:map
+        id="vnet.sms.common.shell.clamshellspring.configMap" />
+
+    <util:map
+        id="vnet.sms.common.shell.clamshellspring.controllersMap">
+        <entry
+            key="cli.clamshell.impl.CmdController">
+            <util:map>
+                <entry
+                    key="enabled"
+                    value="true" />
+                <entry
+                    key="inputPattern"
+                    value="\\s*(exit|help|sysinfo|time)\\b.*" />
+                <entry
+                    key="expectedInputs">
+                    <array />
+                </entry>
+            </util:map>
+        </entry>
+    </util:map>
+
+    <bean
+        id="vnet.sms.common.shell.clamshellspring.staticConfigurator"
+        class="vnet.sms.common.shell.clamshellspring.internal.StaticConfigurator"
+        c:configMap-ref="vnet.sms.common.shell.clamshellspring.configMap"
+        c:controllersMap-ref="vnet.sms.common.shell.clamshellspring.controllersMap"
+        c:propertiesMap-ref="vnet.sms.common.shell.clamshellspring.propertiesMap" />
+
+	<!-- 
+        Command and plugin registries 
+    -->
+
+    <bean
+        id="vnet.sms.common.shell.clamshellspring.commandRegistry"
+        class="vnet.sms.common.shell.clamshellspring.internal.SpringCommandRegistry" />
+
+    <bean
+        id="vnet.sms.common.shell.clamshellspring.pluginRegistry"
+        class="vnet.sms.common.shell.clamshellspring.internal.SpringPluginRegistry" />
+        
+    <!-- 
+        Configure context factory 
+    -->
+
+    <bean
+        id="vnet.sms.common.shell.clamshellspring.staticContextFactory"
+        class="vnet.sms.common.shell.clamshellspring.internal.StaticContextFactory"
+        p:commandRegistry-ref="vnet.sms.common.shell.clamshellspring.commandRegistry"
+        p:configuration-ref="vnet.sms.common.shell.clamshellspring.staticConfigurator"
+        p:pluginRegistry-ref="vnet.sms.common.shell.clamshellspring.pluginRegistry" />
+
+	<!--
+        Standard plugins
+    -->
+
+    <bean
+        id="vnet.sms.common.shell.clamshellspring.cmdController"
+        class="org.clamshellcli.impl.CmdController" />
+
+    <bean
+        id="vnet.sms.common.shell.clamshellspring.cliShell"
+        class="org.clamshellcli.impl.CliShell" />
+
+    <bean
+        id="vnet.sms.common.shell.clamshellspring.cliConsole"
+        class="org.clamshellcli.impl.CliConsole" />
+        
+    <!--
+        Standard commands
+    -->
+
+    <bean
+        id="vnet.sms.common.shell.clamshellspring.exitCommand"
+        class="org.clamshellcli.impl.commands.ExitCmd" />
+
+    <bean
+        id="vnet.sms.common.shell.clamshellspring.helpCommand"
+        class="org.clamshellcli.impl.commands.HelpCmd" />
+
+    <bean
+        id="vnet.sms.common.shell.clamshellspring.sysinfoCommand"
+        class="org.clamshellcli.impl.commands.SysInfoCmd" />
+
+</beans>

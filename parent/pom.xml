@@ -35,6 +35,8 @@
 		<module.common.windowed-message-event-library.version>1.0.0-SNAPSHOT</module.common.windowed-message-event-library.version>
 		<module.common.spring-extensions.version>1.0.0-SNAPSHOT</module.common.spring-extensions.version>
 		<module.common.executor-support.version>1.0.0-SNAPSHOT</module.common.executor-support.version>
+		<module.common.shell.version>1.0.0-SNAPSHOT</module.common.shell.version>
+		<module.common.shell.clamshell-spring.version>1.0.0-SNAPSHOT</module.common.shell.clamshell-spring.version>
 		<module.gateway.version>1.0.0-SNAPSHOT</module.gateway.version>
 		<module.gateway.netty-gateway-support.version>1.0.0-SNAPSHOT</module.gateway.netty-gateway-support.version>
 		<module.gateway.netty-test-support.version>1.0.0-SNAPSHOT</module.gateway.netty-test-support.version>
@@ -80,6 +82,7 @@
 		<deps.pax-swissbox-tinybundles.version>1.3.1</deps.pax-swissbox-tinybundles.version>
 		<deps.pojosr.version>0.1.8</deps.pojosr.version>
 		<deps.felix-configadmin.version>1.2.8</deps.felix-configadmin.version>
+		<deps.clamshell-cli.version>0.5.1</deps.clamshell-cli.version>
 		<!-- Testing -->
 		<deps.junit.version>4.10</deps.junit.version>
 		<deps.arquillian.version>1.0.0.CR7</deps.arquillian.version>
@@ -193,6 +196,17 @@
 				<enabled>true</enabled>
 			</releases>
 		</repository>
+		<repository>
+			<id>com.googlecode.clamshellcliRepository</id>
+			<name>Clamshell-Cli Repository</name>
+			<url>http://s3.amazonaws.com/repo.clamshellcli.org/release/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</repository>
 	</repositories>
 
 	<!-- =================================================== -->
@@ -232,6 +246,18 @@
 				<groupId>vnet.sms.common</groupId>
 				<artifactId>executor-support</artifactId>
 				<version>${module.common.executor-support.version}</version>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>vnet.sms.common</groupId>
+				<artifactId>shell</artifactId>
+				<version>${module.common.shell.version}</version>
+				<type>pom</type>
+			</dependency>
+			<dependency>
+				<groupId>vnet.sms.common.shell</groupId>
+				<artifactId>clamshell-spring</artifactId>
+				<version>${module.common.shell.clamshell-spring.version}</version>
 				<type>jar</type>
 			</dependency>
 			<dependency>
@@ -783,6 +809,25 @@
 				<groupId>org.codehaus.groovy</groupId>
 				<artifactId>groovy-all</artifactId>
 				<version>${deps.groovy.version}</version>
+				<type>jar</type>
+			</dependency>
+			<!-- Clamshell CLI -->
+			<dependency>
+				<groupId>org.clamshellcli</groupId>
+				<artifactId>clamshell-api</artifactId>
+				<version>${deps.clamshell-cli.version}</version>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>org.clamshellcli</groupId>
+				<artifactId>clamshell-impl-core</artifactId>
+				<version>${deps.clamshell-cli.version}</version>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>org.clamshellcli</groupId>
+				<artifactId>clamshell-impl-default</artifactId>
+				<version>${deps.clamshell-cli.version}</version>
 				<type>jar</type>
 			</dependency>
 			<!-- =========================================== -->
