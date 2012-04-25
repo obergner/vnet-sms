@@ -5,6 +5,7 @@ package vnet.sms.common.shell.clamshellsshsrv.internal;
 
 import static org.apache.commons.lang.Validate.notNull;
 
+import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -71,7 +72,7 @@ public class ClamshellLauncherCommand implements Command {
 	 */
 	@Override
 	public void setOutputStream(final OutputStream out) {
-		this.output = out;
+		this.output = new LfToCrLfFilterOutputStream(out);
 	}
 
 	/**
@@ -107,5 +108,26 @@ public class ClamshellLauncherCommand implements Command {
 	public void destroy() {
 		this.exitCallback.onExit(0);
 		this.log.info("Clamshell has been terminated");
+	}
+
+	private final class LfToCrLfFilterOutputStream extends FilterOutputStream {
+
+		private boolean	lastWasCr;
+
+		public LfToCrLfFilterOutputStream(final OutputStream out) {
+			super(out);
+		}
+
+		@Override
+		public void write(final int b) throws IOException {
+			if (!this.lastWasCr && (b == '\n')) {
+				this.out.write('\r');
+				this.out.write('\n');
+			} else {
+				this.out.write(b);
+			}
+			this.lastWasCr = b == '\r';
+		}
+
 	}
 }

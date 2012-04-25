@@ -50,6 +50,7 @@ public class MonitoringChannelGroup implements ChannelGroup {
 	 */
 	@Override
 	public boolean add(final Channel channel) {
+		System.out.println("REGISTER CHANNEL " + channel);
 		this.channelMonitorRegistry.registerChannel(channel);
 		return this.delegate.add(channel);
 	}

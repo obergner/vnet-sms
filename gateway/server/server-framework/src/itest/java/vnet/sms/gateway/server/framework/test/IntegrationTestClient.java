@@ -130,7 +130,11 @@ public class IntegrationTestClient {
 		};
 
 		sendMessage(messageReference, message, responseListener);
+		this.log.debug("Waiting for response to message {} sent to {}",
+		        message, this.serverAddress);
 		responseReceived.await();
+		this.log.debug("Received response {} to message {}",
+		        receivedResponse.get(), message);
 
 		return ReferenceableMessageContainer.class.cast(receivedResponse.get()
 		        .getMessage());
@@ -152,7 +156,11 @@ public class IntegrationTestClient {
 		};
 
 		sendMessage(messageReference, message, responseListener);
+		this.log.debug("Waiting for response to message {} sent to {}",
+		        message, this.serverAddress);
 		responseReceived.await();
+		this.log.debug("Received response {} to message {}",
+		        receivedResponse.get(), message);
 
 		return ReferenceableMessageContainer.class.cast(receivedResponse.get()
 		        .getMessage());

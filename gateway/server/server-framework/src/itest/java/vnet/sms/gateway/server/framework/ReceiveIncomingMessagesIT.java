@@ -39,6 +39,7 @@ import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;
         "classpath:META-INF/services/gateway-server-application-context.xml",
         "classpath:META-INF/services/gateway-server-authentication-manager-context.xml",
         "classpath:META-INF/services/gateway-server-jms-client-context.xml",
+        "classpath:META-INF/services/gateway-server-shell-context.xml",
         "classpath*:META-INF/module/module-context.xml",
         "classpath:META-INF/itest/itest-gateway-server-embedded-activemq-broker-context.xml",
         "classpath:META-INF/itest/itest-serialization-transport-plugin-context.xml",

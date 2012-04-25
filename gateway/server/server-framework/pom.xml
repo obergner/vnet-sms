@@ -11,120 +11,134 @@
 	OF ANY KIND, either express or implied. See the License for the specific 
 	language governing permissions and limitations under the License. -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>vnet.sms.gateway</groupId>
-		<artifactId>server</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
-		<relativePath>../</relativePath>
-	</parent>
+    <parent>
+        <groupId>vnet.sms.gateway</groupId>
+        <artifactId>server</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../</relativePath>
+    </parent>
 
-	<groupId>vnet.sms.gateway.server</groupId>
-	<artifactId>server-framework</artifactId>
-	<packaging>bundle</packaging>
-	<name>SMS :: Gateway :: Server :: Framework</name>
-	<description>A transport protocol-agnostic framework for implementing gateway servers</description>
+    <groupId>vnet.sms.gateway.server</groupId>
+    <artifactId>server-framework</artifactId>
+    <packaging>bundle</packaging>
+    <name>SMS :: Gateway :: Server :: Framework</name>
+    <description>A transport protocol-agnostic framework for implementing gateway servers</description>
 
-	<properties>
-	</properties>
+    <properties>
+    </properties>
 
-	<dependencies>
+    <dependencies>
 		<!-- *************************************************************** -->
 		<!-- Compile -->
 		<!-- *************************************************************** -->
-		<dependency>
-			<groupId>javax.jms</groupId>
-			<artifactId>jms</artifactId>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-jms</artifactId>
-			<scope>compile</scope>
-		</dependency>
+        <dependency>
+            <groupId>javax.jms</groupId>
+            <artifactId>jms</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jms</artifactId>
+            <scope>compile</scope>
+        </dependency>
 
-		<dependency>
-			<groupId>org.jboss.netty</groupId>
-			<artifactId>netty</artifactId>
-			<scope>compile</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.jboss.netty</groupId>
+            <artifactId>netty</artifactId>
+            <scope>compile</scope>
+        </dependency>
 
-		<dependency>
-			<groupId>vnet.sms.common</groupId>
-			<artifactId>spring-extensions</artifactId>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>vnet.sms.common</groupId>
-			<artifactId>executor-support</artifactId>
-			<scope>compile</scope>
-		</dependency>
+        <dependency>
+            <groupId>vnet.sms.common</groupId>
+            <artifactId>spring-extensions</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>vnet.sms.common</groupId>
+            <artifactId>executor-support</artifactId>
+            <scope>compile</scope>
+        </dependency>
 
-		<dependency>
-			<groupId>vnet.sms.gateway</groupId>
-			<artifactId>netty-gateway-support</artifactId>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>vnet.sms.gateway</groupId>
-			<artifactId>transport-spi</artifactId>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>vnet.sms.gateway</groupId>
-			<artifactId>transport-plugin-support</artifactId>
-			<scope>compile</scope>
-		</dependency>
+        <dependency>
+            <groupId>vnet.sms.common.shell</groupId>
+            <artifactId>clamshell-spring</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>vnet.sms.gateway</groupId>
+            <artifactId>netty-gateway-support</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>vnet.sms.gateway</groupId>
+            <artifactId>transport-spi</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>vnet.sms.gateway</groupId>
+            <artifactId>transport-plugin-support</artifactId>
+            <scope>compile</scope>
+        </dependency>
 		<!-- *************************************************************** -->
 		<!-- Runtime -->
 		<!-- *************************************************************** -->
-		<dependency>
-			<groupId>org.apache.activemq</groupId>
-			<artifactId>activemq-core</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.activemq</groupId>
-			<artifactId>activemq-pool</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.activemq</groupId>
-			<artifactId>activemq-spring</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.xbean</groupId>
-			<artifactId>xbean-spring-v2c</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-config</artifactId>
-			<scope>runtime</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-core</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-pool</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-spring</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.xbean</groupId>
+            <artifactId>xbean-spring-v2c</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>vnet.sms.common.shell</groupId>
+            <artifactId>clamshell-ssh-server</artifactId>
+            <scope>runtime</scope>
+        </dependency>
 		<!-- *************************************************************** -->
 		<!-- Test -->
 		<!-- *************************************************************** -->
-		<dependency>
-			<groupId>vnet.sms.gateway</groupId>
-			<artifactId>netty-test-support</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>vnet.sms.gateway.transports</groupId>
-			<artifactId>serialization-transport</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.mockrunner</groupId>
-			<artifactId>mockrunner</artifactId>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>vnet.sms.gateway</groupId>
+            <artifactId>netty-test-support</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>vnet.sms.gateway.transports</groupId>
+            <artifactId>serialization-transport</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.mockrunner</groupId>
+            <artifactId>mockrunner</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
 </project>

@@ -15,11 +15,13 @@ public final class Context {
 
 	public static final String	 JMS_CLIENT_CONTEXT	            = "classpath:META-INF/services/gateway-server-jms-client-context.xml";
 
+	public static final String	 SHELL_CONTEXT	                = "classpath:META-INF/services/gateway-server-shell-context.xml";
+
 	public static final String	 MODULE_CONTEXTS	            = "classpath*:META-INF/module/module-context.xml";
 
 	public static final String[]	ALL_CONTEXTS	            = new String[] {
 	        APPLICATION_CONTEXT, AUTHENTICATION_MANAGER_CONTEXT,
-	        JMS_CLIENT_CONTEXT, MODULE_CONTEXTS	            };
+	        JMS_CLIENT_CONTEXT, SHELL_CONTEXT, MODULE_CONTEXTS	};
 
 	private Context() {
 		// Noop

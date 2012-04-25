@@ -25,27 +25,15 @@ public class ClamshellLauncherFactoryInjectorTest {
 		        beanPassedIn, beanReturned);
 	}
 
-	@Test
-	public final void assertThatPostProcessAfterInitializationReturnsBeanPassedIn() {
-		final ClamshellLauncherFactoryInjector objectUnderTest = new ClamshellLauncherFactoryInjector();
-		final Object beanPassedIn = new Object();
-
-		final Object beanReturned = objectUnderTest
-		        .postProcessAfterInitialization(beanPassedIn,
-		                "assertThatPostProcessAfterInitializationReturnsBeanPassedIn");
-
-		assertSame(
-		        "postProcessAfterInitialization(...) should have returned the bean passed in, yet it didn't",
-		        beanPassedIn, beanReturned);
-	}
-
 	@Test(expected = IllegalStateException.class)
-	public final void assertThatPostProcessAfterInitializationRecognizesThatNoClamshellLauncherFactoryHasBeenSet() {
+	public final void assertThatPostProcessBeforeInitializationRecognizesThatNoClamshellLauncherFactoryHasBeenSet() {
 		final ClamshellLauncherFactoryInjector objectUnderTest = new ClamshellLauncherFactoryInjector();
 		final Object beanPassedIn = new SampleClamshellLauncherFactoryAware();
 
-		objectUnderTest.postProcessAfterInitialization(beanPassedIn,
-		        "assertThatPostProcessAfterInitializationReturnsBeanPassedIn");
+		objectUnderTest
+		        .postProcessBeforeInitialization(
+		                beanPassedIn,
+		                "assertThatPostProcessBeforeInitializationRecognizesThatNoClamshellLauncherFactoryHasBeenSet");
 	}
 
 	private static class SampleClamshellLauncherFactoryAware implements
@@ -61,18 +49,34 @@ public class ClamshellLauncherFactoryInjectorTest {
 	}
 
 	@Test
-	public final void assertThatPostProcessAfterInitializationSetsClamshellLauncherFactoryOnBeanImplementingClamshellLauncherFactoryAware() {
+	public final void assertThatPostProcessBefpreInitializationSetsClamshellLauncherFactoryOnBeanImplementingClamshellLauncherFactoryAware() {
 		final ClamshellLauncherFactoryInjector objectUnderTest = new ClamshellLauncherFactoryInjector();
 		objectUnderTest
 		        .setClamshellLauncherFactory(new EmbeddedClamshellLauncherFactory());
 		final SampleClamshellLauncherFactoryAware beanPassedIn = new SampleClamshellLauncherFactoryAware();
 
-		objectUnderTest.postProcessAfterInitialization(beanPassedIn,
-		        "assertThatPostProcessAfterInitializationReturnsBeanPassedIn");
+		objectUnderTest
+		        .postProcessBeforeInitialization(
+		                beanPassedIn,
+		                "assertThatPostProcessBefpreInitializationSetsClamshellLauncherFactoryOnBeanImplementingClamshellLauncherFactoryAware");
 
 		assertNotNull(
 		        "postProcessAfterInitialization(...) should have set ClamshellLauncher.Factory on bean passed in",
 		        beanPassedIn.clamshellLauncherFactory);
+	}
+
+	@Test
+	public final void assertThatPostProcessAfterInitializationReturnsBeanPassedIn() {
+		final ClamshellLauncherFactoryInjector objectUnderTest = new ClamshellLauncherFactoryInjector();
+		final Object beanPassedIn = new Object();
+
+		final Object beanReturned = objectUnderTest
+		        .postProcessAfterInitialization(beanPassedIn,
+		                "assertThatPostProcessAfterInitializationReturnsBeanPassedIn");
+
+		assertSame(
+		        "postProcessAfterInitialization(...) should have returned the bean passed in, yet it didn't",
+		        beanPassedIn, beanReturned);
 	}
 
 	@Test(expected = IllegalArgumentException.class)

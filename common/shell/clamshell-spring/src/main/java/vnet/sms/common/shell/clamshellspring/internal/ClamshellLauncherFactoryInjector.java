@@ -33,16 +33,6 @@ public final class ClamshellLauncherFactoryInjector implements
 	@Override
 	public Object postProcessBeforeInitialization(final Object bean,
 	        final String beanName) throws BeansException {
-		return bean;
-	}
-
-	/**
-	 * @see org.springframework.beans.factory.config.BeanPostProcessor#postProcessAfterInitialization(java.lang.Object,
-	 *      java.lang.String)
-	 */
-	@Override
-	public Object postProcessAfterInitialization(final Object bean,
-	        final String beanName) throws BeansException {
 		this.log.debug(
 		        "Testing if bean [name = {}|bean = {}] implements {} ...",
 		        new Object[] { bean, beanName,
@@ -62,6 +52,16 @@ public final class ClamshellLauncherFactoryInjector implements
 			        new Object[] { bean, beanName,
 			                ClamshellLauncherFactoryAware.class.getName() });
 		}
+		return bean;
+	}
+
+	/**
+	 * @see org.springframework.beans.factory.config.BeanPostProcessor#postProcessAfterInitialization(java.lang.Object,
+	 *      java.lang.String)
+	 */
+	@Override
+	public Object postProcessAfterInitialization(final Object bean,
+	        final String beanName) throws BeansException {
 		return bean;
 	}
 

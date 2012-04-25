@@ -138,6 +138,10 @@ public class SshServerFactoryBean implements FactoryBean<SshServer>,
 		        "Set scheduled executor service on new SshServer instance {} to {}",
 		        newSshServer, this.scheduledExecutorService);
 
+		newSshServer.setShellFactory(this.shellFactory);
+		this.log.debug("Set shell factory on new SshServer instance {} to {}",
+		        newSshServer, this.shellFactory);
+
 		if (this.autostart) {
 			this.log.info(
 			        "Autostart is set to true - will start newly created SshServer {} ...",
