@@ -1,115 +1,144 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:jms="http://www.springframework.org/schema/jms" xmlns:p="http://www.springframework.org/schema/p"
-	xmlns:c="http://www.springframework.org/schema/c" xmlns:task="http://www.springframework.org/schema/task"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+<beans
+    xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:jms="http://www.springframework.org/schema/jms"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:c="http://www.springframework.org/schema/c"
+    xmlns:task="http://www.springframework.org/schema/task"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
 		http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-3.1.xsd
 		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.1.xsd">
 
 	<!-- START-SNIPPET: general settings -->
-	<context:mbean-server
-		id="vnet.sms.gateway.server.server-framework.mbeanServer" />
-	<context:mbean-export registration="failOnExisting"
-		server="vnet.sms.gateway.server.server-framework.mbeanServer"
-		default-domain="vnet.sms.gateway.server.server-framework" />
-	<context:property-placeholder
-		location="classpath:gateway-server-configuration.properties" />
+    <context:mbean-server
+        id="vnet.sms.gateway.server.server-framework.mbeanServer" />
+    <context:mbean-export
+        registration="failOnExisting"
+        server="vnet.sms.gateway.server.server-framework.mbeanServer"
+        default-domain="vnet.sms.gateway.server.server-framework" />
+    <context:property-placeholder
+        location="classpath:gateway-server-configuration.properties" />
 	<!-- END-SNIPPET: general settings -->
 
 	<!-- START-SNIPPET: custom bean post processors -->
-	<bean
-		id="vnet.sms.gateway.server.server-framework.gatewayServerDescriptionInjector"
-		class="vnet.sms.gateway.server.framework.internal.description.GatewayServerDescriptionInjector" />
+    <bean
+        id="vnet.sms.gateway.server.server-framework.gatewayServerDescriptionInjector"
+        class="vnet.sms.gateway.server.framework.internal.description.GatewayServerDescriptionInjector" />
 	<!-- END-SNIPPET: custom bean post processors -->
 
 	<!-- START-SNIPPET: gateway server controller -->
-	<bean
-		id="vnet.sms.gateway.server.server-framework.gatewayServerController"
-		class="vnet.sms.gateway.server.framework.GatewayServerController">
-		<constructor-arg index="0"
-			ref="vnet.sms.gateway.server.server-framework.gatewayServer" />
-	</bean>
+    <bean
+        id="vnet.sms.gateway.server.server-framework.gatewayServerController"
+        class="vnet.sms.gateway.server.framework.GatewayServerController">
+        <constructor-arg
+            index="0"
+            ref="vnet.sms.gateway.server.server-framework.gatewayServer" />
+    </bean>
 	<!-- END-SNIPPET: gateway server controller -->
 
 	<!-- START-SNIPPET: gateway server -->
-	<bean id="vnet.sms.gateway.server.server-framework.gatewayServer"
-		class="vnet.sms.gateway.server.framework.GatewayServerBuilder"
-		p:instanceId="${gateway.server.instanceId}" p:host="${gateway.server.host}"
-		p:port="${gateway.server.port}"
-		p:channelPipelineFactory-ref="vnet.sms.gateway.server.server-framework.gatewayServerChannelPipelineFactory"
-		p:bossExecutor-ref="vnet.sms.gateway.server.server-framework.bossExecutor"
-		p:workerExecutor-ref="vnet.sms.gateway.server.server-framework.workerExecutor" />
+    <bean
+        id="vnet.sms.gateway.server.server-framework.gatewayServer"
+        class="vnet.sms.gateway.server.framework.GatewayServerBuilder"
+        p:instanceId="${gateway.server.instanceId}"
+        p:host="${gateway.server.host}"
+        p:port="${gateway.server.port}"
+        p:channelPipelineFactory-ref="vnet.sms.gateway.server.server-framework.gatewayServerChannelPipelineFactory"
+        p:bossExecutor-ref="vnet.sms.gateway.server.server-framework.bossExecutor"
+        p:workerExecutor-ref="vnet.sms.gateway.server.server-framework.workerExecutor" />
 
-	<bean id="vnet.sms.gateway.server.server-framework.bossExecutor"
-		class="org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean"
-		p:threadFactory-ref="vnet.sms.gateway.server.server-framework.bossThreadFactory" />
+    <bean
+        id="vnet.sms.gateway.server.server-framework.bossExecutor"
+        class="org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean"
+        p:threadFactory-ref="vnet.sms.gateway.server.server-framework.bossThreadFactory" />
 
-	<bean id="vnet.sms.gateway.server.server-framework.bossThreadFactory"
-		class="vnet.sms.gateway.server.framework.internal.executor.GatewayServerDescriptionMdcThreadFactoryBuilder"
-		p:threadNamePrefix="New I/O TCP Acceptor" />
+    <bean
+        id="vnet.sms.gateway.server.server-framework.bossThreadFactory"
+        class="vnet.sms.gateway.server.framework.internal.executor.GatewayServerDescriptionMdcThreadFactoryBuilder"
+        p:threadNamePrefix="New I/O TCP Acceptor" />
 
-	<bean id="vnet.sms.gateway.server.server-framework.workerExecutor"
-		class="org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean"
-		p:threadFactory-ref="vnet.sms.gateway.server.server-framework.workerThreadFactory" />
+    <bean
+        id="vnet.sms.gateway.server.server-framework.workerExecutor"
+        class="org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean"
+        p:threadFactory-ref="vnet.sms.gateway.server.server-framework.workerThreadFactory" />
 
-	<bean id="vnet.sms.gateway.server.server-framework.workerThreadFactory"
-		class="vnet.sms.gateway.server.framework.internal.executor.GatewayServerDescriptionMdcThreadFactoryBuilder"
-		p:threadNamePrefix="New I/O TCP Worker" />
+    <bean
+        id="vnet.sms.gateway.server.server-framework.workerThreadFactory"
+        class="vnet.sms.gateway.server.framework.internal.executor.GatewayServerDescriptionMdcThreadFactoryBuilder"
+        p:threadNamePrefix="New I/O TCP Worker" />
 	<!-- END-SNIPPET: gateway server -->
 
 	<!-- START-SNIPPET: Outgoing messages sender -->
-	<bean id="vnet.sms.gateway.server.server-framework.outgoingMessagesSender"
-		class="vnet.sms.gateway.nettysupport.publish.outgoing.spring.OutgoingMessagesSenderFactory"
-		p:allConnectedChannels-ref="vnet.sms.gateway.server.server-framework.allConnectedChannels" />
+    <bean
+        id="vnet.sms.gateway.server.server-framework.outgoingMessagesSender"
+        class="vnet.sms.gateway.nettysupport.publish.outgoing.spring.OutgoingMessagesSenderFactory"
+        p:allConnectedChannels-ref="vnet.sms.gateway.server.server-framework.allConnectedChannels" />
 	<!-- END-SNIPPET: Outgoing messages sender -->
 
 	<!-- START-SNIPPET: gateway server channel pipeline factory -->
-	<bean
-		id="vnet.sms.gateway.server.server-framework.gatewayServerChannelPipelineFactory"
-		class="vnet.sms.gateway.server.framework.internal.channel.GatewayServerChannelPipelineFactoryBuilder">
-		<property name="gatewayServerInstanceId" value="${gateway.server.instanceId}" />
-		<property name="authenticationManager"
-			ref="vnet.sms.gateway.server.server-framework.authenticationManager" />
-		<property name="messageForwardingJmsBridge"
-			ref="vnet.sms.gateway.server.server-framework.messageForwardingJmsBridge" />
-		<property name="initialChannelEventsMonitor"
-			ref="vnet.sms.gateway.server.server-framework.initialChannelEventsMonitor" />
-		<property name="allConnectedChannels"
-			ref="vnet.sms.gateway.server.server-framework.allConnectedChannels" />
-		<property name="availableIncomingWindows" value="${gateway.server.availableIncomingWindows}" />
-		<property name="failedLoginResponseDelayMillis"
-			value="${gateway.server.failedLoginResponseDelayMillis}" />
-		<property name="incomingWindowWaitTimeMillis"
-			value="${gateway.server.incomingWindowWaitTimeMillis}" />
-		<property name="pingIntervalSeconds" value="${gateway.server.pingIntervalSeconds}" />
-		<property name="pingResponseTimeoutMillis" value="${gateway.server.pingResponseTimeoutMillis}" />
-	</bean>
+    <bean
+        id="vnet.sms.gateway.server.server-framework.gatewayServerChannelPipelineFactory"
+        class="vnet.sms.gateway.server.framework.internal.channel.GatewayServerChannelPipelineFactoryBuilder">
+        <property
+            name="gatewayServerInstanceId"
+            value="${gateway.server.instanceId}" />
+        <property
+            name="authenticationManager"
+            ref="vnet.sms.gateway.server.server-framework.authenticationManager" />
+        <property
+            name="messageForwardingJmsBridge"
+            ref="vnet.sms.gateway.server.server-framework.messageForwardingJmsBridge" />
+        <property
+            name="initialChannelEventsMonitor"
+            ref="vnet.sms.gateway.server.server-framework.initialChannelEventsMonitor" />
+        <property
+            name="allConnectedChannels"
+            ref="vnet.sms.gateway.server.server-framework.allConnectedChannels" />
+        <property
+            name="availableIncomingWindows"
+            value="${gateway.server.availableIncomingWindows}" />
+        <property
+            name="failedLoginResponseDelayMillis"
+            value="${gateway.server.failedLoginResponseDelayMillis}" />
+        <property
+            name="incomingWindowWaitTimeMillis"
+            value="${gateway.server.incomingWindowWaitTimeMillis}" />
+        <property
+            name="pingIntervalSeconds"
+            value="${gateway.server.pingIntervalSeconds}" />
+        <property
+            name="pingResponseTimeoutMillis"
+            value="${gateway.server.pingResponseTimeoutMillis}" />
+    </bean>
 	<!-- END-SNIPPET: gateway server channel pipeline factory -->
 
 	<!-- START-SNIPPET: authentication manager -->
-	<bean id="vnet.sms.gateway.server.server-framework.authenticationManager"
-		class="vnet.sms.gateway.server.framework.test.AcceptAllAuthenticationManager" />
+    <bean
+        id="vnet.sms.gateway.server.server-framework.authenticationManager"
+        class="vnet.sms.gateway.server.framework.test.AcceptAllAuthenticationManager" />
 	<!-- END-SNIPPET: authentication manager -->
 
 	<!-- START-SNIPPET: message forwarding JMS bridge -->
-	<bean
-		id="vnet.sms.gateway.server.server-framework.messageForwardingJmsBridge"
-		class="vnet.sms.gateway.server.framework.internal.jmsbridge.IncomingMessagesForwardingJmsBridge"
-		c:jmsTemplate-ref="vnet.sms.gateway.server.server-framework.jmsTemplate" />
+    <bean
+        id="vnet.sms.gateway.server.server-framework.messageForwardingJmsBridge"
+        class="vnet.sms.gateway.server.framework.internal.jmsbridge.IncomingMessagesForwardingJmsBridge"
+        c:jmsTemplate-ref="vnet.sms.gateway.server.server-framework.jmsTemplate" />
 	<!-- END-SNIPPET: message forwarding JMS bridge -->
 
 	<!-- START-SNIPPET: initial channel events monitor -->
-	<bean
-		id="vnet.sms.gateway.server.server-framework.initialChannelEventsMonitor"
-		class="vnet.sms.gateway.nettysupport.monitor.incoming.InitialChannelEventsMonitor" />
+    <bean
+        id="vnet.sms.gateway.server.server-framework.initialChannelEventsMonitor"
+        class="vnet.sms.gateway.nettysupport.monitor.incoming.InitialChannelEventsMonitor" />
 	<!-- END-SNIPPET: initial channel events monitor -->
 
 	<!-- START-SNIPPET: ChannelGroup storing all connected channels -->
-	<bean id="vnet.sms.gateway.server.server-framework.allConnectedChannels"
-		class="vnet.sms.gateway.server.framework.internal.channel.ChannelGroupFactory" />
+    <bean
+        id="vnet.sms.gateway.server.server-framework.allConnectedChannels"
+        class="vnet.sms.gateway.server.framework.internal.channel.ChannelGroupFactory" />
 	<!-- END-SNIPPET: ChannelGroup storing all connected channels -->
 
 </beans>

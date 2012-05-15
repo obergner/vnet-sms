@@ -15,7 +15,7 @@
     <!-- START-SNIPPET: SSH server -->
     <bean
         id="vnet.sms.gateway.server.server-framework.sshServer"
-        class="vnet.sms.common.shell.clamshellsshsrv.internal.SshServerFactoryBean"
+        class="vnet.sms.common.shell.springshellsshd.internal.SshServerFactoryBean"
         p:autostart="true"
         p:host="localhost"
         p:hostKeyPath="hostkey.ser"

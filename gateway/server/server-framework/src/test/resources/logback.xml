@@ -11,8 +11,8 @@
     </appender>
 
     <logger
-        name="org.springframework"
-        level="INFO" />
+        name="vnet.sms.common"
+        level="TRACE" />
 
     <logger
         name="vnet.sms"

@@ -104,7 +104,7 @@ public class GatewayServerDescriptionMdcThreadFactoryBuilder implements
 	// ------------------------------------------------------------------------
 
 	/**
-	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+	 * @see vnet.sms.common.beans.factory.InitializingBean#afterPropertiesSet()
 	 */
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -130,7 +130,7 @@ public class GatewayServerDescriptionMdcThreadFactoryBuilder implements
 	}
 
 	/**
-	 * @see org.springframework.beans.factory.FactoryBean#getObject()
+	 * @see vnet.sms.common.beans.factory.FactoryBean#getObject()
 	 */
 	@Override
 	public ThreadFactory getObject() throws Exception {
@@ -142,7 +142,7 @@ public class GatewayServerDescriptionMdcThreadFactoryBuilder implements
 	}
 
 	/**
-	 * @see org.springframework.beans.factory.FactoryBean#getObjectType()
+	 * @see vnet.sms.common.beans.factory.FactoryBean#getObjectType()
 	 */
 	@Override
 	public Class<?> getObjectType() {
@@ -151,7 +151,7 @@ public class GatewayServerDescriptionMdcThreadFactoryBuilder implements
 	}
 
 	/**
-	 * @see org.springframework.beans.factory.FactoryBean#isSingleton()
+	 * @see vnet.sms.common.beans.factory.FactoryBean#isSingleton()
 	 */
 	@Override
 	public boolean isSingleton() {

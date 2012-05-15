@@ -62,7 +62,7 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 	private GatewayServerChannelPipelineFactory<ID, TP>	producedPipelineFactory;
 
 	/**
-	 * @see org.springframework.beans.factory.FactoryBean#getObject()
+	 * @see vnet.sms.common.beans.factory.FactoryBean#getObject()
 	 */
 	@Override
 	public GatewayServerChannelPipelineFactory<ID, TP> getObject()
@@ -75,7 +75,7 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 	}
 
 	/**
-	 * @see org.springframework.beans.factory.FactoryBean#getObjectType()
+	 * @see vnet.sms.common.beans.factory.FactoryBean#getObjectType()
 	 */
 	@Override
 	public Class<?> getObjectType() {
@@ -87,7 +87,7 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 	 * Returns {@code true} as a {@link GatewayServerChannelPipelineFactory} is
 	 * a singleton.
 	 * 
-	 * @see org.springframework.beans.factory.FactoryBean#isSingleton()
+	 * @see vnet.sms.common.beans.factory.FactoryBean#isSingleton()
 	 */
 	@Override
 	public boolean isSingleton() {

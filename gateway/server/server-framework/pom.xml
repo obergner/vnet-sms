@@ -68,7 +68,7 @@
 
         <dependency>
             <groupId>vnet.sms.common.shell</groupId>
-            <artifactId>clamshell-spring</artifactId>
+            <artifactId>spring-shell</artifactId>
             <scope>compile</scope>
         </dependency>
 
@@ -118,7 +118,7 @@
 
         <dependency>
             <groupId>vnet.sms.common.shell</groupId>
-            <artifactId>clamshell-ssh-server</artifactId>
+            <artifactId>spring-shell-sshd</artifactId>
             <scope>runtime</scope>
         </dependency>
 		<!-- *************************************************************** -->

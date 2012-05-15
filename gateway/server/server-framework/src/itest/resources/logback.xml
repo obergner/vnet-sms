@@ -11,15 +11,19 @@
     </appender>
 
     <logger
-        name="org.springframework"
-        level="INFO" />
-
-    <logger
-        name="org.apache.sshd"
+        name="vnet.sms.common"
         level="TRACE" />
 
     <logger
+        name="org.apache.sshd"
+        level="INFO" />
+
+    <logger
         name="vnet.sms"
+        level="INFO" />
+
+    <logger
+        name="org.springframework"
         level="TRACE" />
 
 	<!-- Strictly speaking, the level attribute is not necessary since -->

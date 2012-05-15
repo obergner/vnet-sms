@@ -58,7 +58,7 @@ public class GatewayServerBuilder<ID extends java.io.Serializable, TP>
 	}
 
 	/**
-	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+	 * @see vnet.sms.common.beans.factory.InitializingBean#afterPropertiesSet()
 	 */
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -96,7 +96,7 @@ public class GatewayServerBuilder<ID extends java.io.Serializable, TP>
 	}
 
 	/**
-	 * @see org.springframework.beans.factory.DisposableBean#destroy()
+	 * @see vnet.sms.common.beans.factory.DisposableBean#destroy()
 	 */
 	@Override
 	public void destroy() throws Exception {

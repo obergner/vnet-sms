@@ -11,57 +11,64 @@
 	OF ANY KIND, either express or implied. See the License for the specific 
 	language governing permissions and limitations under the License. -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>vnet.sms.common</groupId>
-		<artifactId>shell</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
-		<relativePath>../</relativePath>
-	</parent>
+    <parent>
+        <groupId>vnet.sms.common</groupId>
+        <artifactId>shell</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../</relativePath>
+    </parent>
 
-	<groupId>vnet.sms.common.shell</groupId>
-	<artifactId>clamshell-spring</artifactId>
-	<packaging>bundle</packaging>
-	<name>SMS :: Common :: Shell :: Clamshell for Spring</name>
-	<description>Clamshell CLI integrated into Spring</description>
+    <groupId>vnet.sms.common.shell</groupId>
+    <artifactId>clamshell-spring</artifactId>
+    <packaging>bundle</packaging>
+    <name>SMS :: Common :: Shell :: Clamshell for Spring</name>
+    <description>Clamshell CLI integrated into Spring</description>
 
-	<properties>
-	</properties>
+    <properties>
+    </properties>
 
-	<dependencies>
+    <dependencies>
 		<!-- *************************************************************** -->
 		<!-- Compile -->
 		<!-- *************************************************************** -->
-		<dependency>
-			<groupId>org.clamshellcli</groupId>
-			<artifactId>clamshell-api</artifactId>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.clamshellcli</groupId>
-			<artifactId>clamshell-impl-core</artifactId>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.clamshellcli</groupId>
-			<artifactId>clamshell-impl-default</artifactId>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<scope>compile</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.springframework.shell</groupId>
+            <artifactId>spring-shell</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.clamshellcli</groupId>
+            <artifactId>clamshell-api</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.clamshellcli</groupId>
+            <artifactId>clamshell-impl-core</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.clamshellcli</groupId>
+            <artifactId>clamshell-impl-default</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <scope>compile</scope>
+        </dependency>
 		<!-- *************************************************************** -->
 		<!-- Runtime -->
 		<!-- *************************************************************** -->
 		<!-- *************************************************************** -->
 		<!-- Test -->
 		<!-- *************************************************************** -->
-	</dependencies>
+    </dependencies>
 
 </project>

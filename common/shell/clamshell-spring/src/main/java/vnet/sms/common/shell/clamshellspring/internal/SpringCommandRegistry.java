@@ -65,7 +65,7 @@ public final class SpringCommandRegistry implements CommandRegistry,
 	}
 
 	/**
-	 * @see org.springframework.beans.factory.config.BeanPostProcessor#postProcessBeforeInitialization(java.lang.Object,
+	 * @see vnet.sms.common.beans.factory.config.BeanPostProcessor#postProcessBeforeInitialization(java.lang.Object,
 	 *      java.lang.String)
 	 */
 	@Override
@@ -75,7 +75,7 @@ public final class SpringCommandRegistry implements CommandRegistry,
 	}
 
 	/**
-	 * @see org.springframework.beans.factory.config.BeanPostProcessor#postProcessAfterInitialization(java.lang.Object,
+	 * @see vnet.sms.common.beans.factory.config.BeanPostProcessor#postProcessAfterInitialization(java.lang.Object,
 	 *      java.lang.String)
 	 */
 	@Override

@@ -29,7 +29,7 @@
 		<chunkThreshold>2000</chunkThreshold>
 	</appender>
 
-	<logger name="org.springframework" level="TRACE" />
+	<logger name="vnet.sms.common" level="TRACE" />
 
 	<logger name="vnet.sms" level="TRACE" />
 

@@ -1,0 +1,53 @@
+/*
+ * Copyright 2011-2012 the original author or authors.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package vnet.sms.common.shell.springshell.internal.plugin;
+
+import static org.junit.Assert.assertNotNull;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+import vnet.sms.common.shell.springshell.internal.plugin.DefaultBannerProvider;
+
+/**
+ * @author Jarred Li
+ * 
+ */
+public class DefaultBannerProviderTest {
+
+	private final DefaultBannerProvider	banner	= new DefaultBannerProvider();
+
+	/**
+	 * Test method for
+	 * {@link vnet.sms.common.shell.springshell.internal.plugin.DefaultBannerProvider#getOrder()}
+	 * .
+	 */
+	@Test
+	public void testGetOrder() {
+		Assert.assertTrue(this.banner.getOrder() == Integer.MAX_VALUE);
+	}
+
+	/**
+	 * Test method for
+	 * {@link vnet.sms.common.shell.springshell.internal.plugin.DefaultBannerProvider#getBanner()}
+	 * .
+	 */
+	@Test
+	public void testGetBanner() {
+		assertNotNull(this.banner.getBanner());
+	}
+
+}

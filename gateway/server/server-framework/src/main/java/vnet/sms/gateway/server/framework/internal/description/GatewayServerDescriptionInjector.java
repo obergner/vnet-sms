@@ -27,7 +27,7 @@ public class GatewayServerDescriptionInjector implements BeanPostProcessor,
 	private ApplicationContext	applicationContext;
 
 	/**
-	 * @see org.springframework.context.ApplicationContextAware#setApplicationContext(org.springframework.context.ApplicationContext)
+	 * @see vnet.sms.common.context.ApplicationContextAware#setApplicationContext(vnet.sms.common.context.ApplicationContext)
 	 */
 	@Override
 	public void setApplicationContext(
@@ -38,7 +38,7 @@ public class GatewayServerDescriptionInjector implements BeanPostProcessor,
 	}
 
 	/**
-	 * @see org.springframework.beans.factory.config.BeanPostProcessor#postProcessBeforeInitialization(java.lang.Object,
+	 * @see vnet.sms.common.beans.factory.config.BeanPostProcessor#postProcessBeforeInitialization(java.lang.Object,
 	 *      java.lang.String)
 	 */
 	@Override
@@ -70,7 +70,7 @@ public class GatewayServerDescriptionInjector implements BeanPostProcessor,
 	}
 
 	/**
-	 * @see org.springframework.beans.factory.config.BeanPostProcessor#postProcessAfterInitialization(java.lang.Object,
+	 * @see vnet.sms.common.beans.factory.config.BeanPostProcessor#postProcessAfterInitialization(java.lang.Object,
 	 *      java.lang.String)
 	 */
 	@Override

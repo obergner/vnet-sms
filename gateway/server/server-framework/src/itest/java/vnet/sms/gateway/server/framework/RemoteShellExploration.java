@@ -24,7 +24,7 @@ import vnet.sms.gateway.server.framework.test.IntegrationTestClient;
         "classpath:META-INF/itest/itest-test-client-context.xml",
         "classpath:META-INF/itest/itest-test-jms-listener-context.xml",
         "classpath:META-INF/itest/itest-gateway-server-description-context.xml" })
-public class RemoteShellExplorationIT {
+public class RemoteShellExploration {
 
 	@Value("#{ '${gateway.server.host}' }")
 	private String	serverHost;

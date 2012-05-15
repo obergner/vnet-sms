@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans
+    xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:c="http://www.springframework.org/schema/c"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="
+       http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       http://www.springframework.org/schema/util
+       http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+       
+    <!-- 
+        Shell factory and injector
+    -->
+
+    <bean
+        id="vnet.sms.common.shell.springshell.shellFactoryInjector"
+        class="vnet.sms.common.shell.springshell.internal.JLineShellComponentFactoryInjector"
+        c:factoryToInject-ref="vnet.sms.common.shell.springshell.shellFactory" />
+
+    <bean
+        id="vnet.sms.common.shell.springshell.shellFactory"
+        class="vnet.sms.common.shell.springshell.JLineShellComponentFactory"
+        c:pluginProvidersRegistry-ref="vnet.sms.common.shell.springshell.pluginProvidersRegistry"
+        c:parser-ref="vnet.sms.common.shell.springshell.shellParser" />
+
+    <!-- 
+        Registry for Commands 
+    -->
+
+    <bean
+        id="vnet.sms.common.shell.springshell.commandsRegistry"
+        class="vnet.sms.common.shell.springshell.internal.commands.CommandsRegistry" />
+
+    <!-- 
+        Registry for Converters
+    -->
+
+    <bean
+        id="vnet.sms.common.shell.springshell.convertersRegistry"
+        class="vnet.sms.common.shell.springshell.internal.converters.ConvertersRegistry" />
+        
+    <!-- 
+        Plugins registry
+    -->
+
+    <bean
+        id="vnet.sms.common.shell.springshell.pluginProvidersRegistry"
+        class="vnet.sms.common.shell.springshell.internal.plugin.ApplicationContextPluginProvidersRegistry" />
+        
+    <!-- 
+        Parser
+    -->
+
+    <bean
+        id="vnet.sms.common.shell.springshell.shellParser"
+        class="vnet.sms.common.shell.springshell.internal.parser.SimpleParser"
+        p:commandRegistry-ref="vnet.sms.common.shell.springshell.commandsRegistry"
+        p:convertersRegistry-ref="vnet.sms.common.shell.springshell.convertersRegistry" />
+
+    <!-- 
+        Configure converters 
+    -->
+
+    <bean
+        class="vnet.sms.common.shell.springshell.internal.converters.StringConverter" />
+
+    <bean
+        class="vnet.sms.common.shell.springshell.internal.converters.AvailableCommandsConverter" />
+
+    <bean
+        class="vnet.sms.common.shell.springshell.internal.converters.BigDecimalConverter" />
+
+    <bean
+        class="vnet.sms.common.shell.springshell.internal.converters.BigIntegerConverter" />
+
+    <bean
+        class="vnet.sms.common.shell.springshell.internal.converters.BooleanConverter" />
+
+    <bean
+        class="vnet.sms.common.shell.springshell.internal.converters.CharacterConverter" />
+
+    <bean
+        class="vnet.sms.common.shell.springshell.internal.converters.DateConverter" />
+
+    <bean
+        class="vnet.sms.common.shell.springshell.internal.converters.DoubleConverter" />
+
+    <bean
+        class="vnet.sms.common.shell.springshell.internal.converters.EnumConverter" />
+
+    <bean
+        class="vnet.sms.common.shell.springshell.internal.converters.FloatConverter" />
+
+    <bean
+        class="vnet.sms.common.shell.springshell.internal.converters.IntegerConverter" />
+
+    <bean
+        class="vnet.sms.common.shell.springshell.internal.converters.LocaleConverter" />
+
+    <bean
+        class="vnet.sms.common.shell.springshell.internal.converters.LongConverter" />
+
+    <bean
+        class="vnet.sms.common.shell.springshell.internal.converters.ShortConverter" />
+
+    <bean
+        class="vnet.sms.common.shell.springshell.internal.converters.StaticFieldConverterImpl" />
+
+    <bean
+        class="vnet.sms.common.shell.springshell.internal.converters.SimpleFileConverter" />
+
+    <!--
+        Standard plugins
+    -->
+
+    <bean
+        id="vnet.sms.common.shell.springshell.bannerProvider"
+        class="vnet.sms.common.shell.springshell.internal.plugin.DefaultBannerProvider" />
+
+    <bean
+        id="vnet.sms.common.shell.springshell.historyFileNameProvider"
+        class="vnet.sms.common.shell.springshell.internal.plugin.DefaultHistoryFileNameProvider" />
+
+    <bean
+        id="vnet.sms.common.shell.springshell.promptProvider"
+        class="vnet.sms.common.shell.springshell.internal.plugin.DefaultPromptProvider" />
+        
+    <!--
+        Standard commands
+    -->
+
+    <bean
+        id="vnet.sms.common.shell.springshell.essentialCommands"
+        class="vnet.sms.common.shell.springshell.internal.commands.EssentialCommands" />
+
+    <bean
+        id="vnet.sms.common.shell.springshell.helpCommands"
+        class="vnet.sms.common.shell.springshell.internal.commands.HelpCommands"
+        p:commandsRegistry-ref="vnet.sms.common.shell.springshell.commandsRegistry" />
+
+    <bean
+        id="vnet.sms.common.shell.springshell.hintCommands"
+        class="vnet.sms.common.shell.springshell.internal.commands.HintCommands"
+        p:hintOperations-ref="vnet.sms.common.shell.springshell.hintOperations" />
+        
+    <!--
+        Command support
+    -->
+
+    <bean
+        id="vnet.sms.common.shell.springshell.hintOperations"
+        class="vnet.sms.common.shell.springshell.internal.commands.ResourceBundleHintOperations" />
+
+    <bean
+        id="vnet.sms.common.shell.springshell.hintConverter"
+        class="vnet.sms.common.shell.springshell.internal.converters.HintConverter"
+        p:hintOperations-ref="vnet.sms.common.shell.springshell.hintOperations" />
+
+</beans>

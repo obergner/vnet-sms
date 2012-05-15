@@ -70,7 +70,7 @@ public class SshServerFactoryBean implements FactoryBean<SshServer>,
 	}
 
 	/**
-	 * @see org.springframework.beans.factory.DisposableBean#destroy()
+	 * @see vnet.sms.common.beans.factory.DisposableBean#destroy()
 	 */
 	@Override
 	public void destroy() throws Exception {
@@ -85,7 +85,7 @@ public class SshServerFactoryBean implements FactoryBean<SshServer>,
 	}
 
 	/**
-	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+	 * @see vnet.sms.common.beans.factory.InitializingBean#afterPropertiesSet()
 	 */
 	@Override
 	public void afterPropertiesSet() throws Exception {

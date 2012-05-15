@@ -118,7 +118,7 @@ public class SpringPluginRegistry implements PluginRegistry, BeanPostProcessor {
 	}
 
 	/**
-	 * @see org.springframework.beans.factory.config.BeanPostProcessor#
+	 * @see vnet.sms.common.beans.factory.config.BeanPostProcessor#
 	 *      postProcessBeforeInitialization(java.lang.Object, java.lang.String)
 	 */
 	@Override
@@ -128,7 +128,7 @@ public class SpringPluginRegistry implements PluginRegistry, BeanPostProcessor {
 	}
 
 	/**
-	 * @see org.springframework.beans.factory.config.BeanPostProcessor#
+	 * @see vnet.sms.common.beans.factory.config.BeanPostProcessor#
 	 *      postProcessAfterInitialization(java.lang.Object, java.lang.String)
 	 */
 	@Override

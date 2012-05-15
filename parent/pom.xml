@@ -40,6 +40,8 @@
         <module.common.shell.version>1.0.0-SNAPSHOT</module.common.shell.version>
         <module.common.shell.clamshell-spring.version>1.0.0-SNAPSHOT</module.common.shell.clamshell-spring.version>
         <module.common.shell.clamshell-ssh-server.version>1.0.0-SNAPSHOT</module.common.shell.clamshell-ssh-server.version>
+        <module.common.shell.spring-shell.version>1.0.0-SNAPSHOT</module.common.shell.spring-shell.version>
+        <module.common.shell.spring-shell-sshd.version>1.0.0-SNAPSHOT</module.common.shell.spring-shell-sshd.version>
         <module.gateway.version>1.0.0-SNAPSHOT</module.gateway.version>
         <module.gateway.netty-gateway-support.version>1.0.0-SNAPSHOT</module.gateway.netty-gateway-support.version>
         <module.gateway.netty-test-support.version>1.0.0-SNAPSHOT</module.gateway.netty-test-support.version>
@@ -87,6 +89,7 @@
         <deps.felix-configadmin.version>1.2.8</deps.felix-configadmin.version>
         <deps.clamshell-cli.version>0.5.1</deps.clamshell-cli.version>
         <deps.sshd.version>0.6.0</deps.sshd.version>
+        <deps.spring-shell.version>1.0.0.BUILD-SNAPSHOT</deps.spring-shell.version>
 		<!-- Testing -->
         <deps.junit.version>4.10</deps.junit.version>
         <deps.arquillian.version>1.0.0.CR7</deps.arquillian.version>
@@ -211,6 +214,29 @@
                 <enabled>true</enabled>
             </releases>
         </repository>
+        <!-- The following two are needed for spring-shell -->
+        <repository>
+            <id>org.springframework.springMavenSnapshots</id>
+            <name>Springframework Maven SNAPSHOT Repository</name>
+            <url>http://maven.springframework.org/snapshot</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+        <repository>
+            <id>org.springframework.springRooRepository</id>
+            <name>Spring Roo Maven Repository</name>
+            <url>http://spring-roo-repository.springsource.org/release</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
     </repositories>
 
 	<!-- =================================================== -->
@@ -268,6 +294,18 @@
                 <groupId>vnet.sms.common.shell</groupId>
                 <artifactId>clamshell-ssh-server</artifactId>
                 <version>${module.common.shell.clamshell-ssh-server.version}</version>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>vnet.sms.common.shell</groupId>
+                <artifactId>spring-shell</artifactId>
+                <version>${module.common.shell.spring-shell.version}</version>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>vnet.sms.common.shell</groupId>
+                <artifactId>spring-shell-sshd</artifactId>
+                <version>${module.common.shell.spring-shell-sshd.version}</version>
                 <type>jar</type>
             </dependency>
             <dependency>
@@ -770,6 +808,10 @@
                         <groupId>org.springframework</groupId>
                         <artifactId>spring</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -840,7 +882,14 @@
                 <version>${deps.clamshell-cli.version}</version>
                 <type>jar</type>
             </dependency>
-            <!-- Clamshell CLI -->
+            <!-- Spring Shell -->
+            <dependency>
+                <groupId>org.springframework.shell</groupId>
+                <artifactId>spring-shell</artifactId>
+                <version>${deps.spring-shell.version}</version>
+                <type>jar</type>
+            </dependency>
+            <!-- Apache SSHD -->
             <dependency>
                 <groupId>org.apache.sshd</groupId>
                 <artifactId>sshd-core</artifactId>
