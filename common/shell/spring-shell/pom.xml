@@ -16,11 +16,9 @@
     <groupId>vnet.sms.common.shell</groupId>
     <artifactId>spring-shell</artifactId>
     <packaging>bundle</packaging>
-    <name>Spring Shell</name>
+    <name>SMS :: Common :: Shell :: Spring Shell</name>
     <description>
-		<![CDATA[
-      This project is a minimal jar utility with Spring configuration.
-    ]]>
+		<![CDATA[Export Spring Shell via SSH.]]>
 	</description>
 
     <dependencies>
