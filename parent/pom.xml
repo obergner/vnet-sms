@@ -70,7 +70,7 @@
         <deps.logback.version>1.0.0</deps.logback.version>
         <deps.spring.version>3.1.1.RELEASE</deps.spring.version>
         <deps.camel.version>2.9.0</deps.camel.version>
-        <deps.netty.version>3.2.7.Final</deps.netty.version>
+        <deps.netty.version>3.4.5.Final</deps.netty.version>
         <deps.osgi-core.version>4.3.0</deps.osgi-core.version>
         <deps.osgi-compendium.version>4.2.0</deps.osgi-compendium.version>
         <deps.google-guava.version>11.0.1</deps.google-guava.version>
@@ -615,7 +615,7 @@
             </dependency>
 			<!-- JBoss Netty -->
             <dependency>
-                <groupId>org.jboss.netty</groupId>
+                <groupId>io.netty</groupId>
                 <artifactId>netty</artifactId>
                 <version>${deps.netty.version}</version>
                 <type>jar</type>

@@ -7,7 +7,6 @@ import java.lang.reflect.Method;
 
 import org.junit.Test;
 
-import vnet.sms.common.shell.springshell.MethodTarget;
 import vnet.sms.common.shell.springshell.command.CommandMarker;
 
 /**

@@ -9,8 +9,6 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import vnet.sms.common.shell.springshell.internal.util.IOUtils;
-
 /**
  * Unit test of {@link IOUtils}.
  * 

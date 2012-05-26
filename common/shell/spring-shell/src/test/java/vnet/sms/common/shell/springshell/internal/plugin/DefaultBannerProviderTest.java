@@ -20,8 +20,6 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.Assert;
 import org.junit.Test;
 
-import vnet.sms.common.shell.springshell.internal.plugin.DefaultBannerProvider;
-
 /**
  * @author Jarred Li
  * 

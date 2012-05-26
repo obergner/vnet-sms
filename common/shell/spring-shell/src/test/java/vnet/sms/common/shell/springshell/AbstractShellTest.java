@@ -6,8 +6,6 @@ import static org.mockito.Mockito.when;
 
 import org.junit.Test;
 
-import vnet.sms.common.shell.springshell.AbstractShell;
-
 /**
  * Unit test of {@link AbstractShell} (not a superclass for writing tests for
  * {@link AbstractShell} subclasses)

@@ -19,7 +19,6 @@ package vnet.sms.common.shell.springshell.internal.util;
 import java.util.Collection;
 import java.util.Map;
 
-
 /**
  * Assertion utility class that assists in validating arguments. Useful for
  * identifying programmer errors early and clearly at runtime.

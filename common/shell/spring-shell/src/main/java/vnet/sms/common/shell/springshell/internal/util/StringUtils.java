@@ -13,7 +13,6 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
-
 /**
  * Miscellaneous {@link String} utility methods.
  * 

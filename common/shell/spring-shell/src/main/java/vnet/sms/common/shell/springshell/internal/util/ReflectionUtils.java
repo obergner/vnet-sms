@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-
 /**
  * Simple utility class for working with the reflection API and handling
  * reflection exceptions.

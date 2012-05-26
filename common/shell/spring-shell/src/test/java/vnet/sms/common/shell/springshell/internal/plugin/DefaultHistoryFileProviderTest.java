@@ -21,7 +21,6 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 
 import vnet.sms.common.shell.springshell.Constant;
-import vnet.sms.common.shell.springshell.internal.plugin.DefaultHistoryFileNameProvider;
 import vnet.sms.common.shell.springshell.plugin.HistoryFileNameProvider;
 
 /**

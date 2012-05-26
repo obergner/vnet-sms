@@ -13,9 +13,6 @@ import java.util.List;
 
 import org.junit.Test;
 
-import vnet.sms.common.shell.springshell.internal.util.CollectionUtils;
-import vnet.sms.common.shell.springshell.internal.util.Filter;
-
 /**
  * Unit test of {@link CollectionUtils}
  * 

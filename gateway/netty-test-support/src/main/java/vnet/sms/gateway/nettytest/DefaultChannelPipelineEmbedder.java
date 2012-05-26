@@ -33,6 +33,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.jboss.netty.buffer.ChannelBufferFactory;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelEvent;
+import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.ChannelHandler;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ChannelPipeline;
@@ -40,6 +41,7 @@ import org.jboss.netty.channel.ChannelPipelineException;
 import org.jboss.netty.channel.ChannelPipelineFactory;
 import org.jboss.netty.channel.ChannelSink;
 import org.jboss.netty.channel.ChannelUpstreamHandler;
+import org.jboss.netty.channel.Channels;
 import org.jboss.netty.channel.DefaultChannelPipeline;
 import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.channel.MessageEvent;
@@ -423,6 +425,17 @@ public class DefaultChannelPipelineEmbedder implements ChannelPipelineEmbedder {
 			        .getCause() : cause;
 			DefaultChannelPipelineEmbedder.this.thrownException
 			        .set(actualCause);
+		}
+
+		@Override
+		public ChannelFuture execute(final ChannelPipeline pipeline,
+		        final Runnable task) {
+			try {
+				task.run();
+				return Channels.succeededFuture(pipeline.getChannel());
+			} catch (final Throwable t) {
+				return Channels.failedFuture(pipeline.getChannel(), t);
+			}
 		}
 	}
 }

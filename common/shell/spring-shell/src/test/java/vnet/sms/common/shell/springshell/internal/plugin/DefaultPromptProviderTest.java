@@ -22,7 +22,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import vnet.sms.common.shell.springshell.Constant;
-import vnet.sms.common.shell.springshell.internal.plugin.DefaultPromptProvider;
 import vnet.sms.common.shell.springshell.plugin.PromptProvider;
 
 /**

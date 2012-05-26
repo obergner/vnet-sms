@@ -9,8 +9,6 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 
-import vnet.sms.common.shell.springshell.internal.util.AnsiEscapeCode;
-
 /**
  * Unit test for the {@link AnsiEscapeCode} enum.
  * 

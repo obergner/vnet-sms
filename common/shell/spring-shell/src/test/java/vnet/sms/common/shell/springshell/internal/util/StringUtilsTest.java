@@ -10,7 +10,6 @@ import java.util.Collections;
 
 import org.junit.Test;
 
-
 /**
  * Unit tests for {@link StringUtils}.
  * 

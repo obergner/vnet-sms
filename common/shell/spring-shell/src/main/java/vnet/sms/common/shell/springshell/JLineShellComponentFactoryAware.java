@@ -3,7 +3,6 @@
  */
 package vnet.sms.common.shell.springshell;
 
-
 /**
  * @author obergner
  * 

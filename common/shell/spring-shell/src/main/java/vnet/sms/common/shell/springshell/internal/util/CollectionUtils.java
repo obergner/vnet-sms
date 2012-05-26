@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-
 /**
  * Miscellaneous collection utility methods. Mainly for internal use within the
  * framework.
