@@ -3,6 +3,7 @@ package vnet.sms.gateway.server.framework.test;
 import java.net.InetSocketAddress;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.jboss.netty.bootstrap.ClientBootstrap;
@@ -25,6 +26,8 @@ import org.springframework.security.authentication.BadCredentialsException;
 import vnet.sms.common.messages.LoginRequest;
 import vnet.sms.common.messages.LoginResponse;
 import vnet.sms.common.messages.Message;
+import vnet.sms.common.messages.PingRequest;
+import vnet.sms.common.messages.PingResponse;
 import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;
 
 public class IntegrationTestClient {
@@ -44,14 +47,19 @@ public class IntegrationTestClient {
 		this.serverAddress = new InetSocketAddress(host, port);
 	}
 
-	public void connect() throws Throwable {
+	public void connect() throws Exception {
+		connect(false);
+	}
+
+	public void connect(final boolean respondToPing) throws Exception {
 		this.log.info("Connecting to {} ...", this.serverAddress);
 
 		this.bootstrap = new ClientBootstrap(new NioClientSocketChannelFactory(
 		        Executors.newCachedThreadPool(),
 		        Executors.newCachedThreadPool()));
 		this.bootstrap
-		        .setPipelineFactory(new IntegrationTestClientChannelPipelineFactory());
+		        .setPipelineFactory(new IntegrationTestClientChannelPipelineFactory(
+		                respondToPing));
 
 		final ChannelFuture channelConnected = this.bootstrap
 		        .connect(this.serverAddress);
@@ -64,7 +72,7 @@ public class IntegrationTestClient {
 			this.bootstrap.releaseExternalResources();
 			this.bootstrap = null;
 
-			throw channelConnected.getCause();
+			throw new RuntimeException(channelConnected.getCause());
 		}
 
 		this.log.info("Connected to {}", this.serverAddress);
@@ -77,8 +85,9 @@ public class IntegrationTestClient {
 
 	public void sendMessage(final int messageReference, final Message message,
 	        final MessageEventListener responseListener) throws Throwable {
-		this.log.debug("Sending message {} to {} ...", message,
-		        this.serverAddress);
+		this.log.debug("Sending message {} to {} via channel {}...",
+		        new Object[] { message, this.serverAddress,
+		                this.serverConnection });
 
 		maybeInstallMessageListener(responseListener);
 
@@ -94,8 +103,9 @@ public class IntegrationTestClient {
 			throw writeCompleted.getCause();
 		}
 
-		this.log.debug("Successfully sent message {} to {}", message,
-		        this.serverAddress);
+		this.log.debug("Successfully sent message {} to {} via channel {}",
+		        new Object[] { message, this.serverAddress,
+		                this.serverConnection });
 	}
 
 	private void maybeInstallMessageListener(
@@ -205,7 +215,7 @@ public class IntegrationTestClient {
 		}
 	}
 
-	public void disconnect() throws Throwable {
+	public void disconnect() throws Exception {
 		this.log.info("Disconnecting from {} ...", this.serverAddress);
 
 		final ChannelFuture channelDisconnected = getMandatoryServerConnection()
@@ -217,7 +227,7 @@ public class IntegrationTestClient {
 			        + ": " + channelDisconnected.getCause().getMessage(),
 			        channelDisconnected.getCause());
 
-			throw channelDisconnected.getCause();
+			throw new RuntimeException(channelDisconnected.getCause());
 		}
 
 		this.log.info("Disconnected from {}", this.serverAddress);
@@ -234,21 +244,68 @@ public class IntegrationTestClient {
 	private final class IntegrationTestClientChannelPipelineFactory implements
 	        ChannelPipelineFactory {
 
+		private final boolean		             respondToPing;
+
+		private final PingResponseChannelHandler	pingResponseHandler	= new PingResponseChannelHandler();
+
+		IntegrationTestClientChannelPipelineFactory(final boolean respondToPing) {
+			this.respondToPing = respondToPing;
+		}
+
 		@Override
 		public ChannelPipeline getPipeline() throws Exception {
 			final ChannelPipeline pipeline = Channels.pipeline();
 			pipeline.addLast("encoder", new ObjectEncoder());
 			pipeline.addLast("decoder",
 			        new ObjectDecoder(ClassResolvers.cacheDisabled(null)));
+			if (this.respondToPing) {
+				pipeline.addLast(PingResponseChannelHandler.NAME,
+				        this.pingResponseHandler);
+			}
 
 			return pipeline;
+		}
+	}
+
+	private final class PingResponseChannelHandler extends
+	        SimpleChannelUpstreamHandler {
+
+		static final String		    NAME		   = "itest:ping-response";
+
+		private final AtomicInteger	nextMessageRef	= new AtomicInteger(
+		                                                   10000000);
+
+		@Override
+		public void messageReceived(final ChannelHandlerContext ctx,
+		        final MessageEvent e) throws Exception {
+			try {
+				final Object message = e.getMessage();
+				if (ReferenceableMessageContainer.class.isInstance(message)
+				        && PingRequest.class
+				                .isInstance(ReferenceableMessageContainer.class
+				                        .cast(message).getMessage())) {
+					final PingRequest pingRequest = PingRequest.class
+					        .cast(ReferenceableMessageContainer.class.cast(
+					                message).getMessage());
+					final PingResponse pingResponse = PingResponse
+					        .accept(pingRequest);
+					sendMessage(this.nextMessageRef.incrementAndGet(),
+					        pingResponse);
+					IntegrationTestClient.this.log.debug(
+					        "Sent {} in response to {}", pingResponse, message);
+				} else {
+					super.messageReceived(ctx, e);
+				}
+			} catch (final Throwable e1) {
+				throw new RuntimeException(e1);
+			}
 		}
 	}
 
 	private final class ResponseListenerChannelHandler extends
 	        SimpleChannelUpstreamHandler {
 
-		public static final String		   NAME	= "itest:response-listener";
+		static final String		           NAME	= "itest:response-listener";
 
 		private final MessageEventListener	listener;
 

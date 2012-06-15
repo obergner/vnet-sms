@@ -125,7 +125,9 @@ public class ChannelGroupFactory implements FactoryBean<ChannelGroup>,
 	 */
 	@Override
 	public void destroy() throws Exception {
-		this.log.info("Attempting to close all channels in ChannelGroup {} - expecting all channels to be already closed");
+		this.log.info(
+		        "Attempting to close all channels in ChannelGroup {} - expecting all channels to be already closed",
+		        this.product);
 		this.product.close().addListener(new ChannelGroupFutureListener() {
 
 			@Override

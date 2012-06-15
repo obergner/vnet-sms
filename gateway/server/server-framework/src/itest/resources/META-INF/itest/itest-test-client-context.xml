@@ -18,4 +18,10 @@
         c:host="${gateway.server.host}"
         c:port="${gateway.server.port}" />
 
+    <bean
+        id="vnet.sms.gateway.server.server-framework.itest.testClientFactory"
+        class="vnet.sms.gateway.server.framework.test.IntegrationTestClientFactory"
+        c:host="${gateway.server.host}"
+        c:port="${gateway.server.port}" />
+
 </beans>

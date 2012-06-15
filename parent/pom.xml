@@ -60,6 +60,8 @@
         <module.routing-engine.branding.version>1.0.0-SNAPSHOT</module.routing-engine.branding.version>
         <module.routing-engine.platform.version>1.0.0-SNAPSHOT</module.routing-engine.platform.version>
         <module.routing-engine.distribution.version>1.0.0-SNAPSHOT</module.routing-engine.distribution.version>
+        <module.notification-cluster.version>1.0.0-SNAPSHOT</module.notification-cluster.version>
+        <module.notification-cluster.cassandra-cachewriter.version>1.0.0-SNAPSHOT</module.notification-cluster.cassandra-cachewriter.version>
 		<!-- Standard javax apis -->
         <deps.jta.version>1.1</deps.jta.version>
         <deps.jms.version>1.1</deps.jms.version>
@@ -90,11 +92,16 @@
         <deps.clamshell-cli.version>0.5.1</deps.clamshell-cli.version>
         <deps.sshd.version>0.6.0</deps.sshd.version>
         <deps.spring-shell.version>1.0.0.BUILD-SNAPSHOT</deps.spring-shell.version>
+        <deps.ehcache.version>2.5.2</deps.ehcache.version>
+        <deps.hectorclient.version>1.1-0</deps.hectorclient.version>
+        <deps.hector-object-mapper.version>3.1-05</deps.hector-object-mapper.version>
+        <deps.astyanax.version>1.0.3</deps.astyanax.version>
 		<!-- Testing -->
         <deps.junit.version>4.10</deps.junit.version>
         <deps.arquillian.version>1.0.0.CR7</deps.arquillian.version>
         <deps.easymock.version>3.1</deps.easymock.version>
         <deps.mockrunner.version>0.3.1</deps.mockrunner.version>
+        <deps.cassandra-unit.version>1.0.3.1</deps.cassandra-unit.version>
 		<!-- ######################################################### -->
 		<!-- Build plugin versions -->
 		<!-- ######################################################### -->
@@ -236,6 +243,17 @@
             <releases>
                 <enabled>true</enabled>
             </releases>
+        </repository>
+        <repository>
+            <id>net.sourceforge.sourceforgeRepository</id>
+            <name>Sonatype's Sourceforge Maven Repository</name>
+            <url>http://oss.sonatype.org/content/groups/sourceforge/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
     </repositories>
 
@@ -429,6 +447,18 @@
                 <artifactId>distribution</artifactId>
                 <version>${module.routing-engine.distribution.version}</version>
                 <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>vnet.sms</groupId>
+                <artifactId>notification-cluster</artifactId>
+                <version>${module.notification-cluster.version}</version>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>vnet.sms.notification-cluster</groupId>
+                <artifactId>cassandra-cachewriter</artifactId>
+                <version>${module.notification-cluster.cassandra-cachewriter.version}</version>
+                <type>jar</type>
             </dependency>
 			<!-- =========================================== -->
 			<!-- Standard Javax APIs -->
@@ -896,6 +926,33 @@
                 <version>${deps.sshd.version}</version>
                 <type>jar</type>
             </dependency>
+            <!-- ehCache -->
+            <dependency>
+                <groupId>net.sf.ehcache</groupId>
+                <artifactId>ehcache-core</artifactId>
+                <version>${deps.ehcache.version}</version>
+                <type>jar</type>
+            </dependency>
+            <!-- Hector for interfacing with Cassandra -->
+            <dependency>
+                <groupId>org.hectorclient</groupId>
+                <artifactId>hector-core</artifactId>
+                <version>${deps.hectorclient.version}</version>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>org.hectorclient</groupId>
+                <artifactId>hector-object-mapper</artifactId>
+                <version>${deps.hector-object-mapper.version}</version>
+                <type>jar</type>
+            </dependency>
+            <!-- Astyanax for interfacing with Cassandra -->
+            <dependency>
+                <groupId>com.netflix.astyanax</groupId>
+                <artifactId>astyanax</artifactId>
+                <version>${deps.astyanax.version}</version>
+                <type>jar</type>
+            </dependency>
 			<!-- =========================================== -->
 			<!-- Test dependencies -->
 			<!-- =========================================== -->
@@ -947,11 +1004,17 @@
                 <scope>test</scope>
                 <type>jar</type>
             </dependency>
-			<!-- TinyBundles: create a test bundle on the fly -->
             <dependency>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.apache.felix.configadmin</artifactId>
                 <version>${deps.felix-configadmin.version}</version>
+                <scope>test</scope>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>org.cassandraunit</groupId>
+                <artifactId>cassandra-unit</artifactId>
+                <version>${deps.cassandra-unit.version}</version>
                 <scope>test</scope>
                 <type>jar</type>
             </dependency>
