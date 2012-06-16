@@ -68,10 +68,10 @@
         <deps.jsr250-api.version>1.0</deps.jsr250-api.version>
         <deps.javax-inject.version>1</deps.javax-inject.version>
 		<!-- Proprietary -->
-        <deps.slf4j.version>1.6.4</deps.slf4j.version>
+        <deps.slf4j.version>1.6.6</deps.slf4j.version>
         <deps.logback.version>1.0.5</deps.logback.version>
         <deps.spring.version>3.1.1.RELEASE</deps.spring.version>
-        <deps.camel.version>2.9.2</deps.camel.version>
+        <deps.camel.version>2.9.0</deps.camel.version>
         <deps.netty.version>3.5.0.Final</deps.netty.version>
         <deps.osgi-core.version>4.3.0</deps.osgi-core.version>
         <deps.osgi-compendium.version>4.2.0</deps.osgi-compendium.version>
