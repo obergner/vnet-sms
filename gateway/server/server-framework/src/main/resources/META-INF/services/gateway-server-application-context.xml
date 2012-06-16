@@ -54,7 +54,9 @@
     <bean
         id="vnet.sms.gateway.server.server-framework.bossExecutor"
         class="org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean"
-        p:threadFactory-ref="vnet.sms.gateway.server.server-framework.bossThreadFactory" />
+        p:threadFactory-ref="vnet.sms.gateway.server.server-framework.bossThreadFactory"
+        p:corePoolSize="20"
+        p:maxPoolSize="30" />
 
     <bean
         id="vnet.sms.gateway.server.server-framework.bossThreadFactory"
@@ -64,7 +66,9 @@
     <bean
         id="vnet.sms.gateway.server.server-framework.workerExecutor"
         class="org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean"
-        p:threadFactory-ref="vnet.sms.gateway.server.server-framework.workerThreadFactory" />
+        p:threadFactory-ref="vnet.sms.gateway.server.server-framework.workerThreadFactory"
+        p:corePoolSize="20"
+        p:maxPoolSize="30" />
 
     <bean
         id="vnet.sms.gateway.server.server-framework.workerThreadFactory"

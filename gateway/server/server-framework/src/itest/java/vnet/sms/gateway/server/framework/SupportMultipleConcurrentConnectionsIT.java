@@ -12,7 +12,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +22,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import vnet.sms.common.messages.LoginRequest;
 import vnet.sms.common.messages.LoginResponse;
-import vnet.sms.gateway.nettysupport.monitor.MonitoringChannelGroup;
 import vnet.sms.gateway.server.framework.test.IntegrationTestClient;
 import vnet.sms.gateway.server.framework.test.IntegrationTestClientFactory;
 import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;
 
-@Ignore("Does not yet work")
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles("itest")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
@@ -46,9 +43,6 @@ import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;
 public class SupportMultipleConcurrentConnectionsIT {
 
 	@Autowired
-	private MonitoringChannelGroup	     allConnectedChannels;
-
-	@Autowired
 	private IntegrationTestClientFactory	testClientFactory;
 
 	@Test
@@ -56,7 +50,7 @@ public class SupportMultipleConcurrentConnectionsIT {
 	        throws Throwable {
 		ExecutorService exec = null;
 		try {
-			final int numberOfConcurrentLogins = 10;
+			final int numberOfConcurrentLogins = 30;
 
 			final CyclicBarrier allClientsConnected = new CyclicBarrier(
 			        numberOfConcurrentLogins);
@@ -81,8 +75,6 @@ public class SupportMultipleConcurrentConnectionsIT {
 			for (int i = 1; i <= numberOfConcurrentLogins; i++) {
 				final Future<ReferenceableMessageContainer> loginResponseFuture = completionService
 				        .take();
-				System.out.println(">>> TAKE ("
-				        + this.allConnectedChannels.size() + ")");
 				final LoginResponse loginResponse = LoginResponse.class
 				        .cast(loginResponseFuture.get().getMessage());
 				assertTrue(
@@ -99,16 +91,16 @@ public class SupportMultipleConcurrentConnectionsIT {
 	private static class LoginSender implements
 	        Callable<ReferenceableMessageContainer> {
 
-		private final CyclicBarrier		    allClientsConnected;
+		private final CyclicBarrier		    waitBarrier;
 
 		private final IntegrationTestClient	testClient;
 
 		private final int		            messageReference;
 
-		LoginSender(final CyclicBarrier allClientsConnected,
+		LoginSender(final CyclicBarrier waitBarrier,
 		        final IntegrationTestClient testClient,
 		        final int messageReference) {
-			this.allClientsConnected = allClientsConnected;
+			this.waitBarrier = waitBarrier;
 			this.testClient = testClient;
 			this.messageReference = messageReference;
 		}
@@ -118,6 +110,8 @@ public class SupportMultipleConcurrentConnectionsIT {
 			try {
 				this.testClient.connect(true);
 
+				this.waitBarrier.await();
+
 				final LoginRequest successfulLoginRequest = new LoginRequest(
 				        "assertThatGatewayServerRespondsWithSuccessfulLoginResponsesToMultipleConcurrentLoginRequests:"
 				                + this.messageReference, "whatever");
@@ -125,10 +119,7 @@ public class SupportMultipleConcurrentConnectionsIT {
 				        .sendMessageAndWaitForResponse(this.messageReference,
 				                successfulLoginRequest);
 
-				System.out.println(">>> WAITING ...");
-				final int arrivalPosition = this.allClientsConnected.await();
-				System.out.println(">>> FINISHED WAITING (" + arrivalPosition
-				        + ")");
+				this.waitBarrier.await();
 
 				return loginResponse;
 			} catch (final Throwable e) {

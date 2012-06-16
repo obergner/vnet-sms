@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -38,6 +39,7 @@ import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles("itest")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @ContextConfiguration({
         "classpath:META-INF/services/gateway-server-application-context.xml",
         "classpath:META-INF/services/gateway-server-authentication-manager-context.xml",
