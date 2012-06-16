@@ -69,15 +69,15 @@
         <deps.javax-inject.version>1</deps.javax-inject.version>
 		<!-- Proprietary -->
         <deps.slf4j.version>1.6.4</deps.slf4j.version>
-        <deps.logback.version>1.0.0</deps.logback.version>
+        <deps.logback.version>1.0.5</deps.logback.version>
         <deps.spring.version>3.1.1.RELEASE</deps.spring.version>
-        <deps.camel.version>2.9.0</deps.camel.version>
-        <deps.netty.version>3.4.5.Final</deps.netty.version>
+        <deps.camel.version>2.9.2</deps.camel.version>
+        <deps.netty.version>3.5.0.Final</deps.netty.version>
         <deps.osgi-core.version>4.3.0</deps.osgi-core.version>
         <deps.osgi-compendium.version>4.2.0</deps.osgi-compendium.version>
-        <deps.google-guava.version>11.0.1</deps.google-guava.version>
+        <deps.google-guava.version>11.0.2</deps.google-guava.version>
         <deps.spring-security.version>3.1.0.RELEASE</deps.spring-security.version>
-        <deps.yammer-metrics.version>2.0.2</deps.yammer-metrics.version>
+        <deps.yammer-metrics.version>2.1.2</deps.yammer-metrics.version>
         <deps.activemq.version>5.5.1</deps.activemq.version>
         <deps.xbean.version>2.8</deps.xbean.version>
         <deps.xbean-spring.version>3.5</deps.xbean-spring.version>
@@ -89,12 +89,9 @@
         <deps.pax-swissbox-tinybundles.version>1.3.1</deps.pax-swissbox-tinybundles.version>
         <deps.pojosr.version>0.1.8</deps.pojosr.version>
         <deps.felix-configadmin.version>1.2.8</deps.felix-configadmin.version>
-        <deps.clamshell-cli.version>0.5.1</deps.clamshell-cli.version>
         <deps.sshd.version>0.6.0</deps.sshd.version>
         <deps.spring-shell.version>1.0.0.BUILD-SNAPSHOT</deps.spring-shell.version>
         <deps.ehcache.version>2.5.2</deps.ehcache.version>
-        <deps.hectorclient.version>1.1-0</deps.hectorclient.version>
-        <deps.hector-object-mapper.version>3.1-05</deps.hector-object-mapper.version>
         <deps.astyanax.version>1.0.3</deps.astyanax.version>
 		<!-- Testing -->
         <deps.junit.version>4.10</deps.junit.version>
@@ -210,17 +207,6 @@
                 <enabled>true</enabled>
             </releases>
         </repository>
-        <repository>
-            <id>com.googlecode.clamshellcliRepository</id>
-            <name>Clamshell-Cli Repository</name>
-            <url>http://s3.amazonaws.com/repo.clamshellcli.org/release/</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </repository>
         <!-- The following two are needed for spring-shell -->
         <repository>
             <id>org.springframework.springMavenSnapshots</id>
@@ -301,18 +287,6 @@
                 <artifactId>shell</artifactId>
                 <version>${module.common.shell.version}</version>
                 <type>pom</type>
-            </dependency>
-            <dependency>
-                <groupId>vnet.sms.common.shell</groupId>
-                <artifactId>clamshell-spring</artifactId>
-                <version>${module.common.shell.clamshell-spring.version}</version>
-                <type>jar</type>
-            </dependency>
-            <dependency>
-                <groupId>vnet.sms.common.shell</groupId>
-                <artifactId>clamshell-ssh-server</artifactId>
-                <version>${module.common.shell.clamshell-ssh-server.version}</version>
-                <type>jar</type>
             </dependency>
             <dependency>
                 <groupId>vnet.sms.common.shell</groupId>
@@ -893,25 +867,6 @@
                 <version>${deps.groovy.version}</version>
                 <type>jar</type>
             </dependency>
-			<!-- Clamshell CLI -->
-            <dependency>
-                <groupId>org.clamshellcli</groupId>
-                <artifactId>clamshell-api</artifactId>
-                <version>${deps.clamshell-cli.version}</version>
-                <type>jar</type>
-            </dependency>
-            <dependency>
-                <groupId>org.clamshellcli</groupId>
-                <artifactId>clamshell-impl-core</artifactId>
-                <version>${deps.clamshell-cli.version}</version>
-                <type>jar</type>
-            </dependency>
-            <dependency>
-                <groupId>org.clamshellcli</groupId>
-                <artifactId>clamshell-impl-default</artifactId>
-                <version>${deps.clamshell-cli.version}</version>
-                <type>jar</type>
-            </dependency>
             <!-- Spring Shell -->
             <dependency>
                 <groupId>org.springframework.shell</groupId>
@@ -933,25 +888,34 @@
                 <version>${deps.ehcache.version}</version>
                 <type>jar</type>
             </dependency>
-            <!-- Hector for interfacing with Cassandra -->
-            <dependency>
-                <groupId>org.hectorclient</groupId>
-                <artifactId>hector-core</artifactId>
-                <version>${deps.hectorclient.version}</version>
-                <type>jar</type>
-            </dependency>
-            <dependency>
-                <groupId>org.hectorclient</groupId>
-                <artifactId>hector-object-mapper</artifactId>
-                <version>${deps.hector-object-mapper.version}</version>
-                <type>jar</type>
-            </dependency>
             <!-- Astyanax for interfacing with Cassandra -->
             <dependency>
                 <groupId>com.netflix.astyanax</groupId>
                 <artifactId>astyanax</artifactId>
                 <version>${deps.astyanax.version}</version>
                 <type>jar</type>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>antlr</groupId>
+                        <artifactId>antlr</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.mortbay.jetty</groupId>
+                        <artifactId>servlet-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-log4j12</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 			<!-- =========================================== -->
 			<!-- Test dependencies -->
@@ -1017,6 +981,12 @@
                 <version>${deps.cassandra-unit.version}</version>
                 <scope>test</scope>
                 <type>jar</type>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-log4j12</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -1532,6 +1502,7 @@
         <module>../common</module>
         <module>../gateway</module>
         <module>../routing-engine</module>
+        <module>../notification-cluster</module>
     </modules>
 
 </project>

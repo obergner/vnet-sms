@@ -1,0 +1,31 @@
+{
+    "name" : "cassandraCacheWriterIT",
+    "columnFamilies" : [{
+        "name" : "simpleTestBean",
+        "rows" : [{
+            "key" : "01",
+            "columns" : [{
+                "name" : "fieldOne",
+                "value" : "01"
+            }]
+        }]
+    },
+    {
+        "name" : "complexTestBean",
+        "rows" : [{
+            "key" : "01",
+            "columns" : [{
+                "name" : "fieldOne",
+                "value" : "01"
+            },
+            {
+                "name" : "fieldTwo",
+                "value" : "01"
+            },
+            {
+                "name" : "byte",
+                "value" : "00"
+            }]
+        }]
+    }]
+}
