@@ -11,8 +11,8 @@ import org.jboss.netty.channel.Channel;
 
 import vnet.sms.common.messages.Acknowledgement;
 import vnet.sms.common.messages.LoginRequest;
-import vnet.sms.common.messages.Message;
-import vnet.sms.common.messages.MessageEventType;
+import vnet.sms.common.messages.GsmPdu;
+import vnet.sms.common.wme.MessageEventType;
 import vnet.sms.common.wme.WindowedMessageEvent;
 import vnet.sms.common.wme.acknowledge.DownstreamReceivedMessageAcknowledgedEvent;
 
@@ -20,10 +20,10 @@ import vnet.sms.common.wme.acknowledge.DownstreamReceivedMessageAcknowledgedEven
  * @author obergner
  * 
  */
-public final class NonLoginMessageReceivedOnUnauthenticatedChannelEvent<ID extends Serializable, M extends Message>
+public final class NonLoginMessageReceivedOnUnauthenticatedChannelEvent<ID extends Serializable, M extends GsmPdu>
         extends DownstreamReceivedMessageAcknowledgedEvent<ID, M> {
 
-	public static final <ID extends Serializable, M extends Message> NonLoginMessageReceivedOnUnauthenticatedChannelEvent<ID, M> discardNonLoginMessage(
+	public static final <ID extends Serializable, M extends GsmPdu> NonLoginMessageReceivedOnUnauthenticatedChannelEvent<ID, M> discardNonLoginMessage(
 	        final WindowedMessageEvent<ID, M> nonLoginRequest) {
 		isTrue(!(nonLoginRequest.getMessage() instanceof LoginRequest),
 		        "Argument 'nonLoginRequest' must not be a LoginRequest");

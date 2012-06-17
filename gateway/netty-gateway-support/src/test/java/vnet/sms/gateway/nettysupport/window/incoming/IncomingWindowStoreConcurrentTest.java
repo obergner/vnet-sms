@@ -23,7 +23,8 @@ import org.jboss.netty.channel.UpstreamMessageEvent;
 import org.junit.Test;
 import org.springframework.jmx.export.MBeanExporter;
 
-import vnet.sms.common.messages.Message;
+import vnet.sms.common.messages.GsmPdu;
+import vnet.sms.common.messages.Msisdn;
 import vnet.sms.common.messages.Sms;
 import vnet.sms.common.wme.receive.SmsReceivedEvent;
 
@@ -51,6 +52,7 @@ public class IncomingWindowStoreConcurrentTest {
 		final Set<IdPlusMessage> backup = new HashSet<IdPlusMessage>(capacity);
 		for (long key = 0; key < capacity; key++) {
 			final IdPlusMessage idPlusMessage = new IdPlusMessage(key, new Sms(
+			        new Msisdn("01686754432"), new Msisdn("01686754432"),
 			        "assertThatStoreMessageFillsWindowStoreToCapacity"));
 			queue.put(idPlusMessage);
 			backup.add(idPlusMessage);
@@ -84,7 +86,7 @@ public class IncomingWindowStoreConcurrentTest {
 		        "IncomingWindowStore should be completely filled, yet it isn't",
 		        capacity, objectUnderTest.getCurrentMessageCount());
 		for (final IdPlusMessage idPlusMessage : backup) {
-			final Message storedMessage = objectUnderTest
+			final GsmPdu storedMessage = objectUnderTest
 			        .releaseWindow(idPlusMessage.id);
 			assertNotNull("IncomingWindowStore should contain id "
 			        + idPlusMessage.id + ", yet it doesn't", storedMessage);
@@ -165,7 +167,8 @@ public class IncomingWindowStoreConcurrentTest {
 			        numberOfMessagesToStore);
 			for (long key = 0; key < numberOfMessagesToStore; key++) {
 				final IdPlusMessage idPlusMessage = new IdPlusMessage(key,
-				        new Sms(String.valueOf(key)));
+				        new Sms(new Msisdn("01686754432"), new Msisdn(
+				                "01686754432"), String.valueOf(key)));
 				queue.put(idPlusMessage);
 			}
 

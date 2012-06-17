@@ -9,7 +9,7 @@ import static org.apache.commons.lang.Validate.notNull;
  * @author obergner
  * 
  */
-public class LoginResponse extends Message {
+public class LoginResponse extends GsmPdu {
 
 	private static final long	serialVersionUID	= -3756368928116010958L;
 

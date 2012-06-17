@@ -11,7 +11,7 @@ import org.jboss.netty.channel.Channel;
 
 import vnet.sms.common.messages.Acknowledgement;
 import vnet.sms.common.messages.LoginRequest;
-import vnet.sms.common.messages.MessageEventType;
+import vnet.sms.common.wme.MessageEventType;
 import vnet.sms.common.wme.receive.LoginRequestReceivedEvent;
 
 /**

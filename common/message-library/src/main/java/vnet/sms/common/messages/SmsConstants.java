@@ -118,7 +118,7 @@ public final class SmsConstants {
 
 	/** Concatenated short messages, 8-bit reference number. */
 	public static final byte	UDH_IEI_CONCATENATED_8BIT	       = 0x00;
-	/** Special SMS Message Indication. */
+	/** Special SMS GsmPdu Indication. */
 	public static final byte	UDH_IEI_SPECIAL_MESSAGE	           = 0x01;
 	/** Application port addressing scheme, 8 bit address. */
 	public static final byte	UDH_IEI_APP_PORT_8BIT	           = 0x04;
@@ -130,7 +130,7 @@ public final class SmsConstants {
 	public static final byte	UDH_IEI_UDH_SOURCE_INDICATOR	   = 0x07;
 	/** Concatenated short message, 16-bit reference number. */
 	public static final byte	UDH_IEI_CONCATENATED_16BIT	       = 0x08;
-	/** Wireless Control Message Protocol. */
+	/** Wireless Control GsmPdu Protocol. */
 	public static final byte	UDH_IEI_WCMP	                   = 0x09;
 
 	/** Text Formatting (EMS). */
@@ -167,14 +167,14 @@ public final class SmsConstants {
 
 	/* MESSAGE INDICATION TYPES FOR UDH_IEI_SPECIAL_MESSAGE */
 
-	/** UDH_IEI_SPECIAL_MESSAGE type "Voice Message Waiting". */
+	/** UDH_IEI_SPECIAL_MESSAGE type "Voice GsmPdu Waiting". */
 	public static final int	 UISM_MSG_WAITING_VOICE	               = 0x00;
-	/** UDH_IEI_SPECIAL_MESSAGE type "Fax Message Waiting". */
+	/** UDH_IEI_SPECIAL_MESSAGE type "Fax GsmPdu Waiting". */
 	public static final int	 UISM_MSG_WAITING_FAX	               = 0x01;
-	/** UDH_IEI_SPECIAL_MESSAGE type "Electronic Mail Message Waiting". */
+	/** UDH_IEI_SPECIAL_MESSAGE type "Electronic Mail GsmPdu Waiting". */
 	public static final int	 UISM_MSG_WAITING_EMAIL	               = 0x02;
 	/**
-	 * UDH_IEI_SPECIAL_MESSAGE type "Other Message Waiting". (see 3GPP TS 23.038
+	 * UDH_IEI_SPECIAL_MESSAGE type "Other GsmPdu Waiting". (see 3GPP TS 23.038
 	 * [9] for definition of 'other')"
 	 */
 	public static final int	 UISM_MSG_WAITING_OTHER	               = 0x03;
@@ -194,7 +194,7 @@ public final class SmsConstants {
 	public static final int	 PORT_NOKIA_CLI_LOGO	               = 5507;
 	/** Nokia Email notification. */
 	public static final int	 PORT_NOKIA_EMAIL_NOTIFICATION	       = 5512;
-	/** Nokia Multipart Message. */
+	/** Nokia Multipart GsmPdu. */
 	public static final int	 PORT_NOKIA_MULTIPART_MESSAGE	       = 5514;
 
 	/** WAP connectionless session service. */

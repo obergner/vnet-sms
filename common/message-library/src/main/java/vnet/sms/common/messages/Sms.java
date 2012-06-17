@@ -69,8 +69,9 @@ public class Sms extends Message {
 	 * @param dcs
 	 *            The data coding scheme
 	 */
-	public Sms(final String msg, final DataCodingScheme dcs) {
-		super();
+	public Sms(final Msisdn originator, final Msisdn destination,
+	        final String msg, final DataCodingScheme dcs) {
+		super(originator, destination);
 		notNull(msg, "Argument 'msg' must not be null");
 		notNull(dcs, "Argument 'dcs' must not be null");
 		setText(msg, dcs);
@@ -97,9 +98,10 @@ public class Sms extends Message {
 	 * @param messageClass
 	 *            The messageclass
 	 */
-	public Sms(final String msg, final int alphabet, final int messageClass) {
-		this(msg, DataCodingScheme.getGeneralDataCodingDcs(alphabet,
-		        messageClass));
+	public Sms(final Msisdn originator, final Msisdn destination,
+	        final String msg, final int alphabet, final int messageClass) {
+		this(originator, destination, msg, DataCodingScheme
+		        .getGeneralDataCodingDcs(alphabet, messageClass));
 	}
 
 	/**
@@ -108,8 +110,9 @@ public class Sms extends Message {
 	 * @param msg
 	 *            The message
 	 */
-	public Sms(final String msg) {
-		this(msg, DataCodingScheme.ALPHABET_GSM,
+	public Sms(final Msisdn originator, final Msisdn destination,
+	        final String msg) {
+		this(originator, destination, msg, DataCodingScheme.ALPHABET_GSM,
 		        DataCodingScheme.MSG_CLASS_UNKNOWN);
 	}
 

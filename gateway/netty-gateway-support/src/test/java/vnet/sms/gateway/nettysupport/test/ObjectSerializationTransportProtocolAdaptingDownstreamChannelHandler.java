@@ -1,6 +1,6 @@
 package vnet.sms.gateway.nettysupport.test;
 
-import vnet.sms.common.messages.Message;
+import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestAckedEvent;
 import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestNackedEvent;
 import vnet.sms.common.wme.acknowledge.ReceivedSmsAckedEvent;
@@ -12,45 +12,45 @@ import vnet.sms.gateway.nettysupport.transport.outgoing.TransportProtocolAdaptin
 
 public class ObjectSerializationTransportProtocolAdaptingDownstreamChannelHandler
         extends
-        TransportProtocolAdaptingDownstreamChannelHandler<Integer, Message> {
+        TransportProtocolAdaptingDownstreamChannelHandler<Integer, GsmPdu> {
 
 	@Override
-	protected Message convertSendPingRequestEventToPdu(
+	protected GsmPdu convertSendPingRequestEventToPdu(
 	        final SendPingRequestEvent<Integer> e) {
 		return e.getMessage();
 	}
 
 	@Override
-	protected Message convertLoginRequestAcceptedEventToPdu(
+	protected GsmPdu convertLoginRequestAcceptedEventToPdu(
 	        final ReceivedLoginRequestAckedEvent<Integer> e) {
 		return e.getMessage();
 	}
 
 	@Override
-	protected Message convertLoginRequestRejectedEventToPdu(
+	protected GsmPdu convertLoginRequestRejectedEventToPdu(
 	        final ReceivedLoginRequestNackedEvent<Integer> e) {
 		return e.getMessage();
 	}
 
 	@Override
-	protected Message convertNonLoginMessageReceivedOnUnauthenticatedChannelEventToPdu(
+	protected GsmPdu convertNonLoginMessageReceivedOnUnauthenticatedChannelEventToPdu(
 	        final NonLoginMessageReceivedOnUnauthenticatedChannelEvent<Integer, ?> e) {
 		return e.getMessage();
 	}
 
 	@Override
-	protected Message convertSendSmsEventToPdu(final SendSmsEvent e) {
+	protected GsmPdu convertSendSmsEventToPdu(final SendSmsEvent e) {
 		return e.getMessage();
 	}
 
 	@Override
-	protected Message convertReceivedSmsAckedEventToPdu(
+	protected GsmPdu convertReceivedSmsAckedEventToPdu(
 	        final ReceivedSmsAckedEvent<Integer> e) {
 		return e.getAcknowledgement();
 	}
 
 	@Override
-	protected Message convertReceivedSmsNackedEventToPdu(
+	protected GsmPdu convertReceivedSmsNackedEventToPdu(
 	        final ReceivedSmsNackedEvent<Integer> e) {
 		return e.getAcknowledgement();
 	}

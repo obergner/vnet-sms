@@ -20,6 +20,7 @@ import org.springframework.jms.core.JmsTemplate;
 
 import vnet.sms.common.messages.LoginRequest;
 import vnet.sms.common.messages.LoginResponse;
+import vnet.sms.common.messages.Msisdn;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.PingResponse;
 import vnet.sms.common.messages.Sms;
@@ -74,7 +75,8 @@ public class MessageForwardingJmsBridgeTest {
 		expect(receivingChannel.getId()).andReturn(channelId).anyTimes();
 		replay(receivingChannel);
 
-		final Sms message = new Sms(
+		final Sms message = new Sms(new Msisdn("01686754432"), new Msisdn(
+		        "01686754432"),
 		        "assertThatLoginRequestReceivedForwardsLoginRequestToJmsQueue");
 		final UpstreamMessageEvent upstreamMessageEvent = new UpstreamMessageEvent(
 		        receivingChannel, message, receivingChannel.getRemoteAddress());

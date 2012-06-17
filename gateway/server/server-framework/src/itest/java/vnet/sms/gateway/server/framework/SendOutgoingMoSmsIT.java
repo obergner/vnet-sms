@@ -25,8 +25,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import vnet.sms.common.messages.Headers;
-import vnet.sms.common.messages.MessageEventType;
+import vnet.sms.common.messages.Msisdn;
 import vnet.sms.common.messages.Sms;
+import vnet.sms.common.wme.MessageEventType;
 import vnet.sms.gateway.nettysupport.monitor.MonitoringChannelGroup;
 import vnet.sms.gateway.server.framework.test.IntegrationTestClient;
 import vnet.sms.gateway.server.framework.test.MessageEventPredicate;
@@ -75,7 +76,8 @@ public class SendOutgoingMoSmsIT {
 	@Test
 	public final void assertThatGatewayServerSendsMoSmsReceivedViaJmsToConnectedClient()
 	        throws Throwable {
-		final Sms moSms = new Sms(
+		final Sms moSms = new Sms(new Msisdn("01686754432"), new Msisdn(
+		        "01686754432"),
 		        "assertThatGatewayServerSendsMoSmsReceivedViaJmsToConnectedClient");
 
 		final MessageEventPredicate moSmsReceived = new MessageEventPredicate() {

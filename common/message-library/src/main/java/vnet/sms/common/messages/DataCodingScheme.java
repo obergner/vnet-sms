@@ -70,7 +70,7 @@ public class DataCodingScheme implements Serializable {
 	/** Class 3 SMS. Default meaning: TE specific (See GSM TS 07.05). */
 	public static final int	  MSG_CLASS_3	                   = 3;
 	/**
-	 * Message with no specific message class (Often handled as an class 1 SMS).
+	 * GsmPdu with no specific message class (Often handled as an class 1 SMS).
 	 */
 	public static final int	  MSG_CLASS_UNKNOWN	               = 4;
 
@@ -87,13 +87,13 @@ public class DataCodingScheme implements Serializable {
 	/** DCS group unknown. */
 	public static final int	  GROUP_UNKNOWN	                   = 5;
 
-	/** Message waiting indication type - voicemail. */
+	/** GsmPdu waiting indication type - voicemail. */
 	public static final int	  DCS_MSG_WAITING_VOICEMAIL	       = 0;
-	/** Message waiting indication type - fax. */
+	/** GsmPdu waiting indication type - fax. */
 	public static final int	  DCS_MSG_WAITING_FAX	           = 1;
-	/** Message waiting indication type - email. */
+	/** GsmPdu waiting indication type - email. */
 	public static final int	  DCS_MSG_WAITING_EMAIL	           = 2;
-	/** Message waiting indication type - other. Should not be used. */
+	/** GsmPdu waiting indication type - other. Should not be used. */
 	public static final int	  DCS_MSG_WAITING_OTHER	           = 3;
 
 	/** The encoded dcs. */

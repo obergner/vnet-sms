@@ -9,7 +9,7 @@ import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelDownstreamHandler;
 import org.junit.Test;
 
-import vnet.sms.common.messages.Message;
+import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.wme.WindowedMessageEvent;
 import vnet.sms.common.wme.send.SendPingRequestEvent;
@@ -19,7 +19,7 @@ import vnet.sms.gateway.nettytest.DefaultChannelPipelineEmbedder;
 
 public class TransportProtocolAdaptingDownstreamChannelHandlerTest {
 
-	private final TransportProtocolAdaptingDownstreamChannelHandler<Integer, Message>	objectUnderTest	= new ObjectSerializationTransportProtocolAdaptingDownstreamChannelHandler();
+	private final TransportProtocolAdaptingDownstreamChannelHandler<Integer, GsmPdu>	objectUnderTest	= new ObjectSerializationTransportProtocolAdaptingDownstreamChannelHandler();
 
 	@Test
 	public final void assertThatTransportProtocolAdapterCorrectlyConvertsPingRequestToPdu()

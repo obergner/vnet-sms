@@ -11,7 +11,7 @@ import org.jboss.netty.channel.UpstreamMessageEvent;
 
 import vnet.sms.common.messages.LoginRequest;
 import vnet.sms.common.messages.LoginResponse;
-import vnet.sms.common.messages.Message;
+import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.PingResponse;
 import vnet.sms.common.messages.Sms;
@@ -34,34 +34,34 @@ class UpstreamMessageEventToWindowedMessageEventConverter {
 		// Singleton
 	}
 
-	<ID extends Serializable> WindowedMessageEvent<ID, ? extends Message> convert(
+	<ID extends Serializable> WindowedMessageEvent<ID, ? extends GsmPdu> convert(
 	        final ID messageReference,
 	        final UpstreamMessageEvent upstreamMessageEvent,
-	        final Message message) {
+	        final GsmPdu gsmPdu) {
 		notNull(messageReference,
 		        "Argument 'messageReference' must not be null");
 		notNull(upstreamMessageEvent,
 		        "Cannot convert a null upstreamMessageEvent");
-		notNull(message, "Cannot convert a null message");
-		final WindowedMessageEvent<ID, ? extends Message> converted;
-		if (message instanceof LoginRequest) {
+		notNull(gsmPdu, "Cannot convert a null message");
+		final WindowedMessageEvent<ID, ? extends GsmPdu> converted;
+		if (gsmPdu instanceof LoginRequest) {
 			converted = new LoginRequestReceivedEvent<ID>(messageReference,
-			        upstreamMessageEvent, (LoginRequest) message);
-		} else if (message instanceof LoginResponse) {
+			        upstreamMessageEvent, (LoginRequest) gsmPdu);
+		} else if (gsmPdu instanceof LoginResponse) {
 			converted = new LoginResponseReceivedEvent<ID>(messageReference,
-			        upstreamMessageEvent, (LoginResponse) message);
-		} else if (message instanceof PingRequest) {
+			        upstreamMessageEvent, (LoginResponse) gsmPdu);
+		} else if (gsmPdu instanceof PingRequest) {
 			converted = new PingRequestReceivedEvent<ID>(messageReference,
-			        upstreamMessageEvent, (PingRequest) message);
-		} else if (message instanceof PingResponse) {
+			        upstreamMessageEvent, (PingRequest) gsmPdu);
+		} else if (gsmPdu instanceof PingResponse) {
 			converted = new PingResponseReceivedEvent<ID>(messageReference,
-			        upstreamMessageEvent, (PingResponse) message);
-		} else if (message instanceof Sms) {
+			        upstreamMessageEvent, (PingResponse) gsmPdu);
+		} else if (gsmPdu instanceof Sms) {
 			converted = new SmsReceivedEvent<ID>(messageReference,
-			        upstreamMessageEvent, (Sms) message);
+			        upstreamMessageEvent, (Sms) gsmPdu);
 		} else {
 			throw new IllegalArgumentException("Unsupported message type: "
-			        + message.getClass());
+			        + gsmPdu.getClass());
 		}
 
 		return converted;

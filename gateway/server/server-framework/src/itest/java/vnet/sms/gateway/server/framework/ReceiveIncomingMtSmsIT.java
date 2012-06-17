@@ -18,6 +18,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import vnet.sms.common.messages.LoginRequest;
+import vnet.sms.common.messages.Msisdn;
 import vnet.sms.common.messages.Sms;
 import vnet.sms.gateway.server.framework.test.ForwardingJmsMessageListener;
 import vnet.sms.gateway.server.framework.test.IntegrationTestClient;
@@ -59,7 +60,8 @@ public class ReceiveIncomingMtSmsIT {
 		        successfulLoginRequest);
 
 		final int smsReference = 2;
-		final Sms mtSms = new Sms(
+		final Sms mtSms = new Sms(new Msisdn("01686754432"), new Msisdn(
+		        "01686754432"),
 		        "assertThatGatewayServerForwardsReceivedMtSmsToJmsServer");
 
 		final JmsMessagePredicate isExpectedSms = new JmsMessagePredicate() {

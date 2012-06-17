@@ -32,7 +32,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 
 import vnet.sms.common.messages.LoginRequest;
 import vnet.sms.common.messages.LoginResponse;
-import vnet.sms.common.messages.Message;
+import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.PingResponse;
 import vnet.sms.gateway.nettysupport.login.incoming.ChannelSuccessfullyAuthenticatedEvent;
@@ -257,7 +257,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		assertNotNull(
 		        "Expected channel pipeline to send ReceivedLoginRequestAckedEvent to client after successful login, yet it sent NO message in reply",
 		        encodedLoginResponse);
-		final Message decodedLoginResponse = SerializationUtils
+		final GsmPdu decodedLoginResponse = SerializationUtils
 		        .deserialize(encodedLoginResponse);
 		assertEquals(
 		        "Expected channel pipeline to send LoginResponse to client after successful login, yet it sent a different reply",
@@ -336,7 +336,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		assertNotNull(
 		        "Expected channel pipeline to send ReceivedLoginRequestNackedEvent to client after failed login, yet it sent NO message in reply",
 		        encodedLoginResponse);
-		final Message decodedLoginResponse = SerializationUtils
+		final GsmPdu decodedLoginResponse = SerializationUtils
 		        .deserialize(encodedLoginResponse);
 		assertEquals(
 		        "Expected channel pipeline to send LoginResponse to client after failed login, yet it sent a different reply",
@@ -413,7 +413,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		assertNotNull(
 		        "Expected channel pipeline to send (failed) PingResponse to client when receiving a PingRequest on an unauthenticated channel, yet it sent NO message in reply",
 		        encodedPingResponse);
-		final Message decodedPingResponse = SerializationUtils
+		final GsmPdu decodedPingResponse = SerializationUtils
 		        .deserialize(encodedPingResponse);
 		assertEquals(
 		        "Expected channel pipeline to send (failed) PingResponse to client after failed login, yet it sent a different reply",
@@ -457,7 +457,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		                + pingIntervalSeconds
 		                + " seconds after the channel had been connected, yet it sent NO message",
 		        expectedEncodedPingRequst);
-		final Message decodedPingRequest = SerializationUtils
+		final GsmPdu decodedPingRequest = SerializationUtils
 		        .deserialize(expectedEncodedPingRequst);
 		assertEquals(
 		        "Expected channel pipeline to send LoginResponse to client after failed login, yet it sent a different reply",
@@ -500,7 +500,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		                + pingIntervalSeconds
 		                + " seconds after the channel had been connected, yet it sent NO message",
 		        expectedInitialPingRequest);
-		final Message decodedPingRequest = SerializationUtils
+		final GsmPdu decodedPingRequest = SerializationUtils
 		        .deserialize(expectedInitialPingRequest);
 		assertEquals(
 		        "Expected channel pipeline to send PingRequest to client after ping interval has expired, yet it sent a different message",

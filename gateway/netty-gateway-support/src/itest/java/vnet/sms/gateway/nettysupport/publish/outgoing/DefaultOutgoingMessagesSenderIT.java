@@ -10,7 +10,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import vnet.sms.common.messages.Message;
+import vnet.sms.common.messages.GsmPdu;
+import vnet.sms.common.messages.Msisdn;
 import vnet.sms.common.messages.Sms;
 import vnet.sms.common.wme.acknowledge.MessageAcknowledgementContainer;
 import vnet.sms.common.wme.acknowledge.ReceivedSmsAckedContainer;
@@ -49,7 +50,8 @@ public class DefaultOutgoingMessagesSenderIT {
 	@Test(timeout = 2000)
 	public final void assertThatSendSmsDoesSendSmsToConnectedServer()
 	        throws Exception {
-		final Sms sms = new Sms("assertThatSendSmsDoesSendSmsToConnectedServer");
+		final Sms sms = new Sms(new Msisdn("01686754432"), new Msisdn(
+		        "01686754432"), "assertThatSendSmsDoesSendSmsToConnectedServer");
 		final SendSmsContainer smsContainer = new SendSmsContainer(sms);
 
 		final AtomicReference<Object> receivedMessage = new AtomicReference<Object>();
@@ -80,7 +82,8 @@ public class DefaultOutgoingMessagesSenderIT {
 	@Test(timeout = 2000, expected = IllegalStateException.class)
 	public final void assertThatSendSmsThrowsIllegalStateExceptionIfNoChannelIsConnected()
 	        throws Exception {
-		final Sms sms = new Sms(
+		final Sms sms = new Sms(new Msisdn("01686754432"), new Msisdn(
+		        "01686754432"),
 		        "assertThatSendSmsThrowsIllegalStateExceptionIfNoChannelIsConnected");
 		final SendSmsContainer smsContainer = new SendSmsContainer(sms);
 
@@ -95,7 +98,8 @@ public class DefaultOutgoingMessagesSenderIT {
 	@Test(timeout = 2000, expected = IllegalStateException.class)
 	public final void assertThatSendSmsCallsListenerIfNoChannelIsConnected()
 	        throws Exception {
-		final Sms sms = new Sms(
+		final Sms sms = new Sms(new Msisdn("01686754432"), new Msisdn(
+		        "01686754432"),
 		        "assertThatSendSmsCallsListenerIfNoChannelIsConnected");
 		final SendSmsContainer smsContainer = new SendSmsContainer(sms);
 
@@ -109,7 +113,7 @@ public class DefaultOutgoingMessagesSenderIT {
 
 			@Override
 			public void acknowldgeReceivedSmsFailed(
-			        final MessageAcknowledgementContainer<String, ? extends Message> acknowledgement,
+			        final MessageAcknowledgementContainer<String, ? extends GsmPdu> acknowledgement,
 			        final Throwable error) {
 				// Noop
 			}
@@ -129,7 +133,8 @@ public class DefaultOutgoingMessagesSenderIT {
 	@Test(timeout = 2000)
 	public final void assertThatAckReceivedSmsDoesSendAckToConnectedServer()
 	        throws Exception {
-		final Sms sms = new Sms(
+		final Sms sms = new Sms(new Msisdn("01686754432"), new Msisdn(
+		        "01686754432"),
 		        "assertThatAckReceivedSmsDoesSendAckToConnectedServer");
 
 		final AtomicReference<Object> receivedMessage = new AtomicReference<Object>();
@@ -164,6 +169,8 @@ public class DefaultOutgoingMessagesSenderIT {
 	public final void assertThatAckReceivedmsThrowsIllegalStateExceptionIfReceivingChannelIsNotConnectedAnymore()
 	        throws Exception {
 		final Sms sms = new Sms(
+		        new Msisdn("01686754432"),
+		        new Msisdn("01686754432"),
 		        "assertThatAckReceivedmsThrowsIllegalStateExceptionIfReceivingChannelIsNotConnectedAnymore");
 		final ReceivedSmsAckedContainer<String> ackContainer = new ReceivedSmsAckedContainer<String>(
 		        "1", -1, sms);
@@ -179,7 +186,8 @@ public class DefaultOutgoingMessagesSenderIT {
 	@Test(timeout = 2000, expected = IllegalStateException.class)
 	public final void assertThatAckReceivedSmsCallsListenerIfReceivingChannelIsNotConnectedAnymore()
 	        throws Exception {
-		final Sms sms = new Sms(
+		final Sms sms = new Sms(new Msisdn("01686754432"), new Msisdn(
+		        "01686754432"),
 		        "assertThatAckReceivedSmsCallsListenerIfReceivingChannelIsNotConnectedAnymore");
 		final ReceivedSmsAckedContainer<String> ackContainer = new ReceivedSmsAckedContainer<String>(
 		        "1", -1, sms);
@@ -194,7 +202,7 @@ public class DefaultOutgoingMessagesSenderIT {
 
 			@Override
 			public void acknowldgeReceivedSmsFailed(
-			        final MessageAcknowledgementContainer<String, ? extends Message> acknowledgement,
+			        final MessageAcknowledgementContainer<String, ? extends GsmPdu> acknowledgement,
 			        final Throwable error) {
 				listenerCalled.countDown();
 			}
@@ -214,7 +222,8 @@ public class DefaultOutgoingMessagesSenderIT {
 	@Test(timeout = 2000)
 	public final void assertThatNackReceivedSmsDoesSendNackToConnectedServer()
 	        throws Exception {
-		final Sms sms = new Sms(
+		final Sms sms = new Sms(new Msisdn("01686754432"), new Msisdn(
+		        "01686754432"),
 		        "assertThatNackReceivedSmsDoesSendNackToConnectedServer");
 
 		final AtomicReference<Object> receivedMessage = new AtomicReference<Object>();
@@ -250,6 +259,8 @@ public class DefaultOutgoingMessagesSenderIT {
 	public final void assertThatNackReceivedmsThrowsIllegalStateExceptionIfReceivingChannelIsNotConnectedAnymore()
 	        throws Exception {
 		final Sms sms = new Sms(
+		        new Msisdn("01686754432"),
+		        new Msisdn("01686754432"),
 		        "assertThatNackReceivedmsThrowsIllegalStateExceptionIfReceivingChannelIsNotConnectedAnymore");
 		final ReceivedSmsNackedContainer<String> ackContainer = new ReceivedSmsNackedContainer<String>(
 		        1, "error", "1", -1, sms);
@@ -265,7 +276,8 @@ public class DefaultOutgoingMessagesSenderIT {
 	@Test(timeout = 2000, expected = IllegalStateException.class)
 	public final void assertThatNackReceivedSmsCallsListenerIfReceivingChannelIsNotConnectedAnymore()
 	        throws Exception {
-		final Sms sms = new Sms(
+		final Sms sms = new Sms(new Msisdn("01686754432"), new Msisdn(
+		        "01686754432"),
 		        "assertThatNackReceivedSmsCallsListenerIfReceivingChannelIsNotConnectedAnymore");
 		final ReceivedSmsNackedContainer<String> ackContainer = new ReceivedSmsNackedContainer<String>(
 		        1, "error", "1", -1, sms);
@@ -280,7 +292,7 @@ public class DefaultOutgoingMessagesSenderIT {
 
 			@Override
 			public void acknowldgeReceivedSmsFailed(
-			        final MessageAcknowledgementContainer<String, ? extends Message> acknowledgement,
+			        final MessageAcknowledgementContainer<String, ? extends GsmPdu> acknowledgement,
 			        final Throwable error) {
 				listenerCalled.countDown();
 			}

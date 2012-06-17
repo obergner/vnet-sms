@@ -10,25 +10,25 @@ import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.handler.codec.serialization.ObjectDecoderInputStream;
 import org.jboss.netty.handler.codec.serialization.ObjectEncoderOutputStream;
 
-import vnet.sms.common.messages.Message;
+import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;
 
 public final class SerializationUtils {
 
 	public static ChannelBuffer serialize(final int messageRef,
-	        final Message message) throws IOException {
+	        final GsmPdu gsmPdu) throws IOException {
 		final ByteArrayOutputStream serializedContainer = new ByteArrayOutputStream();
 		final ObjectEncoderOutputStream objectEncoderOut = new ObjectEncoderOutputStream(
 		        serializedContainer);
 		objectEncoderOut.writeObject(ReferenceableMessageContainer.wrap(
-		        messageRef, message));
+		        messageRef, gsmPdu));
 		objectEncoderOut.flush();
 		objectEncoderOut.close();
 
 		return ChannelBuffers.copiedBuffer(serializedContainer.toByteArray());
 	}
 
-	public static Message deserialize(final MessageEvent messageEvent)
+	public static GsmPdu deserialize(final MessageEvent messageEvent)
 	        throws ClassNotFoundException, IOException {
 		if (!(messageEvent.getMessage() instanceof ChannelBuffer)) {
 			throw new IllegalArgumentException(
@@ -48,7 +48,7 @@ public final class SerializationUtils {
 			        + " after deserialization. Got: " + readObject);
 		}
 
-		return Message.class.cast(ReferenceableMessageContainer.class.cast(
+		return GsmPdu.class.cast(ReferenceableMessageContainer.class.cast(
 		        readObject).getMessage());
 	}
 

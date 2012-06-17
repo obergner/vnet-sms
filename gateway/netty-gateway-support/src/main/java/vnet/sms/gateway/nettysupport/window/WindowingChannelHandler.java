@@ -16,7 +16,7 @@ import org.jboss.netty.channel.UpstreamMessageEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import vnet.sms.common.messages.Message;
+import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.wme.WindowedMessageEvent;
 import vnet.sms.common.wme.acknowledge.ReceivedMessageAcknowledgedEvent;
 import vnet.sms.gateway.nettysupport.window.incoming.IncomingWindowStore;
@@ -54,11 +54,11 @@ public class WindowingChannelHandler<ID extends Serializable> extends
 			        + e);
 		}
 		windowedMessageReceived(ctx,
-		        (WindowedMessageEvent<ID, ? extends Message>) e);
+		        (WindowedMessageEvent<ID, ? extends GsmPdu>) e);
 	}
 
 	private void windowedMessageReceived(final ChannelHandlerContext ctx,
-	        final WindowedMessageEvent<ID, ? extends Message> e)
+	        final WindowedMessageEvent<ID, ? extends GsmPdu> e)
 	        throws IllegalArgumentException, InterruptedException {
 		this.log.trace("Processing {} ...", e);
 		if (this.incomingWindowStore.tryAcquireWindow(e)) {
@@ -88,7 +88,7 @@ public class WindowingChannelHandler<ID extends Serializable> extends
 	        final MessageEvent e) throws Exception {
 		this.log.debug("Processing {} ...", e);
 		if (e instanceof ReceivedMessageAcknowledgedEvent) {
-			final ReceivedMessageAcknowledgedEvent<ID, ? extends Message> acknowledgedEvent = (ReceivedMessageAcknowledgedEvent<ID, ? extends Message>) e;
+			final ReceivedMessageAcknowledgedEvent<ID, ? extends GsmPdu> acknowledgedEvent = (ReceivedMessageAcknowledgedEvent<ID, ? extends GsmPdu>) e;
 			releaseAcknowledgedMessage(ctx, acknowledgedEvent);
 			ctx.sendDownstream(acknowledgedEvent);
 		} else {
@@ -99,15 +99,15 @@ public class WindowingChannelHandler<ID extends Serializable> extends
 
 	private void releaseAcknowledgedMessage(
 	        final ChannelHandlerContext ctx,
-	        final ReceivedMessageAcknowledgedEvent<ID, ? extends Message> acknowledgedEvent) {
+	        final ReceivedMessageAcknowledgedEvent<ID, ? extends GsmPdu> acknowledgedEvent) {
 		try {
-			final Message acknowledgedMessage = acknowledgedEvent.getMessage();
+			final GsmPdu acknowledgedMessage = acknowledgedEvent.getMessage();
 			this.log.debug(
 			        "Received acknowledgement {} for message {} - will release said message from incoming windowing store",
 			        acknowledgedEvent.getAcknowledgement(), acknowledgedMessage);
 			final ID acknowledgedMessageRef = acknowledgedEvent
 			        .getAcknowledgedMessageReference();
-			final Message releasedMessage = this.incomingWindowStore
+			final GsmPdu releasedMessage = this.incomingWindowStore
 			        .releaseWindow(acknowledgedMessageRef);
 			if (!acknowledgedMessage.equals(releasedMessage)) {
 				throw new IllegalArgumentException(
@@ -143,7 +143,7 @@ public class WindowingChannelHandler<ID extends Serializable> extends
 	@Override
 	public void channelDisconnected(final ChannelHandlerContext ctx,
 	        final ChannelStateEvent e) throws Exception {
-		final Map<ID, Message> pendingMessages = this.incomingWindowStore
+		final Map<ID, GsmPdu> pendingMessages = this.incomingWindowStore
 		        .shutDown();
 		if (!pendingMessages.isEmpty()) {
 			this.log.warn(

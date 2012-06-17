@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import vnet.sms.common.messages.LoginRequest;
 import vnet.sms.common.messages.LoginResponse;
+import vnet.sms.common.messages.Msisdn;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.PingResponse;
 import vnet.sms.common.messages.Sms;
@@ -118,7 +119,8 @@ public class SerializationTransportProtocolAdaptingUpstreamChannelHandlerTest {
 		embeddedPipeline
 		        .receive(ReferenceableMessageContainer
 		                .wrap(1,
-		                        new Sms(
+		                        new Sms(new Msisdn("01686754432"), new Msisdn(
+		                                "01686754432"),
 		                                "assertThatTransportProtocolAdapterCorrectlyConvertsPduToSms")));
 		final MessageEvent convertedPduEvent = embeddedPipeline
 		        .nextReceivedMessageEvent();

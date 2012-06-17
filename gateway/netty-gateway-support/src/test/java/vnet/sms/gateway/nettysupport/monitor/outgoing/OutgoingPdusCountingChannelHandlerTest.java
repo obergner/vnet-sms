@@ -8,7 +8,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import vnet.sms.common.messages.Message;
+import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.gateway.nettysupport.monitor.DefaultChannelMonitor;
 import vnet.sms.gateway.nettytest.ChannelPipelineEmbedder;
@@ -33,8 +33,8 @@ public class OutgoingPdusCountingChannelHandlerTest {
 
 	private final SimpleChannelMonitorCallback	              monitorCallback	= new SimpleChannelMonitorCallback();
 
-	private final OutgoingPdusCountingChannelHandler<Message>	objectUnderTest	= new OutgoingPdusCountingChannelHandler<Message>(
-	                                                                                    Message.class);
+	private final OutgoingPdusCountingChannelHandler<GsmPdu>	objectUnderTest	= new OutgoingPdusCountingChannelHandler<GsmPdu>(
+	                                                                                    GsmPdu.class);
 
 	@Before
 	public void addMonitor() {

@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import vnet.sms.common.messages.LoginRequest;
 import vnet.sms.common.messages.LoginResponse;
-import vnet.sms.common.messages.Message;
+import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.PingResponse;
 import vnet.sms.common.messages.Sms;
@@ -52,7 +52,7 @@ public abstract class TransportProtocolAdaptingUpstreamChannelHandler<ID extends
 		final Object pdu = e.getMessage();
 		getLog().trace("Attempting to convert PDU {} to message ...", pdu);
 		final ID extractedWindowId;
-		final Message convertedPdu;
+		final GsmPdu convertedPdu;
 		switch (typeOf(pdu)) {
 		case LOGIN_REQUEST:
 			extractedWindowId = extractWindowId((TP) pdu);
@@ -81,7 +81,7 @@ public abstract class TransportProtocolAdaptingUpstreamChannelHandler<ID extends
 		}
 		getLog().trace("PDU {} converted to {}", pdu, convertedPdu);
 
-		final WindowedMessageEvent<ID, ? extends Message> windowedMessageEvent = UpstreamMessageEventToWindowedMessageEventConverter.INSTANCE
+		final WindowedMessageEvent<ID, ? extends GsmPdu> windowedMessageEvent = UpstreamMessageEventToWindowedMessageEventConverter.INSTANCE
 		        .convert(extractedWindowId, (UpstreamMessageEvent) e,
 		                convertedPdu);
 		ctx.sendUpstream(windowedMessageEvent);

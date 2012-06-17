@@ -9,9 +9,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.messages.LoginRequest;
 import vnet.sms.common.messages.LoginResponse;
-import vnet.sms.common.messages.Message;
+import vnet.sms.common.messages.Msisdn;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.PingResponse;
 import vnet.sms.common.messages.Sms;
@@ -84,7 +85,7 @@ public class IncomingMessagesMonitoringChannelHandlerTest {
 
 	@Test
 	public final void assertThatTransportProtocolAdapterCorrectlyUpdatesNumberOfReceivedLoginRequests() {
-		final DecoderEmbedder<Message> embeddedPipeline = new DecoderEmbedder<Message>(
+		final DecoderEmbedder<GsmPdu> embeddedPipeline = new DecoderEmbedder<GsmPdu>(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        this.objectUnderTest);
 
@@ -100,7 +101,7 @@ public class IncomingMessagesMonitoringChannelHandlerTest {
 
 	@Test
 	public final void assertThatTransportProtocolAdapterCorrectlyCountsNumberOfReceivedLoginResponses() {
-		final DecoderEmbedder<Message> embeddedPipeline = new DecoderEmbedder<Message>(
+		final DecoderEmbedder<GsmPdu> embeddedPipeline = new DecoderEmbedder<GsmPdu>(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        this.objectUnderTest);
 
@@ -117,7 +118,7 @@ public class IncomingMessagesMonitoringChannelHandlerTest {
 
 	@Test
 	public final void assertThatTransportProtocolAdapterCorrectlyCountsNumberOfReceivedPingRequests() {
-		final DecoderEmbedder<Message> embeddedPipeline = new DecoderEmbedder<Message>(
+		final DecoderEmbedder<GsmPdu> embeddedPipeline = new DecoderEmbedder<GsmPdu>(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        this.objectUnderTest);
 
@@ -131,7 +132,7 @@ public class IncomingMessagesMonitoringChannelHandlerTest {
 	@Test
 	public final void assertThatTransportProtocolAdapterCorrectlyCountsNumberOfReceivedPingResponses() {
 
-		final DecoderEmbedder<Message> embeddedPipeline = new DecoderEmbedder<Message>(
+		final DecoderEmbedder<GsmPdu> embeddedPipeline = new DecoderEmbedder<GsmPdu>(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        this.objectUnderTest);
 
@@ -144,11 +145,12 @@ public class IncomingMessagesMonitoringChannelHandlerTest {
 
 	@Test
 	public final void assertThatTransportProtocolAdapterCorrectlyCountsNumberOfReceivedSms() {
-		final DecoderEmbedder<Message> embeddedPipeline = new DecoderEmbedder<Message>(
+		final DecoderEmbedder<GsmPdu> embeddedPipeline = new DecoderEmbedder<GsmPdu>(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        this.objectUnderTest);
 
-		embeddedPipeline.offer(new Sms(
+		embeddedPipeline.offer(new Sms(new Msisdn("01686754432"), new Msisdn(
+		        "01686754432"),
 		        "assertThatTransportProtocolAdapterCorrectlyConvertsPduToSms"));
 
 		assertEquals(

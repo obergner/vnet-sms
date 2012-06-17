@@ -11,7 +11,7 @@ import java.io.Serializable;
  * @author obergner
  * 
  */
-public class Acknowledgement extends Message implements Serializable {
+public class Acknowledgement extends GsmPdu implements Serializable {
 
 	private static final long	serialVersionUID	= 7954930395340440259L;
 

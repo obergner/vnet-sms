@@ -5,7 +5,7 @@ package vnet.sms.gateway.nettysupport.window;
 
 import org.jboss.netty.channel.UpstreamMessageEvent;
 
-import vnet.sms.common.messages.Message;
+import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.gateway.nettysupport.AbstractMessageProcessingEvent;
 
 /**
@@ -13,7 +13,7 @@ import vnet.sms.gateway.nettysupport.AbstractMessageProcessingEvent;
  * 
  */
 public class NoWindowForIncomingMessageAvailableEvent extends
-        AbstractMessageProcessingEvent<Message> {
+        AbstractMessageProcessingEvent<GsmPdu> {
 
 	private final int	maximumWindowCapacity;
 
@@ -22,7 +22,7 @@ public class NoWindowForIncomingMessageAvailableEvent extends
 	NoWindowForIncomingMessageAvailableEvent(
 	        final UpstreamMessageEvent rejectedMessage,
 	        final int maximumWindowCapacity, final long waitTimeMillis) {
-		super(rejectedMessage.getChannel(), (Message) rejectedMessage
+		super(rejectedMessage.getChannel(), (GsmPdu) rejectedMessage
 		        .getMessage(), rejectedMessage.getRemoteAddress());
 		this.maximumWindowCapacity = maximumWindowCapacity;
 		this.waitTimeMillis = waitTimeMillis;

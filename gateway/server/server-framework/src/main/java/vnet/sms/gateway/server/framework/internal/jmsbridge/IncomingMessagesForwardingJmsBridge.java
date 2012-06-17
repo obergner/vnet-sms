@@ -17,7 +17,7 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
-import vnet.sms.common.messages.Message;
+import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.wme.WindowedMessageEvent;
 import vnet.sms.common.wme.receive.LoginRequestReceivedEvent;
 import vnet.sms.common.wme.receive.LoginResponseReceivedEvent;
@@ -124,7 +124,7 @@ public class IncomingMessagesForwardingJmsBridge<ID extends java.io.Serializable
 	}
 
 	private void doForward(
-	        final WindowedMessageEvent<ID, ? extends Message> windowedMessageEvent)
+	        final WindowedMessageEvent<ID, ? extends GsmPdu> windowedMessageEvent)
 	        throws JmsException {
 		this.log.debug("Forwarding {} to [{}] ...", windowedMessageEvent,
 		        this.jmsTemplate.getDefaultDestinationName());

@@ -9,15 +9,15 @@ import java.io.Serializable;
 
 import org.jboss.netty.channel.UpstreamMessageEvent;
 
-import vnet.sms.common.messages.Message;
-import vnet.sms.common.messages.MessageEventType;
+import vnet.sms.common.messages.GsmPdu;
+import vnet.sms.common.wme.MessageEventType;
 import vnet.sms.common.wme.WindowedMessageEvent;
 
 /**
  * @author obergner
  * 
  */
-public abstract class UpstreamWindowedMessageEvent<ID extends Serializable, M extends Message>
+public abstract class UpstreamWindowedMessageEvent<ID extends Serializable, M extends GsmPdu>
         extends UpstreamMessageEvent implements WindowedMessageEvent<ID, M> {
 
 	private final ID	           messageReference;
@@ -82,7 +82,7 @@ public abstract class UpstreamWindowedMessageEvent<ID extends Serializable, M ex
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		final UpstreamWindowedMessageEvent<? extends Serializable, ? extends Message> other = (UpstreamWindowedMessageEvent<? extends Serializable, ? extends Message>) obj;
+		final UpstreamWindowedMessageEvent<? extends Serializable, ? extends GsmPdu> other = (UpstreamWindowedMessageEvent<? extends Serializable, ? extends GsmPdu>) obj;
 		if (this.messageReference == null) {
 			if (other.messageReference != null) {
 				return false;

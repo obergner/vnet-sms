@@ -8,14 +8,14 @@ import static org.apache.commons.lang.Validate.notEmpty;
 import java.io.Serializable;
 
 import vnet.sms.common.messages.Acknowledgement;
-import vnet.sms.common.messages.Message;
-import vnet.sms.common.messages.MessageEventType;
+import vnet.sms.common.messages.GsmPdu;
+import vnet.sms.common.wme.MessageEventType;
 
 /**
  * @author obergner
  * 
  */
-abstract class AbstractMessageNackContainer<ID extends Serializable, M extends Message>
+abstract class AbstractMessageNackContainer<ID extends Serializable, M extends GsmPdu>
         extends AbstractMessageAcknowledgementContainer<ID, M> implements
         MessageNackContainer<ID, M> {
 

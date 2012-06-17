@@ -11,7 +11,7 @@ import java.util.UUID;
  * @author obergner
  * 
  */
-public class LoginRequest extends Message {
+public class LoginRequest extends GsmPdu {
 
 	private static final long	serialVersionUID	= 8063236854497731334L;
 

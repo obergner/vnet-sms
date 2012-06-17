@@ -10,7 +10,7 @@ import java.util.Map;
 
 import org.jboss.netty.channel.Channel;
 
-import vnet.sms.common.messages.Message;
+import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.gateway.nettysupport.AbstractIdentifiableChannelEvent;
 
 /**
@@ -20,15 +20,15 @@ import vnet.sms.gateway.nettysupport.AbstractIdentifiableChannelEvent;
 public class PendingWindowedMessagesDiscardedEvent<ID extends Serializable>
         extends AbstractIdentifiableChannelEvent {
 
-	private final Map<ID, Message>	discardedMessages	= new HashMap<ID, Message>();
+	private final Map<ID, GsmPdu>	discardedMessages	= new HashMap<ID, GsmPdu>();
 
 	PendingWindowedMessagesDiscardedEvent(final Channel channel,
-	        final Map<ID, Message> discardedMessages) {
+	        final Map<ID, GsmPdu> discardedMessages) {
 		super(channel);
 		this.discardedMessages.putAll(discardedMessages);
 	}
 
-	public Map<ID, Message> getDiscardedMessages() {
+	public Map<ID, GsmPdu> getDiscardedMessages() {
 		return Collections.unmodifiableMap(this.discardedMessages);
 	}
 

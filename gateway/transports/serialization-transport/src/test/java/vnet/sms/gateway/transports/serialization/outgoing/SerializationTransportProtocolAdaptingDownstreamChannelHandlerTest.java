@@ -17,6 +17,7 @@ import org.junit.Test;
 
 import vnet.sms.common.messages.LoginRequest;
 import vnet.sms.common.messages.LoginResponse;
+import vnet.sms.common.messages.Msisdn;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.Sms;
 import vnet.sms.common.wme.WindowedMessageEvent;
@@ -158,7 +159,8 @@ public class SerializationTransportProtocolAdaptingDownstreamChannelHandlerTest 
 		        this.objectUnderTest,
 		        new MessageEventWrappingDownstreamChannelHandler());
 
-		final Sms moSms = new Sms(
+		final Sms moSms = new Sms(new Msisdn("01686754432"), new Msisdn(
+		        "01686754432"),
 		        "assertThatTransportProtocolAdapterCorrectlyConvertsSendSmsEventToPdu");
 		final ReferenceableMessageContainer convertedMessageContainer = this.objectUnderTest
 		        .convertSendSmsEventToPdu(SendSmsEvent

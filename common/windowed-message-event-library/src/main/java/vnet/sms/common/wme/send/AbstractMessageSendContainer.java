@@ -4,15 +4,15 @@ import static org.apache.commons.lang.Validate.notNull;
 
 import java.io.Serializable;
 
-import vnet.sms.common.messages.Message;
-import vnet.sms.common.messages.MessageEventType;
+import vnet.sms.common.messages.GsmPdu;
+import vnet.sms.common.wme.MessageEventType;
 
 /**
  * @author obergner
  * 
  * @param <M>
  */
-abstract class AbstractMessageSendContainer<M extends Message> implements
+abstract class AbstractMessageSendContainer<M extends GsmPdu> implements
         MessageSendContainer<M>, Serializable {
 
 	private static final long	   serialVersionUID	= -662855539360676935L;

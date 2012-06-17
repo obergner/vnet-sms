@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 
+import vnet.sms.common.messages.Msisdn;
 import vnet.sms.common.messages.Sms;
 import vnet.sms.gateway.server.framework.internal.channel.GatewayServerChannelPipelineFactory;
 import vnet.sms.gateway.server.framework.spi.GatewayServerDescription;
@@ -60,7 +61,8 @@ public class IncomingWindowingTest extends AbstractGatewayServerTest {
 
 		// Login request uses up one window
 		for (int i = 2; i <= availableIncomingWindows; i++) {
-			final Sms sms = new Sms(
+			final Sms sms = new Sms(new Msisdn("01686754432"), new Msisdn(
+			        "01686754432"),
 			        "assertThatGatewayServerForwardsUpToWindowSizeManySmsToJmsServer-"
 			                + i);
 			client.sendMessage(i, sms);
@@ -130,7 +132,8 @@ public class IncomingWindowingTest extends AbstractGatewayServerTest {
 
 		// Login request uses up one window
 		for (int i = 2; i <= availableIncomingWindows; i++) {
-			final Sms sms = new Sms(
+			final Sms sms = new Sms(new Msisdn("01686754432"), new Msisdn(
+			        "01686754432"),
 			        "assertThatGatewayServerDoesNotForwardMoreThanWindowSizeManySmsToJmsServer-"
 			                + i);
 			client.sendMessage(i, sms);

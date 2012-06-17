@@ -12,8 +12,9 @@ import org.jboss.netty.channel.SimpleChannelDownstreamHandler;
 import org.junit.Test;
 import org.springframework.jmx.export.MBeanExporter;
 
+import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.messages.LoginRequest;
-import vnet.sms.common.messages.Message;
+import vnet.sms.common.messages.Msisdn;
 import vnet.sms.common.messages.Sms;
 import vnet.sms.common.wme.acknowledge.ReceivedSmsAckedContainer;
 import vnet.sms.common.wme.acknowledge.ReceivedSmsAckedEvent;
@@ -102,7 +103,8 @@ public class WindowingChannelHandlerTest {
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        objectUnderTest);
 
-		final Sms receivedSms = new Sms(
+		final Sms receivedSms = new Sms(new Msisdn("01686754432"), new Msisdn(
+		        "01686754432"),
 		        "assertThatWindowedChannelHandlerStoresReceivedSmsInIncomingWindowingStore");
 		embeddedPipeline.receive(receivedSms);
 		final MessageEvent propagatedMessageEvent = embeddedPipeline
@@ -116,7 +118,7 @@ public class WindowingChannelHandlerTest {
 
 		final Integer messageRef = (Integer) SmsReceivedEvent.class.cast(
 		        propagatedMessageEvent).getMessageReference();
-		final Message storedMessage = incomingWindowStore
+		final GsmPdu storedMessage = incomingWindowStore
 		        .releaseWindow(messageRef);
 		assertEquals(
 		        "WindowingChannelHandler did not store received SMS in incoming windowing store but some other message",
@@ -147,6 +149,8 @@ public class WindowingChannelHandlerTest {
 		        objectUnderTest, converterHandler);
 
 		final Sms receivedSms = new Sms(
+		        new Msisdn("01686754432"),
+		        new Msisdn("01686754432"),
 		        "assertThatWindowedChannelHandlerReleasesSmsStoredInIncomingWindowingStoreWhenReceivingAnAck");
 		embeddedPipeline.receive(receivedSms);
 
@@ -190,6 +194,8 @@ public class WindowingChannelHandlerTest {
 		        objectUnderTest, converterHandler);
 
 		final Sms smsToAcknowledge = new Sms(
+		        new Msisdn("01686754432"),
+		        new Msisdn("01686754432"),
 		        "assertThatWindowedChannelHandlerPropagatesFailedToReleaseAcknowledgedMessageEventUpstreamIfReleasedMessagesDoNotMatch");
 		embeddedPipeline.receive(smsToAcknowledge);
 
@@ -200,7 +206,8 @@ public class WindowingChannelHandlerTest {
 		final MessageEvent propagatedMessageEvent = embeddedPipeline
 		        .nextReceivedMessageEvent();
 
-		final Sms actuallyAcknowledgedSms = new Sms("actually");
+		final Sms actuallyAcknowledgedSms = new Sms(new Msisdn("01686754432"),
+		        new Msisdn("01686754432"), "actually");
 		final Integer messageRef = (Integer) SmsReceivedEvent.class.cast(
 		        propagatedMessageEvent).getMessageReference();
 		embeddedPipeline.send(new ReceivedSmsAckedContainer<Integer>(
@@ -242,6 +249,8 @@ public class WindowingChannelHandlerTest {
 		        objectUnderTest, converterHandler);
 
 		final Sms receivedSms = new Sms(
+		        new Msisdn("01686754432"),
+		        new Msisdn("01686754432"),
 		        "assertThatWindowedChannelHandlerReleasesSmsStoredInIncomingWindowingStoreWhenReceivingANack");
 		embeddedPipeline.receive(receivedSms);
 
@@ -288,6 +297,8 @@ public class WindowingChannelHandlerTest {
 		        objectUnderTest, converterHandler);
 
 		final Sms smsToAcknowledge = new Sms(
+		        new Msisdn("01686754432"),
+		        new Msisdn("01686754432"),
 		        "assertThatWindowedChannelHandlerPropagatesFailedToReleaseAcknowledgedMessageEventUpstreamIfMessageReferenceIsUnknown");
 		embeddedPipeline.receive(smsToAcknowledge);
 

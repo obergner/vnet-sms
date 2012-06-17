@@ -20,7 +20,7 @@ import org.springframework.jmx.export.MBeanExporter;
 import org.springframework.jmx.export.notification.NotificationPublisher;
 import org.springframework.jmx.export.notification.UnableToSendNotificationException;
 
-import vnet.sms.common.messages.Message;
+import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.wme.receive.PingRequestReceivedEvent;
 
@@ -247,7 +247,7 @@ public class IncomingWindowStoreTest {
 			                        new InetSocketAddress(0)), pingRequest));
 		}
 
-		final Map<Integer, Message> pendingMessages = objectUnderTest
+		final Map<Integer, GsmPdu> pendingMessages = objectUnderTest
 		        .shutDown();
 
 		assertEquals(

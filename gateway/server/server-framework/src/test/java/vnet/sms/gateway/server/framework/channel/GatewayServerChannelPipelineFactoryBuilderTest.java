@@ -12,7 +12,7 @@ import org.junit.Test;
 import org.springframework.jmx.export.MBeanExporter;
 import org.springframework.security.authentication.AuthenticationManager;
 
-import vnet.sms.common.messages.Message;
+import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.gateway.nettysupport.monitor.incoming.InitialChannelEventsMonitor;
 import vnet.sms.gateway.nettysupport.window.spi.MessageReferenceGenerator;
 import vnet.sms.gateway.server.framework.internal.channel.GatewayServerChannelPipelineFactory;
@@ -29,13 +29,13 @@ public class GatewayServerChannelPipelineFactoryBuilderTest {
 	@Test(expected = IllegalStateException.class)
 	public final void assertThatGetObjectThrowsIllegalStateExceptionIfAfterPropertiesSetHasNotBeenCalledBefore()
 	        throws Exception {
-		final GatewayServerChannelPipelineFactoryBuilder<Integer, Message> objectUnderTest = new GatewayServerChannelPipelineFactoryBuilder<Integer, Message>();
+		final GatewayServerChannelPipelineFactoryBuilder<Integer, GsmPdu> objectUnderTest = new GatewayServerChannelPipelineFactoryBuilder<Integer, GsmPdu>();
 		objectUnderTest.getObject();
 	}
 
 	@Test
 	public final void assertThatGetObjectTypeReturnsTypeCompatibleWithGatewayServerChannelPipelineFactory() {
-		final GatewayServerChannelPipelineFactoryBuilder<Integer, Message> objectUnderTest = new GatewayServerChannelPipelineFactoryBuilder<Integer, Message>();
+		final GatewayServerChannelPipelineFactoryBuilder<Integer, GsmPdu> objectUnderTest = new GatewayServerChannelPipelineFactoryBuilder<Integer, GsmPdu>();
 		final Class<?> objectType = objectUnderTest.getObjectType();
 
 		assertTrue(
@@ -48,7 +48,7 @@ public class GatewayServerChannelPipelineFactoryBuilderTest {
 
 	@Test
 	public final void assertThatIsSingletonReturnsTrue() {
-		final GatewayServerChannelPipelineFactoryBuilder<Integer, Message> objectUnderTest = new GatewayServerChannelPipelineFactoryBuilder<Integer, Message>();
+		final GatewayServerChannelPipelineFactoryBuilder<Integer, GsmPdu> objectUnderTest = new GatewayServerChannelPipelineFactoryBuilder<Integer, GsmPdu>();
 
 		assertTrue(
 		        "isSingleton() should have returned true since a GatewayServerChannelPipelineFactory is a singleton",

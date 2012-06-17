@@ -5,7 +5,7 @@ package vnet.sms.gateway.transports.serialization.incoming;
 
 import vnet.sms.common.messages.LoginRequest;
 import vnet.sms.common.messages.LoginResponse;
-import vnet.sms.common.messages.Message;
+import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.PingResponse;
 import vnet.sms.common.messages.Sms;
@@ -28,7 +28,7 @@ public class SerializationTransportProtocolAdaptingUpstreamChannelHandler
 		if (!(pdu instanceof ReferenceableMessageContainer)) {
 			return TransportProtocolAdaptingUpstreamChannelHandler.PduType.UNKNOWN;
 		}
-		final Message payload = ((ReferenceableMessageContainer) pdu)
+		final GsmPdu payload = ((ReferenceableMessageContainer) pdu)
 		        .getMessage();
 		final TransportProtocolAdaptingUpstreamChannelHandler.PduType pduType;
 		if (payload instanceof LoginRequest) {

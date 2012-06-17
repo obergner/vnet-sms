@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 
+import vnet.sms.common.messages.Msisdn;
 import vnet.sms.common.messages.Sms;
 import vnet.sms.gateway.server.framework.internal.channel.GatewayServerChannelPipelineFactory;
 import vnet.sms.gateway.server.framework.spi.GatewayServerDescription;
@@ -56,7 +57,8 @@ public class SmsTest extends AbstractGatewayServerTest {
 		// Discard forwarded LoginRequest
 		jmsTemplate.receive();
 
-		final Sms sms = new Sms(
+		final Sms sms = new Sms(new Msisdn("01686754432"), new Msisdn(
+		        "01686754432"),
 		        "assertThatGatewayServerForwardsReceivedSmsToJmsServer");
 		client.sendMessage(2, sms);
 		client.disconnect();

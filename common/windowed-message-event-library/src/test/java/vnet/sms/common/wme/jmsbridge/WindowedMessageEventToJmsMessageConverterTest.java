@@ -27,10 +27,11 @@ import org.junit.Test;
 import vnet.sms.common.messages.Headers;
 import vnet.sms.common.messages.LoginRequest;
 import vnet.sms.common.messages.LoginResponse;
-import vnet.sms.common.messages.MessageEventType;
+import vnet.sms.common.messages.Msisdn;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.PingResponse;
 import vnet.sms.common.messages.Sms;
+import vnet.sms.common.wme.MessageEventType;
 import vnet.sms.common.wme.acknowledge.ReceivedSmsAckedContainer;
 import vnet.sms.common.wme.acknowledge.ReceivedSmsNackedContainer;
 import vnet.sms.common.wme.receive.LoginRequestReceivedEvent;
@@ -660,7 +661,8 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		        .anyTimes();
 		expect(receivingChannel.getId()).andReturn(channelId).anyTimes();
 
-		final Sms message = new Sms(
+		final Sms message = new Sms(new Msisdn("01701690056"), new Msisdn(
+		        "01701690056"),
 		        "assertThatToMessageCorrectlyConvertsSmsReceivedEvent");
 		final UpstreamMessageEvent upstreamMessageEvent = new UpstreamMessageEvent(
 		        receivingChannel, message, sender);
@@ -772,7 +774,8 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 	@Test
 	public final void assertThatFromMessageCorrectlyConvertsSendSmsMessage()
 	        throws JMSException {
-		final Sms sms = new Sms(
+		final Sms sms = new Sms(new Msisdn("01701690056"), new Msisdn(
+		        "01701690056"),
 		        "assertThatFromMessageCorrectlyConvertsSendSmsMessage");
 		final ObjectMessage smsMessage = new MockObjectMessage(sms);
 		smsMessage.setStringProperty(Headers.EVENT_TYPE,
@@ -804,7 +807,8 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 	@Test(expected = IllegalArgumentException.class)
 	public final void assertThatFromMessageRejectsReceivedSmsAckedMessageWithoutReceivingChannelId()
 	        throws JMSException {
-		final Sms ackedSms = new Sms(
+		final Sms ackedSms = new Sms(new Msisdn("01701690056"), new Msisdn(
+		        "01701690056"),
 		        "assertThatFromMessageRejectsReceivedSmsAckMessageWithoutReceivingChannelId");
 		final ObjectMessage receivedSmsAckedMessage = new MockObjectMessage(
 		        ackedSms);
@@ -819,7 +823,8 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 	@Test(expected = IllegalArgumentException.class)
 	public final void assertThatFromMessageRejectsReceivedSmsAckedMessageWithoutMessageReference()
 	        throws JMSException {
-		final Sms ackedSms = new Sms(
+		final Sms ackedSms = new Sms(new Msisdn("01701690056"), new Msisdn(
+		        "01701690056"),
 		        "assertThatFromMessageRejectsReceivedSmsAckedMessageWithoutMessageReference");
 		final ObjectMessage receivedSmsAckedMessage = new MockObjectMessage(
 		        ackedSms);
@@ -836,7 +841,8 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		final int receivingChannelId = 1;
 		final String messageReference = "1";
 
-		final Sms ackedSms = new Sms(
+		final Sms ackedSms = new Sms(new Msisdn("01701690056"), new Msisdn(
+		        "01701690056"),
 		        "assertThatFromMessageCorrectlyConvertsReceivedSmsAckedMessage");
 		final ObjectMessage receivedSmsAckedMessage = new MockObjectMessage(
 		        ackedSms);
@@ -863,7 +869,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		assertEquals(
 		        "fromMessage("
 		                + receivedSmsAckedMessage
-		                + ") did not produce ReceivedMessageAckedContainer with the original Message Reference",
+		                + ") did not produce ReceivedMessageAckedContainer with the original GsmPdu Reference",
 		        messageReference, casted.getAcknowledgedMessageReference());
 		assertEquals(
 		        "fromMessage("
@@ -875,7 +881,8 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 	@Test(expected = IllegalArgumentException.class)
 	public final void assertThatFromMessageRejectsReceivedSmsNAckedMessageWithoutReceivingChannelId()
 	        throws JMSException {
-		final Sms nackedSms = new Sms(
+		final Sms nackedSms = new Sms(new Msisdn("01701690056"), new Msisdn(
+		        "01701690056"),
 		        "assertThatFromMessageRejectsReceivedSmsNAckedMessageWithoutReceivingChannelId");
 		final ObjectMessage receivedSmsNAckedMessage = new MockObjectMessage(
 		        nackedSms);
@@ -894,7 +901,8 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 	@Test(expected = IllegalArgumentException.class)
 	public final void assertThatFromMessageRejectsReceivedSmsNAckedMessageWithoutMessageReference()
 	        throws JMSException {
-		final Sms nackedSms = new Sms(
+		final Sms nackedSms = new Sms(new Msisdn("01701690056"), new Msisdn(
+		        "01701690056"),
 		        "assertThatFromMessageRejectsReceivedSmsNAckedMessageWithoutMessageReference");
 		final ObjectMessage receivedSmsNAckedMessage = new MockObjectMessage(
 		        nackedSms);
@@ -913,7 +921,8 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 	@Test(expected = IllegalArgumentException.class)
 	public final void assertThatFromMessageRejectsReceivedSmsNAckedMessageWithoutErrorCode()
 	        throws JMSException {
-		final Sms nackedSms = new Sms(
+		final Sms nackedSms = new Sms(new Msisdn("01701690056"), new Msisdn(
+		        "01701690056"),
 		        "assertThatFromMessageRejectsReceivedSmsNAckedMessageWithoutErrorCode");
 		final ObjectMessage receivedSmsNAckedMessage = new MockObjectMessage(
 		        nackedSms);
@@ -934,7 +943,8 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 	@Test(expected = IllegalArgumentException.class)
 	public final void assertThatFromMessageRejectsReceivedSmsNAckedMessageWithoutErrorDescription()
 	        throws JMSException {
-		final Sms nackedSms = new Sms(
+		final Sms nackedSms = new Sms(new Msisdn("01701690056"), new Msisdn(
+		        "01701690056"),
 		        "assertThatFromMessageRejectsReceivedSmsNAckedMessageWithoutErrorDescription");
 		final ObjectMessage receivedSmsNAckedMessage = new MockObjectMessage(
 		        nackedSms);
@@ -958,7 +968,8 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		final int errorKey = 55;
 		final String errorDescription = "assertThatFromMessageCorrectlyConvertsReceivedSmsNAckedMessage";
 
-		final Sms nackedSms = new Sms(
+		final Sms nackedSms = new Sms(new Msisdn("01701690056"), new Msisdn(
+		        "01701690056"),
 		        "assertThatFromMessageCorrectlyConvertsReceivedSmsNAckedMessage");
 		final ObjectMessage receivedSmsNAckedMessage = new MockObjectMessage(
 		        nackedSms);
@@ -988,7 +999,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		assertEquals(
 		        "fromMessage("
 		                + receivedSmsNAckedMessage
-		                + ") did not produce ReceivedMessageAckedContainer with the original Message Reference",
+		                + ") did not produce ReceivedMessageAckedContainer with the original GsmPdu Reference",
 		        messageReference, casted.getAcknowledgedMessageReference());
 		assertEquals(
 		        "fromMessage("

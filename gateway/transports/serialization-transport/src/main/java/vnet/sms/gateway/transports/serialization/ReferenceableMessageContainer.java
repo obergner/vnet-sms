@@ -7,7 +7,7 @@ import static org.apache.commons.lang.Validate.notNull;
 
 import java.io.Serializable;
 
-import vnet.sms.common.messages.Message;
+import vnet.sms.common.messages.GsmPdu;
 
 /**
  * @author obergner
@@ -18,38 +18,38 @@ public final class ReferenceableMessageContainer implements Serializable {
 	private static final long	serialVersionUID	= -278633444989175439L;
 
 	public static final ReferenceableMessageContainer wrap(
-	        final int messageReference, final Message message) {
-		return new ReferenceableMessageContainer(messageReference, message);
+	        final int messageReference, final GsmPdu gsmPdu) {
+		return new ReferenceableMessageContainer(messageReference, gsmPdu);
 	}
 
 	private final int	  messageReference;
 
-	private final Message	message;
+	private final GsmPdu	gsmPdu;
 
 	private ReferenceableMessageContainer(final int messageReference,
-	        final Message message) {
-		notNull(message, "Argument 'message' must not be null");
+	        final GsmPdu gsmPdu) {
+		notNull(gsmPdu, "Argument 'gsmPdu' must not be null");
 		this.messageReference = messageReference;
-		this.message = message;
+		this.gsmPdu = gsmPdu;
 	}
 
 	public int getMessageReference() {
 		return this.messageReference;
 	}
 
-	public Message getMessage() {
-		return this.message;
+	public GsmPdu getMessage() {
+		return this.gsmPdu;
 	}
 
-	public <M extends Message> M getMessage(final Class<M> expectedType)
+	public <M extends GsmPdu> M getMessage(final Class<M> expectedType)
 	        throws IllegalArgumentException {
-		if (!expectedType.isInstance(this.message)) {
+		if (!expectedType.isInstance(this.gsmPdu)) {
 			throw new IllegalArgumentException(
-			        "Contained message is not of expected type "
+			        "Contained gsmPdu is not of expected type "
 			                + expectedType.getName() + " but of type "
-			                + this.message.getClass().getName());
+			                + this.gsmPdu.getClass().getName());
 		}
-		return expectedType.cast(this.message);
+		return expectedType.cast(this.gsmPdu);
 	}
 
 	@Override
@@ -57,7 +57,7 @@ public final class ReferenceableMessageContainer implements Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
-		        + ((this.message == null) ? 0 : this.message.hashCode());
+		        + ((this.gsmPdu == null) ? 0 : this.gsmPdu.hashCode());
 		result = prime * result + this.messageReference;
 		return result;
 	}
@@ -74,11 +74,11 @@ public final class ReferenceableMessageContainer implements Serializable {
 			return false;
 		}
 		final ReferenceableMessageContainer other = (ReferenceableMessageContainer) obj;
-		if (this.message == null) {
-			if (other.message != null) {
+		if (this.gsmPdu == null) {
+			if (other.gsmPdu != null) {
 				return false;
 			}
-		} else if (!this.message.equals(other.message)) {
+		} else if (!this.gsmPdu.equals(other.gsmPdu)) {
 			return false;
 		}
 		if (this.messageReference != other.messageReference) {
@@ -90,7 +90,7 @@ public final class ReferenceableMessageContainer implements Serializable {
 	@Override
 	public String toString() {
 		return "ReferenceableMessageContainer@" + hashCode()
-		        + " [messageReference: " + this.messageReference + "|message: "
-		        + this.message + "]";
+		        + " [messageReference: " + this.messageReference + "|gsmPdu: "
+		        + this.gsmPdu + "]";
 	}
 }

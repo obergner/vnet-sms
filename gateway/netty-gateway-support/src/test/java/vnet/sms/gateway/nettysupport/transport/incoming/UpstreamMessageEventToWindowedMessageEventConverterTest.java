@@ -11,9 +11,10 @@ import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.UpstreamMessageEvent;
 import org.junit.Test;
 
+import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.messages.LoginRequest;
 import vnet.sms.common.messages.LoginResponse;
-import vnet.sms.common.messages.Message;
+import vnet.sms.common.messages.Msisdn;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.PingResponse;
 import vnet.sms.common.messages.Sms;
@@ -36,12 +37,12 @@ public class UpstreamMessageEventToWindowedMessageEventConverterTest {
 		assertCorrectConversion(inputMessage, expectedOutputType);
 	}
 
-	private void assertCorrectConversion(final Message inputMessage,
+	private void assertCorrectConversion(final GsmPdu inputMessage,
 	        final Class<?> expectedOutputType) {
 		final Integer messageReference = Integer.valueOf(1);
 		final UpstreamMessageEvent upstreamMessageEvent = newUpstreamMessageEvent(inputMessage);
 
-		final WindowedMessageEvent<Integer, ? extends Message> convertedMessage = UpstreamMessageEventToWindowedMessageEventConverter.INSTANCE
+		final WindowedMessageEvent<Integer, ? extends GsmPdu> convertedMessage = UpstreamMessageEventToWindowedMessageEventConverter.INSTANCE
 		        .convert(messageReference, upstreamMessageEvent, inputMessage);
 
 		assertNotNull("convert(" + messageReference + ", "
@@ -53,11 +54,11 @@ public class UpstreamMessageEventToWindowedMessageEventConverterTest {
 		        convertedMessage.getClass());
 	}
 
-	private UpstreamMessageEvent newUpstreamMessageEvent(final Message message) {
+	private UpstreamMessageEvent newUpstreamMessageEvent(final GsmPdu gsmPdu) {
 		final Channel mockChannel = createNiceMock(Channel.class);
 		replay(mockChannel);
 		final UpstreamMessageEvent upstreamMessageEvent = new UpstreamMessageEvent(
-		        mockChannel, message, new InetSocketAddress(1));
+		        mockChannel, gsmPdu, new InetSocketAddress(1));
 		return upstreamMessageEvent;
 	}
 
@@ -91,7 +92,8 @@ public class UpstreamMessageEventToWindowedMessageEventConverterTest {
 
 	@Test
 	public final void assertThatConvertConvertsSmsToSmsReceivedEvent() {
-		final Sms inputMessage = new Sms(
+		final Sms inputMessage = new Sms(new Msisdn("01686754432"), new Msisdn(
+		        "01686754432"),
 		        "assertThatConvertConvertsSmsToSmsReceivedEvent");
 		final Class<?> expectedOutputType = SmsReceivedEvent.class;
 

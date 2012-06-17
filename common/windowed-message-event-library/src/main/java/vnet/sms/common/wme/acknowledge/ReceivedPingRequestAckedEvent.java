@@ -10,8 +10,8 @@ import java.io.Serializable;
 import org.jboss.netty.channel.Channel;
 
 import vnet.sms.common.messages.Acknowledgement;
-import vnet.sms.common.messages.MessageEventType;
 import vnet.sms.common.messages.PingRequest;
+import vnet.sms.common.wme.MessageEventType;
 import vnet.sms.common.wme.receive.PingRequestReceivedEvent;
 
 /**

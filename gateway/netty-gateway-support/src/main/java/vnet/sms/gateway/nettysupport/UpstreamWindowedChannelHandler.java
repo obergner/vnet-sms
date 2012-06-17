@@ -17,7 +17,7 @@ import org.jboss.netty.channel.WriteCompletionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import vnet.sms.common.messages.Message;
+import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.wme.receive.LoginRequestReceivedEvent;
 import vnet.sms.common.wme.receive.LoginResponseReceivedEvent;
 import vnet.sms.common.wme.receive.PingRequestReceivedEvent;
@@ -78,7 +78,7 @@ public abstract class UpstreamWindowedChannelHandler<ID extends Serializable>
 		} else if (e instanceof FailedToReleaseAcknowledgedMessageEvent) {
 			failedToReleaseAcknowledgedMessage(
 			        ctx,
-			        (FailedToReleaseAcknowledgedMessageEvent<ID, ? extends Message>) e);
+			        (FailedToReleaseAcknowledgedMessageEvent<ID, ? extends GsmPdu>) e);
 		} else if (e instanceof WriteCompletionEvent) {
 			final WriteCompletionEvent evt = (WriteCompletionEvent) e;
 			writeComplete(ctx, evt);
@@ -244,7 +244,7 @@ public abstract class UpstreamWindowedChannelHandler<ID extends Serializable>
 	 */
 	protected void failedToReleaseAcknowledgedMessage(
 	        final ChannelHandlerContext ctx,
-	        final FailedToReleaseAcknowledgedMessageEvent<ID, ? extends Message> e)
+	        final FailedToReleaseAcknowledgedMessageEvent<ID, ? extends GsmPdu> e)
 	        throws Exception {
 		ctx.sendUpstream(e);
 	}

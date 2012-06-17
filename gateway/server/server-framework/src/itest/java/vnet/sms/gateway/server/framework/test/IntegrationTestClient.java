@@ -25,7 +25,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 
 import vnet.sms.common.messages.LoginRequest;
 import vnet.sms.common.messages.LoginResponse;
-import vnet.sms.common.messages.Message;
+import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.PingResponse;
 import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;
@@ -78,25 +78,25 @@ public class IntegrationTestClient {
 		this.log.info("Connected to {}", this.serverAddress);
 	}
 
-	public void sendMessage(final int messageReference, final Message message)
+	public void sendMessage(final int messageReference, final GsmPdu gsmPdu)
 	        throws Throwable {
-		sendMessage(messageReference, message, null);
+		sendMessage(messageReference, gsmPdu, null);
 	}
 
-	public void sendMessage(final int messageReference, final Message message,
+	public void sendMessage(final int messageReference, final GsmPdu gsmPdu,
 	        final MessageEventListener responseListener) throws Throwable {
 		this.log.debug("Sending message {} to {} via channel {}...",
-		        new Object[] { message, this.serverAddress,
+		        new Object[] { gsmPdu, this.serverAddress,
 		                this.serverConnection });
 
 		maybeInstallMessageListener(responseListener);
 
 		final ChannelFuture writeCompleted = getMandatoryServerConnection()
 		        .write(ReferenceableMessageContainer.wrap(messageReference,
-		                message));
+		                gsmPdu));
 		writeCompleted.awaitUninterruptibly();
 		if (!writeCompleted.isSuccess()) {
-			this.log.error("Failed to send " + message + ": "
+			this.log.error("Failed to send " + gsmPdu + ": "
 			        + writeCompleted.getCause().getMessage(),
 			        writeCompleted.getCause());
 
@@ -104,7 +104,7 @@ public class IntegrationTestClient {
 		}
 
 		this.log.debug("Successfully sent message {} to {} via channel {}",
-		        new Object[] { message, this.serverAddress,
+		        new Object[] { gsmPdu, this.serverAddress,
 		                this.serverConnection });
 	}
 
@@ -128,7 +128,7 @@ public class IntegrationTestClient {
 	}
 
 	public ReferenceableMessageContainer sendMessageAndWaitForResponse(
-	        final int messageReference, final Message message) throws Throwable {
+	        final int messageReference, final GsmPdu gsmPdu) throws Throwable {
 		final CountDownLatch responseReceived = new CountDownLatch(1);
 		final AtomicReference<MessageEvent> receivedResponse = new AtomicReference<MessageEvent>();
 		final MessageEventListener responseListener = new MessageEventListener() {
@@ -139,19 +139,19 @@ public class IntegrationTestClient {
 			}
 		};
 
-		sendMessage(messageReference, message, responseListener);
+		sendMessage(messageReference, gsmPdu, responseListener);
 		this.log.debug("Waiting for response to message {} sent to {}",
-		        message, this.serverAddress);
+		        gsmPdu, this.serverAddress);
 		responseReceived.await();
 		this.log.debug("Received response {} to message {}",
-		        receivedResponse.get(), message);
+		        receivedResponse.get(), gsmPdu);
 
 		return ReferenceableMessageContainer.class.cast(receivedResponse.get()
 		        .getMessage());
 	}
 
 	public ReferenceableMessageContainer sendMessageAndWaitForMatchingResponse(
-	        final int messageReference, final Message message,
+	        final int messageReference, final GsmPdu gsmPdu,
 	        final MessageEventPredicate messageEventPredicate) throws Throwable {
 		final CountDownLatch responseReceived = new CountDownLatch(1);
 		final AtomicReference<MessageEvent> receivedResponse = new AtomicReference<MessageEvent>();
@@ -165,12 +165,12 @@ public class IntegrationTestClient {
 			}
 		};
 
-		sendMessage(messageReference, message, responseListener);
+		sendMessage(messageReference, gsmPdu, responseListener);
 		this.log.debug("Waiting for response to message {} sent to {}",
-		        message, this.serverAddress);
+		        gsmPdu, this.serverAddress);
 		responseReceived.await();
 		this.log.debug("Received response {} to message {}",
-		        receivedResponse.get(), message);
+		        receivedResponse.get(), gsmPdu);
 
 		return ReferenceableMessageContainer.class.cast(receivedResponse.get()
 		        .getMessage());
@@ -202,7 +202,7 @@ public class IntegrationTestClient {
 		final LoginRequest loginRequest = new LoginRequest(username, password);
 		final ReferenceableMessageContainer loginResponseContainer = sendMessageAndWaitForResponse(
 		        messageReference, loginRequest);
-		final Message response = loginResponseContainer.getMessage();
+		final GsmPdu response = loginResponseContainer.getMessage();
 		if (!(response instanceof LoginResponse)) {
 			throw new RuntimeException("Unexpected response to " + loginRequest
 			        + ": " + response);

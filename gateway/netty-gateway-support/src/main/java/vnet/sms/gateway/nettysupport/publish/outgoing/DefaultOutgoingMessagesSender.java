@@ -25,7 +25,8 @@ import org.springframework.jmx.export.annotation.ManagedOperationParameter;
 import org.springframework.jmx.export.annotation.ManagedOperationParameters;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
-import vnet.sms.common.messages.Message;
+import vnet.sms.common.messages.GsmPdu;
+import vnet.sms.common.messages.Msisdn;
 import vnet.sms.common.messages.Sms;
 import vnet.sms.common.wme.acknowledge.MessageAcknowledgementContainer;
 import vnet.sms.common.wme.acknowledge.ReceivedSmsAckedContainer;
@@ -241,7 +242,7 @@ public class DefaultOutgoingMessagesSender<ID extends Serializable> implements
 	}
 
 	private Channel replyChannelFor(
-	        final MessageAcknowledgementContainer<ID, ? extends Message> acknowledgement) {
+	        final MessageAcknowledgementContainer<ID, ? extends GsmPdu> acknowledgement) {
 		final Channel replyChannel = this.allConnectedChannels
 		        .find(acknowledgement.getReceivingChannelId());
 		if (replyChannel == null) {
@@ -327,10 +328,15 @@ public class DefaultOutgoingMessagesSender<ID extends Serializable> implements
 	// FIXME: This method does currently fill neither originator nor destination
 	// MSISDN
 	@ManagedOperation(description = "Send an SMS")
-	@ManagedOperationParameters(@ManagedOperationParameter(name = "text", description = "The text to send"))
-	public void sendSms(final String text) throws Exception {
+	@ManagedOperationParameters({
+	        @ManagedOperationParameter(name = "originator", description = "Sender's MSISDN"),
+	        @ManagedOperationParameter(name = "destination", description = "Receiver's MSISDN"),
+	        @ManagedOperationParameter(name = "text", description = "The text to send") })
+	public void sendSms(final String originator, final String destination,
+	        final String text) throws Exception {
 		this.log.info("Received request to send SMS [\"{}\"] via JMX", text);
-		final Sms sms = new Sms(text);
+		final Sms sms = new Sms(new Msisdn(originator),
+		        new Msisdn(destination), text);
 		final SendSmsContainer sendSmsContainer = new SendSmsContainer(sms);
 		final ChannelFuture smsSent = sendSms(sendSmsContainer);
 		this.log.info(

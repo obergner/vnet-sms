@@ -8,14 +8,14 @@ import static org.apache.commons.lang.Validate.notNull;
 import java.io.Serializable;
 
 import vnet.sms.common.messages.Acknowledgement;
-import vnet.sms.common.messages.Message;
-import vnet.sms.common.messages.MessageEventType;
+import vnet.sms.common.messages.GsmPdu;
+import vnet.sms.common.wme.MessageEventType;
 
 /**
  * @author obergner
  * 
  */
-abstract class AbstractMessageAcknowledgementContainer<ID extends Serializable, M extends Message>
+abstract class AbstractMessageAcknowledgementContainer<ID extends Serializable, M extends GsmPdu>
         implements MessageAcknowledgementContainer<ID, M>, Serializable {
 
 	private static final long	   serialVersionUID	= 2256764884947681256L;

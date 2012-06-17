@@ -8,14 +8,14 @@ import java.io.Serializable;
 import org.jboss.netty.channel.MessageEvent;
 
 import vnet.sms.common.messages.Acknowledgement;
-import vnet.sms.common.messages.Message;
-import vnet.sms.common.messages.MessageEventType;
+import vnet.sms.common.messages.GsmPdu;
+import vnet.sms.common.wme.MessageEventType;
 
 /**
  * @author obergner
  * 
  */
-public interface ReceivedMessageAcknowledgedEvent<ID extends Serializable, M extends Message>
+public interface ReceivedMessageAcknowledgedEvent<ID extends Serializable, M extends GsmPdu>
         extends MessageEvent {
 
 	MessageEventType getAcknowledgedMessageType();

@@ -7,7 +7,7 @@ package vnet.sms.common.messages;
  * @author obergner
  * 
  */
-public class PingRequest extends Message {
+public class PingRequest extends GsmPdu {
 
 	private static final long	serialVersionUID	= 6318807185475767936L;
 

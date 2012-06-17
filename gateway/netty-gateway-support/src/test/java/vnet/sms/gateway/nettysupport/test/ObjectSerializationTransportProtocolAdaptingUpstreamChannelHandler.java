@@ -4,7 +4,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import vnet.sms.common.messages.LoginRequest;
 import vnet.sms.common.messages.LoginResponse;
-import vnet.sms.common.messages.Message;
+import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.PingResponse;
 import vnet.sms.common.messages.Sms;
@@ -12,12 +12,12 @@ import vnet.sms.gateway.nettysupport.transport.incoming.TransportProtocolAdaptin
 
 public class ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler
         extends
-        TransportProtocolAdaptingUpstreamChannelHandler<Integer, Message> {
+        TransportProtocolAdaptingUpstreamChannelHandler<Integer, GsmPdu> {
 
 	private final AtomicInteger	nextWindowId	= new AtomicInteger(1);
 
 	@Override
-	protected Integer extractWindowId(final Message pdu) {
+	protected Integer extractWindowId(final GsmPdu pdu) {
 		return this.nextWindowId.getAndIncrement();
 	}
 
@@ -43,29 +43,29 @@ public class ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler
 
 	@Override
 	protected LoginRequest convertPduToLoginRequest(
-	        final Message loginRequestPdu) {
+	        final GsmPdu loginRequestPdu) {
 		return (LoginRequest) loginRequestPdu;
 	}
 
 	@Override
 	protected LoginResponse convertPduToLoginResponse(
-	        final Message loginResponsePdu) {
+	        final GsmPdu loginResponsePdu) {
 		return (LoginResponse) loginResponsePdu;
 	}
 
 	@Override
-	protected PingRequest convertPduToPingRequest(final Message pingRequestPdu) {
+	protected PingRequest convertPduToPingRequest(final GsmPdu pingRequestPdu) {
 		return (PingRequest) pingRequestPdu;
 	}
 
 	@Override
 	protected PingResponse convertPduToPingResponse(
-	        final Message pingResponsePdu) {
+	        final GsmPdu pingResponsePdu) {
 		return (PingResponse) pingResponsePdu;
 	}
 
 	@Override
-	protected Sms convertPduToSms(final Message smsPdu) {
+	protected Sms convertPduToSms(final GsmPdu smsPdu) {
 		return (Sms) smsPdu;
 	}
 }

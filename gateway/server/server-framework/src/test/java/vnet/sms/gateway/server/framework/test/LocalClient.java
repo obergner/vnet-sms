@@ -23,7 +23,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 
 import vnet.sms.common.messages.LoginRequest;
 import vnet.sms.common.messages.LoginResponse;
-import vnet.sms.common.messages.Message;
+import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;
 
 public class LocalClient {
@@ -73,31 +73,31 @@ public class LocalClient {
 		this.log.info("Connected to {}", this.serverAddress);
 	}
 
-	public void sendMessage(final int messageReference, final Message message)
+	public void sendMessage(final int messageReference, final GsmPdu gsmPdu)
 	        throws Throwable {
-		sendMessage(messageReference, message, null);
+		sendMessage(messageReference, gsmPdu, null);
 	}
 
-	public void sendMessage(final int messageReference, final Message message,
+	public void sendMessage(final int messageReference, final GsmPdu gsmPdu,
 	        final MessageListener responseListener) throws Throwable {
-		this.log.debug("Sending message {} to {} ...", message,
+		this.log.debug("Sending message {} to {} ...", gsmPdu,
 		        this.serverAddress);
 
 		maybeInstallMessageListener(responseListener);
 
 		final ChannelFuture writeCompleted = getMandatoryServerConnection()
 		        .write(ReferenceableMessageContainer.wrap(messageReference,
-		                message));
+		                gsmPdu));
 		writeCompleted.awaitUninterruptibly();
 		if (!writeCompleted.isSuccess()) {
-			this.log.error("Failed to send " + message + ": "
+			this.log.error("Failed to send " + gsmPdu + ": "
 			        + writeCompleted.getCause().getMessage(),
 			        writeCompleted.getCause());
 
 			throw writeCompleted.getCause();
 		}
 
-		this.log.debug("Successfully sent message {} to {}", message,
+		this.log.debug("Successfully sent message {} to {}", gsmPdu,
 		        this.serverAddress);
 	}
 
@@ -120,7 +120,7 @@ public class LocalClient {
 	}
 
 	public ReferenceableMessageContainer sendMessageAndWaitForResponse(
-	        final int messageReference, final Message message) throws Throwable {
+	        final int messageReference, final GsmPdu gsmPdu) throws Throwable {
 		final CountDownLatch responseReceived = new CountDownLatch(1);
 		final AtomicReference<MessageEvent> receivedResponse = new AtomicReference<MessageEvent>();
 		final MessageListener responseListener = new MessageListener() {
@@ -131,7 +131,7 @@ public class LocalClient {
 			}
 		};
 
-		sendMessage(messageReference, message, responseListener);
+		sendMessage(messageReference, gsmPdu, responseListener);
 		responseReceived.await();
 
 		return ReferenceableMessageContainer.class.cast(receivedResponse.get()
@@ -147,7 +147,7 @@ public class LocalClient {
 		final LoginRequest loginRequest = new LoginRequest(username, password);
 		final ReferenceableMessageContainer loginResponseContainer = sendMessageAndWaitForResponse(
 		        messageReference, loginRequest);
-		final Message response = loginResponseContainer.getMessage();
+		final GsmPdu response = loginResponseContainer.getMessage();
 		if (!(response instanceof LoginResponse)) {
 			throw new RuntimeException("Unexpected response to " + loginRequest
 			        + ": " + response);

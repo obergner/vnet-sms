@@ -13,14 +13,14 @@ import org.jboss.netty.channel.Channels;
 import org.jboss.netty.channel.DownstreamMessageEvent;
 
 import vnet.sms.common.messages.Acknowledgement;
-import vnet.sms.common.messages.Message;
-import vnet.sms.common.messages.MessageEventType;
+import vnet.sms.common.messages.GsmPdu;
+import vnet.sms.common.wme.MessageEventType;
 
 /**
  * @author obergner
  * 
  */
-public class DownstreamReceivedMessageAcknowledgedEvent<ID extends Serializable, M extends Message>
+public class DownstreamReceivedMessageAcknowledgedEvent<ID extends Serializable, M extends GsmPdu>
         extends DownstreamMessageEvent implements
         ReceivedMessageAcknowledgedEvent<ID, M> {
 

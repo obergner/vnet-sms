@@ -1,4 +1,4 @@
-package vnet.sms.common.messages;
+package vnet.sms.common.wme;
 
 /**
  * @author obergner

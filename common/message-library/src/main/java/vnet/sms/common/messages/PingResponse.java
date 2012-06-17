@@ -9,7 +9,7 @@ import static org.apache.commons.lang.Validate.notNull;
  * @author obergner
  * 
  */
-public class PingResponse extends Message {
+public class PingResponse extends GsmPdu {
 
 	private static final long	serialVersionUID	= 8968135952963388189L;
 

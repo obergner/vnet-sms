@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 import org.jboss.netty.channel.ChannelFuture;
 
-import vnet.sms.common.messages.Message;
+import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.wme.acknowledge.MessageAcknowledgementContainer;
 import vnet.sms.common.wme.acknowledge.ReceivedSmsAckedContainer;
 import vnet.sms.common.wme.acknowledge.ReceivedSmsNackedContainer;
@@ -29,7 +29,7 @@ public interface OutgoingMessagesSender<ID extends Serializable> {
 		        final Throwable error);
 
 		void acknowldgeReceivedSmsFailed(
-		        final MessageAcknowledgementContainer<ID, ? extends Message> acknowledgement,
+		        final MessageAcknowledgementContainer<ID, ? extends GsmPdu> acknowledgement,
 		        final Throwable error);
 	}
 

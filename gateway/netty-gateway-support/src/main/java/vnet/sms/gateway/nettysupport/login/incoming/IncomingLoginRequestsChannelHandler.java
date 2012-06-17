@@ -25,7 +25,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 
-import vnet.sms.common.messages.Message;
+import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.wme.WindowedMessageEvent;
 import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestAckedEvent;
 import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestNackedEvent;
@@ -73,7 +73,7 @@ public class IncomingLoginRequestsChannelHandler<ID extends Serializable>
 			loginRequestReceived(ctx, (LoginRequestReceivedEvent<ID>) e);
 		} else if (e instanceof WindowedMessageEvent) {
 			nonLoginRequestReceived(ctx,
-			        (WindowedMessageEvent<ID, ? extends Message>) e);
+			        (WindowedMessageEvent<ID, ? extends GsmPdu>) e);
 		} else {
 			throw new IllegalArgumentException("Unsupported MessageEvent: " + e);
 		}
@@ -146,7 +146,7 @@ public class IncomingLoginRequestsChannelHandler<ID extends Serializable>
 	}
 
 	private void nonLoginRequestReceived(final ChannelHandlerContext ctx,
-	        final WindowedMessageEvent<ID, ? extends Message> e) {
+	        final WindowedMessageEvent<ID, ? extends GsmPdu> e) {
 		if (!isCurrentChannelAuthenticated()) {
 			nonLoginRequestReceivedOnUnauthenticatedChannel(ctx, e);
 			return;
@@ -157,7 +157,7 @@ public class IncomingLoginRequestsChannelHandler<ID extends Serializable>
 
 	private void nonLoginRequestReceivedOnUnauthenticatedChannel(
 	        final ChannelHandlerContext ctx,
-	        final WindowedMessageEvent<ID, ? extends Message> e) {
+	        final WindowedMessageEvent<ID, ? extends GsmPdu> e) {
 		this.log.warn(
 		        "Received non-login request {} on UNAUTHENTICATED channel {} - DISCARD",
 		        e, ctx.getChannel());
@@ -168,7 +168,7 @@ public class IncomingLoginRequestsChannelHandler<ID extends Serializable>
 
 	private void nonLoginRequestReceivedOnAuthenticatedChannel(
 	        final ChannelHandlerContext ctx,
-	        final WindowedMessageEvent<ID, ? extends Message> e)
+	        final WindowedMessageEvent<ID, ? extends GsmPdu> e)
 	        throws IllegalArgumentException {
 		try {
 			MDC.put(CURRENT_USER_MDC_KEY, this.authenticatedClient.get()

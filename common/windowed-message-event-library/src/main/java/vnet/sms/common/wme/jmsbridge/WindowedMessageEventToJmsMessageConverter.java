@@ -15,9 +15,9 @@ import org.springframework.jms.support.converter.MessageConversionException;
 import org.springframework.jms.support.converter.MessageConverter;
 
 import vnet.sms.common.messages.Headers;
-import vnet.sms.common.messages.Message;
-import vnet.sms.common.messages.MessageEventType;
+import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.messages.Sms;
+import vnet.sms.common.wme.MessageEventType;
 import vnet.sms.common.wme.WindowedMessageEvent;
 import vnet.sms.common.wme.acknowledge.ReceivedSmsAckedContainer;
 import vnet.sms.common.wme.acknowledge.ReceivedSmsNackedContainer;
@@ -39,7 +39,7 @@ public class WindowedMessageEventToJmsMessageConverter implements
 			        + WindowedMessageEvent.class.getName() + ". Got: " + object);
 		}
 
-		final WindowedMessageEvent<? extends Serializable, ? extends Message> windowedMessageEvent = (WindowedMessageEvent<? extends Serializable, ? extends Message>) object;
+		final WindowedMessageEvent<? extends Serializable, ? extends GsmPdu> windowedMessageEvent = (WindowedMessageEvent<? extends Serializable, ? extends GsmPdu>) object;
 
 		final ObjectMessage converted = session
 		        .createObjectMessage(windowedMessageEvent.getMessage());
@@ -151,7 +151,7 @@ public class WindowedMessageEventToJmsMessageConverter implements
 
 	private void validateSendSms(final ObjectMessage jmsMessage,
 	        final Serializable messagePayload) {
-		isTrue(Sms.class.isInstance(messagePayload), "Message '" + jmsMessage
+		isTrue(Sms.class.isInstance(messagePayload), "GsmPdu '" + jmsMessage
 		        + "' is of type " + MessageEventType.SEND_SMS
 		        + ", yet it does not contain an SMS but rather "
 		        + messagePayload);
@@ -159,7 +159,7 @@ public class WindowedMessageEventToJmsMessageConverter implements
 
 	private void validateReceivedSmsAcked(final ObjectMessage jmsMessage,
 	        final Serializable messagePayload) throws JMSException {
-		isTrue(Sms.class.isInstance(messagePayload), "Message '" + jmsMessage
+		isTrue(Sms.class.isInstance(messagePayload), "GsmPdu '" + jmsMessage
 		        + "' is of type " + MessageEventType.RECEIVED_SMS_ACKED
 		        + ", yet it does not contain an SMS but rather "
 		        + messagePayload);
@@ -174,7 +174,7 @@ public class WindowedMessageEventToJmsMessageConverter implements
 
 	private void validateReceivedSmsNacked(final ObjectMessage jmsMessage,
 	        final Serializable messagePayload) throws JMSException {
-		isTrue(Sms.class.isInstance(messagePayload), "Message '" + jmsMessage
+		isTrue(Sms.class.isInstance(messagePayload), "GsmPdu '" + jmsMessage
 		        + "' is of type " + MessageEventType.RECEIVED_SMS_NACKED
 		        + ", yet it does not contain an SMS but rather "
 		        + messagePayload);

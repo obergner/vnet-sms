@@ -170,10 +170,10 @@ public final class SmsUdhUtil {
 	}
 
 	/**
-	 * Creates a "Message waiting" UDH element using UDH_IEI_SPECIAL_MESSAGE.
+	 * Creates a "GsmPdu waiting" UDH element using UDH_IEI_SPECIAL_MESSAGE.
 	 * <p>
 	 * If more than one type of message is required to be indicated within one
-	 * SMS message, then multiple "Message waiting" UDH elements must be used.
+	 * SMS message, then multiple "GsmPdu waiting" UDH elements must be used.
 	 * <p>
 	 * <b>Special handling in concatenated messages:</b><br>
 	 * <i> "In the case where this IEI is to be used in a concatenated SM then
@@ -190,7 +190,7 @@ public final class SmsUdhUtil {
 	 * @param storeMsg
 	 *            Set to true if the message should be stored
 	 * @param msgType
-	 *            Message type, may be one of MESSAGE_WAITING_VOICE,
+	 *            GsmPdu type, may be one of MESSAGE_WAITING_VOICE,
 	 *            MESSAGE_WAITING_FAX, MESSAGE_WAITING_EMAIL or
 	 *            MESSAGE_WAITING_OTHER.
 	 * @param msgCount

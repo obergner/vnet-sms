@@ -29,8 +29,9 @@ import vnet.sms.common.messages.Acknowledgement;
 import vnet.sms.common.messages.Headers;
 import vnet.sms.common.messages.LoginRequest;
 import vnet.sms.common.messages.LoginResponse;
-import vnet.sms.common.messages.MessageEventType;
+import vnet.sms.common.messages.Msisdn;
 import vnet.sms.common.messages.Sms;
+import vnet.sms.common.wme.MessageEventType;
 import vnet.sms.gateway.server.framework.test.ForwardingJmsMessageListener;
 import vnet.sms.gateway.server.framework.test.IntegrationTestClient;
 import vnet.sms.gateway.server.framework.test.JmsMessagePredicate;
@@ -96,7 +97,8 @@ public class SendOutgoingAcknowledgementsIT {
 
 		// 2. Send MT SMS
 		final int mtSmsReference = 2;
-		final Sms mtSms = new Sms(
+		final Sms mtSms = new Sms(new Msisdn("01686754432"), new Msisdn(
+		        "01686754432"),
 		        "assertThatGatewayServerSendsMoSmsReceivedViaJmsToConnectedClient");
 		final JmsMessagePredicate isExpectedMtSms = new JmsMessagePredicate() {
 			@Override
@@ -128,12 +130,12 @@ public class SendOutgoingAcknowledgementsIT {
 		final MessageEventPredicate isExpectedMtSmsAck = new MessageEventPredicate() {
 			@Override
 			public boolean evaluate(final MessageEvent e) {
-				final vnet.sms.common.messages.Message message = ReferenceableMessageContainer.class
+				final vnet.sms.common.messages.GsmPdu gsmPdu = ReferenceableMessageContainer.class
 				        .cast(e.getMessage()).getMessage();
-				if (!(message instanceof Acknowledgement)) {
+				if (!(gsmPdu instanceof Acknowledgement)) {
 					return false;
 				}
-				return Acknowledgement.class.cast(message).is(
+				return Acknowledgement.class.cast(gsmPdu).is(
 				        Acknowledgement.Status.ACK);
 			}
 		};
@@ -190,7 +192,8 @@ public class SendOutgoingAcknowledgementsIT {
 
 		// 2. Send MT SMS
 		final int mtSmsReference = 2;
-		final Sms mtSms = new Sms(
+		final Sms mtSms = new Sms(new Msisdn("01686754432"), new Msisdn(
+		        "01686754432"),
 		        "assertThatGatewayServerSendsSmsNackReceivedViaJmsToConnectedClient");
 		final JmsMessagePredicate isExpectedMtSms = new JmsMessagePredicate() {
 			@Override
@@ -222,12 +225,12 @@ public class SendOutgoingAcknowledgementsIT {
 		final MessageEventPredicate isExpectedMtSmsAck = new MessageEventPredicate() {
 			@Override
 			public boolean evaluate(final MessageEvent e) {
-				final vnet.sms.common.messages.Message message = ReferenceableMessageContainer.class
+				final vnet.sms.common.messages.GsmPdu gsmPdu = ReferenceableMessageContainer.class
 				        .cast(e.getMessage()).getMessage();
-				if (!(message instanceof Acknowledgement)) {
+				if (!(gsmPdu instanceof Acknowledgement)) {
 					return false;
 				}
-				return Acknowledgement.class.cast(message).is(
+				return Acknowledgement.class.cast(gsmPdu).is(
 				        Acknowledgement.Status.NACK);
 			}
 		};

@@ -29,7 +29,7 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.jmx.export.notification.NotificationPublisher;
 import org.springframework.jmx.export.notification.NotificationPublisherAware;
 
-import vnet.sms.common.messages.Message;
+import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.wme.WindowedMessageEvent;
 import vnet.sms.gateway.nettysupport.Jmx;
 
@@ -60,7 +60,7 @@ public class IncomingWindowStore<ID extends Serializable> implements
 
 	private NotificationPublisher	         notificationPublisher;
 
-	private final ConcurrentMap<ID, Message>	messageReferenceToMessage;
+	private final ConcurrentMap<ID, GsmPdu>	messageReferenceToMessage;
 
 	private final Semaphore	                 availableWindows;
 
@@ -80,7 +80,7 @@ public class IncomingWindowStore<ID extends Serializable> implements
 		this.availableWindows = new Semaphore(maximumCapacity);
 		this.waitTimeMillis = waitTimeMillis;
 		this.mbeanExporter = mbeanExporter;
-		this.messageReferenceToMessage = new ConcurrentHashMap<ID, Message>(
+		this.messageReferenceToMessage = new ConcurrentHashMap<ID, GsmPdu>(
 		        maximumCapacity);
 	}
 
@@ -171,13 +171,13 @@ public class IncomingWindowStore<ID extends Serializable> implements
 	 * @throws InterruptedException
 	 */
 	public boolean tryAcquireWindow(
-	        final WindowedMessageEvent<ID, ? extends Message> messageEvent)
+	        final WindowedMessageEvent<ID, ? extends GsmPdu> messageEvent)
 	        throws IllegalArgumentException, IllegalStateException,
 	        InterruptedException {
 		notNull(messageEvent, "Cannot store a null message");
-		isTrue(messageEvent.getMessage() instanceof Message,
+		isTrue(messageEvent.getMessage() instanceof GsmPdu,
 		        "Can only process MessageEvents containing a message of type "
-		                + Message.class.getName() + ". Got: "
+		                + GsmPdu.class.getName() + ". Got: "
 		                + messageEvent.getMessage());
 		ensureNotShutDown();
 		if (!this.availableWindows.tryAcquire(this.waitTimeMillis,
@@ -196,7 +196,7 @@ public class IncomingWindowStore<ID extends Serializable> implements
 	}
 
 	private void publishNoWindowAvailableEvent(
-	        final WindowedMessageEvent<ID, ? extends Message> messageEvent) {
+	        final WindowedMessageEvent<ID, ? extends GsmPdu> messageEvent) {
 		final Notification noWindowAvailableNot = new Notification(
 		        Events.NO_WINDOW_FOR_INCOMING_MESSAGE, this,
 		        this.noWindowAvailableSeq.getAndIncrement());
@@ -215,9 +215,9 @@ public class IncomingWindowStore<ID extends Serializable> implements
 	}
 
 	private boolean storeMessageHavingPermit(
-	        final WindowedMessageEvent<ID, ? extends Message> messageEvent)
+	        final WindowedMessageEvent<ID, ? extends GsmPdu> messageEvent)
 	        throws IllegalArgumentException {
-		final Message storedMessageHavingSameId;
+		final GsmPdu storedMessageHavingSameId;
 		if ((storedMessageHavingSameId = this.messageReferenceToMessage
 		        .putIfAbsent(messageEvent.getMessageReference(),
 		                messageEvent.getMessage())) != null) {
@@ -240,11 +240,11 @@ public class IncomingWindowStore<ID extends Serializable> implements
 	 * @throws IllegalArgumentException
 	 * @throws IllegalStateException
 	 */
-	public Message releaseWindow(final ID messageReference)
+	public GsmPdu releaseWindow(final ID messageReference)
 	        throws IllegalArgumentException, IllegalStateException {
 		ensureNotShutDown();
 		try {
-			final Message releasedMessage = this.messageReferenceToMessage
+			final GsmPdu releasedMessage = this.messageReferenceToMessage
 			        .remove(messageReference);
 			if (releasedMessage == null) {
 				throw new IllegalArgumentException(
@@ -265,7 +265,7 @@ public class IncomingWindowStore<ID extends Serializable> implements
 	/**
 	 * @return
 	 */
-	public Map<ID, Message> shutDown() {
+	public Map<ID, GsmPdu> shutDown() {
 		if (this.shutDown) {
 			return Collections.emptyMap();
 		}

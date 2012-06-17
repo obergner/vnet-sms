@@ -13,8 +13,8 @@ import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.MessageEvent;
 
 import vnet.sms.common.messages.Acknowledgement;
-import vnet.sms.common.messages.MessageEventType;
 import vnet.sms.common.messages.Sms;
+import vnet.sms.common.wme.MessageEventType;
 
 /**
  * @author obergner

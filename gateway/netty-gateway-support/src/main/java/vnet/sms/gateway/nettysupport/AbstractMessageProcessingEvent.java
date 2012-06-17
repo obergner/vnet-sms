@@ -13,13 +13,13 @@ import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.Channels;
 
-import vnet.sms.common.messages.Message;
+import vnet.sms.common.messages.GsmPdu;
 
 /**
  * @author obergner
  * 
  */
-public abstract class AbstractMessageProcessingEvent<M extends Message>
+public abstract class AbstractMessageProcessingEvent<M extends GsmPdu>
         implements MessageProcessingEvent<M> {
 
 	private final UUID	        id;
@@ -129,7 +129,7 @@ public abstract class AbstractMessageProcessingEvent<M extends Message>
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		final AbstractMessageProcessingEvent<? extends Message> other = (AbstractMessageProcessingEvent<? extends Message>) obj;
+		final AbstractMessageProcessingEvent<? extends GsmPdu> other = (AbstractMessageProcessingEvent<? extends GsmPdu>) obj;
 		if (this.id == null) {
 			if (other.id != null) {
 				return false;
