@@ -4,8 +4,9 @@ import org.apache.camel.Exchange;
 import org.junit.Test;
 
 import vnet.sms.common.messages.Headers;
-import vnet.sms.common.messages.MessageEventType;
+import vnet.sms.common.messages.Msisdn;
 import vnet.sms.common.messages.Sms;
+import vnet.sms.common.wme.MessageEventType;
 import vnet.sms.routingengine.core.internal.CamelBlueprintTestSupport;
 
 public class AcknowledgementProcessingContextIT extends
@@ -19,7 +20,8 @@ public class AcknowledgementProcessingContextIT extends
 	@Test
 	public void assertThatRoutingEngineRespondsWithAnAckMessageContainingReceivedSmsWhenReceivingAnMtSms()
 	        throws Exception {
-		final Sms expectedSms = new Sms(
+		final Sms expectedSms = new Sms(new Msisdn("01587756444"), new Msisdn(
+		        "01587756455"),
 		        "assertThatRoutingEngineRespondsWithAnAckMessageWhenReceivingAnMtSms");
 		template().sendBody("jms:queue:Q1", expectedSms);
 

@@ -39,12 +39,12 @@ import vnet.sms.gateway.nettysupport.ping.outgoing.StartedToPingEvent;
 import vnet.sms.gateway.nettysupport.window.NoWindowForIncomingMessageAvailableEvent;
 import vnet.sms.gateway.nettysupport.window.PendingWindowedMessagesDiscardedEvent;
 
-import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Counter;
 import com.yammer.metrics.core.Histogram;
 import com.yammer.metrics.core.Meter;
 import com.yammer.metrics.core.Metric;
 import com.yammer.metrics.core.MetricName;
+import com.yammer.metrics.core.MetricsRegistry;
 
 /**
  * @author obergner
@@ -73,17 +73,23 @@ public class ManagedChannel {
 
 		private final MBeanExportOperations	mbeanExporter;
 
+		private final MetricsRegistry		metricsRegistry;
+
 		/**
 		 * @param mbeanExporter
 		 */
-		private Factory(final MBeanExportOperations mbeanExporter) {
+		private Factory(final MBeanExportOperations mbeanExporter,
+		        final MetricsRegistry metricsRegistry) {
 			notNull(mbeanExporter, "Argument 'mbeanExporter' must not be null");
+			notNull(metricsRegistry,
+			        "Argument 'metricsRegistry' must not be null");
 			this.mbeanExporter = mbeanExporter;
+			this.metricsRegistry = metricsRegistry;
 		}
 
 		ManagedChannel attachTo(final Channel channel) {
 			final ManagedChannel managedChannel = new ManagedChannel(channel,
-			        this.mbeanExporter);
+			        this.mbeanExporter, this.metricsRegistry);
 
 			channel.getCloseFuture().addListener(new ChannelFutureListener() {
 				@Override
@@ -104,14 +110,17 @@ public class ManagedChannel {
 	}
 
 	public static ManagedChannel.Factory factory(
-	        final MBeanExportOperations mbeanExporter) {
-		return new ManagedChannel.Factory(mbeanExporter);
+	        final MBeanExportOperations mbeanExporter,
+	        final MetricsRegistry metricsRegistry) {
+		return new ManagedChannel.Factory(mbeanExporter, metricsRegistry);
 	}
 
 	private final Logger	            log	= LoggerFactory
 	                                                .getLogger(getClass());
 
 	private final MBeanExportOperations	mbeanExporter;
+
+	private final MetricsRegistry	    metricsRegistry;
 
 	private NotificationPublisher	    notificationPublisher;
 
@@ -154,64 +163,72 @@ public class ManagedChannel {
 	private final long	                connectedSinceTimestamp;
 
 	private ManagedChannel(final Channel channel,
-	        final MBeanExportOperations mbeanExporter) {
+	        final MBeanExportOperations mbeanExporter,
+	        final MetricsRegistry metricsRegistry) {
 		notNull(channel, "Argument 'channel' must not be null");
 		notNull(mbeanExporter, "Argument 'mbeanExporter' must not be null");
+		notNull(metricsRegistry, "Argument 'metricsRegistry' must not be null");
 
 		this.connectedSinceTimestamp = System.currentTimeMillis();
 		this.channel = channel;
 		this.listener = this.new Listener();
 		this.mbeanExporter = mbeanExporter;
+		this.metricsRegistry = metricsRegistry;
 		// Incoming metrics
-		this.numberOfReceivedBytes = Metrics.newHistogram(new MetricName(
-		        Jmx.GROUP, TYPE, "received-bytes", channel.getId().toString()));
-		this.totalNumberOfReceivedBytes = Metrics.newCounter(new MetricName(
-		        Jmx.GROUP, TYPE, "total-received-bytes", channel.getId()
-		                .toString()));
-		this.numberOfReceivedPdus = Metrics.newMeter(new MetricName(Jmx.GROUP,
-		        TYPE, "received-pdus", channel.getId().toString()),
-		        "pdu-received", TimeUnit.SECONDS);
-		this.numberOfReceivedLoginRequests = Metrics.newMeter(new MetricName(
-		        Jmx.GROUP, TYPE, "received-login-requests", channel.getId()
-		                .toString()), "login-request-received",
+		this.numberOfReceivedBytes = this.metricsRegistry.newHistogram(
+		        new MetricName(Jmx.GROUP, TYPE, "received-bytes", channel
+		                .getId().toString()), false);
+		this.totalNumberOfReceivedBytes = this.metricsRegistry
+		        .newCounter(new MetricName(Jmx.GROUP, TYPE,
+		                "total-received-bytes", channel.getId().toString()));
+		this.numberOfReceivedPdus = this.metricsRegistry.newMeter(
+		        new MetricName(Jmx.GROUP, TYPE, "received-pdus", channel
+		                .getId().toString()), "pdu-received", TimeUnit.SECONDS);
+		this.numberOfReceivedLoginRequests = this.metricsRegistry.newMeter(
+		        new MetricName(Jmx.GROUP, TYPE, "received-login-requests",
+		                channel.getId().toString()), "login-request-received",
 		        TimeUnit.SECONDS);
-		this.numberOfReceivedLoginResponses = Metrics.newMeter(new MetricName(
-		        Jmx.GROUP, TYPE, "received-login-responses", channel.getId()
-		                .toString()), "login-response-received",
+		this.numberOfReceivedLoginResponses = this.metricsRegistry.newMeter(
+		        new MetricName(Jmx.GROUP, TYPE, "received-login-responses",
+		                channel.getId().toString()), "login-response-received",
 		        TimeUnit.SECONDS);
-		this.numberOfReceivedPingRequests = Metrics.newMeter(new MetricName(
-		        Jmx.GROUP, TYPE, "received-ping-requests", channel.getId()
+		this.numberOfReceivedPingRequests = this.metricsRegistry.newMeter(
+		        new MetricName(Jmx.GROUP, TYPE, "received-ping-requests",
+		                channel.getId().toString()), "pdu-received",
+		        TimeUnit.SECONDS);
+		this.numberOfReceivedPingResponses = this.metricsRegistry.newMeter(
+		        new MetricName(Jmx.GROUP, TYPE, "received-ping-responses",
+		                channel.getId().toString()), "ping-response-received",
+		        TimeUnit.SECONDS);
+		this.numberOfReceivedSms = this.metricsRegistry.newMeter(
+		        new MetricName(Jmx.GROUP, TYPE, "received-sms", channel.getId()
 		                .toString()), "pdu-received", TimeUnit.SECONDS);
-		this.numberOfReceivedPingResponses = Metrics.newMeter(new MetricName(
-		        Jmx.GROUP, TYPE, "received-ping-responses", channel.getId()
-		                .toString()), "ping-response-received",
-		        TimeUnit.SECONDS);
-		this.numberOfReceivedSms = Metrics.newMeter(new MetricName(Jmx.GROUP,
-		        TYPE, "received-sms", channel.getId().toString()),
-		        "pdu-received", TimeUnit.SECONDS);
 		// Outgoing metrics
-		this.numberOfSentBytes = Metrics.newHistogram(new MetricName(Jmx.GROUP,
-		        TYPE, "sent-bytes", channel.getId().toString()));
-		this.totalNumberOfSentBytes = Metrics
+		this.numberOfSentBytes = this.metricsRegistry.newHistogram(
+		        new MetricName(Jmx.GROUP, TYPE, "sent-bytes", channel.getId()
+		                .toString()), false);
+		this.totalNumberOfSentBytes = this.metricsRegistry
 		        .newCounter(new MetricName(Jmx.GROUP, TYPE, "total-sent-bytes",
 		                channel.getId().toString()));
-		this.numberOfSentPdus = Metrics.newMeter(new MetricName(Jmx.GROUP,
-		        TYPE, "sent-pdus", channel.getId().toString()), "pdu-sent",
+		this.numberOfSentPdus = this.metricsRegistry.newMeter(new MetricName(
+		        Jmx.GROUP, TYPE, "sent-pdus", channel.getId().toString()),
+		        "pdu-sent", TimeUnit.SECONDS);
+		this.numberOfAcceptedLoginRequests = this.metricsRegistry.newMeter(
+		        new MetricName(Jmx.GROUP, TYPE, "accepted-login-requests",
+		                channel.getId().toString()), "login-request-accepted",
 		        TimeUnit.SECONDS);
-		this.numberOfAcceptedLoginRequests = Metrics.newMeter(new MetricName(
-		        Jmx.GROUP, TYPE, "accepted-login-requests", channel.getId()
-		                .toString()), "login-request-accepted",
+		this.numberOfRejectedLoginRequests = this.metricsRegistry.newMeter(
+		        new MetricName(Jmx.GROUP, TYPE, "rejected-login-requests",
+		                channel.getId().toString()), "login-request-rejected",
 		        TimeUnit.SECONDS);
-		this.numberOfRejectedLoginRequests = Metrics.newMeter(new MetricName(
-		        Jmx.GROUP, TYPE, "rejected-login-requests", channel.getId()
-		                .toString()), "login-request-rejected",
+		this.numberOfSentPingRequests = this.metricsRegistry.newMeter(
+		        new MetricName(Jmx.GROUP, TYPE, "sent-ping-requests", channel
+		                .getId().toString()), "ping-request-sent",
 		        TimeUnit.SECONDS);
-		this.numberOfSentPingRequests = Metrics.newMeter(new MetricName(
-		        Jmx.GROUP, TYPE, "sent-ping-requests", channel.getId()
-		                .toString()), "ping-request-sent", TimeUnit.SECONDS);
-		this.numberOfSentPingResponses = Metrics.newMeter(new MetricName(
-		        Jmx.GROUP, TYPE, "sent-ping-responses", channel.getId()
-		                .toString()), "ping-response-sent", TimeUnit.SECONDS);
+		this.numberOfSentPingResponses = this.metricsRegistry.newMeter(
+		        new MetricName(Jmx.GROUP, TYPE, "sent-ping-responses", channel
+		                .getId().toString()), "ping-response-sent",
+		        TimeUnit.SECONDS);
 		// Controller
 		this.controller = this.new Controller();
 		this.mbeanExporter.registerManagedResource(this.controller,
@@ -245,36 +262,34 @@ public class ManagedChannel {
 	}
 
 	void cleanup() {
-		Metrics.defaultRegistry().removeMetric(
-		        metricNameOf(this.numberOfAcceptedLoginRequests));
-		Metrics.defaultRegistry().removeMetric(
-		        metricNameOf(this.numberOfReceivedBytes));
-		Metrics.defaultRegistry().removeMetric(
-		        metricNameOf(this.totalNumberOfReceivedBytes));
-		Metrics.defaultRegistry().removeMetric(
-		        metricNameOf(this.numberOfReceivedLoginRequests));
-		Metrics.defaultRegistry().removeMetric(
-		        metricNameOf(this.numberOfReceivedLoginResponses));
-		Metrics.defaultRegistry().removeMetric(
-		        metricNameOf(this.numberOfReceivedPdus));
-		Metrics.defaultRegistry().removeMetric(
-		        metricNameOf(this.numberOfReceivedPingRequests));
-		Metrics.defaultRegistry().removeMetric(
-		        metricNameOf(this.numberOfReceivedPingResponses));
-		Metrics.defaultRegistry().removeMetric(
-		        metricNameOf(this.numberOfReceivedSms));
-		Metrics.defaultRegistry().removeMetric(
-		        metricNameOf(this.numberOfRejectedLoginRequests));
-		Metrics.defaultRegistry().removeMetric(
-		        metricNameOf(this.numberOfSentBytes));
-		Metrics.defaultRegistry().removeMetric(
-		        metricNameOf(this.totalNumberOfSentBytes));
-		Metrics.defaultRegistry().removeMetric(
-		        metricNameOf(this.numberOfSentPdus));
-		Metrics.defaultRegistry().removeMetric(
-		        metricNameOf(this.numberOfSentPingRequests));
-		Metrics.defaultRegistry().removeMetric(
-		        metricNameOf(this.numberOfSentPingResponses));
+		this.metricsRegistry
+		        .removeMetric(metricNameOf(this.numberOfAcceptedLoginRequests));
+		this.metricsRegistry
+		        .removeMetric(metricNameOf(this.numberOfReceivedBytes));
+		this.metricsRegistry
+		        .removeMetric(metricNameOf(this.totalNumberOfReceivedBytes));
+		this.metricsRegistry
+		        .removeMetric(metricNameOf(this.numberOfReceivedLoginRequests));
+		this.metricsRegistry
+		        .removeMetric(metricNameOf(this.numberOfReceivedLoginResponses));
+		this.metricsRegistry
+		        .removeMetric(metricNameOf(this.numberOfReceivedPdus));
+		this.metricsRegistry
+		        .removeMetric(metricNameOf(this.numberOfReceivedPingRequests));
+		this.metricsRegistry
+		        .removeMetric(metricNameOf(this.numberOfReceivedPingResponses));
+		this.metricsRegistry
+		        .removeMetric(metricNameOf(this.numberOfReceivedSms));
+		this.metricsRegistry
+		        .removeMetric(metricNameOf(this.numberOfRejectedLoginRequests));
+		this.metricsRegistry.removeMetric(metricNameOf(this.numberOfSentBytes));
+		this.metricsRegistry
+		        .removeMetric(metricNameOf(this.totalNumberOfSentBytes));
+		this.metricsRegistry.removeMetric(metricNameOf(this.numberOfSentPdus));
+		this.metricsRegistry
+		        .removeMetric(metricNameOf(this.numberOfSentPingRequests));
+		this.metricsRegistry
+		        .removeMetric(metricNameOf(this.numberOfSentPingResponses));
 
 		removeChannelMonitorFromChannel();
 
@@ -286,15 +301,15 @@ public class ManagedChannel {
 	}
 
 	private MetricName metricNameOf(final Metric metric) {
-		for (final Map.Entry<MetricName, Metric> namePlusMetric : Metrics
-		        .defaultRegistry().allMetrics().entrySet()) {
+		for (final Map.Entry<MetricName, Metric> namePlusMetric : this.metricsRegistry
+		        .allMetrics().entrySet()) {
 			if (namePlusMetric.getValue().equals(metric)) {
 				return namePlusMetric.getKey();
 			}
 		}
 		throw new IllegalArgumentException("Metric [" + metric
 		        + "] has not been registered in MetricsRegistry ["
-		        + Metrics.defaultRegistry() + "]");
+		        + this.metricsRegistry + "]");
 	}
 
 	private void removeChannelMonitorFromChannel() {

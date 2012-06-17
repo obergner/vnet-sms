@@ -11,8 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import vnet.sms.common.messages.Headers;
-import vnet.sms.common.messages.MessageEventType;
 import vnet.sms.common.messages.Sms;
+import vnet.sms.common.wme.MessageEventType;
 
 /**
  * @author obergner

@@ -87,6 +87,17 @@
             <artifactId>transport-plugin-support</artifactId>
             <scope>compile</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.yammer.metrics</groupId>
+            <artifactId>metrics-core</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.yammer.metrics</groupId>
+            <artifactId>metrics-annotation</artifactId>
+            <scope>compile</scope>
+        </dependency>
 		<!-- *************************************************************** -->
 		<!-- Runtime -->
 		<!-- *************************************************************** -->
@@ -119,6 +130,12 @@
         <dependency>
             <groupId>vnet.sms.common.shell</groupId>
             <artifactId>spring-shell-sshd</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.yammer.metrics</groupId>
+            <artifactId>metrics-spring</artifactId>
             <scope>runtime</scope>
         </dependency>
 		<!-- *************************************************************** -->

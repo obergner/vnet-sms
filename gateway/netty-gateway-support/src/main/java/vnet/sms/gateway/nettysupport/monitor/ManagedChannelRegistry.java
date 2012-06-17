@@ -15,6 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jmx.export.MBeanExportOperations;
 
+import com.yammer.metrics.core.MetricsRegistry;
+
 /**
  * <p>
  * This is effectively a singleton.
@@ -32,10 +34,13 @@ class ManagedChannelRegistry {
 
 	private final ManagedChannel.Factory	             managedChannelFactory;
 
-	ManagedChannelRegistry(final MBeanExportOperations mbeanExporter) {
+	ManagedChannelRegistry(final MBeanExportOperations mbeanExporter,
+	        final MetricsRegistry metricsRegistry) {
 		notNull(mbeanExporter,
 		        "Argument 'managedChannelFactory' must not be null");
-		this.managedChannelFactory = ManagedChannel.factory(mbeanExporter);
+		notNull(metricsRegistry, "Argument 'metricsRegistry' must not be null");
+		this.managedChannelFactory = ManagedChannel.factory(mbeanExporter,
+		        metricsRegistry);
 	}
 
 	void registerChannel(final Channel channel) {

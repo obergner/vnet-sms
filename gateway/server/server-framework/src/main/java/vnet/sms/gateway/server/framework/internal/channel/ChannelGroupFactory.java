@@ -13,12 +13,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jmx.export.MBeanExportOperations;
 
 import vnet.sms.common.spring.jmx.MBeanExportOperationsAware;
 import vnet.sms.gateway.nettysupport.monitor.MonitoringChannelGroup;
 import vnet.sms.gateway.server.framework.GatewayServerDescriptionAware;
 import vnet.sms.gateway.server.framework.spi.GatewayServerDescription;
+
+import com.yammer.metrics.core.MetricsRegistry;
 
 /**
  * @author obergner
@@ -32,6 +35,8 @@ public class ChannelGroupFactory implements FactoryBean<ChannelGroup>,
 	                                             .getLogger(getClass());
 
 	private MBeanExportOperations	 mbeanExporter;
+
+	private MetricsRegistry	         metricsRegistry;
 
 	private GatewayServerDescription	description;
 
@@ -62,6 +67,16 @@ public class ChannelGroupFactory implements FactoryBean<ChannelGroup>,
 	}
 
 	// ------------------------------------------------------------------------
+	// Set MetricsRegistry
+	// ------------------------------------------------------------------------
+
+	@Required
+	public void setMetricsRegistry(final MetricsRegistry metricsRegistry) {
+		notNull(metricsRegistry, "Argument 'metricsRegistry' must not be null");
+		this.metricsRegistry = metricsRegistry;
+	}
+
+	// ------------------------------------------------------------------------
 	// InitializingBean
 	// ------------------------------------------------------------------------
 
@@ -77,9 +92,13 @@ public class ChannelGroupFactory implements FactoryBean<ChannelGroup>,
 			throw new IllegalStateException(
 			        "No MBeanExportOperations has been set");
 		}
+		if (this.metricsRegistry == null) {
+			throw new IllegalStateException("No MetricsRegistry has been set");
+		}
 		final String name = this.description.toString()
 		        + " - All Connected Channels";
-		this.product = new MonitoringChannelGroup(name, this.mbeanExporter);
+		this.product = new MonitoringChannelGroup(name, this.mbeanExporter,
+		        this.metricsRegistry);
 		this.log.info("Created new ChannelGroup {}", this.product);
 	}
 

@@ -739,6 +739,18 @@
                 <version>${deps.yammer-metrics.version}</version>
                 <type>jar</type>
             </dependency>
+            <dependency>
+                <groupId>com.yammer.metrics</groupId>
+                <artifactId>metrics-spring</artifactId>
+                <version>${deps.yammer-metrics.version}</version>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>com.yammer.metrics</groupId>
+                <artifactId>metrics-annotation</artifactId>
+                <version>${deps.yammer-metrics.version}</version>
+                <type>jar</type>
+            </dependency>
 			<!-- ActiveMQ -->
             <dependency>
                 <groupId>org.apache.activemq</groupId>

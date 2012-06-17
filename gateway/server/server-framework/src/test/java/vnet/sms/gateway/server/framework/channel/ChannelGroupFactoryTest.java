@@ -11,6 +11,8 @@ import vnet.sms.gateway.server.framework.internal.channel.ChannelGroupFactory;
 import vnet.sms.gateway.server.framework.spi.GatewayServerDescription;
 import vnet.sms.gateway.server.framework.spi.Version;
 
+import com.yammer.metrics.Metrics;
+
 public class ChannelGroupFactoryTest {
 
 	@Test(expected = IllegalArgumentException.class)
@@ -21,6 +23,11 @@ public class ChannelGroupFactoryTest {
 	@Test(expected = IllegalArgumentException.class)
 	public final void assertThatSetMBeanExportOperationsRejectsNullMBeanExportOperations() {
 		new ChannelGroupFactory().setMBeanExportOperations(null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public final void assertThatSetMetricsRegistryRejectsNullMetricsRegistry() {
+		new ChannelGroupFactory().setMetricsRegistry(null);
 	}
 
 	@Test(expected = IllegalStateException.class)
@@ -58,6 +65,7 @@ public class ChannelGroupFactoryTest {
 		        .setGatewayServerDescription(new GatewayServerDescription(
 		                "TEST", new Version(1, 2, 3, "TEST", 66)));
 		objectUnderTest.setMBeanExportOperations(new MBeanExporter());
+		objectUnderTest.setMetricsRegistry(Metrics.defaultRegistry());
 		objectUnderTest.afterPropertiesSet();
 
 		final ChannelGroup product = objectUnderTest.getObject();

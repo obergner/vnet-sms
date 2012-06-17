@@ -16,6 +16,8 @@ import org.jboss.netty.channel.group.ChannelGroupFuture;
 import org.jboss.netty.channel.group.DefaultChannelGroup;
 import org.springframework.jmx.export.MBeanExportOperations;
 
+import com.yammer.metrics.core.MetricsRegistry;
+
 /**
  * @author obergner
  * 
@@ -26,21 +28,18 @@ public class MonitoringChannelGroup implements ChannelGroup {
 
 	private final ManagedChannelRegistry	channelMonitorRegistry;
 
-	public MonitoringChannelGroup(final MBeanExportOperations mbeanExporter) {
-		notNull(mbeanExporter, "Argument 'mbeanExporter' must not be null");
-		this.delegate = new DefaultChannelGroup();
-		this.channelMonitorRegistry = new ManagedChannelRegistry(mbeanExporter);
-	}
-
 	/**
 	 * @param name
 	 */
 	public MonitoringChannelGroup(final String name,
-	        final MBeanExportOperations mbeanExporter) {
+	        final MBeanExportOperations mbeanExporter,
+	        final MetricsRegistry metricsRegistry) {
 		notEmpty(name, "Argument 'name' must not be null");
 		notNull(mbeanExporter, "Argument 'mbeanExporter' must not be null");
+		notNull(metricsRegistry, "Argument 'metricsRegistry' must not be null");
 		this.delegate = new DefaultChannelGroup(name);
-		this.channelMonitorRegistry = new ManagedChannelRegistry(mbeanExporter);
+		this.channelMonitorRegistry = new ManagedChannelRegistry(mbeanExporter,
+		        metricsRegistry);
 	}
 
 	/**
