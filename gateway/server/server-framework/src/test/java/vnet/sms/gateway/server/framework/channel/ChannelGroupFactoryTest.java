@@ -63,7 +63,7 @@ public class ChannelGroupFactoryTest {
 		final ChannelGroupFactory objectUnderTest = new ChannelGroupFactory();
 		objectUnderTest
 		        .setGatewayServerDescription(new GatewayServerDescription(
-		                "TEST", new Version(1, 2, 3, "TEST", 66)));
+		                "TEST", new Version(1, 2, 3, "TEST", "66")));
 		objectUnderTest.setMBeanExportOperations(new MBeanExporter());
 		objectUnderTest.setMetricsRegistry(Metrics.defaultRegistry());
 		objectUnderTest.afterPropertiesSet();

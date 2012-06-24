@@ -24,7 +24,7 @@ public final class Version implements Serializable, Comparable<Version> {
 
 	private final String	  qualifier;
 
-	private final int	      buildNumber;
+	private final String	  buildNumber;
 
 	/**
 	 * @param majorVersion
@@ -35,7 +35,7 @@ public final class Version implements Serializable, Comparable<Version> {
 	 */
 	public Version(final int majorVersion, final int minorVersion,
 	        final int incrementalVersion, final String qualifier,
-	        final int buildNumber) {
+	        final String buildNumber) {
 		this.majorVersion = majorVersion;
 		this.minorVersion = minorVersion;
 		this.incrementalVersion = incrementalVersion;
@@ -74,7 +74,7 @@ public final class Version implements Serializable, Comparable<Version> {
 	/**
 	 * @return the buildNumber
 	 */
-	public final int getBuildNumber() {
+	public final String getBuildNumber() {
 		return this.buildNumber;
 	}
 
@@ -108,7 +108,9 @@ public final class Version implements Serializable, Comparable<Version> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + this.buildNumber;
+		result = prime
+		        * result
+		        + ((this.buildNumber == null) ? 0 : this.buildNumber.hashCode());
 		result = prime * result + this.incrementalVersion;
 		result = prime * result + this.majorVersion;
 		result = prime * result + this.minorVersion;

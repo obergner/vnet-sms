@@ -88,7 +88,7 @@ public class IncomingWindowingTest extends AbstractGatewayServerTest {
 	        GatewayServerDescription {
 
 		public TestGatewayServerDescription() {
-			super("Test", 1, 0, 0, "BETA", 15);
+			super("Test", 1, 0, 0, "BETA", "15");
 		}
 	}
 

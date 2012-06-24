@@ -30,7 +30,7 @@ public class GatewayServerDescription implements Serializable {
 	 */
 	public GatewayServerDescription(final String name, final int majorVersion,
 	        final int minorVersion, final int incrementalVersion,
-	        final String qualifier, final int buildNumber) {
+	        final String qualifier, final String buildNumber) {
 		this(name, new Version(majorVersion, minorVersion, incrementalVersion,
 		        qualifier, buildNumber));
 	}

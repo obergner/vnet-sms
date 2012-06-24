@@ -26,7 +26,8 @@
 
     <metrics:annotation-driven
         metrics-registry="vnet.sms.gateway.server.server-framework.metricsRegistry"
-        health-check-registry="vnet.sms.gateway.server.server-framework.healthCheckRegistry" />
+        health-check-registry="vnet.sms.gateway.server.server-framework.healthCheckRegistry"
+        proxy-target-class="false" />
     <metrics:metrics-registry
         id="vnet.sms.gateway.server.server-framework.metricsRegistry" />
     <metrics:health-check-registry

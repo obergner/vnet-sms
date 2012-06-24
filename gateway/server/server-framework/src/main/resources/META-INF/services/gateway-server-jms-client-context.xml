@@ -56,7 +56,8 @@
     <bean
         id="vnet.sms.gateway.server.server-framework.outgoingMessagesSendingMessageListener"
         class="vnet.sms.gateway.server.framework.internal.jmsbridge.OutgoingMessagesSendingJmsMessageListener"
-        c:outgoingMessagesSender-ref="vnet.sms.gateway.server.server-framework.outgoingMessagesSender" />
+        c:outgoingMessagesSender-ref="vnet.sms.gateway.server.server-framework.outgoingMessagesSender"
+        c:metricsRegistry-ref="vnet.sms.gateway.server.server-framework.metricsRegistry" />
 	<!-- END-SNIPPET: Spring JMS message listener container -->
 
 	<!-- START-SNIPPET: JMS connection factory -->
