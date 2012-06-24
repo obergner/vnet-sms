@@ -259,7 +259,7 @@
                                     <distribution>Routing Engine 2012</distribution>
                                     <packager>Olaf Bergner</packager>
                                     <targetVendor>CentOS</targetVendor>
-                                    <needarch>noarch</needarch>
+                                    <needarch>x86_64</needarch>
                                     <release>${buildNumber}</release>
                                     <defineStatements>
                                         <defineStatement><![CDATA[workdir /var/lib/routing-engine-${project.version}]]></defineStatement>
