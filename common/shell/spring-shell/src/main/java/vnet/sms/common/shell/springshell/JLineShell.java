@@ -81,6 +81,8 @@ public abstract class JLineShell extends AbstractShell implements
 
 	private static final String	          BEL	                 = "\007";
 
+	private static final int	          DEFAULT_HISTORY_SIZE	 = 500;
+
 	// Fields
 	private final PluginProvidersRegistry	pluginProvidersRegistry;
 
@@ -89,8 +91,6 @@ public abstract class JLineShell extends AbstractShell implements
 	private final OutputStream	          output;
 
 	protected ConsoleReader	              reader;
-
-	private final boolean	              developmentMode	     = false;
 
 	private FileWriter	                  fileLog;
 
@@ -117,7 +117,7 @@ public abstract class JLineShell extends AbstractShell implements
 
 	private String	                      welcomeMessage;
 
-	private int	                          historySize;
+	private int	                          historySize	         = DEFAULT_HISTORY_SIZE;
 
 	/**
 	 * @param input
@@ -183,25 +183,8 @@ public abstract class JLineShell extends AbstractShell implements
 			}
 		}, "Spring Shell JLine Shutdown Hook"));
 
-		// Handle any "execute-then-quit" operation
-
-		final String rooArgs = System.getProperty("roo.args");
-		if ((rooArgs != null) && !"".equals(rooArgs)) {
-			setShellStatus(Status.USER_INPUT);
-			final boolean success = executeCommand(rooArgs);
-			if (this.exitShellRequest == null) {
-				// The command itself did not specify an exit shell code, so
-				// we'll fall back to something sensible here
-				executeCommand("quit"); // ROO-839
-				this.exitShellRequest = success ? ExitShellRequest.NORMAL_EXIT
-				        : ExitShellRequest.FATAL_EXIT;
-			}
-			setShellStatus(Status.SHUTTING_DOWN);
-		} else {
-			// Normal RPEL processing
-			promptLoop();
-		}
-
+		// Normal RPEL processing
+		promptLoop();
 	}
 
 	/**
@@ -245,8 +228,8 @@ public abstract class JLineShell extends AbstractShell implements
 	 * @return a jline ConsoleReader instance
 	 */
 	protected ConsoleReader createConsoleReader() {
-		ConsoleReader consoleReader = null;
 		try {
+			ConsoleReader consoleReader = null;
 			if (JANSI_AVAILABLE && OsUtils.isWindows()) {
 				try {
 					consoleReader = createAnsiWindowsReader();
@@ -261,10 +244,10 @@ public abstract class JLineShell extends AbstractShell implements
 				consoleReader = new ConsoleReader(this.input, new PrintWriter(
 				        this.output));
 			}
+			return consoleReader;
 		} catch (final IOException ioe) {
 			throw new IllegalStateException("Cannot start console class", ioe);
 		}
-		return consoleReader;
 	}
 
 	public void printBannerAndWelcome() {

@@ -142,22 +142,4 @@
         class="vnet.sms.common.shell.springshell.internal.commands.HelpCommands"
         p:commandsRegistry-ref="vnet.sms.common.shell.springshell.commandsRegistry" />
 
-    <bean
-        id="vnet.sms.common.shell.springshell.hintCommands"
-        class="vnet.sms.common.shell.springshell.internal.commands.HintCommands"
-        p:hintOperations-ref="vnet.sms.common.shell.springshell.hintOperations" />
-        
-    <!--
-        Command support
-    -->
-
-    <bean
-        id="vnet.sms.common.shell.springshell.hintOperations"
-        class="vnet.sms.common.shell.springshell.internal.commands.ResourceBundleHintOperations" />
-
-    <bean
-        id="vnet.sms.common.shell.springshell.hintConverter"
-        class="vnet.sms.common.shell.springshell.internal.converters.HintConverter"
-        p:hintOperations-ref="vnet.sms.common.shell.springshell.hintOperations" />
-
 </beans>
