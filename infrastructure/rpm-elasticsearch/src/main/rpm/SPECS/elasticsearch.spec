@@ -3,7 +3,7 @@
 
 Name:           elasticsearch
 Version:        ${elasticsearch.version}
-Release:        1%{?dist}
+Release:        ${buildNumber}
 Summary:        A distributed, highly available, RESTful search engine
 
 Group:          System Environment/Daemons

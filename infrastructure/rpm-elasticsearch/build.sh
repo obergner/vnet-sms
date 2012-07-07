@@ -4,8 +4,13 @@ set -e
 set -o nounset
 
 VERSION="$1"
+RELEASE="$2"
+PLATFORM="$3"
+ARCH="$4"
+
 MODULEDIR=$( cd "$( dirname "$0" )" && pwd )
 RPMBUILD=${HOME}/rpmbuild
+PACKAGE=elasticsearch-${VERSION}-${RELEASE}.${PLATFORM}.${ARCH}.rpm
 
 echo "Building RPM for elasticsearch ${VERSION} ..."
 
@@ -47,7 +52,7 @@ echo "Copied elasticsearch binary rpm to ${MODULEDIR}/target ..."
 
 echo "Uploading rpm to pulp repository ..."
 /usr/bin/pulp-admin -u admin -p admin content upload --nosig --verbose --dir ${MODULEDIR}/target/x86_64/
-/usr/bin/pulp-admin -u admin -p admin repo add_file --id vnet --filename elasticsearch-${VERSION}-1.el6.x86_64.rpm
+/usr/bin/pulp-admin -u admin -p admin repo add_package --id vnet --package=${PACKAGE}
 echo "Uploaded rpm to pulp repository"
 
 popd
