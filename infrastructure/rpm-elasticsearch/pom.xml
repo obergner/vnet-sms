@@ -35,7 +35,7 @@
         <elasticsearch.dist>el6</elasticsearch.dist>
         <elasticsearch.arch>x86_64</elasticsearch.arch>
         <elasticsearch.version>0.19.8</elasticsearch.version>
-        <pulp.repository>vnet</pulp.repository>
+        <pulp.repository>vnet-el6-x86_64</pulp.repository>
     </properties>
 
     <dependencies>

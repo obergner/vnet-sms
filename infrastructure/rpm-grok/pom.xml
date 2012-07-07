@@ -35,7 +35,7 @@
         <grok.dist>el6</grok.dist>
         <grok.arch>x86_64</grok.arch>
         <grok.version>1.20110630.1</grok.version>
-        <pulp.repository>vnet</pulp.repository>
+        <pulp.repository>vnet-el6-x86_64</pulp.repository>
     </properties>
 
     <dependencies>

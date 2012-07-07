@@ -35,7 +35,7 @@
         <logstash.dist>el6</logstash.dist>
         <logstash.arch>x86_64</logstash.arch>
         <logstash.version>1.1.0</logstash.version>
-        <pulp.repository>vnet</pulp.repository>
+        <pulp.repository>vnet-el6-noarch</pulp.repository>
     </properties>
 
     <dependencies>
