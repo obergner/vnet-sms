@@ -32,7 +32,7 @@
     <description>Elasticsearch repackaged as an RPM</description>
 
     <properties>
-        <elasticsearch.platform>el6</elasticsearch.platform>
+        <elasticsearch.dist>el6</elasticsearch.dist>
         <elasticsearch.arch>x86_64</elasticsearch.arch>
         <elasticsearch.version>0.19.8</elasticsearch.version>
     </properties>
@@ -100,7 +100,7 @@
                             <arguments>
                                 <argument>${elasticsearch.version}</argument>
                                 <argument>${buildNumber}</argument>
-                                <argument>${elasticsearch.platform}</argument>
+                                <argument>${elasticsearch.dist}</argument>
                                 <argument>${elasticsearch.arch}</argument>
                             </arguments>
                         </configuration>

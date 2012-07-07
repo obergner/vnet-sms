@@ -5,12 +5,12 @@ set -o nounset
 
 VERSION="$1"
 RELEASE="$2"
-PLATFORM="$3"
+DIST="$3"
 ARCH="$4"
 
 MODULEDIR=$( cd "$( dirname "$0" )" && pwd )
 RPMBUILD=${HOME}/rpmbuild
-PACKAGE=elasticsearch-${VERSION}-${RELEASE}.${PLATFORM}.${ARCH}.rpm
+PACKAGE=elasticsearch-${VERSION}-${RELEASE}.${DIST}.${ARCH}.rpm
 
 echo "Building RPM for elasticsearch ${VERSION} ..."
 
