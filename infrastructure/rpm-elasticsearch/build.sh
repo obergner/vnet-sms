@@ -59,7 +59,7 @@ echo "------------------------------------------------------------------------"
 echo ""
 echo "------------------------------------------------------------------------"
 echo "Building elasticsearch binary rpm ..."
-/usr/bin/rpmbuild --define 'dist .${DIST}' -bb ${RPMBUILD}/SPECS/elasticsearch.spec
+/usr/bin/rpmbuild --define "dist .${DIST}" -bb ${RPMBUILD}/SPECS/elasticsearch.spec
 echo "Finished building elasticsearch binary rpm ..."
 echo "------------------------------------------------------------------------"
 
