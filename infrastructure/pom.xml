@@ -46,6 +46,7 @@
     <modules>
         <module>rpm-elasticsearch</module>
         <module>rpm-grok</module>
+        <module>rpm-lostash</module>
     </modules>
 
 </project>
