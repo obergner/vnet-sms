@@ -44,7 +44,7 @@ cp -R ${RPMBUILD}/RPMS/* ${MODULEDIR}/target/
 echo "Copied elasticsearch binary rpm to ${MODULEDIR}/target ..."
 
 echo "Uploading rpm to pulp repository ..."
-/usr/bin/pulp-admin -u admin -p admin content upload --nosig --verbose --dir ${MODULEDIR}/target/rpm/x86_64/
+/usr/bin/pulp-admin -u admin -p admin content upload --nosig --verbose --dir ${MODULEDIR}/target/x86_64/ || exit 1
 echo "Uploaded rpm to pulp repository"
 
 popd
