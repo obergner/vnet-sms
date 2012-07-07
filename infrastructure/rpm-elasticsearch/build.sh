@@ -14,9 +14,9 @@ PACKAGE=elasticsearch-${VERSION}-${RELEASE}.${DIST}.${ARCH}.rpm
 
 echo "Building RPM for elasticsearch ${VERSION} ..."
 
-echo "Cleaning rpmbuild directory in ${RPMBUILD} ..."
+echo "Cleaning rpmbuild directory in ${RPMBUILD} (PRE) ..."
 rm -rf ${RPMBUILD}
-echo "rpmbuild directory ${RPMBUILD} cleaned"
+echo "rpmbuild directory ${RPMBUILD} cleaned (PRE)"
 
 echo "Creating fresh rpmbuild directory in ${RPMBUILD} ..."
 /usr/bin/rpmdev-setuptree
@@ -56,5 +56,10 @@ echo "Uploading rpm to pulp repository ..."
 echo "Uploaded rpm to pulp repository"
 
 popd
+
+echo "Cleaning rpmbuild directory in ${RPMBUILD} (POST)..."
+rm -rf ${RPMBUILD}
+echo "rpmbuild directory ${RPMBUILD} cleaned (POST)"
+
 
 echo "Finished building RPM for elasticsearch ${VERSION}"
