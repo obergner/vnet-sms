@@ -113,8 +113,9 @@
                                 <configuration>
                                     <artifacts>
                                         <artifact>
-                                            <file>${project.build.directory}/</file>
+                                            <file>${project.build.directory}/rpm/elasticsearch-${elasticsearch.version}-1.el6.x86_64.rpm</file>
                                             <type>rpm</type>
+                                            <classifier>el6.x86_64</classifier>
                                         </artifact>
                                     </artifacts>
                                 </configuration>
