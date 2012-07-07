@@ -1,5 +1,5 @@
 Name:		grok
-Version:	1.20110630.1
+Version:	${grok.version}
 Release:	${buildNumber}%{?dist}
 Summary:	Grok is simple software that allows you to easily parse logs and other files.
 
