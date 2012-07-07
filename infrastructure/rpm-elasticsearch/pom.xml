@@ -51,7 +51,8 @@
         <profile>
             <activation>
                 <os>
-                    <arch>x86</arch>
+                    <name>linux</name>
+                    <arch>amd64</arch>
                     <family>unix</family>
                 </os>
             </activation>
