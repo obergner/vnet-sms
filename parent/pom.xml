@@ -34,6 +34,8 @@
 		<!-- Our own modules' versions -->
         <module.infrastructure.version>1.0.0-SNAPSHOT</module.infrastructure.version>
         <module.infrastructure.rpm-elasticsearch.version>1.0.0-SNAPSHOT</module.infrastructure.rpm-elasticsearch.version>
+        <module.infrastructure.rpm-grok.version>1.0.0-SNAPSHOT</module.infrastructure.rpm-grok.version>
+        <module.infrastructure.rpm-logstash.version>1.0.0-SNAPSHOT</module.infrastructure.rpm-logstash.version>
         <module.common.version>1.0.0-SNAPSHOT</module.common.version>
         <module.common.message-library.version>1.0.0-SNAPSHOT</module.common.message-library.version>
         <module.common.windowed-message-event-library.version>1.0.0-SNAPSHOT</module.common.windowed-message-event-library.version>
@@ -265,6 +267,18 @@
                 <groupId>vnet.sms.infrastructure</groupId>
                 <artifactId>rpm-elasticsearch</artifactId>
                 <version>${module.infrastructure.rpm-elasticsearch.version}</version>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>vnet.sms.infrastructure</groupId>
+                <artifactId>rpm-grok</artifactId>
+                <version>${module.infrastructure.rpm-grok.version}</version>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>vnet.sms.infrastructure</groupId>
+                <artifactId>rpm-logstash</artifactId>
+                <version>${module.infrastructure.rpm-logstash.version}</version>
                 <type>pom</type>
             </dependency>
             <dependency>
