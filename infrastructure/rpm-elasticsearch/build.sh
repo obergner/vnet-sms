@@ -7,26 +7,26 @@ RPMBUILD=${HOME}/rpmbuild
 echo "Building RPM for elasticsearch ${VERSION} ..."
 
 echo "Cleaning rpmbuild directory in ${RPMBUILD} ..."
-rm -rf ${HOME}/rpmbuild
+rm -rf ${RPMBUILD}
 echo "rpmbuild directory ${RPMBUILD} cleaned"
 
 echo "Creating fresh rpmbuild directory in ${RPMBUILD} ..."
-/usr/bin/rpmdev-setuptree
+/usr/bin/rpmdev-setuptree || exit 1
 echo "Fresh rpmbuild directory in ${RPMBUILD} created"
 
 pushd ${RPMBUILD}
 
 echo "Symlinking sources from ${MODULEDIR} into ${RPMBUILD} ..."
-ln -s ${MODULEDIR}/target/rpm/SPECS/elasticsearch.spec ${RPMBUILD}/SPECS/elasticsearch.spec
-ln -s ${MODULEDIR}/target/rpm/SOURCES/* ${RPMBUILD}/SOURCES/
+ln -s ${MODULEDIR}/target/rpm/SPECS/elasticsearch.spec ${RPMBUILD}/SPECS/elasticsearch.spec || exit 1
+ln -s ${MODULEDIR}/target/rpm/SOURCES/* ${RPMBUILD}/SOURCES/ || exit 1
 echo "Symlinked sources from ${MODULEDIR} into ${RPMBUILD} ..."
 
 echo "Downloading elasticsearch sources ..."
-/usr/bin/spectool -g SPECS/elasticsearch.spec
+/usr/bin/spectool -g ${RPMBUILD}/SPECS/elasticsearch.spec  || exit 1
 echo "Finished downloading elasticsearch sources"
 
 echo "Moving downloaded archive to ${RPMBUILD}/SOURCES ..."
-mv ${RPMBUILD}/elasticsearch-${VERSION}.tar.gz ${RPMBUILD}/SOURCES
+mv ${RPMBUILD}/elasticsearch-${VERSION}.tar.gz ${RPMBUILD}/SOURCES || exit 1
 echo "Moved downloaded archive to ${RPMBUILD}/SOURCES"
 
 # echo "Building elasticsearch source rpm ..."
@@ -34,7 +34,7 @@ echo "Moved downloaded archive to ${RPMBUILD}/SOURCES"
 # echo "Finished building elasticsearch source rpm"
 
 echo "Building elasticsearch binary rpm ..."
-/usr/bin/rpmbuild -bb SPECS/elasticsearch.spec
+/usr/bin/rpmbuild -bb ${RPMBUILD}/SPECS/elasticsearch.spec || exit 1
 echo "Finished building elasticsearch binary rpm ..."
 
 echo "Copying elasticsearch binary rpm to ${MODULEDIR}/target ..."
