@@ -35,6 +35,7 @@
         <elasticsearch.dist>el6</elasticsearch.dist>
         <elasticsearch.arch>x86_64</elasticsearch.arch>
         <elasticsearch.version>0.19.8</elasticsearch.version>
+        <pulp.repository>vnet</pulp.repository>
     </properties>
 
     <dependencies>
@@ -102,6 +103,7 @@
                                 <argument>${buildNumber}</argument>
                                 <argument>${elasticsearch.dist}</argument>
                                 <argument>${elasticsearch.arch}</argument>
+                                <argument>${pulp.repository}</argument>
                             </arguments>
                         </configuration>
                     </plugin>

@@ -7,6 +7,7 @@ VERSION="$1"
 RELEASE="$2"
 DIST="$3"
 ARCH="$4"
+REPO="$5"
 
 MODULEDIR=$( cd "$( dirname "$0" )" && pwd )
 RPMBUILD=${HOME}/rpmbuild
@@ -50,10 +51,17 @@ mkdir -p ${MODULEDIR}/target
 cp -R ${RPMBUILD}/RPMS/* ${MODULEDIR}/target/
 echo "Copied elasticsearch binary rpm to ${MODULEDIR}/target ..."
 
-echo "Uploading rpm to pulp repository ..."
+echo "Uploading rpm to pulp server ..."
 /usr/bin/pulp-admin -u admin -p admin content upload --nosig --verbose --dir ${MODULEDIR}/target/x86_64/
-/usr/bin/pulp-admin -u admin -p admin repo add_package --id vnet --package=${PACKAGE}
-echo "Uploaded rpm to pulp repository"
+echo "Uploaded rpm to pulp server"
+
+echo "Associating generated rpm ${PACKAGE} with pulp repository ${REPO} ..."
+/usr/bin/pulp-admin -u admin -p admin repo add_package --id ${REPO} --package=${PACKAGE}
+echo "Associated generated rpm ${PACKAGE} with pulp repository ${REPO}"
+
+echo "Scheduling metadata update for pulp repository ${REPO} ..."
+/usr/bin/pulp-admin -u admin -p admin repo generate_metadata --id ${REPO}
+echo "Scheduled metadata update for pulp repository ${REPO}"
 
 popd
 
