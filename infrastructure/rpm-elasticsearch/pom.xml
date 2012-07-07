@@ -64,28 +64,6 @@
                     </resource>
                 </resources>
                 <plugins>
-<!--             <plugin> -->
-<!--                 <groupId>org.codehaus.mojo</groupId> -->
-<!--                 <artifactId>build-helper-maven-plugin</artifactId> -->
-<!--                 <executions> -->
-<!--                     <execution> -->
-<!--                         <id>add-rpm-resource</id> -->
-<!--                         <phase>validate</phase> -->
-<!--                         <goals> -->
-<!--                             <goal>add-resource</goal> -->
-<!--                         </goals> -->
-<!--                     </execution> -->
-<!--                 </executions> -->
-<!--                 <configuration> -->
-<!--                     <resources> -->
-<!--                         <resource> -->
-<!--                             <directory>${basedir}/src/main/rpm</directory> -->
-<!--                             <filtering>true</filtering> -->
-<!--                             <targetPath>${project.build.directory}/rpm</targetPath> -->
-<!--                         </resource> -->
-<!--                     </resources> -->
-<!--                 </configuration> -->
-<!--             </plugin> -->
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
