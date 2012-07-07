@@ -52,7 +52,7 @@ echo "------------------------------------------------------------------------"
 echo ""
 echo "------------------------------------------------------------------------"
 echo "Moving downloaded archive to ${RPMBUILD}/SOURCES ..."
-mv ${RPMBUILD}/logstash-${VERSION}-monolithic.tar.gz ${RPMBUILD}/SOURCES
+mv ${RPMBUILD}/logstash-${VERSION}-monolithic.jar ${RPMBUILD}/SOURCES
 echo "Moved downloaded archive to ${RPMBUILD}/SOURCES"
 echo "------------------------------------------------------------------------"
 
