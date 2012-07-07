@@ -11,5 +11,5 @@ poms/
 buildNumber.properties
 
 # Ignore for the time being our puppet modules
-/infrastructure
+/infrastructure/puppet*
 
