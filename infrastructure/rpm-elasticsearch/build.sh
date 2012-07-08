@@ -30,16 +30,16 @@ pushd ${RPMBUILD}
 echo ""
 echo "------------------------------------------------------------------------"
 echo "Downloading elasticsearch sources ..."
-/usr/bin/spectool -g ${RPMBUILD}/SPECS/elasticsearch.spec
+/usr/bin/spectool --directory ${RPMBUILD}/SOURCES --get-files ${RPMBUILD}/SPECS/elasticsearch.spec
 echo "Finished downloading elasticsearch sources"
 echo "------------------------------------------------------------------------"
 
-echo ""
-echo "------------------------------------------------------------------------"
-echo "Moving downloaded archive to ${RPMBUILD}/SOURCES ..."
-mv ${RPMBUILD}/elasticsearch-${VERSION}.tar.gz ${RPMBUILD}/SOURCES
-echo "Moved downloaded archive to ${RPMBUILD}/SOURCES"
-echo "------------------------------------------------------------------------"
+#echo ""
+#echo "------------------------------------------------------------------------"
+#echo "Moving downloaded archive to ${RPMBUILD}/SOURCES ..."
+#mv ${RPMBUILD}/elasticsearch-${VERSION}.tar.gz ${RPMBUILD}/SOURCES
+#echo "Moved downloaded archive to ${RPMBUILD}/SOURCES"
+#echo "------------------------------------------------------------------------"
 
 echo ""
 echo "------------------------------------------------------------------------"
