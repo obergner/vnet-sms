@@ -47,6 +47,7 @@
         <module>rpm-elasticsearch</module>
         <module>rpm-grok</module>
         <module>rpm-lostash</module>
+        <module>rpm-graylog2-server</module>
     </modules>
 
 </project>
