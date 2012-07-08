@@ -2,7 +2,7 @@
 %define base_install_dir %{_javadir}{%name}
 
 Name:           elasticsearch
-Version:        ${elasticsearch.version}
+Version:        ${rpm.version}
 Release:        ${buildNumber}%{?dist}
 Summary:        A distributed, highly available, RESTful search engine
 

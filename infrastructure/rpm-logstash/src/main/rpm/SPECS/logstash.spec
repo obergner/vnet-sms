@@ -1,7 +1,7 @@
 %define debug_package %{nil}
 
 Name:           logstash
-Version:        ${logstash.version}
+Version:        ${rpm.version}
 Release:        ${buildNumber}%{?dist}
 Summary:        logstash is a tool for managing events and logs.
 

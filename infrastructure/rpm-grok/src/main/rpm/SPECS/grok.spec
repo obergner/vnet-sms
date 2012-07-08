@@ -1,5 +1,5 @@
 Name:		grok
-Version:	${grok.version}
+Version:	${rpm.version}
 Release:	${buildNumber}%{?dist}
 Summary:	Grok is simple software that allows you to easily parse logs and other files.
 

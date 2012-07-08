@@ -11,6 +11,7 @@ REPO="$5"
 
 MODULEDIR=$( cd "$( dirname "$0" )" && pwd )
 RPMBUILD=${MODULEDIR}/target/rpmbuild
+TMPPATH=${MODULEDIR}/target/tmp
 PACKAGE=elasticsearch-${VERSION}-${RELEASE}.${DIST}.${ARCH}.rpm
 
 echo ""
@@ -43,7 +44,7 @@ echo "------------------------------------------------------------------------"
 echo ""
 echo "------------------------------------------------------------------------"
 echo "Building elasticsearch binary rpm ..."
-/usr/bin/rpmbuild --define "dist .${DIST}" --define "_topdir ${RPMBUILD}" -bb ${RPMBUILD}/SPECS/elasticsearch.spec
+/usr/bin/rpmbuild --define "dist .${DIST}" --define "_topdir ${RPMBUILD}" --define "_tmppath ${TMPPATH} -bb ${RPMBUILD}/SPECS/elasticsearch.spec
 echo "Finished building elasticsearch binary rpm ..."
 echo "------------------------------------------------------------------------"
 

@@ -11,6 +11,7 @@ REPO="$5"
 
 MODULEDIR=$( cd "$( dirname "$0" )" && pwd )
 RPMBUILD=${MODULEDIR}/target/rpmbuild
+TMPPATH=${MODULEDIR}/target/tmp
 PACKAGE=grok-${VERSION}-${RELEASE}.${DIST}.${ARCH}.rpm
 
 echo ""
@@ -43,7 +44,7 @@ echo "------------------------------------------------------------------------"
 echo ""
 echo "------------------------------------------------------------------------"
 echo "Building grok binary rpm ..."
-/usr/bin/rpmbuild --define "dist .${DIST}" --define "_topdir ${RPMBUILD}" -bb ${RPMBUILD}/SPECS/grok.spec
+/usr/bin/rpmbuild --define "dist .${DIST}" --define "_topdir ${RPMBUILD}" --define "_tmppath ${TMPPATH} -bb ${RPMBUILD}/SPECS/grok.spec
 echo "Finished building grok binary rpm ..."
 echo "------------------------------------------------------------------------"
 
