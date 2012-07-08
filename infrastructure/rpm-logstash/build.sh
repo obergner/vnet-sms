@@ -44,15 +44,8 @@ echo "------------------------------------------------------------------------"
 echo ""
 echo "------------------------------------------------------------------------"
 echo "Uploading rpm to pulp server ..."
-/usr/bin/pulp-admin -u admin -p admin content upload --nosig --verbose --dir ${RPMBUILD}/RPMS/${ARCH}
+/usr/bin/pulp-admin -u admin -p admin content upload --nosig --verbose --repoid=${REPO} ${RPMBUILD}/RPMS/${ARCH}/${PACKAGE}
 echo "Uploaded rpm to pulp server"
-echo "------------------------------------------------------------------------"
-
-echo ""
-echo "------------------------------------------------------------------------"
-echo "Associating generated rpm ${PACKAGE} with pulp repository ${REPO} ..."
-/usr/bin/pulp-admin -u admin -p admin repo add_package --id ${REPO} --package=${PACKAGE}
-echo "Associated generated rpm ${PACKAGE} with pulp repository ${REPO}"
 echo "------------------------------------------------------------------------"
 
 echo ""
