@@ -264,12 +264,12 @@
                                     <group>VNET SMS/Servers</group>
                                     <name>routing-engine</name>
                                     <copyright>2012, Olaf Bergner</copyright>
-                                    <distribution>Routing Engine 2012</distribution>
                                     <packager>Olaf Bergner</packager>
                                     <targetVendor>CentOS</targetVendor>
                                     <needarch>${rpm.arch}</needarch>
                                     <release>${buildNumber}</release>
                                     <distribution>${rpm.dist}</distribution>
+                                    <group>Applications/Communications</group>
                                     <defineStatements>
                                         <defineStatement><![CDATA[workdir /var/lib/routing-engine-${project.version}]]></defineStatement>
 										<!-- Do not run /usr/lib/rpm/redhat/brp-java-repack-jars as this 
