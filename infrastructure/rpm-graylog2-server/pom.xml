@@ -33,8 +33,8 @@
 
     <properties>
         <rpm.dist>el6</rpm.dist>
-        <rpm.arch>noarch</rpm.arch>
-        <rpm.version>0.9.6</rpm.version>
+        <rpm.arch>x86_64</rpm.arch>
+        <rpm.version>0.9.6p1</rpm.version>
         <rpm.repository>vnet-el6-noarch</rpm.repository>
     </properties>
 
