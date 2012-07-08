@@ -267,8 +267,9 @@
                                     <distribution>Routing Engine 2012</distribution>
                                     <packager>Olaf Bergner</packager>
                                     <targetVendor>CentOS</targetVendor>
-                                    <needarch>x86_64</needarch>
+                                    <needarch>${rpm.arch}</needarch>
                                     <release>${buildNumber}</release>
+                                    <distribution>${rpm.dist}</distribution>
                                     <defineStatements>
                                         <defineStatement><![CDATA[workdir /var/lib/routing-engine-${project.version}]]></defineStatement>
 										<!-- Do not run /usr/lib/rpm/redhat/brp-java-repack-jars as this 

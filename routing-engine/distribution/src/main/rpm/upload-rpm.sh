@@ -11,7 +11,6 @@ REPO="$5"
 
 MODULEDIR=$( cd "$( dirname "$0" )" && pwd )
 RPMBUILD=${MODULEDIR}/target/rpm/routing-engine
-PACKAGE=routing-engine-${VERSION}-${RELEASE}.${DIST}.${ARCH}.rpm
 
 echo ""
 echo "------------------------------------------------------------------------"
@@ -23,7 +22,10 @@ echo "------------------------------------------------------------------------"
 echo ""
 echo "------------------------------------------------------------------------"
 echo "Associating generated rpm ${PACKAGE} with pulp repository ${REPO} ..."
-/usr/bin/pulp-admin -u admin -p admin repo add_package --id ${REPO} --package=${PACKAGE}
+for p in "${RPMBUILD}/RPMS/${ARCH}"/*.rpm; do
+    pack=$(basename "$p")
+    /usr/bin/pulp-admin -u admin -p admin repo add_package --id ${REPO} --package=${pack}
+done
 echo "Associated generated rpm ${PACKAGE} with pulp repository ${REPO}"
 echo "------------------------------------------------------------------------"
 
