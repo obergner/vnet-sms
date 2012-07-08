@@ -1296,9 +1296,9 @@
                         <doCheck>false</doCheck>
                         <doUpdate>false</doUpdate>
                         <revisionOnScmFailure>-1</revisionOnScmFailure>
-                        <format>{0,number,integer}</format>
+                        <format>{0,time,yyyyMMddHHmmss}</format>
                         <items>
-                            <item>buildNumber0</item>
+                            <item>timestamp</item>
                         </items>
                     </configuration>
                 </plugin>
