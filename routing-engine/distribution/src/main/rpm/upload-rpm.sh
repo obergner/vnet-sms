@@ -9,7 +9,7 @@ DIST="$3"
 ARCH="$4"
 REPO="$5"
 
-MODULEDIR=$( cd "$( dirname "$0" )" && pwd )
+MODULEDIR=$( cd "$( dirname "$0" )/../../../" && pwd )
 RPMBUILD=${MODULEDIR}/target/rpm/routing-engine
 
 echo ""
