@@ -21,12 +21,13 @@ echo "------------------------------------------------------------------------"
 
 echo ""
 echo "------------------------------------------------------------------------"
-echo "Associating generated rpm ${PACKAGE} with pulp repository ${REPO} ..."
+echo "Associating generated rpm with pulp repository ${REPO} ..."
 for p in "${RPMBUILD}/RPMS/${ARCH}"/*.rpm; do
     pack=$(basename "$p")
     /usr/bin/pulp-admin -u admin -p admin repo add_package --id ${REPO} --package=${pack}
+    echo "Associated RPM ${pack} with pulp repository ${REPO}"
 done
-echo "Associated generated rpm ${PACKAGE} with pulp repository ${REPO}"
+echo "Associated generated rpm with pulp repository ${REPO}"
 echo "------------------------------------------------------------------------"
 
 echo ""
