@@ -16,31 +16,15 @@ PACKAGE=elasticsearch-${VERSION}-${RELEASE}.${DIST}.${ARCH}.rpm
 echo ""
 echo "------------------------------------------------------------------------"
 echo "Building RPM for elasticsearch ${VERSION} ..."
+echo "Name:           elasticsearch"
+echo "Version:        ${VERSION}"
+echo "Release:        ${RELEASE}"
+echo "Distribution:   ${DIST}"
+echo "Architecture:   ${ARCH}"
+echo "Repository:     ${REPO}"
 echo "------------------------------------------------------------------------"
 
-#echo ""
-#echo "------------------------------------------------------------------------"
-#echo "Cleaning rpmbuild directory in ${RPMBUILD} (PRE) ..."
-#rm -rf ${RPMBUILD}
-#echo "rpmbuild directory ${RPMBUILD} cleaned (PRE)"
-#echo "------------------------------------------------------------------------"
-
-#echo ""
-#echo "------------------------------------------------------------------------"
-#echo "Creating fresh rpmbuild directory in ${RPMBUILD} ..."
-#/usr/bin/rpmdev-setuptree
-#echo "Fresh rpmbuild directory in ${RPMBUILD} created"
-#echo "------------------------------------------------------------------------"
-
 pushd ${RPMBUILD}
-
-#echo ""
-#echo "------------------------------------------------------------------------"
-#echo "Symlinking sources from ${MODULEDIR} into ${RPMBUILD} ..."
-#ln -s ${MODULEDIR}/target/rpm/SPECS/elasticsearch.spec ${RPMBUILD}/SPECS/elasticsearch.spec
-#ln -s ${MODULEDIR}/target/rpm/SOURCES/* ${RPMBUILD}/SOURCES/
-#echo "Symlinked sources from ${MODULEDIR} into ${RPMBUILD} ..."
-#echo "------------------------------------------------------------------------"
 
 echo ""
 echo "------------------------------------------------------------------------"
@@ -63,18 +47,10 @@ echo "Building elasticsearch binary rpm ..."
 echo "Finished building elasticsearch binary rpm ..."
 echo "------------------------------------------------------------------------"
 
-#echo ""
-#echo "------------------------------------------------------------------------"
-#echo "Copying elasticsearch binary rpm to ${MODULEDIR}/target ..."
-#mkdir -p ${MODULEDIR}/target
-#cp -R ${RPMBUILD}/RPMS/* ${MODULEDIR}/target/
-#echo "Copied elasticsearch binary rpm to ${MODULEDIR}/target ..."
-#echo "------------------------------------------------------------------------"
-
 echo ""
 echo "------------------------------------------------------------------------"
 echo "Uploading rpm to pulp server ..."
-/usr/bin/pulp-admin -u admin -p admin content upload --nosig --verbose --dir ${RPMBUILD}/RPMS/
+/usr/bin/pulp-admin -u admin -p admin content upload --nosig --verbose --dir ${RPMBUILD}/RPMS/${ARCH}
 echo "Uploaded rpm to pulp server"
 echo "------------------------------------------------------------------------"
 
@@ -93,13 +69,6 @@ echo "Scheduled metadata update for pulp repository ${REPO}"
 echo "------------------------------------------------------------------------"
 
 popd
-
-#echo ""
-#echo "------------------------------------------------------------------------"
-#echo "Cleaning rpmbuild directory in ${RPMBUILD} (POST)..."
-#rm -rf ${RPMBUILD}
-#echo "rpmbuild directory ${RPMBUILD} cleaned (POST)"
-#echo "------------------------------------------------------------------------"
 
 echo ""
 echo "------------------------------------------------------------------------"
