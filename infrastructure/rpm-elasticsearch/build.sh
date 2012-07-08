@@ -10,7 +10,7 @@ ARCH="$4"
 REPO="$5"
 
 MODULEDIR=$( cd "$( dirname "$0" )" && pwd )
-RPMBUILD=${HOME}/rpmbuild
+RPMBUILD=${MODULEDIR}/target/rpmbuild
 PACKAGE=elasticsearch-${VERSION}-${RELEASE}.${DIST}.${ARCH}.rpm
 
 echo ""
@@ -18,29 +18,29 @@ echo "------------------------------------------------------------------------"
 echo "Building RPM for elasticsearch ${VERSION} ..."
 echo "------------------------------------------------------------------------"
 
-echo ""
-echo "------------------------------------------------------------------------"
-echo "Cleaning rpmbuild directory in ${RPMBUILD} (PRE) ..."
-rm -rf ${RPMBUILD}
-echo "rpmbuild directory ${RPMBUILD} cleaned (PRE)"
-echo "------------------------------------------------------------------------"
+#echo ""
+#echo "------------------------------------------------------------------------"
+#echo "Cleaning rpmbuild directory in ${RPMBUILD} (PRE) ..."
+#rm -rf ${RPMBUILD}
+#echo "rpmbuild directory ${RPMBUILD} cleaned (PRE)"
+#echo "------------------------------------------------------------------------"
 
-echo ""
-echo "------------------------------------------------------------------------"
-echo "Creating fresh rpmbuild directory in ${RPMBUILD} ..."
-/usr/bin/rpmdev-setuptree
-echo "Fresh rpmbuild directory in ${RPMBUILD} created"
-echo "------------------------------------------------------------------------"
+#echo ""
+#echo "------------------------------------------------------------------------"
+#echo "Creating fresh rpmbuild directory in ${RPMBUILD} ..."
+#/usr/bin/rpmdev-setuptree
+#echo "Fresh rpmbuild directory in ${RPMBUILD} created"
+#echo "------------------------------------------------------------------------"
 
 pushd ${RPMBUILD}
 
-echo ""
-echo "------------------------------------------------------------------------"
-echo "Symlinking sources from ${MODULEDIR} into ${RPMBUILD} ..."
-ln -s ${MODULEDIR}/target/rpm/SPECS/elasticsearch.spec ${RPMBUILD}/SPECS/elasticsearch.spec
-ln -s ${MODULEDIR}/target/rpm/SOURCES/* ${RPMBUILD}/SOURCES/
-echo "Symlinked sources from ${MODULEDIR} into ${RPMBUILD} ..."
-echo "------------------------------------------------------------------------"
+#echo ""
+#echo "------------------------------------------------------------------------"
+#echo "Symlinking sources from ${MODULEDIR} into ${RPMBUILD} ..."
+#ln -s ${MODULEDIR}/target/rpm/SPECS/elasticsearch.spec ${RPMBUILD}/SPECS/elasticsearch.spec
+#ln -s ${MODULEDIR}/target/rpm/SOURCES/* ${RPMBUILD}/SOURCES/
+#echo "Symlinked sources from ${MODULEDIR} into ${RPMBUILD} ..."
+#echo "------------------------------------------------------------------------"
 
 echo ""
 echo "------------------------------------------------------------------------"
@@ -59,22 +59,22 @@ echo "------------------------------------------------------------------------"
 echo ""
 echo "------------------------------------------------------------------------"
 echo "Building elasticsearch binary rpm ..."
-/usr/bin/rpmbuild --define "dist .${DIST}" -bb ${RPMBUILD}/SPECS/elasticsearch.spec
+/usr/bin/rpmbuild --define "dist .${DIST}" --define "_topdir ${RPMBUILD}" -bb ${RPMBUILD}/SPECS/elasticsearch.spec
 echo "Finished building elasticsearch binary rpm ..."
 echo "------------------------------------------------------------------------"
 
-echo ""
-echo "------------------------------------------------------------------------"
-echo "Copying elasticsearch binary rpm to ${MODULEDIR}/target ..."
-mkdir -p ${MODULEDIR}/target
-cp -R ${RPMBUILD}/RPMS/* ${MODULEDIR}/target/
-echo "Copied elasticsearch binary rpm to ${MODULEDIR}/target ..."
-echo "------------------------------------------------------------------------"
+#echo ""
+#echo "------------------------------------------------------------------------"
+#echo "Copying elasticsearch binary rpm to ${MODULEDIR}/target ..."
+#mkdir -p ${MODULEDIR}/target
+#cp -R ${RPMBUILD}/RPMS/* ${MODULEDIR}/target/
+#echo "Copied elasticsearch binary rpm to ${MODULEDIR}/target ..."
+#echo "------------------------------------------------------------------------"
 
 echo ""
 echo "------------------------------------------------------------------------"
 echo "Uploading rpm to pulp server ..."
-/usr/bin/pulp-admin -u admin -p admin content upload --nosig --verbose --dir ${MODULEDIR}/target/x86_64/
+/usr/bin/pulp-admin -u admin -p admin content upload --nosig --verbose --dir ${RPMBUILD}/RPMS/
 echo "Uploaded rpm to pulp server"
 echo "------------------------------------------------------------------------"
 
@@ -94,12 +94,12 @@ echo "------------------------------------------------------------------------"
 
 popd
 
-echo ""
-echo "------------------------------------------------------------------------"
-echo "Cleaning rpmbuild directory in ${RPMBUILD} (POST)..."
-rm -rf ${RPMBUILD}
-echo "rpmbuild directory ${RPMBUILD} cleaned (POST)"
-echo "------------------------------------------------------------------------"
+#echo ""
+#echo "------------------------------------------------------------------------"
+#echo "Cleaning rpmbuild directory in ${RPMBUILD} (POST)..."
+#rm -rf ${RPMBUILD}
+#echo "rpmbuild directory ${RPMBUILD} cleaned (POST)"
+#echo "------------------------------------------------------------------------"
 
 echo ""
 echo "------------------------------------------------------------------------"
