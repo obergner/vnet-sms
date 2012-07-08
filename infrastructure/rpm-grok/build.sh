@@ -30,15 +30,8 @@ pushd ${RPMBUILD}
 echo ""
 echo "------------------------------------------------------------------------"
 echo "Downloading grok sources ..."
-/usr/bin/spectool -g ${RPMBUILD}/SPECS/grok.spec
+/usr/bin/spectool --directory ${RPMBUILD}/SOURCES --get-files ${RPMBUILD}/SPECS/grok.spec
 echo "Finished downloading grok sources"
-echo "------------------------------------------------------------------------"
-
-echo ""
-echo "------------------------------------------------------------------------"
-echo "Moving downloaded archive to ${RPMBUILD}/SOURCES ..."
-mv ${RPMBUILD}/grok-${VERSION}.tar.gz ${RPMBUILD}/SOURCES
-echo "Moved downloaded archive to ${RPMBUILD}/SOURCES"
 echo "------------------------------------------------------------------------"
 
 echo ""

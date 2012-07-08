@@ -34,13 +34,6 @@ echo "Downloading elasticsearch sources ..."
 echo "Finished downloading elasticsearch sources"
 echo "------------------------------------------------------------------------"
 
-#echo ""
-#echo "------------------------------------------------------------------------"
-#echo "Moving downloaded archive to ${RPMBUILD}/SOURCES ..."
-#mv ${RPMBUILD}/elasticsearch-${VERSION}.tar.gz ${RPMBUILD}/SOURCES
-#echo "Moved downloaded archive to ${RPMBUILD}/SOURCES"
-#echo "------------------------------------------------------------------------"
-
 echo ""
 echo "------------------------------------------------------------------------"
 echo "Building elasticsearch binary rpm ..."

@@ -30,15 +30,8 @@ pushd ${RPMBUILD}
 echo ""
 echo "------------------------------------------------------------------------"
 echo "Downloading logstash sources ..."
-/usr/bin/spectool -g ${RPMBUILD}/SPECS/logstash.spec
+/usr/bin/spectool --directory ${RPMBUILD}/SOURCES --get-files ${RPMBUILD}/SPECS/logstash.spec
 echo "Finished downloading logstash sources"
-echo "------------------------------------------------------------------------"
-
-echo ""
-echo "------------------------------------------------------------------------"
-echo "Moving downloaded archive to ${RPMBUILD}/SOURCES ..."
-mv ${RPMBUILD}/logstash-${VERSION}-monolithic.jar ${RPMBUILD}/SOURCES
-echo "Moved downloaded archive to ${RPMBUILD}/SOURCES"
 echo "------------------------------------------------------------------------"
 
 echo ""
