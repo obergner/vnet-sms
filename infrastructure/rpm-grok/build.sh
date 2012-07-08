@@ -48,13 +48,6 @@ echo "Uploading rpm to pulp server ..."
 echo "Uploaded rpm to pulp server"
 echo "------------------------------------------------------------------------"
 
-echo ""
-echo "------------------------------------------------------------------------"
-echo "Scheduling metadata update for pulp repository ${REPO} ..."
-/usr/bin/pulp-admin -u admin -p admin repo generate_metadata --id ${REPO}
-echo "Scheduled metadata update for pulp repository ${REPO}"
-echo "------------------------------------------------------------------------"
-
 popd
 
 echo ""
