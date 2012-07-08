@@ -221,10 +221,18 @@
         <profile>
             <id>rpm</id>
             <activation>
-                <activeByDefault>false</activeByDefault>
+                <os>
+                    <name>linux</name>
+                    <arch>amd64</arch>
+                    <family>unix</family>
+                </os>
             </activation>
 
             <properties>
+                <rpm.dist>el6</rpm.dist>
+                <rpm.arch>x86_64</rpm.arch>
+                <rpm.version>0.19.8</rpm.version>
+                <rpm.repository>vnet-el6-x86_64</rpm.repository>
                 <rpm.filtered.dir>${project.build.directory}/rpm-filtered</rpm.filtered.dir>
                 <java.min.mem>128m</java.min.mem>
                 <java.max.mem>512m</java.max.mem>
@@ -524,6 +532,31 @@
                                 </configuration>
                             </execution>
                         </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.2.1</version>
+                        <executions>
+                            <execution>
+                                <id>upload-rpm</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <executable>${basedir}/src/main/rpm/upload-rpm.sh</executable>
+                            <workingDirectory>${basedir}</workingDirectory>
+                            <arguments>
+                                <argument>${rpm.version}</argument>
+                                <argument>${buildNumber}</argument>
+                                <argument>${rpm.dist}</argument>
+                                <argument>${rpm.arch}</argument>
+                                <argument>${rpm.repository}</argument>
+                            </arguments>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
