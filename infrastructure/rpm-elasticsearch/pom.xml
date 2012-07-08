@@ -32,10 +32,10 @@
     <description>Elasticsearch repackaged as an RPM</description>
 
     <properties>
-        <elasticsearch.dist>el6</elasticsearch.dist>
-        <elasticsearch.arch>x86_64</elasticsearch.arch>
-        <elasticsearch.version>0.19.8</elasticsearch.version>
-        <pulp.repository>vnet-el6-x86_64</pulp.repository>
+        <rpm.dist>el6</rpm.dist>
+        <rpm.arch>x86_64</rpm.arch>
+        <rpm.version>0.19.8</rpm.version>
+        <rpm.repository>vnet-el6-x86_64</rpm.repository>
     </properties>
 
     <dependencies>
@@ -99,11 +99,11 @@
                             <executable>${basedir}/build.sh</executable>
                             <workingDirectory>${basedir}</workingDirectory>
                             <arguments>
-                                <argument>${elasticsearch.version}</argument>
+                                <argument>${rpm.version}</argument>
                                 <argument>${buildNumber}</argument>
-                                <argument>${elasticsearch.dist}</argument>
-                                <argument>${elasticsearch.arch}</argument>
-                                <argument>${pulp.repository}</argument>
+                                <argument>${rpm.dist}</argument>
+                                <argument>${rpm.arch}</argument>
+                                <argument>${rpm.repository}</argument>
                             </arguments>
                         </configuration>
                     </plugin>
@@ -120,9 +120,9 @@
                                 <configuration>
                                     <artifacts>
                                         <artifact>
-                                            <file>${project.build.directory}/rpmbuild/RPMS/elasticsearch-${elasticsearch.version}-${buildNumber}.${elasticsearch.dist}.${elasticsearch.arch}.rpm</file>
+                                            <file>${project.build.directory}/rpmbuild/RPMS/elasticsearch-${rpm.version}-${buildNumber}.${rpm.dist}.${rpm.arch}.rpm</file>
                                             <type>rpm</type>
-                                            <classifier>${elasticsearch.dist}.${elasticsearch.arch}</classifier>
+                                            <classifier>${rpm.dist}.${rpm.arch}</classifier>
                                         </artifact>
                                     </artifacts>
                                 </configuration>

@@ -32,10 +32,10 @@
     <description>Grok repackaged as an RPM</description>
 
     <properties>
-        <grok.dist>el6</grok.dist>
-        <grok.arch>x86_64</grok.arch>
-        <grok.version>1.20110630.1</grok.version>
-        <pulp.repository>vnet-el6-x86_64</pulp.repository>
+        <rpm.dist>el6</rpm.dist>
+        <rpm.arch>x86_64</rpm.arch>
+        <rpm.version>1.20110630.1</rpm.version>
+        <rpm.repository>vnet-el6-x86_64</rpm.repository>
     </properties>
 
     <dependencies>
@@ -64,7 +64,7 @@
                     <resource>
                         <directory>${basedir}/src/main/rpm</directory>
                         <filtering>true</filtering>
-                        <targetPath>${project.build.directory}/rpm</targetPath>
+                        <targetPath>${project.build.directory}/rpmbuild</targetPath>
                     </resource>
                 </resources>
 
@@ -99,11 +99,11 @@
                             <executable>${basedir}/build.sh</executable>
                             <workingDirectory>${basedir}</workingDirectory>
                             <arguments>
-                                <argument>${grok.version}</argument>
+                                <argument>${rpm.version}</argument>
                                 <argument>${buildNumber}</argument>
-                                <argument>${grok.dist}</argument>
-                                <argument>${grok.arch}</argument>
-                                <argument>${pulp.repository}</argument>
+                                <argument>${rpm.dist}</argument>
+                                <argument>${rpm.arch}</argument>
+                                <argument>${rpm.repository}</argument>
                             </arguments>
                         </configuration>
                     </plugin>
@@ -120,9 +120,9 @@
                                 <configuration>
                                     <artifacts>
                                         <artifact>
-                                            <file>${project.build.directory}/rpm/grok-${grok.version}-1.el6.x86_64.rpm</file>
+                                            <file>${project.build.directory}/rpm/grok-${rpm.version}-${buildNumber}.${rpm.dist}.${rpm.arch}.rpm</file>
                                             <type>rpm</type>
-                                            <classifier>el6.x86_64</classifier>
+                                            <classifier>${rpm.dist}.${rpm.arch}</classifier>
                                         </artifact>
                                     </artifacts>
                                 </configuration>

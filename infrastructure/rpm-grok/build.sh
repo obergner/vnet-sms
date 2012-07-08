@@ -10,37 +10,21 @@ ARCH="$4"
 REPO="$5"
 
 MODULEDIR=$( cd "$( dirname "$0" )" && pwd )
-RPMBUILD=${HOME}/rpmbuild
+RPMBUILD=${MODULEDIR}/target/rpmbuild
 PACKAGE=grok-${VERSION}-${RELEASE}.${DIST}.${ARCH}.rpm
 
 echo ""
 echo "------------------------------------------------------------------------"
 echo "Building RPM for grok ${VERSION} ..."
-echo "------------------------------------------------------------------------"
-
-echo ""
-echo "------------------------------------------------------------------------"
-echo "Cleaning rpmbuild directory in ${RPMBUILD} (PRE) ..."
-rm -rf ${RPMBUILD}
-echo "rpmbuild directory ${RPMBUILD} cleaned (PRE)"
-echo "------------------------------------------------------------------------"
-
-echo ""
-echo "------------------------------------------------------------------------"
-echo "Creating fresh rpmbuild directory in ${RPMBUILD} ..."
-/usr/bin/rpmdev-setuptree
-echo "Fresh rpmbuild directory in ${RPMBUILD} created"
+echo "Name:           grok"
+echo "Version:        ${VERSION}"
+echo "Release:        ${RELEASE}"
+echo "Distribution:   ${DIST}"
+echo "Architecture:   ${ARCH}"
+echo "Repository:     ${REPO}"
 echo "------------------------------------------------------------------------"
 
 pushd ${RPMBUILD}
-
-echo ""
-echo "------------------------------------------------------------------------"
-echo "Symlinking sources from ${MODULEDIR} into ${RPMBUILD} ..."
-ln -s ${MODULEDIR}/target/rpm/SPECS/grok.spec ${RPMBUILD}/SPECS/grok.spec
-ln -s ${MODULEDIR}/target/rpm/SOURCES/* ${RPMBUILD}/SOURCES/
-echo "Symlinked sources from ${MODULEDIR} into ${RPMBUILD} ..."
-echo "------------------------------------------------------------------------"
 
 echo ""
 echo "------------------------------------------------------------------------"
@@ -59,22 +43,14 @@ echo "------------------------------------------------------------------------"
 echo ""
 echo "------------------------------------------------------------------------"
 echo "Building grok binary rpm ..."
-/usr/bin/rpmbuild --define "dist .${DIST}" -bb ${RPMBUILD}/SPECS/grok.spec
+/usr/bin/rpmbuild --define "dist .${DIST}" --define "_topdir ${RPMBUILD}" -bb ${RPMBUILD}/SPECS/grok.spec
 echo "Finished building grok binary rpm ..."
 echo "------------------------------------------------------------------------"
 
 echo ""
 echo "------------------------------------------------------------------------"
-echo "Copying grok binary rpm to ${MODULEDIR}/target ..."
-mkdir -p ${MODULEDIR}/target
-cp -R ${RPMBUILD}/RPMS/* ${MODULEDIR}/target/
-echo "Copied grok binary rpm to ${MODULEDIR}/target ..."
-echo "------------------------------------------------------------------------"
-
-echo ""
-echo "------------------------------------------------------------------------"
 echo "Uploading rpm to pulp server ..."
-/usr/bin/pulp-admin -u admin -p admin content upload --nosig --verbose --dir ${MODULEDIR}/target/x86_64/
+/usr/bin/pulp-admin -u admin -p admin content upload --nosig --verbose --dir ${RPMBUILD}/RPMS/${ARCH}
 echo "Uploaded rpm to pulp server"
 echo "------------------------------------------------------------------------"
 
@@ -93,13 +69,6 @@ echo "Scheduled metadata update for pulp repository ${REPO}"
 echo "------------------------------------------------------------------------"
 
 popd
-
-echo ""
-echo "------------------------------------------------------------------------"
-echo "Cleaning rpmbuild directory in ${RPMBUILD} (POST)..."
-rm -rf ${RPMBUILD}
-echo "rpmbuild directory ${RPMBUILD} cleaned (POST)"
-echo "------------------------------------------------------------------------"
 
 echo ""
 echo "------------------------------------------------------------------------"

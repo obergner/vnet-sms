@@ -32,10 +32,10 @@
     <description>Logstash repackaged as an RPM</description>
 
     <properties>
-        <logstash.dist>el6</logstash.dist>
-        <logstash.arch>noarch</logstash.arch>
-        <logstash.version>1.1.0</logstash.version>
-        <pulp.repository>vnet-el6-noarch</pulp.repository>
+        <rpm.dist>el6</rpm.dist>
+        <rpm.arch>noarch</rpm.arch>
+        <rpm.version>1.1.0</rpm.version>
+        <rpm.repository>vnet-el6-noarch</rpm.repository>
     </properties>
 
     <dependencies>
@@ -70,7 +70,7 @@
                     <resource>
                         <directory>${basedir}/src/main/rpm</directory>
                         <filtering>true</filtering>
-                        <targetPath>${project.build.directory}/rpm</targetPath>
+                        <targetPath>${project.build.directory}/rpmbuild</targetPath>
                     </resource>
                 </resources>
 
@@ -105,11 +105,11 @@
                             <executable>${basedir}/build.sh</executable>
                             <workingDirectory>${basedir}</workingDirectory>
                             <arguments>
-                                <argument>${logstash.version}</argument>
+                                <argument>${rpm.version}</argument>
                                 <argument>${buildNumber}</argument>
-                                <argument>${logstash.dist}</argument>
-                                <argument>${logstash.arch}</argument>
-                                <argument>${pulp.repository}</argument>
+                                <argument>${rpm.dist}</argument>
+                                <argument>${rpm.arch}</argument>
+                                <argument>${rpm.repository}</argument>
                             </arguments>
                         </configuration>
                     </plugin>
@@ -126,9 +126,9 @@
                                 <configuration>
                                     <artifacts>
                                         <artifact>
-                                            <file>${project.build.directory}/rpm/logstash-${logstash.version}-1.el6.x86_64.rpm</file>
+                                            <file>${project.build.directory}/rpm/logstash-${rpm.version}-${buildNumber}.${rpm.dist}.${rpm.arch}.rpm</file>
                                             <type>rpm</type>
-                                            <classifier>el6.x86_64</classifier>
+                                            <classifier>${rpm.dist}.${rpm.arch}</classifier>
                                         </artifact>
                                     </artifacts>
                                 </configuration>
