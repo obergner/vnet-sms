@@ -35,7 +35,7 @@
         <rpm.dist>el6</rpm.dist>
         <rpm.arch>x86_64</rpm.arch>
         <rpm.version>0.9.6p1</rpm.version>
-        <rpm.repository>vnet-el6-x86_64</rpm.repository>
+        <rpm.repository>vnet</rpm.repository>
     </properties>
 
     <dependencies>

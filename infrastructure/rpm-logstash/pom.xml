@@ -35,7 +35,7 @@
         <rpm.dist>el6</rpm.dist>
         <rpm.arch>noarch</rpm.arch>
         <rpm.version>1.1.0</rpm.version>
-        <rpm.repository>vnet-el6-noarch</rpm.repository>
+        <rpm.repository>vnet</rpm.repository>
     </properties>
 
     <dependencies>
