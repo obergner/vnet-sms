@@ -99,38 +99,18 @@
 	<!-- START-SNIPPET: gateway server channel pipeline factory -->
     <bean
         id="vnet.sms.gateway.server.server-framework.gatewayServerChannelPipelineFactory"
-        class="vnet.sms.gateway.server.framework.internal.channel.GatewayServerChannelPipelineFactoryBuilder">
-        <property
-            name="gatewayServerInstanceId"
-            value="${gateway.server.instanceId}" />
-        <property
-            name="authenticationManager"
-            ref="vnet.sms.gateway.server.server-framework.authenticationManager" />
-        <property
-            name="messageForwardingJmsBridge"
-            ref="vnet.sms.gateway.server.server-framework.messageForwardingJmsBridge" />
-        <property
-            name="initialChannelEventsMonitor"
-            ref="vnet.sms.gateway.server.server-framework.initialChannelEventsMonitor" />
-        <property
-            name="allConnectedChannels"
-            ref="vnet.sms.gateway.server.server-framework.allConnectedChannels" />
-        <property
-            name="availableIncomingWindows"
-            value="${gateway.server.availableIncomingWindows}" />
-        <property
-            name="failedLoginResponseDelayMillis"
-            value="${gateway.server.failedLoginResponseDelayMillis}" />
-        <property
-            name="incomingWindowWaitTimeMillis"
-            value="${gateway.server.incomingWindowWaitTimeMillis}" />
-        <property
-            name="pingIntervalSeconds"
-            value="${gateway.server.pingIntervalSeconds}" />
-        <property
-            name="pingResponseTimeoutMillis"
-            value="${gateway.server.pingResponseTimeoutMillis}" />
-    </bean>
+        class="vnet.sms.gateway.server.framework.internal.channel.GatewayServerChannelPipelineFactoryBuilder"
+        p:gatewayServerInstanceId="${gateway.server.instanceId}"
+        p:authenticationManager-ref="vnet.sms.gateway.server.server-framework.authenticationManager"
+        p:messageForwardingJmsBridge-ref="vnet.sms.gateway.server.server-framework.messageForwardingJmsBridge"
+        p:initialChannelEventsMonitor-ref="vnet.sms.gateway.server.server-framework.initialChannelEventsMonitor"
+        p:allConnectedChannels-ref="vnet.sms.gateway.server.server-framework.allConnectedChannels"
+        p:metricsRegistry-ref="vnet.sms.gateway.server.server-framework.metricsRegistry"
+        p:availableIncomingWindows="${gateway.server.availableIncomingWindows}"
+        p:failedLoginResponseDelayMillis="${gateway.server.failedLoginResponseDelayMillis}"
+        p:incomingWindowWaitTimeMillis="${gateway.server.incomingWindowWaitTimeMillis}"
+        p:pingIntervalSeconds="${gateway.server.pingIntervalSeconds}"
+        p:pingResponseTimeoutMillis="${gateway.server.pingResponseTimeoutMillis}" />
 	<!-- END-SNIPPET: gateway server channel pipeline factory -->
 
 	<!-- START-SNIPPET: authentication manager -->
@@ -155,8 +135,11 @@
 	<!-- START-SNIPPET: ChannelGroup storing all connected channels -->
     <bean
         id="vnet.sms.gateway.server.server-framework.allConnectedChannels"
-        class="vnet.sms.gateway.server.framework.internal.channel.ChannelGroupFactory"
-        p:metricsRegistry-ref="vnet.sms.gateway.server.server-framework.metricsRegistry" />
+        class="vnet.sms.gateway.server.framework.internal.channel.ChannelGroupFactory" />
+    <bean
+        id="vnet.sms.gateway.server.server-framework.allConnectedChannelStatistics"
+        class="vnet.sms.gateway.nettysupport.ChannelStatisticsGroup"
+        c:channels-ref="vnet.sms.gateway.server.server-framework.allConnectedChannels" />
 	<!-- END-SNIPPET: ChannelGroup storing all connected channels -->
 
 </beans>

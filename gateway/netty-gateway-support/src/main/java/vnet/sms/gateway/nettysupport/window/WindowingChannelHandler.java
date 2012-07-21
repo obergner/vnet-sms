@@ -8,6 +8,7 @@ import static org.apache.commons.lang.Validate.notNull;
 import java.io.Serializable;
 import java.util.Map;
 
+import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ChannelStateEvent;
 import org.jboss.netty.channel.MessageEvent;
@@ -19,7 +20,12 @@ import org.slf4j.LoggerFactory;
 import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.wme.WindowedMessageEvent;
 import vnet.sms.common.wme.acknowledge.ReceivedMessageAcknowledgedEvent;
+import vnet.sms.gateway.nettysupport.ChannelUtils;
 import vnet.sms.gateway.nettysupport.window.incoming.IncomingWindowStore;
+
+import com.yammer.metrics.core.Gauge;
+import com.yammer.metrics.core.MetricName;
+import com.yammer.metrics.core.MetricsRegistry;
 
 /**
  * @author obergner
@@ -33,13 +39,49 @@ public class WindowingChannelHandler<ID extends Serializable> extends
 	private final Logger	              log	= LoggerFactory
 	                                                   .getLogger(getClass());
 
+	private final MetricsRegistry	      metricsRegistry;
+
 	private final IncomingWindowStore<ID>	incomingWindowStore;
 
+	private Gauge<Integer>	              maximumWindowCapacity;
+
+	private Gauge<Long>	                  maxWindowWaitTimeMillis;
+
+	private Gauge<Integer>	              currentlyUsedWindows;
+
 	public WindowingChannelHandler(
-	        final IncomingWindowStore<ID> incomingWindowStore) {
+	        final IncomingWindowStore<ID> incomingWindowStore,
+	        final MetricsRegistry metricsRegistry) {
 		notNull(incomingWindowStore,
 		        "Argument 'incomingWindowStore' cannot be null");
+		notNull(metricsRegistry, "Argument 'metricsRegistry' must not be null");
 		this.incomingWindowStore = incomingWindowStore;
+		this.metricsRegistry = metricsRegistry;
+	}
+
+	// ------------------------------------------------------------------------
+	// Publish metrics
+	// ------------------------------------------------------------------------
+
+	/**
+	 * @return the maximumWindowCapacity
+	 */
+	public final Gauge<Integer> getMaximumWindowCapacity() {
+		return this.maximumWindowCapacity;
+	}
+
+	/**
+	 * @return the maxWindowWaitTimeMillis
+	 */
+	public final Gauge<Long> getMaxWindowWaitTimeMillis() {
+		return this.maxWindowWaitTimeMillis;
+	}
+
+	/**
+	 * @return the currentlyUsedWindows
+	 */
+	public final Gauge<Integer> getCurrentlyUsedWindows() {
+		return this.currentlyUsedWindows;
 	}
 
 	// ------------------------------------------------------------------------
@@ -136,13 +178,62 @@ public class WindowingChannelHandler<ID extends Serializable> extends
 	@Override
 	public void channelConnected(final ChannelHandlerContext ctx,
 	        final ChannelStateEvent e) throws Exception {
-		this.incomingWindowStore.attachTo(e.getChannel());
+		this.maximumWindowCapacity = this.metricsRegistry.newGauge(
+		        maximumCapacityMetricName(e.getChannel()),
+		        new Gauge<Integer>() {
+			        @Override
+			        public Integer value() {
+				        return WindowingChannelHandler.this.incomingWindowStore
+				                .getMaximumCapacity();
+			        }
+		        });
+		this.maxWindowWaitTimeMillis = this.metricsRegistry.newGauge(
+		        maxWindowWaitTimeMillisMetricName(e.getChannel()),
+		        new Gauge<Long>() {
+			        @Override
+			        public Long value() {
+				        return WindowingChannelHandler.this.incomingWindowStore
+				                .getWaitTimeMillis();
+			        }
+		        });
+		this.currentlyUsedWindows = this.metricsRegistry.newGauge(
+		        currentlyUsedWindowsMetricName(e.getChannel()),
+		        new Gauge<Integer>() {
+			        @Override
+			        public Integer value() {
+				        return WindowingChannelHandler.this.incomingWindowStore
+				                .getCurrentMessageCount();
+			        }
+		        });
+
 		super.channelConnected(ctx, e);
+	}
+
+	private MetricName currentlyUsedWindowsMetricName(final Channel channel) {
+		return new MetricName(Channel.class, "currently-used-windows",
+		        ChannelUtils.toString(channel));
+	}
+
+	private MetricName maxWindowWaitTimeMillisMetricName(final Channel channel) {
+		return new MetricName(Channel.class, "max-window-wait-time-millis",
+		        ChannelUtils.toString(channel));
+	}
+
+	private MetricName maximumCapacityMetricName(final Channel channel) {
+		return new MetricName(Channel.class, "maximum-windows-capacity",
+		        ChannelUtils.toString(channel));
 	}
 
 	@Override
 	public void channelDisconnected(final ChannelHandlerContext ctx,
 	        final ChannelStateEvent e) throws Exception {
+		this.metricsRegistry.removeMetric(maximumCapacityMetricName(e
+		        .getChannel()));
+		this.metricsRegistry.removeMetric(maxWindowWaitTimeMillisMetricName(e
+		        .getChannel()));
+		this.metricsRegistry.removeMetric(currentlyUsedWindowsMetricName(e
+		        .getChannel()));
+
 		final Map<ID, GsmPdu> pendingMessages = this.incomingWindowStore
 		        .shutDown();
 		if (!pendingMessages.isEmpty()) {

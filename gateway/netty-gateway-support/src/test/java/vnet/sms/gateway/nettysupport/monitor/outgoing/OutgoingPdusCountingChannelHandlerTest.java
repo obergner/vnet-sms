@@ -2,50 +2,20 @@ package vnet.sms.gateway.nettysupport.monitor.outgoing;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.concurrent.atomic.AtomicLong;
-
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.messages.PingRequest;
-import vnet.sms.gateway.nettysupport.monitor.DefaultChannelMonitor;
 import vnet.sms.gateway.nettytest.ChannelPipelineEmbedder;
 import vnet.sms.gateway.nettytest.DefaultChannelPipelineEmbedder;
 
+import com.yammer.metrics.Metrics;
+
 public class OutgoingPdusCountingChannelHandlerTest {
 
-	private static class SimpleChannelMonitorCallback extends
-	        DefaultChannelMonitor {
-
-		final AtomicLong	numberOfSentPdus	= new AtomicLong(0);
-
-		void reset() {
-			this.numberOfSentPdus.set(0);
-		}
-
-		@Override
-		public void sendPdu() {
-			this.numberOfSentPdus.incrementAndGet();
-		}
-	}
-
-	private final SimpleChannelMonitorCallback	              monitorCallback	= new SimpleChannelMonitorCallback();
-
 	private final OutgoingPdusCountingChannelHandler<GsmPdu>	objectUnderTest	= new OutgoingPdusCountingChannelHandler<GsmPdu>(
-	                                                                                    GsmPdu.class);
-
-	@Before
-	public void addMonitor() {
-		this.objectUnderTest.addMonitor(this.monitorCallback);
-	}
-
-	@After
-	public void resetMonitor() {
-		this.monitorCallback.reset();
-		this.objectUnderTest.clearMonitors();
-	}
+	                                                                                    GsmPdu.class,
+	                                                                                    Metrics.defaultRegistry());
 
 	@Test
 	public final void assertThatWriteRequestedCorrectlyUpdatesNumberOfSentPdus()
@@ -60,6 +30,7 @@ public class OutgoingPdusCountingChannelHandlerTest {
 
 		assertEquals(
 		        "OutgoingPdusCountingChannelHandler did not correctly count number of sent PDUs",
-		        numberOfSentPdus, this.monitorCallback.numberOfSentPdus.get());
+		        numberOfSentPdus, this.objectUnderTest.getNumberOfSentPdus()
+		                .count());
 	}
 }

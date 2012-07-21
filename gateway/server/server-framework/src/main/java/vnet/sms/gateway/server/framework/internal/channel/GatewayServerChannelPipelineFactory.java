@@ -22,6 +22,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 
 import vnet.sms.gateway.nettysupport.logging.incoming.ChannelContextLoggingUpstreamChannelHandler;
 import vnet.sms.gateway.nettysupport.login.incoming.IncomingLoginRequestsChannelHandler;
+import vnet.sms.gateway.nettysupport.monitor.ChannelInfoChannelHandler;
 import vnet.sms.gateway.nettysupport.monitor.incoming.IncomingBytesCountingChannelHandler;
 import vnet.sms.gateway.nettysupport.monitor.incoming.IncomingMessagesMonitoringChannelHandler;
 import vnet.sms.gateway.nettysupport.monitor.incoming.IncomingPdusCountingChannelHandler;
@@ -41,6 +42,8 @@ import vnet.sms.gateway.nettysupport.window.incoming.IncomingWindowStore;
 import vnet.sms.gateway.nettysupport.window.spi.MessageReferenceGenerator;
 import vnet.sms.gateway.server.framework.Jmx;
 import vnet.sms.gateway.server.framework.internal.jmsbridge.IncomingMessagesForwardingJmsBridge;
+
+import com.yammer.metrics.core.MetricsRegistry;
 
 /**
  * @author obergner
@@ -92,6 +95,8 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 
 	private final InitialChannelEventsPublishingUpstreamChannelHandler	    initialChannelEventsHandler;
 
+	private final MetricsRegistry	                                        metricsRegistry;
+
 	private final IncomingMessagesPublishingChannelHandler<ID>	            incomingMessagesPublisher	         = new IncomingMessagesPublishingChannelHandler<ID>();
 
 	private final ChannelContextLoggingUpstreamChannelHandler	            channelContextLoggingUpstreamHandler	= new ChannelContextLoggingUpstreamChannelHandler();
@@ -114,6 +119,7 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 	        final long pingResponseTimeoutMillis,
 	        final MBeanExportOperations mbeanExporter,
 	        final InitialChannelEventsMonitor initialChannelEventsMonitor,
+	        final MetricsRegistry metricsRegistry,
 	        final ChannelGroup allConnectedChannels) {
 		notEmpty(gatewayServerInstanceId,
 		        "Argument 'gatewayServerInstanceId' must neither be null nor empty");
@@ -133,6 +139,7 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 		notNull(mbeanExporter, "Argument 'mbeanExporter' must not be null");
 		notNull(initialChannelEventsMonitor,
 		        "Argument 'intialChannelEventsMonitor' must not be null");
+		notNull(metricsRegistry, "Argument 'metricsRegistry' must not be null");
 		notNull(allConnectedChannels,
 		        "Argument 'allConnectedChannels' must not be null");
 		this.pduType = pduType;
@@ -149,6 +156,7 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 		this.pingIntervalSeconds = pingIntervalSeconds;
 		this.pingResponseTimeoutMillis = pingResponseTimeoutMillis;
 		this.mbeanExporter = mbeanExporter;
+		this.metricsRegistry = metricsRegistry;
 		this.initialChannelEventsHandler = new InitialChannelEventsPublishingUpstreamChannelHandler(
 		        initialChannelEventsMonitor);
 		this.connectedChannelsTracker = new ConnectedChannelsTrackingChannelHandler(
@@ -175,12 +183,16 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 		pipeline.addLast(ConnectedChannelsTrackingChannelHandler.NAME,
 		        this.connectedChannelsTracker);
 
+		// Publish general channel attributes: connected-since, id, ...
+		pipeline.addLast(ChannelInfoChannelHandler.NAME,
+		        new ChannelInfoChannelHandler(this.metricsRegistry));
+
 		// Monitor number of incoming bytes ...
 		pipeline.addLast(IncomingBytesCountingChannelHandler.NAME,
-		        new IncomingBytesCountingChannelHandler());
+		        new IncomingBytesCountingChannelHandler(this.metricsRegistry));
 		// ... and outgoing bytes, too, while we are at it.
 		pipeline.addLast(OutgoingBytesCountingChannelHandler.NAME,
-		        new OutgoingBytesCountingChannelHandler());
+		        new OutgoingBytesCountingChannelHandler(this.metricsRegistry));
 
 		// Frame decoder, decoder, encoder
 		pipeline.addLast("vnet.sms.gateway:frame-decoder", this.frameDecoder);
@@ -193,10 +205,12 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 
 		// Monitor number of incoming PDUs ...
 		pipeline.addLast(IncomingPdusCountingChannelHandler.NAME,
-		        new IncomingPdusCountingChannelHandler<TP>(this.pduType));
+		        new IncomingPdusCountingChannelHandler<TP>(this.pduType,
+		                this.metricsRegistry));
 		// ... and outgoing PDUs, too, while we are at it.
 		pipeline.addLast(OutgoingPdusCountingChannelHandler.NAME,
-		        new OutgoingPdusCountingChannelHandler<TP>(this.pduType));
+		        new OutgoingPdusCountingChannelHandler<TP>(this.pduType,
+		                this.metricsRegistry));
 
 		// Transport protocol adapter
 		pipeline.addLast(TransportProtocolAdaptingUpstreamChannelHandler.NAME,
@@ -207,17 +221,19 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 
 		// Monitor incoming and outgoing messages
 		pipeline.addLast(IncomingMessagesMonitoringChannelHandler.NAME,
-		        new IncomingMessagesMonitoringChannelHandler<ID>());
+		        new IncomingMessagesMonitoringChannelHandler<ID>(
+		                this.metricsRegistry));
 		pipeline.addLast(OutgoingMessagesMonitoringChannelHandler.NAME,
-		        new OutgoingMessagesMonitoringChannelHandler<ID>());
+		        new OutgoingMessagesMonitoringChannelHandler<ID>(
+		                this.metricsRegistry));
 
 		// Windowing channel handler
 		pipeline.addLast(WindowingChannelHandler.NAME,
 		        new WindowingChannelHandler<Serializable>(
 		                new IncomingWindowStore<Serializable>(
 		                        this.availableIncomingWindows,
-		                        this.incomingWindowWaitTimeMillis,
-		                        this.mbeanExporter)));
+		                        this.incomingWindowWaitTimeMillis),
+		                this.metricsRegistry));
 
 		// Login channel handler
 		pipeline.addLast(IncomingLoginRequestsChannelHandler.NAME,

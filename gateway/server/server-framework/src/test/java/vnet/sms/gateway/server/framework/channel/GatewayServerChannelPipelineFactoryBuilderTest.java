@@ -24,6 +24,8 @@ import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;
 import vnet.sms.gateway.transports.serialization.incoming.SerializationTransportProtocolAdaptingUpstreamChannelHandler;
 import vnet.sms.gateway.transports.serialization.outgoing.SerializationTransportProtocolAdaptingDownstreamChannelHandler;
 
+import com.yammer.metrics.Metrics;
+
 public class GatewayServerChannelPipelineFactoryBuilderTest {
 
 	@Test(expected = IllegalStateException.class)
@@ -83,6 +85,7 @@ public class GatewayServerChannelPipelineFactoryBuilderTest {
 		objectUnderTest
 		        .setInitialChannelEventsMonitor(new InitialChannelEventsMonitor());
 		objectUnderTest.setAllConnectedChannels(new DefaultChannelGroup());
+		objectUnderTest.setMetricsRegistry(Metrics.defaultRegistry());
 		objectUnderTest.afterPropertiesSet();
 
 		final GatewayServerChannelPipelineFactory<Integer, ReferenceableMessageContainer> product = objectUnderTest

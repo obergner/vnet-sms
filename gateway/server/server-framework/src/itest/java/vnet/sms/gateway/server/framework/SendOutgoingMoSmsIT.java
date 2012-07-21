@@ -5,12 +5,14 @@ import static org.junit.Assert.assertTrue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.Resource;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.ObjectMessage;
 import javax.jms.Session;
 
 import org.jboss.netty.channel.MessageEvent;
+import org.jboss.netty.channel.group.ChannelGroup;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +30,6 @@ import vnet.sms.common.messages.Headers;
 import vnet.sms.common.messages.Msisdn;
 import vnet.sms.common.messages.Sms;
 import vnet.sms.common.wme.MessageEventType;
-import vnet.sms.gateway.nettysupport.monitor.MonitoringChannelGroup;
 import vnet.sms.gateway.server.framework.test.IntegrationTestClient;
 import vnet.sms.gateway.server.framework.test.MessageEventPredicate;
 import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;
@@ -52,13 +53,13 @@ public class SendOutgoingMoSmsIT {
 	private IntegrationTestClient	testClient;
 
 	@Autowired
-	private JmsTemplate	           jmsClient;
+	private JmsTemplate	          jmsClient;
 
-	@Autowired
-	private MonitoringChannelGroup	allConnectedChannels;
+	@Resource(name = "vnet.sms.gateway.server.server-framework.allConnectedChannels")
+	private ChannelGroup	      allConnectedChannels;
 
 	@Value("#{ '${gateway.server.jmsserver.queues.outgoingMoSms}' }")
-	private String	               outgoingMoSmsQueueName;
+	private String	              outgoingMoSmsQueueName;
 
 	@Before
 	public void connectTestClient() throws Throwable {

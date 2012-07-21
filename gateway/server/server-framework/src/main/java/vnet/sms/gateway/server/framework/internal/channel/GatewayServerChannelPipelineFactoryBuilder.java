@@ -23,6 +23,8 @@ import vnet.sms.gateway.transport.plugin.TransportProtocolExtensionPoint;
 import vnet.sms.gateway.transport.plugin.context.TransportProtocolPluginInjector;
 import vnet.sms.gateway.transport.spi.TransportProtocolPlugin;
 
+import com.yammer.metrics.core.MetricsRegistry;
+
 /**
  * @author obergner
  * 
@@ -58,6 +60,8 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 	private IncomingMessagesForwardingJmsBridge<ID>	    messageForwardingJmsBridge;
 
 	private InitialChannelEventsMonitor	                initialChannelEventsMonitor;
+
+	private MetricsRegistry	                            metricsRegistry;
 
 	private GatewayServerChannelPipelineFactory<ID, TP>	producedPipelineFactory;
 
@@ -115,7 +119,7 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 		        this.transportProtocolPlugin.getMessageReferenceGenerator(),
 		        this.pingIntervalSeconds, this.pingResponseTimeoutMillis,
 		        this.mbeanExporter, this.initialChannelEventsMonitor,
-		        this.allConnectedChannels);
+		        this.metricsRegistry, this.allConnectedChannels);
 
 		this.log.info(
 		        "Finished building GatewayServerChannelPipelineFactory instance {}",
@@ -149,6 +153,14 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 		notNull(mbeanExportOperations,
 		        "Argument 'mbeanExportOperations' must not be null");
 		this.mbeanExporter = mbeanExportOperations;
+	}
+
+	/**
+	 * @param metricsRegistry
+	 */
+	@Required
+	public void setMetricsRegistry(final MetricsRegistry metricsRegistry) {
+		this.metricsRegistry = metricsRegistry;
 	}
 
 	/**

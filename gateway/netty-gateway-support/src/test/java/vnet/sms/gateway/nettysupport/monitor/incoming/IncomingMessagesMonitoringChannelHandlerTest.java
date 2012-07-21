@@ -2,159 +2,106 @@ package vnet.sms.gateway.nettysupport.monitor.incoming;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.concurrent.atomic.AtomicLong;
-
-import org.jboss.netty.handler.codec.embedder.DecoderEmbedder;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
-import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.messages.LoginRequest;
 import vnet.sms.common.messages.LoginResponse;
 import vnet.sms.common.messages.Msisdn;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.PingResponse;
 import vnet.sms.common.messages.Sms;
-import vnet.sms.gateway.nettysupport.monitor.DefaultChannelMonitor;
 import vnet.sms.gateway.nettysupport.test.ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler;
+import vnet.sms.gateway.nettytest.ChannelPipelineEmbedder;
+import vnet.sms.gateway.nettytest.DefaultChannelPipelineEmbedder;
+
+import com.yammer.metrics.Metrics;
 
 public class IncomingMessagesMonitoringChannelHandlerTest {
 
-	private static class SimpleChannelMonitorCallback extends
-	        DefaultChannelMonitor {
-
-		final AtomicLong	numberOfReceivedLoginRequests	= new AtomicLong(0);
-
-		final AtomicLong	numberOfReceivedLoginResponses	= new AtomicLong(0);
-
-		final AtomicLong	numberOfReceivedPingRequests	= new AtomicLong(0);
-
-		final AtomicLong	numberOfReceivedPingResponses	= new AtomicLong(0);
-
-		final AtomicLong	numberOfReceivedSms		       = new AtomicLong(0);
-
-		void reset() {
-			this.numberOfReceivedSms.set(0);
-			this.numberOfReceivedLoginRequests.set(0);
-			this.numberOfReceivedLoginResponses.set(0);
-			this.numberOfReceivedPingRequests.set(0);
-			this.numberOfReceivedPingResponses.set(0);
-		}
-
-		@Override
-		public void loginRequestReceived() {
-			this.numberOfReceivedLoginRequests.incrementAndGet();
-		}
-
-		@Override
-		public void loginResponseReceived() {
-			this.numberOfReceivedLoginResponses.incrementAndGet();
-		}
-
-		@Override
-		public void pingRequestReceived() {
-			this.numberOfReceivedPingRequests.incrementAndGet();
-		}
-
-		@Override
-		public void pingResponseReceived() {
-			this.numberOfReceivedPingResponses.incrementAndGet();
-		}
-
-		@Override
-		public void smsReceived() {
-			this.numberOfReceivedSms.incrementAndGet();
-		}
-	}
-
-	private final SimpleChannelMonitorCallback	                    monitorCallback	= new SimpleChannelMonitorCallback();
-
-	private final IncomingMessagesMonitoringChannelHandler<Integer>	objectUnderTest	= new IncomingMessagesMonitoringChannelHandler<Integer>();
-
-	@Before
-	public void addMonitor() {
-		this.objectUnderTest.addMonitor(this.monitorCallback);
-	}
-
-	@After
-	public void resetMonitor() {
-		this.monitorCallback.reset();
-		this.objectUnderTest.clearMonitors();
-	}
+	private final IncomingMessagesMonitoringChannelHandler<Integer>	objectUnderTest	= new IncomingMessagesMonitoringChannelHandler<Integer>(
+	                                                                                        Metrics.defaultRegistry());
 
 	@Test
-	public final void assertThatTransportProtocolAdapterCorrectlyUpdatesNumberOfReceivedLoginRequests() {
-		final DecoderEmbedder<GsmPdu> embeddedPipeline = new DecoderEmbedder<GsmPdu>(
+	public final void assertThatTransportProtocolAdapterCorrectlyUpdatesNumberOfReceivedLoginRequests()
+	        throws Throwable {
+		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        this.objectUnderTest);
 
 		embeddedPipeline
-		        .offer(new LoginRequest(
-		                "assertThatTransportProtocolAdapterCorrectlyConvertsPduToLoginRequest",
+		        .receive(new LoginRequest(
+		                "assertThatTransportProtocolAdapterCorrectlyUpdatesNumberOfReceivedLoginRequests",
 		                "secret"));
 
 		assertEquals(
 		        "IncomingMessagesMonitoringChannelHandler did not correctly count number of received login requests",
-		        1L, this.monitorCallback.numberOfReceivedLoginRequests.get());
+		        1L, this.objectUnderTest.getNumberOfReceivedLoginRequests()
+		                .count());
 	}
 
 	@Test
-	public final void assertThatTransportProtocolAdapterCorrectlyCountsNumberOfReceivedLoginResponses() {
-		final DecoderEmbedder<GsmPdu> embeddedPipeline = new DecoderEmbedder<GsmPdu>(
+	public final void assertThatTransportProtocolAdapterCorrectlyCountsNumberOfReceivedLoginResponses()
+	        throws Throwable {
+		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        this.objectUnderTest);
 
 		embeddedPipeline
-		        .offer(LoginResponse
+		        .receive(LoginResponse
 		                .accept(new LoginRequest(
 		                        "assertThatTransportProtocolAdapterCorrectlyConvertsPduToLoginRequest",
 		                        "secret")));
 
 		assertEquals(
 		        "IncomingMessagesMonitoringChannelHandler did not correctly count number of received login responses",
-		        1L, this.monitorCallback.numberOfReceivedLoginResponses.get());
+		        1L, this.objectUnderTest.getNumberOfReceivedLoginResponses()
+		                .count());
 	}
 
 	@Test
-	public final void assertThatTransportProtocolAdapterCorrectlyCountsNumberOfReceivedPingRequests() {
-		final DecoderEmbedder<GsmPdu> embeddedPipeline = new DecoderEmbedder<GsmPdu>(
+	public final void assertThatTransportProtocolAdapterCorrectlyCountsNumberOfReceivedPingRequests()
+	        throws Throwable {
+		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        this.objectUnderTest);
 
-		embeddedPipeline.offer(new PingRequest());
+		embeddedPipeline.receive(new PingRequest());
 
 		assertEquals(
 		        "IncomingMessagesMonitoringChannelHandler did not correctly count number of received ping requests",
-		        1L, this.monitorCallback.numberOfReceivedPingRequests.get());
+		        1L, this.objectUnderTest.getNumberOfReceivedPingRequests()
+		                .count());
 	}
 
 	@Test
-	public final void assertThatTransportProtocolAdapterCorrectlyCountsNumberOfReceivedPingResponses() {
+	public final void assertThatTransportProtocolAdapterCorrectlyCountsNumberOfReceivedPingResponses()
+	        throws Throwable {
 
-		final DecoderEmbedder<GsmPdu> embeddedPipeline = new DecoderEmbedder<GsmPdu>(
+		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        this.objectUnderTest);
 
-		embeddedPipeline.offer(PingResponse.accept(new PingRequest()));
+		embeddedPipeline.receive(PingResponse.accept(new PingRequest()));
 
 		assertEquals(
 		        "IncomingMessagesMonitoringChannelHandler did not correctly count number of received ping responses",
-		        1L, this.monitorCallback.numberOfReceivedPingResponses.get());
+		        1L, this.objectUnderTest.getNumberOfReceivedPingResponses()
+		                .count());
 	}
 
 	@Test
-	public final void assertThatTransportProtocolAdapterCorrectlyCountsNumberOfReceivedSms() {
-		final DecoderEmbedder<GsmPdu> embeddedPipeline = new DecoderEmbedder<GsmPdu>(
+	public final void assertThatTransportProtocolAdapterCorrectlyCountsNumberOfReceivedSms()
+	        throws IllegalArgumentException, Throwable {
+		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        this.objectUnderTest);
 
-		embeddedPipeline.offer(new Sms(new Msisdn("01686754432"), new Msisdn(
+		embeddedPipeline.receive(new Sms(new Msisdn("01686754432"), new Msisdn(
 		        "01686754432"),
 		        "assertThatTransportProtocolAdapterCorrectlyConvertsPduToSms"));
 
 		assertEquals(
 		        "IncomingMessagesMonitoringChannelHandler did not correctly count number of received sms",
-		        1L, this.monitorCallback.numberOfReceivedSms.get());
+		        1L, this.objectUnderTest.getNumberOfReceivedSms().count());
 	}
 }

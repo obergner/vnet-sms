@@ -44,6 +44,7 @@ import org.jboss.netty.channel.ChannelUpstreamHandler;
 import org.jboss.netty.channel.Channels;
 import org.jboss.netty.channel.DefaultChannelPipeline;
 import org.jboss.netty.channel.ExceptionEvent;
+import org.jboss.netty.channel.LifeCycleAwareChannelHandler;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
 
@@ -71,8 +72,8 @@ public class DefaultChannelPipelineEmbedder implements ChannelPipelineEmbedder {
 
 	public DefaultChannelPipelineEmbedder(final ChannelHandler... handlers) {
 		this.pipeline = new DefaultChannelPipeline();
-		configurePipeline(handlers);
 		this.channel = new EmbeddedChannel(this.pipeline, this.sink);
+		configurePipeline(handlers);
 		fireInitialEvents();
 	}
 
@@ -80,8 +81,8 @@ public class DefaultChannelPipelineEmbedder implements ChannelPipelineEmbedder {
 	        final ChannelPipelineFactory channelPipelineFactory)
 	        throws Exception {
 		this.pipeline = channelPipelineFactory.getPipeline();
-		configurePipeline(this.pipeline);
 		this.channel = new EmbeddedChannel(this.pipeline, this.sink);
+		configurePipeline(this.pipeline);
 		fireInitialEvents();
 	}
 
@@ -122,17 +123,29 @@ public class DefaultChannelPipelineEmbedder implements ChannelPipelineEmbedder {
 			                + ChannelHandler.class.getSimpleName() + '.');
 		}
 
-		for (int i = 0; i < handlers.length; i++) {
-			final ChannelHandler h = handlers[i];
-			if (h == null) {
-				throw new NullPointerException("handlers[" + i + "]");
+		try {
+			for (int i = 0; i < handlers.length; i++) {
+				final ChannelHandler h = handlers[i];
+				if (h == null) {
+					throw new NullPointerException("handlers[" + i + "]");
+				}
+				if (h instanceof LifeCycleAwareChannelHandler) {
+					LifeCycleAwareChannelHandler.class.cast(h).beforeAdd(
+					        new EmbeddedChannelHandlerContext(h));
+				}
+				this.pipeline.addLast(String.valueOf(i), h);
+				if (h instanceof LifeCycleAwareChannelHandler) {
+					LifeCycleAwareChannelHandler.class.cast(h).afterAdd(
+					        new EmbeddedChannelHandlerContext(h));
+				}
 			}
-			this.pipeline.addLast(String.valueOf(i), handlers[i]);
+			this.pipeline.addLast("EXCEPTIONS-RECORDER",
+			        new ExceptionRecordingUpstreamChannelHandler());
+			this.pipeline.addLast("SENT-MESSAGES-RECORDER",
+			        new ReceivedMessagesRecordingUpstreamChannelHandler());
+		} catch (final Exception e) {
+			throw new RuntimeException(e);
 		}
-		this.pipeline.addLast("EXCEPTIONS-RECORDER",
-		        new ExceptionRecordingUpstreamChannelHandler());
-		this.pipeline.addLast("SENT-MESSAGES-RECORDER",
-		        new ReceivedMessagesRecordingUpstreamChannelHandler());
 	}
 
 	private void configurePipeline(final ChannelPipeline pipe) {
@@ -352,6 +365,63 @@ public class DefaultChannelPipelineEmbedder implements ChannelPipelineEmbedder {
 	// ------------------------------------------------------------------------
 	// Inner classes
 	// ------------------------------------------------------------------------
+
+	private final class EmbeddedChannelHandlerContext implements
+	        ChannelHandlerContext {
+
+		private final ChannelHandler	h;
+
+		EmbeddedChannelHandlerContext(final ChannelHandler h) {
+			this.h = h;
+		}
+
+		@Override
+		public void setAttachment(final Object attachment) {
+		}
+
+		@Override
+		public void sendUpstream(final ChannelEvent e) {
+		}
+
+		@Override
+		public void sendDownstream(final ChannelEvent e) {
+		}
+
+		@Override
+		public ChannelPipeline getPipeline() {
+			return getChannel().getPipeline();
+		}
+
+		@Override
+		public String getName() {
+			return null;
+		}
+
+		@Override
+		public ChannelHandler getHandler() {
+			return this.h;
+		}
+
+		@Override
+		public Channel getChannel() {
+			return DefaultChannelPipelineEmbedder.this.channel;
+		}
+
+		@Override
+		public Object getAttachment() {
+			return null;
+		}
+
+		@Override
+		public boolean canHandleUpstream() {
+			return false;
+		}
+
+		@Override
+		public boolean canHandleDownstream() {
+			return false;
+		}
+	}
 
 	private final class ReceivedMessagesRecordingUpstreamChannelHandler
 	        implements ChannelUpstreamHandler {

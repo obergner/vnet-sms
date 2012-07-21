@@ -8,35 +8,25 @@ import static org.apache.commons.lang.Validate.notNull;
 import org.jboss.netty.channel.group.ChannelGroup;
 import org.jboss.netty.channel.group.ChannelGroupFuture;
 import org.jboss.netty.channel.group.ChannelGroupFutureListener;
+import org.jboss.netty.channel.group.DefaultChannelGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Required;
-import org.springframework.jmx.export.MBeanExportOperations;
 
-import vnet.sms.common.spring.jmx.MBeanExportOperationsAware;
-import vnet.sms.gateway.nettysupport.monitor.MonitoringChannelGroup;
 import vnet.sms.gateway.server.framework.GatewayServerDescriptionAware;
 import vnet.sms.gateway.server.framework.spi.GatewayServerDescription;
-
-import com.yammer.metrics.core.MetricsRegistry;
 
 /**
  * @author obergner
  * 
  */
 public class ChannelGroupFactory implements FactoryBean<ChannelGroup>,
-        InitializingBean, DisposableBean, MBeanExportOperationsAware,
-        GatewayServerDescriptionAware {
+        InitializingBean, DisposableBean, GatewayServerDescriptionAware {
 
 	private final Logger	         log	= LoggerFactory
 	                                             .getLogger(getClass());
-
-	private MBeanExportOperations	 mbeanExporter;
-
-	private MetricsRegistry	         metricsRegistry;
 
 	private GatewayServerDescription	description;
 
@@ -55,28 +45,6 @@ public class ChannelGroupFactory implements FactoryBean<ChannelGroup>,
 	}
 
 	// ------------------------------------------------------------------------
-	// MBeanExportOperationsAware
-	// ------------------------------------------------------------------------
-
-	@Override
-	public void setMBeanExportOperations(
-	        final MBeanExportOperations mbeanExportOperations) {
-		notNull(mbeanExportOperations,
-		        "Argument 'mbeanExportOperations' must not be null");
-		this.mbeanExporter = mbeanExportOperations;
-	}
-
-	// ------------------------------------------------------------------------
-	// Set MetricsRegistry
-	// ------------------------------------------------------------------------
-
-	@Required
-	public void setMetricsRegistry(final MetricsRegistry metricsRegistry) {
-		notNull(metricsRegistry, "Argument 'metricsRegistry' must not be null");
-		this.metricsRegistry = metricsRegistry;
-	}
-
-	// ------------------------------------------------------------------------
 	// InitializingBean
 	// ------------------------------------------------------------------------
 
@@ -88,17 +56,9 @@ public class ChannelGroupFactory implements FactoryBean<ChannelGroup>,
 		if (this.description == null) {
 			throw new IllegalStateException("No description has been set");
 		}
-		if (this.mbeanExporter == null) {
-			throw new IllegalStateException(
-			        "No MBeanExportOperations has been set");
-		}
-		if (this.metricsRegistry == null) {
-			throw new IllegalStateException("No MetricsRegistry has been set");
-		}
 		final String name = this.description.toString()
 		        + " - All Connected Channels";
-		this.product = new MonitoringChannelGroup(name, this.mbeanExporter,
-		        this.metricsRegistry);
+		this.product = new DefaultChannelGroup(name);
 		this.log.info("Created new ChannelGroup {}", this.product);
 	}
 

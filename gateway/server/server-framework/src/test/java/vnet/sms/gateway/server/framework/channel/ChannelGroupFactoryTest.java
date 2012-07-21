@@ -5,29 +5,16 @@ import static org.junit.Assert.assertTrue;
 
 import org.jboss.netty.channel.group.ChannelGroup;
 import org.junit.Test;
-import org.springframework.jmx.export.MBeanExporter;
 
 import vnet.sms.gateway.server.framework.internal.channel.ChannelGroupFactory;
 import vnet.sms.gateway.server.framework.spi.GatewayServerDescription;
 import vnet.sms.gateway.server.framework.spi.Version;
-
-import com.yammer.metrics.Metrics;
 
 public class ChannelGroupFactoryTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public final void assertThatSetGatewayServerDescriptionRejectsNullDescription() {
 		new ChannelGroupFactory().setGatewayServerDescription(null);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public final void assertThatSetMBeanExportOperationsRejectsNullMBeanExportOperations() {
-		new ChannelGroupFactory().setMBeanExportOperations(null);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public final void assertThatSetMetricsRegistryRejectsNullMetricsRegistry() {
-		new ChannelGroupFactory().setMetricsRegistry(null);
 	}
 
 	@Test(expected = IllegalStateException.class)
@@ -64,8 +51,6 @@ public class ChannelGroupFactoryTest {
 		objectUnderTest
 		        .setGatewayServerDescription(new GatewayServerDescription(
 		                "TEST", new Version(1, 2, 3, "TEST", "66")));
-		objectUnderTest.setMBeanExportOperations(new MBeanExporter());
-		objectUnderTest.setMetricsRegistry(Metrics.defaultRegistry());
 		objectUnderTest.afterPropertiesSet();
 
 		final ChannelGroup product = objectUnderTest.getObject();

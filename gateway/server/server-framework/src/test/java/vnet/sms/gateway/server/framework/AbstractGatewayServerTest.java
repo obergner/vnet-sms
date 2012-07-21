@@ -26,6 +26,7 @@ import vnet.sms.gateway.transports.serialization.outgoing.SerializationTransport
 import com.mockrunner.jms.ConfigurationManager;
 import com.mockrunner.jms.DestinationManager;
 import com.mockrunner.mock.jms.MockConnectionFactory;
+import com.yammer.metrics.Metrics;
 
 public class AbstractGatewayServerTest {
 
@@ -81,6 +82,7 @@ public class AbstractGatewayServerTest {
 		        authenticationManager, failedLoginResponseMillis,
 		        new SerialIntegersMessageReferenceGenerator(),
 		        pingIntervalSeconds, pingResponseTimeoutMillis, mbeanExporter,
-		        initialChannelEventsMonitor, new DefaultChannelGroup());
+		        initialChannelEventsMonitor, Metrics.defaultRegistry(),
+		        new DefaultChannelGroup());
 	}
 }

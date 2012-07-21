@@ -27,6 +27,7 @@ import vnet.sms.gateway.transports.serialization.outgoing.SerializationTransport
 import com.mockrunner.jms.ConfigurationManager;
 import com.mockrunner.jms.DestinationManager;
 import com.mockrunner.mock.jms.MockConnectionFactory;
+import com.yammer.metrics.Metrics;
 
 public class GatewayServerControllerTest {
 
@@ -109,8 +110,8 @@ public class GatewayServerControllerTest {
 		        authenticationManager, failedLoginResponseMillis,
 		        new SerialIntegersMessageReferenceGenerator(),
 		        pingIntervalSeconds, pingResponseTimeoutMillis,
-		        new MBeanExporter(), new InitialChannelEventsMonitor(),
-		        new DefaultChannelGroup());
+		        new MBeanExporter(), new InitialChannelEventsMonitor(), Metrics
+		                .defaultRegistry(), new DefaultChannelGroup());
 	}
 
 	@Test

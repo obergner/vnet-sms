@@ -10,90 +10,37 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
-
-import javax.management.MalformedObjectNameException;
-import javax.management.Notification;
-import javax.management.ObjectName;
-
-import org.jboss.netty.channel.Channel;
-import org.jboss.netty.channel.ChannelFuture;
-import org.jboss.netty.channel.ChannelFutureListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.jmx.export.MBeanExportOperations;
-import org.springframework.jmx.export.annotation.ManagedAttribute;
-import org.springframework.jmx.export.annotation.ManagedNotification;
-import org.springframework.jmx.export.annotation.ManagedNotifications;
-import org.springframework.jmx.export.annotation.ManagedResource;
-import org.springframework.jmx.export.notification.NotificationPublisher;
-import org.springframework.jmx.export.notification.NotificationPublisherAware;
 
 import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.wme.WindowedMessageEvent;
-import vnet.sms.gateway.nettysupport.Jmx;
 
 /**
  * @author obergner
  * 
  */
-@ManagedNotifications({ @ManagedNotification(name = IncomingWindowStore.Events.NO_WINDOW_FOR_INCOMING_MESSAGE, description = "An incoming message has been rejected since no free windows has been available", notificationTypes = IncomingWindowStore.Events.NO_WINDOW_FOR_INCOMING_MESSAGE) })
-@ManagedResource(description = "Buffers incoming messages until a predefined limit is reached.")
-public class IncomingWindowStore<ID extends Serializable> implements
-        NotificationPublisherAware {
+public class IncomingWindowStore<ID extends Serializable> {
 
-	private static final String	TYPE	= "Channel";
+	private final int	                    maximumCapacity;
 
-	public static class Events {
-
-		public static final String	NO_WINDOW_FOR_INCOMING_MESSAGE	= "channel.no-window-for-incoming-message";
-	}
-
-	private final Logger	                 log	              = LoggerFactory
-	                                                                      .getLogger(getClass());
-
-	private final int	                     maximumCapacity;
-
-	private final long	                     waitTimeMillis;
-
-	private final MBeanExportOperations	     mbeanExporter;
-
-	private NotificationPublisher	         notificationPublisher;
+	private final long	                    waitTimeMillis;
 
 	private final ConcurrentMap<ID, GsmPdu>	messageReferenceToMessage;
 
-	private final Semaphore	                 availableWindows;
+	private final Semaphore	                availableWindows;
 
-	private volatile boolean	             shutDown	          = false;
-
-	private final AtomicLong	             noWindowAvailableSeq	= new AtomicLong(
-	                                                                      1);
+	private volatile boolean	            shutDown	= false;
 
 	// ------------------------------------------------------------------------
 	// Constructors
 	// ------------------------------------------------------------------------
 
 	public IncomingWindowStore(final int maximumCapacity,
-	        final long waitTimeMillis, final MBeanExportOperations mbeanExporter) {
-		notNull(mbeanExporter, "Argument 'mbeanExporter' must not be null");
+	        final long waitTimeMillis) {
 		this.maximumCapacity = maximumCapacity;
 		this.availableWindows = new Semaphore(maximumCapacity);
 		this.waitTimeMillis = waitTimeMillis;
-		this.mbeanExporter = mbeanExporter;
 		this.messageReferenceToMessage = new ConcurrentHashMap<ID, GsmPdu>(
 		        maximumCapacity);
-	}
-
-	// ------------------------------------------------------------------------
-	// NotificationPublisherAware
-	// ------------------------------------------------------------------------
-
-	@Override
-	public void setNotificationPublisher(
-	        final NotificationPublisher notificationPublisher) {
-		notNull(notificationPublisher,
-		        "Argument 'notificationPublisher' must not be null");
-		this.notificationPublisher = notificationPublisher;
 	}
 
 	// ------------------------------------------------------------------------
@@ -103,13 +50,10 @@ public class IncomingWindowStore<ID extends Serializable> implements
 	/**
 	 * @see vnet.sms.gateway.nettysupport.window.incoming.IncomingWindowStoreMBean#getMaximumCapacity()
 	 */
-	@ManagedAttribute(description = "The maximum number of messages this store will buffer")
 	public final int getMaximumCapacity() {
 		return this.maximumCapacity;
 	}
 
-	@ManagedAttribute(description = "When trying to acquire a free window/slot for an incoming message we will "
-	        + "wait for at most this number of milliseconds for a window to become available")
 	public long getWaitTimeMillis() {
 		return this.waitTimeMillis;
 	}
@@ -117,46 +61,8 @@ public class IncomingWindowStore<ID extends Serializable> implements
 	/**
 	 * @see vnet.sms.gateway.nettysupport.window.incoming.IncomingWindowStoreMBean#getCurrentMessageCount()
 	 */
-	@ManagedAttribute(description = "Number of messages currently stored")
 	public final int getCurrentMessageCount() {
 		return this.messageReferenceToMessage.size();
-	}
-
-	// ------------------------------------------------------------------------
-	// Attach to/detach from Channel
-	// ------------------------------------------------------------------------
-
-	public void attachTo(final Channel channel)
-	        throws MalformedObjectNameException {
-		notNull(channel, "Argument 'channel' must not be null");
-
-		final ObjectName objectName = objectNameFor(channel);
-		this.mbeanExporter.registerManagedResource(this, objectName);
-		this.log.info("Registered {} with MBeanServer using ObjectName [{}]",
-		        new Object[] { this, objectName });
-
-		channel.getCloseFuture().addListener(new ChannelFutureListener() {
-			@Override
-			public void operationComplete(final ChannelFuture future)
-			        throws Exception {
-				detachFrom(future.getChannel());
-			}
-		});
-	}
-
-	private final ObjectName objectNameFor(final Channel channel)
-	        throws MalformedObjectNameException {
-		return new ObjectName(Jmx.GROUP + ":type=" + TYPE + ",scope="
-		        + channel.getId() + ",name=incoming-windows");
-	}
-
-	private void detachFrom(final Channel channel)
-	        throws MalformedObjectNameException {
-		notNull(channel, "Argument 'channel' must not be null");
-		final ObjectName objectName = objectNameFor(channel);
-		this.mbeanExporter.unregisterManagedResource(objectName);
-		this.log.info("Unregistered {} from MBeanServer using ObjectName [{}]",
-		        new Object[] { this, objectName });
 	}
 
 	// ------------------------------------------------------------------------
@@ -182,7 +88,6 @@ public class IncomingWindowStore<ID extends Serializable> implements
 		ensureNotShutDown();
 		if (!this.availableWindows.tryAcquire(this.waitTimeMillis,
 		        TimeUnit.MILLISECONDS)) {
-			publishNoWindowAvailableEvent(messageEvent);
 			return false;
 		}
 		return storeMessageHavingPermit(messageEvent);
@@ -193,25 +98,6 @@ public class IncomingWindowStore<ID extends Serializable> implements
 			throw new IllegalStateException(
 			        "This IncomingWindowStore has already been shut down");
 		}
-	}
-
-	private void publishNoWindowAvailableEvent(
-	        final WindowedMessageEvent<ID, ? extends GsmPdu> messageEvent) {
-		final Notification noWindowAvailableNot = new Notification(
-		        Events.NO_WINDOW_FOR_INCOMING_MESSAGE, this,
-		        this.noWindowAvailableSeq.getAndIncrement());
-		noWindowAvailableNot.setUserData(messageEvent.getMessage());
-		sendNotification(noWindowAvailableNot);
-	}
-
-	private void sendNotification(final Notification notification) {
-		if (this.notificationPublisher == null) {
-			throw new IllegalStateException(
-			        "No "
-			                + NotificationPublisher.class.getName()
-			                + " has been set. Did you remember to manually inject a NotificationPublisher when using this class outside a Spring context?");
-		}
-		this.notificationPublisher.sendNotification(notification);
 	}
 
 	private boolean storeMessageHavingPermit(

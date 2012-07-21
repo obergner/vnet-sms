@@ -3,14 +3,11 @@ package vnet.sms.gateway.nettysupport.window;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.lang.management.ManagementFactory;
-
 import org.jboss.netty.channel.ChannelEvent;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelDownstreamHandler;
 import org.junit.Test;
-import org.springframework.jmx.export.MBeanExporter;
 
 import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.messages.LoginRequest;
@@ -27,15 +24,16 @@ import vnet.sms.gateway.nettytest.ChannelEventFilter;
 import vnet.sms.gateway.nettytest.ChannelPipelineEmbedder;
 import vnet.sms.gateway.nettytest.DefaultChannelPipelineEmbedder;
 
+import com.yammer.metrics.Metrics;
+
 public class WindowingChannelHandlerTest {
 
 	@Test
 	public final void assertThatWindowedChannelHandlerCorrectlyPropagatesLoginRequest()
 	        throws Throwable {
-		final MBeanExporter mbeanExporter = new MBeanExporter();
-		mbeanExporter.setServer(ManagementFactory.getPlatformMBeanServer());
 		final WindowingChannelHandler<Integer> objectUnderTest = new WindowingChannelHandler<Integer>(
-		        new IncomingWindowStore<Integer>(100, 1000, mbeanExporter));
+		        new IncomingWindowStore<Integer>(100, 1000),
+		        Metrics.defaultRegistry());
 
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
@@ -63,10 +61,9 @@ public class WindowingChannelHandlerTest {
 		        "assertThatWindowedChannelHandlerIssuesNoWindowForIncomingMessageEventIfNoWindowIsAvailable",
 		        "secret");
 
-		final MBeanExporter mbeanExporter = new MBeanExporter();
-		mbeanExporter.setServer(ManagementFactory.getPlatformMBeanServer());
 		final WindowingChannelHandler<Integer> objectUnderTest = new WindowingChannelHandler<Integer>(
-		        new IncomingWindowStore<Integer>(1, 1, mbeanExporter));
+		        new IncomingWindowStore<Integer>(1, 1),
+		        Metrics.defaultRegistry());
 
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
@@ -92,12 +89,10 @@ public class WindowingChannelHandlerTest {
 	@Test
 	public final void assertThatWindowedChannelHandlerStoresReceivedSmsInIncomingWindowingStore()
 	        throws Throwable {
-		final MBeanExporter mbeanExporter = new MBeanExporter();
-		mbeanExporter.setServer(ManagementFactory.getPlatformMBeanServer());
 		final IncomingWindowStore<Integer> incomingWindowStore = new IncomingWindowStore<Integer>(
-		        100, 1000, mbeanExporter);
+		        100, 1000);
 		final WindowingChannelHandler<Integer> objectUnderTest = new WindowingChannelHandler<Integer>(
-		        incomingWindowStore);
+		        incomingWindowStore, Metrics.defaultRegistry());
 
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
@@ -128,12 +123,10 @@ public class WindowingChannelHandlerTest {
 	@Test
 	public final void assertThatWindowedChannelHandlerReleasesSmsStoredInIncomingWindowingStoreWhenReceivingAnAck()
 	        throws Throwable {
-		final MBeanExporter mbeanExporter = new MBeanExporter();
-		mbeanExporter.setServer(ManagementFactory.getPlatformMBeanServer());
 		final IncomingWindowStore<Integer> incomingWindowStore = new IncomingWindowStore<Integer>(
-		        100, 1000, mbeanExporter);
+		        100, 1000);
 		final WindowingChannelHandler<Integer> objectUnderTest = new WindowingChannelHandler<Integer>(
-		        incomingWindowStore);
+		        incomingWindowStore, Metrics.defaultRegistry());
 
 		final SimpleChannelDownstreamHandler converterHandler = new SimpleChannelDownstreamHandler() {
 			@Override
@@ -173,12 +166,10 @@ public class WindowingChannelHandlerTest {
 	@Test
 	public final void assertThatWindowedChannelHandlerPropagatesFailedToReleaseAcknowledgedMessageEventUpstreamIfReleasedMessagesDoNotMatch()
 	        throws Throwable {
-		final MBeanExporter mbeanExporter = new MBeanExporter();
-		mbeanExporter.setServer(ManagementFactory.getPlatformMBeanServer());
 		final IncomingWindowStore<Integer> incomingWindowStore = new IncomingWindowStore<Integer>(
-		        100, 1000, mbeanExporter);
+		        100, 1000);
 		final WindowingChannelHandler<Integer> objectUnderTest = new WindowingChannelHandler<Integer>(
-		        incomingWindowStore);
+		        incomingWindowStore, Metrics.defaultRegistry());
 
 		final SimpleChannelDownstreamHandler converterHandler = new SimpleChannelDownstreamHandler() {
 			@Override
@@ -228,12 +219,10 @@ public class WindowingChannelHandlerTest {
 	@Test
 	public final void assertThatWindowedChannelHandlerReleasesSmsStoredInIncomingWindowingStoreWhenReceivingANack()
 	        throws Throwable {
-		final MBeanExporter mbeanExporter = new MBeanExporter();
-		mbeanExporter.setServer(ManagementFactory.getPlatformMBeanServer());
 		final IncomingWindowStore<Integer> incomingWindowStore = new IncomingWindowStore<Integer>(
-		        100, 1000, mbeanExporter);
+		        100, 1000);
 		final WindowingChannelHandler<Integer> objectUnderTest = new WindowingChannelHandler<Integer>(
-		        incomingWindowStore);
+		        incomingWindowStore, Metrics.defaultRegistry());
 
 		final SimpleChannelDownstreamHandler converterHandler = new SimpleChannelDownstreamHandler() {
 			@Override
@@ -276,12 +265,10 @@ public class WindowingChannelHandlerTest {
 	@Test
 	public final void assertThatWindowedChannelHandlerPropagatesFailedToReleaseAcknowledgedMessageEventUpstreamIfMessageReferenceIsUnknown()
 	        throws Throwable {
-		final MBeanExporter mbeanExporter = new MBeanExporter();
-		mbeanExporter.setServer(ManagementFactory.getPlatformMBeanServer());
 		final IncomingWindowStore<Integer> incomingWindowStore = new IncomingWindowStore<Integer>(
-		        100, 1000, mbeanExporter);
+		        100, 1000);
 		final WindowingChannelHandler<Integer> objectUnderTest = new WindowingChannelHandler<Integer>(
-		        incomingWindowStore);
+		        incomingWindowStore, Metrics.defaultRegistry());
 
 		final SimpleChannelDownstreamHandler converterHandler = new SimpleChannelDownstreamHandler() {
 			@Override
