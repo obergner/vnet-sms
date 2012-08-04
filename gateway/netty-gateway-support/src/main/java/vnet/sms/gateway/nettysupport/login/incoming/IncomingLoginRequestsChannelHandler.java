@@ -19,7 +19,6 @@ import org.jboss.netty.util.Timer;
 import org.jboss.netty.util.TimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -30,6 +29,7 @@ import vnet.sms.common.wme.WindowedMessageEvent;
 import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestAckedEvent;
 import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestNackedEvent;
 import vnet.sms.common.wme.receive.LoginRequestReceivedEvent;
+import vnet.sms.gateway.nettysupport.MessageProcessingContext;
 
 /**
  * @author obergner
@@ -39,8 +39,6 @@ public class IncomingLoginRequestsChannelHandler<ID extends Serializable>
         extends SimpleChannelUpstreamHandler {
 
 	public static final String	                  NAME	                   = "vnet.sms.gateway:incoming-login-handler";
-
-	public static final String	                  CURRENT_USER_MDC_KEY	   = "currentUser";
 
 	private final Logger	                      log	                   = LoggerFactory
 	                                                                               .getLogger(getClass());
@@ -117,7 +115,7 @@ public class IncomingLoginRequestsChannelHandler<ID extends Serializable>
 		}
 
 		try {
-			MDC.put(CURRENT_USER_MDC_KEY, authentication.getName());
+			MessageProcessingContext.INSTANCE.onUserEnter(authentication);
 			this.log.info(
 			        "Successfully authenticated channel {} - authenticated user is {}",
 			        ctx.getChannel(), authentication.getPrincipal());
@@ -126,7 +124,7 @@ public class IncomingLoginRequestsChannelHandler<ID extends Serializable>
 			ctx.sendUpstream(new ChannelSuccessfullyAuthenticatedEvent(ctx
 			        .getChannel(), e.getMessage()));
 		} finally {
-			MDC.remove(CURRENT_USER_MDC_KEY);
+			MessageProcessingContext.INSTANCE.onUserExit(authentication);
 		}
 	}
 
@@ -171,14 +169,15 @@ public class IncomingLoginRequestsChannelHandler<ID extends Serializable>
 	        final WindowedMessageEvent<ID, ? extends GsmPdu> e)
 	        throws IllegalArgumentException {
 		try {
-			MDC.put(CURRENT_USER_MDC_KEY, this.authenticatedClient.get()
-			        .getName());
+			MessageProcessingContext.INSTANCE
+			        .onUserEnter(this.authenticatedClient.get());
 			this.log.trace(
 			        "Received non-login request {} on authenticated channel {} - will propagate event further upstream",
 			        e, ctx.getChannel());
 			ctx.sendUpstream(e);
 		} finally {
-			MDC.remove(CURRENT_USER_MDC_KEY);
+			MessageProcessingContext.INSTANCE
+			        .onUserExit(this.authenticatedClient.get());
 		}
 	}
 

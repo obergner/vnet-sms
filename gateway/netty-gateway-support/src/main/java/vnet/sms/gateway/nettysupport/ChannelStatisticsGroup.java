@@ -14,7 +14,7 @@ import org.jboss.netty.channel.group.ChannelGroup;
  * @author obergner
  * 
  */
-public class ChannelStatisticsGroup {
+public class ChannelStatisticsGroup implements Iterable<ChannelStatistics> {
 
 	private final ChannelGroup	channels;
 
@@ -55,6 +55,7 @@ public class ChannelStatisticsGroup {
 	 * @return
 	 * @see java.util.Set#iterator()
 	 */
+	@Override
 	public Iterator<ChannelStatistics> iterator() {
 		final Iterator<Channel> channelsIterator = this.channels.iterator();
 		final Iterator<ChannelStatistics> channelStatisticsIterator = new Iterator<ChannelStatistics>() {

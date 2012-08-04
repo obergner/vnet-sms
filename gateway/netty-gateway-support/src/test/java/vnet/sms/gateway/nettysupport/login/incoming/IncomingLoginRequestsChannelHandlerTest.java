@@ -7,7 +7,6 @@ import static org.junit.Assert.assertNull;
 import org.jboss.netty.channel.ChannelEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.junit.Test;
-import org.slf4j.MDC;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.TestingAuthenticationToken;
@@ -19,6 +18,7 @@ import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestAckedEvent;
 import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestNackedEvent;
 import vnet.sms.common.wme.receive.PingRequestReceivedEvent;
+import vnet.sms.gateway.nettysupport.MessageProcessingContext;
 import vnet.sms.gateway.nettysupport.test.ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler;
 import vnet.sms.gateway.nettytest.ChannelEventFilter;
 import vnet.sms.gateway.nettytest.ChannelPipelineEmbedder;
@@ -291,8 +291,8 @@ public class IncomingLoginRequestsChannelHandlerTest {
 		        "assertThatLoginChannelHandlerRemovesAuthenticatedUserFromMDCAfterReturning",
 		        "secret");
 		embeddedPipeline.receive(loginRequest);
-		final String currentUserInMdc = MDC
-		        .get(IncomingLoginRequestsChannelHandler.CURRENT_USER_MDC_KEY);
+		final String currentUserInMdc = MessageProcessingContext.INSTANCE
+		        .currentUserName();
 
 		assertNull(
 		        "IncomingLoginRequestsChannelHandler did not remove authenticated user from MDC after returning",

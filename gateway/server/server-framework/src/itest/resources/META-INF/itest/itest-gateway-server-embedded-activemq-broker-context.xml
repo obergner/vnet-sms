@@ -1,25 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:jms="http://www.springframework.org/schema/jms" xmlns:p="http://www.springframework.org/schema/p"
-	xmlns:amq="http://activemq.apache.org/schema/core"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+<beans
+    xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:jms="http://www.springframework.org/schema/jms"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:amq="http://activemq.apache.org/schema/core"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
 		http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-3.1.xsd
 		http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.5.0.xsd"
-	profile="itest">
+    profile="itest">
 
 	<!-- START-SNIPPET: Embedded ActiveMQ -->
-	<amq:broker
-		id="vnet.sms.gateway.server.server-framework.itest.embeddedActiveMQBroker"
-		brokerId="vnet.sms.gateway.server.server-framework.itest.embeddedActiveMQBroker"
-		enableStatistics="false" persistent="false" useJmx="false">
-		<amq:transportConnectors>
-			<amq:transportConnector
-				uri="tcp://${gateway.server.jmsserver.host}:${gateway.server.jmsserver.port}" />
-		</amq:transportConnectors>
-	</amq:broker>
+    <amq:broker
+        id="vnet.sms.gateway.server.server-framework.itest.embeddedActiveMQBroker"
+        brokerId="vnet.sms.gateway.server.server-framework.itest.embeddedActiveMQBroker"
+        enableStatistics="false"
+        persistent="false"
+        useJmx="false">
+        <amq:transportConnectors>
+            <amq:transportConnector
+                uri="${gateway.server.jmsserver.url}" />
+        </amq:transportConnectors>
+    </amq:broker>
 	<!-- END-SNIPPET: Embedded ActiveMQ -->
 
 </beans>

@@ -26,7 +26,7 @@
     <bean
         id="vnet.sms.gateway.server.server-framework.listChannelsShellCommand"
         class="vnet.sms.gateway.server.framework.internal.shell.ListChannelsCommand"
-        c:allOpenChannels-ref="vnet.sms.gateway.server.server-framework.allConnectedChannels" />
+        c:allOpenChannels-ref="vnet.sms.gateway.server.server-framework.allConnectedChannelStatistics" />
 	<!-- END-SNIPPET: Commands -->
 
 </beans>

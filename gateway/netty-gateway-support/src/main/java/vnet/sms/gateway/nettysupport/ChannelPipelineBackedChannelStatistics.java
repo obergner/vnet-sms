@@ -197,4 +197,9 @@ class ChannelPipelineBackedChannelStatistics implements ChannelStatistics {
 		        .getNumberOfSentPingRequests();
 	}
 
+	@Override
+	public String toString() {
+		return "ChannelPipelineBackedChannelStatistics@" + this.hashCode()
+		        + "[channel: " + this.channel + "]";
+	}
 }

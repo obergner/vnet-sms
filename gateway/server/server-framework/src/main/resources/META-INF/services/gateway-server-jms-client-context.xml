@@ -69,7 +69,7 @@
 
     <amq:connectionFactory
         id="vnet.sms.gateway.server.server-framework.jmsConnectionFactory"
-        brokerURL="tcp://${gateway.server.jmsserver.host}:${gateway.server.jmsserver.port}"
+        brokerURL="${gateway.server.jmsserver.url}"
         clientIDPrefix="vnet.sms.gateway.server.server-framework.${gateway.server.instanceId}" />
 	<!-- END-SNIPPET: JMS connection factory -->
 

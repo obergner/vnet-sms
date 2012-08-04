@@ -8,6 +8,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import vnet.sms.common.messages.Msisdn;
+import vnet.sms.common.messages.Sms;
 import vnet.sms.gateway.server.framework.test.IntegrationTestClient;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -33,8 +35,7 @@ public class RemoteShellExploration {
 	private int	   serverPort;
 
 	@Test
-	public final void assertThatGatewayServerRespondsWithASuccessfulLoginResponseToASuccessfulLoginRequest()
-	        throws Throwable {
+	public final void exploreShell() throws Throwable {
 		final IntegrationTestClient testClient1 = newClient();
 		testClient1.connect();
 		testClient1.login(1, "test-client-1", "password");
@@ -47,6 +48,13 @@ public class RemoteShellExploration {
 		testClient3.connect();
 		testClient3.login(3, "test-client-3", "password");
 
+		for (int i = 0; i < 100000000; i++) {
+			final Sms sms = new Sms(new Msisdn("016567543" + i), new Msisdn(
+			        "016567543" + i), "message:" + i);
+			testClient1.sendMessage(i, sms);
+			testClient2.sendMessage(i, sms);
+			testClient3.sendMessage(i, sms);
+		}
 		Thread.sleep(600000L);
 
 		testClient3.disconnect();

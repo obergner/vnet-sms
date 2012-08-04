@@ -12,13 +12,14 @@ import org.jboss.netty.channel.UpstreamMessageEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.messages.LoginRequest;
 import vnet.sms.common.messages.LoginResponse;
-import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.PingResponse;
 import vnet.sms.common.messages.Sms;
 import vnet.sms.common.wme.WindowedMessageEvent;
+import vnet.sms.gateway.nettysupport.MessageProcessingContext;
 
 /**
  * @author obergner
@@ -49,42 +50,47 @@ public abstract class TransportProtocolAdaptingUpstreamChannelHandler<ID extends
 	@Override
 	public void messageReceived(final ChannelHandlerContext ctx,
 	        final MessageEvent e) throws Exception {
-		final Object pdu = e.getMessage();
-		getLog().trace("Attempting to convert PDU {} to message ...", pdu);
-		final ID extractedWindowId;
-		final GsmPdu convertedPdu;
-		switch (typeOf(pdu)) {
-		case LOGIN_REQUEST:
-			extractedWindowId = extractWindowId((TP) pdu);
-			convertedPdu = convertPduToLoginRequest((TP) pdu);
-			break;
-		case LOGIN_RESPONSE:
-			extractedWindowId = extractWindowId((TP) pdu);
-			convertedPdu = convertPduToLoginResponse((TP) pdu);
-			break;
-		case PING_REQUEST:
-			extractedWindowId = extractWindowId((TP) pdu);
-			convertedPdu = convertPduToPingRequest((TP) pdu);
-			break;
-		case PING_RESPONSE:
-			extractedWindowId = extractWindowId((TP) pdu);
-			convertedPdu = convertPduToPingResponse((TP) pdu);
-			break;
-		case SMS:
-			extractedWindowId = extractWindowId((TP) pdu);
-			convertedPdu = convertPduToSms((TP) pdu);
-			break;
-		case UNKNOWN:
-		default:
-			throw new IllegalStateException("Unsupported message type: "
-			        + pdu.getClass());
-		}
-		getLog().trace("PDU {} converted to {}", pdu, convertedPdu);
+		GsmPdu convertedPdu = null;
+		try {
+			final Object pdu = e.getMessage();
+			getLog().trace("Attempting to convert PDU {} to message ...", pdu);
+			final ID extractedWindowId;
+			switch (typeOf(pdu)) {
+			case LOGIN_REQUEST:
+				extractedWindowId = extractWindowId((TP) pdu);
+				convertedPdu = convertPduToLoginRequest((TP) pdu);
+				break;
+			case LOGIN_RESPONSE:
+				extractedWindowId = extractWindowId((TP) pdu);
+				convertedPdu = convertPduToLoginResponse((TP) pdu);
+				break;
+			case PING_REQUEST:
+				extractedWindowId = extractWindowId((TP) pdu);
+				convertedPdu = convertPduToPingRequest((TP) pdu);
+				break;
+			case PING_RESPONSE:
+				extractedWindowId = extractWindowId((TP) pdu);
+				convertedPdu = convertPduToPingResponse((TP) pdu);
+				break;
+			case SMS:
+				extractedWindowId = extractWindowId((TP) pdu);
+				convertedPdu = convertPduToSms((TP) pdu);
+				break;
+			case UNKNOWN:
+			default:
+				throw new IllegalStateException("Unsupported message type: "
+				        + pdu.getClass());
+			}
+			MessageProcessingContext.INSTANCE.onMessageEnter(convertedPdu);
+			getLog().trace("PDU {} converted to {}", pdu, convertedPdu);
 
-		final WindowedMessageEvent<ID, ? extends GsmPdu> windowedMessageEvent = UpstreamMessageEventToWindowedMessageEventConverter.INSTANCE
-		        .convert(extractedWindowId, (UpstreamMessageEvent) e,
-		                convertedPdu);
-		ctx.sendUpstream(windowedMessageEvent);
+			final WindowedMessageEvent<ID, ? extends GsmPdu> windowedMessageEvent = UpstreamMessageEventToWindowedMessageEventConverter.INSTANCE
+			        .convert(extractedWindowId, (UpstreamMessageEvent) e,
+			                convertedPdu);
+			ctx.sendUpstream(windowedMessageEvent);
+		} finally {
+			MessageProcessingContext.INSTANCE.onMessageExit(convertedPdu);
+		}
 	}
 
 	protected abstract PduType typeOf(final Object pdu);
