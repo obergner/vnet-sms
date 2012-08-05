@@ -158,7 +158,7 @@ public class SendOutgoingAcknowledgementsIT {
 				                .createObjectMessage(mtSms);
 				        mtSmsAckObjectMessage.setStringProperty(
 				                Headers.EVENT_TYPE,
-				                MessageEventType.RECEIVED_SMS_ACKED.name());
+				                MessageEventType.SEND_SMS_ACK.name());
 				        mtSmsAckObjectMessage.setIntProperty(
 				                Headers.RECEIVING_CHANNEL_ID,
 				                receivingChannelId);
@@ -253,7 +253,7 @@ public class SendOutgoingAcknowledgementsIT {
 				                .createObjectMessage(mtSms);
 				        mtSmsNackObjectMessage.setStringProperty(
 				                Headers.EVENT_TYPE,
-				                MessageEventType.RECEIVED_SMS_NACKED.name());
+				                MessageEventType.SEND_SMS_NACK.name());
 				        mtSmsNackObjectMessage.setIntProperty(
 				                Headers.RECEIVING_CHANNEL_ID,
 				                receivingChannelId);

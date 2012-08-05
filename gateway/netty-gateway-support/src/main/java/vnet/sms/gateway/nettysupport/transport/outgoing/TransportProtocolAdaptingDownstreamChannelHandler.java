@@ -8,10 +8,10 @@ import java.io.Serializable;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.DownstreamMessageEvent;
 
-import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestAckedEvent;
-import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestNackedEvent;
-import vnet.sms.common.wme.acknowledge.ReceivedSmsAckedEvent;
-import vnet.sms.common.wme.acknowledge.ReceivedSmsNackedEvent;
+import vnet.sms.common.wme.acknowledge.SendLoginRequestAckEvent;
+import vnet.sms.common.wme.acknowledge.SendLoginRequestNackEvent;
+import vnet.sms.common.wme.acknowledge.SendSmsAckEvent;
+import vnet.sms.common.wme.acknowledge.SendSmsNackEvent;
 import vnet.sms.common.wme.send.SendPingRequestEvent;
 import vnet.sms.common.wme.send.SendSmsEvent;
 import vnet.sms.gateway.nettysupport.WindowedChannelHandler;
@@ -38,7 +38,7 @@ public abstract class TransportProtocolAdaptingDownstreamChannelHandler<ID exten
 	@Override
 	protected void writeLoginRequestAcceptedRequested(
 	        final ChannelHandlerContext ctx,
-	        final ReceivedLoginRequestAckedEvent<ID> e) {
+	        final SendLoginRequestAckEvent<ID> e) {
 		final TP pdu = convertLoginRequestAcceptedEventToPdu(e);
 		getLog().trace("{} converted to {}", e, pdu);
 		ctx.sendDownstream(new DownstreamMessageEvent(ctx.getChannel(), e
@@ -48,7 +48,7 @@ public abstract class TransportProtocolAdaptingDownstreamChannelHandler<ID exten
 	@Override
 	protected void writeLoginRequestRejectedRequested(
 	        final ChannelHandlerContext ctx,
-	        final ReceivedLoginRequestNackedEvent<ID> e) {
+	        final SendLoginRequestNackEvent<ID> e) {
 		final TP pdu = convertLoginRequestRejectedEventToPdu(e);
 		getLog().trace("{} converted to {}", e, pdu);
 		ctx.sendDownstream(new DownstreamMessageEvent(ctx.getChannel(), e
@@ -76,7 +76,7 @@ public abstract class TransportProtocolAdaptingDownstreamChannelHandler<ID exten
 
 	@Override
 	protected void writeReceivedSmsAckedRequested(
-	        final ChannelHandlerContext ctx, final ReceivedSmsAckedEvent<ID> e)
+	        final ChannelHandlerContext ctx, final SendSmsAckEvent<ID> e)
 	        throws Exception {
 		final TP pdu = convertReceivedSmsAckedEventToPdu(e);
 		getLog().trace("{} converted to {}", e, pdu);
@@ -86,7 +86,7 @@ public abstract class TransportProtocolAdaptingDownstreamChannelHandler<ID exten
 
 	@Override
 	protected void writeReceivedSmsNackedRequested(
-	        final ChannelHandlerContext ctx, final ReceivedSmsNackedEvent<ID> e)
+	        final ChannelHandlerContext ctx, final SendSmsNackEvent<ID> e)
 	        throws Exception {
 		final TP pdu = convertReceivedSmsNackedEventToPdu(e);
 		getLog().trace("{} converted to {}", e, pdu);
@@ -98,10 +98,10 @@ public abstract class TransportProtocolAdaptingDownstreamChannelHandler<ID exten
 	        final SendPingRequestEvent<ID> e);
 
 	protected abstract TP convertLoginRequestAcceptedEventToPdu(
-	        final ReceivedLoginRequestAckedEvent<ID> e);
+	        final SendLoginRequestAckEvent<ID> e);
 
 	protected abstract TP convertLoginRequestRejectedEventToPdu(
-	        final ReceivedLoginRequestNackedEvent<ID> e);
+	        final SendLoginRequestNackEvent<ID> e);
 
 	protected abstract TP convertNonLoginMessageReceivedOnUnauthenticatedChannelEventToPdu(
 	        final NonLoginMessageReceivedOnUnauthenticatedChannelEvent<ID, ?> e);
@@ -109,8 +109,8 @@ public abstract class TransportProtocolAdaptingDownstreamChannelHandler<ID exten
 	protected abstract TP convertSendSmsEventToPdu(final SendSmsEvent e);
 
 	protected abstract TP convertReceivedSmsAckedEventToPdu(
-	        final ReceivedSmsAckedEvent<ID> e);
+	        final SendSmsAckEvent<ID> e);
 
 	protected abstract TP convertReceivedSmsNackedEventToPdu(
-	        final ReceivedSmsNackedEvent<ID> e);
+	        final SendSmsNackEvent<ID> e);
 }

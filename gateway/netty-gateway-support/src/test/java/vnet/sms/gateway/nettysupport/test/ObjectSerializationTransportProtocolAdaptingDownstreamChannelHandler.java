@@ -1,10 +1,10 @@
 package vnet.sms.gateway.nettysupport.test;
 
 import vnet.sms.common.messages.GsmPdu;
-import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestAckedEvent;
-import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestNackedEvent;
-import vnet.sms.common.wme.acknowledge.ReceivedSmsAckedEvent;
-import vnet.sms.common.wme.acknowledge.ReceivedSmsNackedEvent;
+import vnet.sms.common.wme.acknowledge.SendLoginRequestAckEvent;
+import vnet.sms.common.wme.acknowledge.SendLoginRequestNackEvent;
+import vnet.sms.common.wme.acknowledge.SendSmsAckEvent;
+import vnet.sms.common.wme.acknowledge.SendSmsNackEvent;
 import vnet.sms.common.wme.send.SendPingRequestEvent;
 import vnet.sms.common.wme.send.SendSmsEvent;
 import vnet.sms.gateway.nettysupport.login.incoming.NonLoginMessageReceivedOnUnauthenticatedChannelEvent;
@@ -22,13 +22,13 @@ public class ObjectSerializationTransportProtocolAdaptingDownstreamChannelHandle
 
 	@Override
 	protected GsmPdu convertLoginRequestAcceptedEventToPdu(
-	        final ReceivedLoginRequestAckedEvent<Integer> e) {
+	        final SendLoginRequestAckEvent<Integer> e) {
 		return e.getMessage();
 	}
 
 	@Override
 	protected GsmPdu convertLoginRequestRejectedEventToPdu(
-	        final ReceivedLoginRequestNackedEvent<Integer> e) {
+	        final SendLoginRequestNackEvent<Integer> e) {
 		return e.getMessage();
 	}
 
@@ -45,13 +45,13 @@ public class ObjectSerializationTransportProtocolAdaptingDownstreamChannelHandle
 
 	@Override
 	protected GsmPdu convertReceivedSmsAckedEventToPdu(
-	        final ReceivedSmsAckedEvent<Integer> e) {
+	        final SendSmsAckEvent<Integer> e) {
 		return e.getAcknowledgement();
 	}
 
 	@Override
 	protected GsmPdu convertReceivedSmsNackedEventToPdu(
-	        final ReceivedSmsNackedEvent<Integer> e) {
+	        final SendSmsNackEvent<Integer> e) {
 		return e.getAcknowledgement();
 	}
 }

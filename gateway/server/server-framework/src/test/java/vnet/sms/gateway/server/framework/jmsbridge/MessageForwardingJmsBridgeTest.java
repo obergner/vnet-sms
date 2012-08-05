@@ -25,11 +25,11 @@ import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.PingResponse;
 import vnet.sms.common.messages.Sms;
 import vnet.sms.common.wme.jmsbridge.WindowedMessageEventToJmsMessageConverter;
-import vnet.sms.common.wme.receive.LoginRequestReceivedEvent;
-import vnet.sms.common.wme.receive.LoginResponseReceivedEvent;
-import vnet.sms.common.wme.receive.PingRequestReceivedEvent;
-import vnet.sms.common.wme.receive.PingResponseReceivedEvent;
-import vnet.sms.common.wme.receive.SmsReceivedEvent;
+import vnet.sms.common.wme.receive.ReceivedLoginRequestEvent;
+import vnet.sms.common.wme.receive.ReceivedLoginRequestAcknowledgementEvent;
+import vnet.sms.common.wme.receive.ReceivedPingRequestEvent;
+import vnet.sms.common.wme.receive.ReceivedPingRequestAcknowledgementEvent;
+import vnet.sms.common.wme.receive.ReceivedSmsEvent;
 import vnet.sms.gateway.server.framework.internal.jmsbridge.IncomingMessagesForwardingJmsBridge;
 
 import com.mockrunner.jms.ConfigurationManager;
@@ -80,7 +80,7 @@ public class MessageForwardingJmsBridgeTest {
 		        "assertThatLoginRequestReceivedForwardsLoginRequestToJmsQueue");
 		final UpstreamMessageEvent upstreamMessageEvent = new UpstreamMessageEvent(
 		        receivingChannel, message, receivingChannel.getRemoteAddress());
-		final SmsReceivedEvent<Integer> windowedMessageEvent = new SmsReceivedEvent<Integer>(
+		final ReceivedSmsEvent<Integer> windowedMessageEvent = new ReceivedSmsEvent<Integer>(
 		        messageReference, upstreamMessageEvent, message);
 
 		objectUnderTest.smsReceived(windowedMessageEvent);
@@ -131,7 +131,7 @@ public class MessageForwardingJmsBridgeTest {
 		        "assertThatLoginRequestReceivedForwardsLoginRequestToJmsQueue");
 		final UpstreamMessageEvent upstreamMessageEvent = new UpstreamMessageEvent(
 		        receivingChannel, message, receivingChannel.getRemoteAddress());
-		final LoginRequestReceivedEvent<Integer> windowedMessageEvent = new LoginRequestReceivedEvent<Integer>(
+		final ReceivedLoginRequestEvent<Integer> windowedMessageEvent = new ReceivedLoginRequestEvent<Integer>(
 		        messageReference, upstreamMessageEvent, message);
 
 		objectUnderTest.loginRequestReceived(windowedMessageEvent);
@@ -183,7 +183,7 @@ public class MessageForwardingJmsBridgeTest {
 		final LoginResponse message = LoginResponse.accept(loginRequest);
 		final UpstreamMessageEvent upstreamMessageEvent = new UpstreamMessageEvent(
 		        receivingChannel, message, receivingChannel.getRemoteAddress());
-		final LoginResponseReceivedEvent<Integer> windowedMessageEvent = new LoginResponseReceivedEvent<Integer>(
+		final ReceivedLoginRequestAcknowledgementEvent<Integer> windowedMessageEvent = new ReceivedLoginRequestAcknowledgementEvent<Integer>(
 		        messageReference, upstreamMessageEvent, message);
 
 		objectUnderTest.loginResponseReceived(windowedMessageEvent);
@@ -232,7 +232,7 @@ public class MessageForwardingJmsBridgeTest {
 		final PingRequest message = new PingRequest();
 		final UpstreamMessageEvent upstreamMessageEvent = new UpstreamMessageEvent(
 		        receivingChannel, message, receivingChannel.getRemoteAddress());
-		final PingRequestReceivedEvent<Integer> windowedMessageEvent = new PingRequestReceivedEvent<Integer>(
+		final ReceivedPingRequestEvent<Integer> windowedMessageEvent = new ReceivedPingRequestEvent<Integer>(
 		        messageReference, upstreamMessageEvent, message);
 
 		objectUnderTest.pingRequestReceived(windowedMessageEvent);
@@ -279,7 +279,7 @@ public class MessageForwardingJmsBridgeTest {
 		final PingResponse message = PingResponse.reject(pingRequest);
 		final UpstreamMessageEvent upstreamMessageEvent = new UpstreamMessageEvent(
 		        receivingChannel, message, receivingChannel.getRemoteAddress());
-		final PingResponseReceivedEvent<Integer> windowedMessageEvent = new PingResponseReceivedEvent<Integer>(
+		final ReceivedPingRequestAcknowledgementEvent<Integer> windowedMessageEvent = new ReceivedPingRequestAcknowledgementEvent<Integer>(
 		        messageReference, upstreamMessageEvent, message);
 
 		objectUnderTest.pingResponseReceived(windowedMessageEvent);

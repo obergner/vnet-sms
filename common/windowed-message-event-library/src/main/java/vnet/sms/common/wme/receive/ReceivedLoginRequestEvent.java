@@ -14,13 +14,13 @@ import vnet.sms.common.wme.MessageEventType;
  * @author obergner
  * 
  */
-public class LoginRequestReceivedEvent<ID extends Serializable> extends
+public class ReceivedLoginRequestEvent<ID extends Serializable> extends
         UpstreamWindowedMessageEvent<ID, LoginRequest> {
 
-	public LoginRequestReceivedEvent(final ID messageReference,
+	public ReceivedLoginRequestEvent(final ID messageReference,
 	        final UpstreamMessageEvent upstreamMessageEvent,
 	        final LoginRequest loginRequest) {
-		super(messageReference, MessageEventType.LOGIN_REQUEST_RECEIVED,
+		super(messageReference, MessageEventType.RECEIVED_LOGIN_REQUEST,
 		        upstreamMessageEvent, loginRequest);
 	}
 }

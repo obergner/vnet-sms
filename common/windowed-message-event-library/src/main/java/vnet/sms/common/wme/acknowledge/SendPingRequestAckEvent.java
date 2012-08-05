@@ -12,29 +12,29 @@ import org.jboss.netty.channel.Channel;
 import vnet.sms.common.messages.Acknowledgement;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.wme.MessageEventType;
-import vnet.sms.common.wme.receive.PingRequestReceivedEvent;
+import vnet.sms.common.wme.receive.ReceivedPingRequestEvent;
 
 /**
  * @author obergner
  * 
  */
-public class ReceivedPingRequestAckedEvent<ID extends Serializable> extends
-        DownstreamReceivedMessageAcknowledgedEvent<ID, PingRequest> {
+public class SendPingRequestAckEvent<ID extends Serializable> extends
+        DownstreamSendMessageAcknowledgementEvent<ID, PingRequest> {
 
-	public static final <ID extends Serializable> ReceivedPingRequestAckedEvent<ID> ack(
-	        final PingRequestReceivedEvent<ID> pingRequestReceived) {
+	public static final <ID extends Serializable> SendPingRequestAckEvent<ID> ack(
+	        final ReceivedPingRequestEvent<ID> pingRequestReceived) {
 		notNull(pingRequestReceived,
 		        "Argument 'pingRequestReceived' must not be null");
-		return new ReceivedPingRequestAckedEvent<ID>(
+		return new SendPingRequestAckEvent<ID>(
 		        pingRequestReceived.getMessageReference(),
 		        pingRequestReceived.getChannel(),
 		        pingRequestReceived.getMessage());
 	}
 
-	private ReceivedPingRequestAckedEvent(final ID messageReference,
+	private SendPingRequestAckEvent(final ID messageReference,
 	        final Channel channel, final PingRequest message) {
 		super(messageReference,
-		        MessageEventType.RECEIVED_PING_REQUEST_ACKNOWLEDGED, channel,
+		        MessageEventType.SEND_PING_REQUEST_ACK, channel,
 		        message, Acknowledgement.ack());
 	}
 }

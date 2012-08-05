@@ -261,7 +261,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        .nextSentMessageEvent();
 
 		assertNotNull(
-		        "Expected channel pipeline to send ReceivedLoginRequestAckedEvent to client after successful login, yet it sent NO message in reply",
+		        "Expected channel pipeline to send SendLoginRequestAckEvent to client after successful login, yet it sent NO message in reply",
 		        encodedLoginResponse);
 		final GsmPdu decodedLoginResponse = SerializationUtils
 		        .deserialize(encodedLoginResponse);
@@ -341,7 +341,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        .nextSentMessageEvent();
 
 		assertNotNull(
-		        "Expected channel pipeline to send ReceivedLoginRequestNackedEvent to client after failed login, yet it sent NO message in reply",
+		        "Expected channel pipeline to send SendLoginRequestNackEvent to client after failed login, yet it sent NO message in reply",
 		        encodedLoginResponse);
 		final GsmPdu decodedLoginResponse = SerializationUtils
 		        .deserialize(encodedLoginResponse);
@@ -388,7 +388,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		final MessageEvent expectedLoginResponse = embeddedPipeline
 		        .nextSentMessageEvent();
 		assertNotNull(
-		        "Expected channel pipeline to send ReceivedLoginRequestNackedEvent to client after "
+		        "Expected channel pipeline to send SendLoginRequestNackEvent to client after "
 		                + failedLoginResponseMillis
 		                + " milliseconds, yet it sent NO message in reply",
 		        expectedLoginResponse);

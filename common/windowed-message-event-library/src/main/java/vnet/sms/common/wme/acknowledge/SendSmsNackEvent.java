@@ -21,19 +21,19 @@ import vnet.sms.common.wme.MessageEventType;
  * @author obergner
  * 
  */
-public class ReceivedSmsNackedEvent<ID extends java.io.Serializable> extends
-        DownstreamReceivedMessageAcknowledgedEvent<ID, Sms> {
+public class SendSmsNackEvent<ID extends java.io.Serializable> extends
+        DownstreamSendMessageAcknowledgementEvent<ID, Sms> {
 
-	public static final <I extends Serializable> ReceivedSmsNackedEvent<I> convert(
+	public static final <I extends Serializable> SendSmsNackEvent<I> convert(
 	        final MessageEvent receivedSmsNackedMessageEvent) {
 		notNull(receivedSmsNackedMessageEvent,
 		        "Argument 'receivedSmsNackedMessageEvent' must not be null");
-		isTrue(receivedSmsNackedMessageEvent.getMessage() instanceof ReceivedSmsNackedContainer,
-		        "Can only convert MessageEvents having a ReceivedSmsNackedContainer as their payload. Got: "
+		isTrue(receivedSmsNackedMessageEvent.getMessage() instanceof SendSmsNackContainer,
+		        "Can only convert MessageEvents having a SendSmsNackContainer as their payload. Got: "
 		                + receivedSmsNackedMessageEvent.getMessage());
-		final ReceivedSmsNackedContainer<I> nackContainer = ReceivedSmsNackedContainer.class
+		final SendSmsNackContainer<I> nackContainer = SendSmsNackContainer.class
 		        .cast(receivedSmsNackedMessageEvent.getMessage());
-		return new ReceivedSmsNackedEvent<I>(
+		return new SendSmsNackEvent<I>(
 		        nackContainer.getAcknowledgedMessageReference(),
 		        receivedSmsNackedMessageEvent.getChannel(),
 		        receivedSmsNackedMessageEvent.getFuture(),
@@ -46,10 +46,10 @@ public class ReceivedSmsNackedEvent<ID extends java.io.Serializable> extends
 
 	private final String	errorDescription;
 
-	private ReceivedSmsNackedEvent(final ID messageReference,
+	private SendSmsNackEvent(final ID messageReference,
 	        final Channel channel, final ChannelFuture future,
 	        final Sms message, final int errorKey, final String errorDescription) {
-		super(messageReference, MessageEventType.RECEIVED_SMS_NACKED, channel,
+		super(messageReference, MessageEventType.SEND_SMS_NACK, channel,
 		        future, message, Acknowledgement.nack());
 		notEmpty(errorDescription,
 		        "Argument 'errorDescription' may be neither null nor empty");
@@ -73,7 +73,7 @@ public class ReceivedSmsNackedEvent<ID extends java.io.Serializable> extends
 
 	@Override
 	public String toString() {
-		return "ReceivedSmsNackedEvent@" + this.hashCode()
+		return "SendSmsNackEvent@" + this.hashCode()
 		        + "[acknowledgement: " + this.getAcknowledgement()
 		        + "|messageReference: "
 		        + this.getAcknowledgedMessageReference() + "|message: "

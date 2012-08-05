@@ -21,17 +21,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import vnet.sms.common.messages.GsmPdu;
-import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestAckedEvent;
-import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestNackedEvent;
-import vnet.sms.common.wme.acknowledge.ReceivedSmsAckedContainer;
-import vnet.sms.common.wme.acknowledge.ReceivedSmsAckedEvent;
-import vnet.sms.common.wme.acknowledge.ReceivedSmsNackedContainer;
-import vnet.sms.common.wme.acknowledge.ReceivedSmsNackedEvent;
-import vnet.sms.common.wme.receive.LoginRequestReceivedEvent;
-import vnet.sms.common.wme.receive.LoginResponseReceivedEvent;
-import vnet.sms.common.wme.receive.PingRequestReceivedEvent;
-import vnet.sms.common.wme.receive.PingResponseReceivedEvent;
-import vnet.sms.common.wme.receive.SmsReceivedEvent;
+import vnet.sms.common.wme.acknowledge.SendLoginRequestAckEvent;
+import vnet.sms.common.wme.acknowledge.SendLoginRequestNackEvent;
+import vnet.sms.common.wme.acknowledge.SendSmsAckContainer;
+import vnet.sms.common.wme.acknowledge.SendSmsAckEvent;
+import vnet.sms.common.wme.acknowledge.SendSmsNackContainer;
+import vnet.sms.common.wme.acknowledge.SendSmsNackEvent;
+import vnet.sms.common.wme.receive.ReceivedLoginRequestEvent;
+import vnet.sms.common.wme.receive.ReceivedLoginRequestAcknowledgementEvent;
+import vnet.sms.common.wme.receive.ReceivedPingRequestEvent;
+import vnet.sms.common.wme.receive.ReceivedPingRequestAcknowledgementEvent;
+import vnet.sms.common.wme.receive.ReceivedSmsEvent;
 import vnet.sms.common.wme.send.SendPingRequestEvent;
 import vnet.sms.common.wme.send.SendSmsContainer;
 import vnet.sms.common.wme.send.SendSmsEvent;
@@ -66,16 +66,16 @@ public class WindowedChannelHandler<ID extends Serializable> implements
 	public final void handleUpstream(final ChannelHandlerContext ctx,
 	        final ChannelEvent e) throws Exception {
 		getLog().debug("Processing {} ...", e);
-		if (e instanceof LoginRequestReceivedEvent) {
-			loginRequestReceived(ctx, (LoginRequestReceivedEvent<ID>) e);
-		} else if (e instanceof LoginResponseReceivedEvent) {
-			loginResponseReceived(ctx, (LoginResponseReceivedEvent<ID>) e);
-		} else if (e instanceof PingRequestReceivedEvent) {
-			pingRequestReceived(ctx, (PingRequestReceivedEvent<ID>) e);
-		} else if (e instanceof PingResponseReceivedEvent) {
-			pingResponseReceived(ctx, (PingResponseReceivedEvent<ID>) e);
-		} else if (e instanceof SmsReceivedEvent) {
-			smsReceived(ctx, (SmsReceivedEvent<ID>) e);
+		if (e instanceof ReceivedLoginRequestEvent) {
+			loginRequestReceived(ctx, (ReceivedLoginRequestEvent<ID>) e);
+		} else if (e instanceof ReceivedLoginRequestAcknowledgementEvent) {
+			loginResponseReceived(ctx, (ReceivedLoginRequestAcknowledgementEvent<ID>) e);
+		} else if (e instanceof ReceivedPingRequestEvent) {
+			pingRequestReceived(ctx, (ReceivedPingRequestEvent<ID>) e);
+		} else if (e instanceof ReceivedPingRequestAcknowledgementEvent) {
+			pingResponseReceived(ctx, (ReceivedPingRequestAcknowledgementEvent<ID>) e);
+		} else if (e instanceof ReceivedSmsEvent) {
+			smsReceived(ctx, (ReceivedSmsEvent<ID>) e);
 		} else if (e instanceof ChannelAuthenticationFailedEvent) {
 			channelAuthenticationFailed(ctx,
 			        (ChannelAuthenticationFailedEvent) e);
@@ -152,7 +152,7 @@ public class WindowedChannelHandler<ID extends Serializable> implements
 	 * @param e
 	 */
 	protected void loginRequestReceived(final ChannelHandlerContext ctx,
-	        final LoginRequestReceivedEvent<ID> e) throws Exception {
+	        final ReceivedLoginRequestEvent<ID> e) throws Exception {
 		ctx.sendUpstream(e);
 	}
 
@@ -161,7 +161,7 @@ public class WindowedChannelHandler<ID extends Serializable> implements
 	 * @param e
 	 */
 	protected void loginResponseReceived(final ChannelHandlerContext ctx,
-	        final LoginResponseReceivedEvent<ID> e) throws Exception {
+	        final ReceivedLoginRequestAcknowledgementEvent<ID> e) throws Exception {
 		ctx.sendUpstream(e);
 	}
 
@@ -170,7 +170,7 @@ public class WindowedChannelHandler<ID extends Serializable> implements
 	 * @param e
 	 */
 	protected void pingRequestReceived(final ChannelHandlerContext ctx,
-	        final PingRequestReceivedEvent<ID> e) throws Exception {
+	        final ReceivedPingRequestEvent<ID> e) throws Exception {
 		ctx.sendUpstream(e);
 	}
 
@@ -179,7 +179,7 @@ public class WindowedChannelHandler<ID extends Serializable> implements
 	 * @param e
 	 */
 	protected void pingResponseReceived(final ChannelHandlerContext ctx,
-	        final PingResponseReceivedEvent<ID> e) throws Exception {
+	        final ReceivedPingRequestAcknowledgementEvent<ID> e) throws Exception {
 		ctx.sendUpstream(e);
 	}
 
@@ -188,7 +188,7 @@ public class WindowedChannelHandler<ID extends Serializable> implements
 	 * @param e
 	 */
 	protected void smsReceived(final ChannelHandlerContext ctx,
-	        final SmsReceivedEvent<ID> e) throws Exception {
+	        final ReceivedSmsEvent<ID> e) throws Exception {
 		ctx.sendUpstream(e);
 	}
 
@@ -396,12 +396,12 @@ public class WindowedChannelHandler<ID extends Serializable> implements
 		getLog().debug("Processing {} ...", e);
 		if (e instanceof SendPingRequestEvent) {
 			writePingRequestRequested(ctx, (SendPingRequestEvent<ID>) e);
-		} else if (e instanceof ReceivedLoginRequestAckedEvent) {
+		} else if (e instanceof SendLoginRequestAckEvent) {
 			writeLoginRequestAcceptedRequested(ctx,
-			        (ReceivedLoginRequestAckedEvent<ID>) e);
-		} else if (e instanceof ReceivedLoginRequestNackedEvent) {
+			        (SendLoginRequestAckEvent<ID>) e);
+		} else if (e instanceof SendLoginRequestNackEvent) {
 			writeLoginRequestRejectedRequested(ctx,
-			        (ReceivedLoginRequestNackedEvent<ID>) e);
+			        (SendLoginRequestNackEvent<ID>) e);
 		} else if (e instanceof NonLoginMessageReceivedOnUnauthenticatedChannelEvent) {
 			writeNonLoginMessageReceivedOnUnauthenticatedChannelRequested(
 			        ctx,
@@ -416,19 +416,19 @@ public class WindowedChannelHandler<ID extends Serializable> implements
 		} else if (e instanceof SendSmsEvent) {
 			writeSmsRequested(ctx, (SendSmsEvent) e);
 		} else if ((e instanceof MessageEvent)
-		        && (MessageEvent.class.cast(e).getMessage() instanceof ReceivedSmsAckedContainer)) {
-			final ReceivedSmsAckedEvent<ID> receivedSmsAckedEvent = ReceivedSmsAckedEvent
+		        && (MessageEvent.class.cast(e).getMessage() instanceof SendSmsAckContainer)) {
+			final SendSmsAckEvent<ID> receivedSmsAckedEvent = SendSmsAckEvent
 			        .convert(MessageEvent.class.cast(e));
 			ctx.sendDownstream(receivedSmsAckedEvent);
-		} else if (e instanceof ReceivedSmsAckedEvent) {
-			writeReceivedSmsAckedRequested(ctx, (ReceivedSmsAckedEvent) e);
+		} else if (e instanceof SendSmsAckEvent) {
+			writeReceivedSmsAckedRequested(ctx, (SendSmsAckEvent) e);
 		} else if ((e instanceof MessageEvent)
-		        && (MessageEvent.class.cast(e).getMessage() instanceof ReceivedSmsNackedContainer)) {
-			final ReceivedSmsNackedEvent<ID> receivedSmsNackedEvent = ReceivedSmsNackedEvent
+		        && (MessageEvent.class.cast(e).getMessage() instanceof SendSmsNackContainer)) {
+			final SendSmsNackEvent<ID> receivedSmsNackedEvent = SendSmsNackEvent
 			        .convert(MessageEvent.class.cast(e));
 			ctx.sendDownstream(receivedSmsNackedEvent);
-		} else if (e instanceof ReceivedSmsNackedEvent) {
-			writeReceivedSmsNackedRequested(ctx, (ReceivedSmsNackedEvent) e);
+		} else if (e instanceof SendSmsNackEvent) {
+			writeReceivedSmsNackedRequested(ctx, (SendSmsNackEvent) e);
 		} else if (e instanceof ChannelStateEvent) {
 			final ChannelStateEvent evt = (ChannelStateEvent) e;
 			switch (evt.getState()) {
@@ -483,7 +483,7 @@ public class WindowedChannelHandler<ID extends Serializable> implements
 	 */
 	protected void writeLoginRequestAcceptedRequested(
 	        final ChannelHandlerContext ctx,
-	        final ReceivedLoginRequestAckedEvent<ID> e) throws Exception {
+	        final SendLoginRequestAckEvent<ID> e) throws Exception {
 		ctx.sendDownstream(e);
 	}
 
@@ -494,7 +494,7 @@ public class WindowedChannelHandler<ID extends Serializable> implements
 	 */
 	protected void writeLoginRequestRejectedRequested(
 	        final ChannelHandlerContext ctx,
-	        final ReceivedLoginRequestNackedEvent<ID> e) throws Exception {
+	        final SendLoginRequestNackEvent<ID> e) throws Exception {
 		ctx.sendDownstream(e);
 	}
 
@@ -526,7 +526,7 @@ public class WindowedChannelHandler<ID extends Serializable> implements
 	 * @throws Exception
 	 */
 	protected void writeReceivedSmsAckedRequested(
-	        final ChannelHandlerContext ctx, final ReceivedSmsAckedEvent<ID> e)
+	        final ChannelHandlerContext ctx, final SendSmsAckEvent<ID> e)
 	        throws Exception {
 		ctx.sendDownstream(e);
 	}
@@ -537,7 +537,7 @@ public class WindowedChannelHandler<ID extends Serializable> implements
 	 * @throws Exception
 	 */
 	protected void writeReceivedSmsNackedRequested(
-	        final ChannelHandlerContext ctx, final ReceivedSmsNackedEvent<ID> e)
+	        final ChannelHandlerContext ctx, final SendSmsNackEvent<ID> e)
 	        throws Exception {
 		ctx.sendDownstream(e);
 	}

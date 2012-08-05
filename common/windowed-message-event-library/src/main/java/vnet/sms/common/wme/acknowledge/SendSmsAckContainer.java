@@ -13,14 +13,14 @@ import vnet.sms.common.wme.MessageEventType;
  * @author obergner
  * 
  */
-public final class ReceivedSmsAckedContainer<ID extends Serializable> extends
+public final class SendSmsAckContainer<ID extends Serializable> extends
         AbstractMessageAcknowledgementContainer<ID, Sms> {
 
 	private static final long	serialVersionUID	= -8271142626779985541L;
 
-	public ReceivedSmsAckedContainer(final ID acknowledgedMessageReference,
+	public SendSmsAckContainer(final ID acknowledgedMessageReference,
 	        final int receivingChannelId, final Sms acknowledgedMessage) {
-		super(MessageEventType.RECEIVED_SMS_ACKED, Acknowledgement.ack(),
+		super(MessageEventType.SEND_SMS_ACK, Acknowledgement.ack(),
 		        acknowledgedMessageReference, receivingChannelId,
 		        acknowledgedMessage);
 	}

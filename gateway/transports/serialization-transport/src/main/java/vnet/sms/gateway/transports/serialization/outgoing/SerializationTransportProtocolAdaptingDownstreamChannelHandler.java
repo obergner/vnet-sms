@@ -5,10 +5,10 @@ import vnet.sms.common.messages.LoginResponse;
 import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.PingResponse;
-import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestAckedEvent;
-import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestNackedEvent;
-import vnet.sms.common.wme.acknowledge.ReceivedSmsAckedEvent;
-import vnet.sms.common.wme.acknowledge.ReceivedSmsNackedEvent;
+import vnet.sms.common.wme.acknowledge.SendLoginRequestAckEvent;
+import vnet.sms.common.wme.acknowledge.SendLoginRequestNackEvent;
+import vnet.sms.common.wme.acknowledge.SendSmsAckEvent;
+import vnet.sms.common.wme.acknowledge.SendSmsNackEvent;
 import vnet.sms.common.wme.send.SendPingRequestEvent;
 import vnet.sms.common.wme.send.SendSmsEvent;
 import vnet.sms.gateway.nettysupport.login.incoming.NonLoginMessageReceivedOnUnauthenticatedChannelEvent;
@@ -28,7 +28,7 @@ public class SerializationTransportProtocolAdaptingDownstreamChannelHandler
 
 	@Override
 	protected ReferenceableMessageContainer convertLoginRequestAcceptedEventToPdu(
-	        final ReceivedLoginRequestAckedEvent<Integer> e) {
+	        final SendLoginRequestAckEvent<Integer> e) {
 		return ReferenceableMessageContainer.wrap(
 		        e.getAcknowledgedMessageReference(),
 		        LoginResponse.accept(e.getMessage()));
@@ -36,7 +36,7 @@ public class SerializationTransportProtocolAdaptingDownstreamChannelHandler
 
 	@Override
 	protected ReferenceableMessageContainer convertLoginRequestRejectedEventToPdu(
-	        final ReceivedLoginRequestNackedEvent<Integer> e) {
+	        final SendLoginRequestNackEvent<Integer> e) {
 		return ReferenceableMessageContainer.wrap(
 		        e.getAcknowledgedMessageReference(),
 		        LoginResponse.reject(e.getMessage()));
@@ -70,14 +70,14 @@ public class SerializationTransportProtocolAdaptingDownstreamChannelHandler
 
 	@Override
 	protected ReferenceableMessageContainer convertReceivedSmsAckedEventToPdu(
-	        final ReceivedSmsAckedEvent<Integer> e) {
+	        final SendSmsAckEvent<Integer> e) {
 		return ReferenceableMessageContainer.wrap(
 		        e.getAcknowledgedMessageReference(), Acknowledgement.ack());
 	}
 
 	@Override
 	protected ReferenceableMessageContainer convertReceivedSmsNackedEventToPdu(
-	        final ReceivedSmsNackedEvent<Integer> e) {
+	        final SendSmsNackEvent<Integer> e) {
 		return ReferenceableMessageContainer.wrap(
 		        e.getAcknowledgedMessageReference(), Acknowledgement.nack());
 	}

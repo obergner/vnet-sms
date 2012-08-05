@@ -13,11 +13,11 @@ import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.messages.LoginRequest;
 import vnet.sms.common.messages.Msisdn;
 import vnet.sms.common.messages.Sms;
-import vnet.sms.common.wme.acknowledge.ReceivedSmsAckedContainer;
-import vnet.sms.common.wme.acknowledge.ReceivedSmsAckedEvent;
-import vnet.sms.common.wme.acknowledge.ReceivedSmsNackedContainer;
-import vnet.sms.common.wme.acknowledge.ReceivedSmsNackedEvent;
-import vnet.sms.common.wme.receive.SmsReceivedEvent;
+import vnet.sms.common.wme.acknowledge.SendSmsAckContainer;
+import vnet.sms.common.wme.acknowledge.SendSmsAckEvent;
+import vnet.sms.common.wme.acknowledge.SendSmsNackContainer;
+import vnet.sms.common.wme.acknowledge.SendSmsNackEvent;
+import vnet.sms.common.wme.receive.ReceivedSmsEvent;
 import vnet.sms.gateway.nettysupport.test.ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler;
 import vnet.sms.gateway.nettysupport.window.incoming.IncomingWindowStore;
 import vnet.sms.gateway.nettytest.ChannelEventFilter;
@@ -109,9 +109,9 @@ public class WindowingChannelHandlerTest {
 		        propagatedMessageEvent);
 		assertEquals(
 		        "WindowingChannelHandler converted Sms to unexpected output",
-		        SmsReceivedEvent.class, propagatedMessageEvent.getClass());
+		        ReceivedSmsEvent.class, propagatedMessageEvent.getClass());
 
-		final Integer messageRef = (Integer) SmsReceivedEvent.class.cast(
+		final Integer messageRef = (Integer) ReceivedSmsEvent.class.cast(
 		        propagatedMessageEvent).getMessageReference();
 		final GsmPdu storedMessage = incomingWindowStore
 		        .releaseWindow(messageRef);
@@ -132,7 +132,7 @@ public class WindowingChannelHandlerTest {
 			@Override
 			public void writeRequested(final ChannelHandlerContext ctx,
 			        final MessageEvent e) throws Exception {
-				final ReceivedSmsAckedEvent<Integer> ackedEvent = ReceivedSmsAckedEvent
+				final SendSmsAckEvent<Integer> ackedEvent = SendSmsAckEvent
 				        .convert(e);
 				ctx.sendDownstream(ackedEvent);
 			}
@@ -153,9 +153,9 @@ public class WindowingChannelHandlerTest {
 
 		final MessageEvent propagatedMessageEvent = embeddedPipeline
 		        .nextReceivedMessageEvent();
-		final Integer messageRef = (Integer) SmsReceivedEvent.class.cast(
+		final Integer messageRef = (Integer) ReceivedSmsEvent.class.cast(
 		        propagatedMessageEvent).getMessageReference();
-		embeddedPipeline.send(new ReceivedSmsAckedContainer<Integer>(
+		embeddedPipeline.send(new SendSmsAckContainer<Integer>(
 		        messageRef, 0, receivedSms));
 
 		assertEquals(
@@ -175,7 +175,7 @@ public class WindowingChannelHandlerTest {
 			@Override
 			public void writeRequested(final ChannelHandlerContext ctx,
 			        final MessageEvent e) throws Exception {
-				final ReceivedSmsAckedEvent<Integer> ackedEvent = ReceivedSmsAckedEvent
+				final SendSmsAckEvent<Integer> ackedEvent = SendSmsAckEvent
 				        .convert(e);
 				ctx.sendDownstream(ackedEvent);
 			}
@@ -199,9 +199,9 @@ public class WindowingChannelHandlerTest {
 
 		final Sms actuallyAcknowledgedSms = new Sms(new Msisdn("01686754432"),
 		        new Msisdn("01686754432"), "actually");
-		final Integer messageRef = (Integer) SmsReceivedEvent.class.cast(
+		final Integer messageRef = (Integer) ReceivedSmsEvent.class.cast(
 		        propagatedMessageEvent).getMessageReference();
-		embeddedPipeline.send(new ReceivedSmsAckedContainer<Integer>(
+		embeddedPipeline.send(new SendSmsAckContainer<Integer>(
 		        messageRef, 0, actuallyAcknowledgedSms));
 
 		final ChannelEvent expectedFailedToReleaseEvent = embeddedPipeline
@@ -228,7 +228,7 @@ public class WindowingChannelHandlerTest {
 			@Override
 			public void writeRequested(final ChannelHandlerContext ctx,
 			        final MessageEvent e) throws Exception {
-				final ReceivedSmsNackedEvent<Integer> nackedEvent = ReceivedSmsNackedEvent
+				final SendSmsNackEvent<Integer> nackedEvent = SendSmsNackEvent
 				        .convert(e);
 				ctx.sendDownstream(nackedEvent);
 			}
@@ -249,10 +249,10 @@ public class WindowingChannelHandlerTest {
 
 		final MessageEvent propagatedMessageEvent = embeddedPipeline
 		        .nextReceivedMessageEvent();
-		final Integer messageRef = (Integer) SmsReceivedEvent.class.cast(
+		final Integer messageRef = (Integer) ReceivedSmsEvent.class.cast(
 		        propagatedMessageEvent).getMessageReference();
 		embeddedPipeline
-		        .send(new ReceivedSmsNackedContainer<Integer>(
+		        .send(new SendSmsNackContainer<Integer>(
 		                1,
 		                "assertThatWindowedChannelHandlerReleasesSmsStoredInIncomingWindowingStoreWhenReceivingANack",
 		                messageRef, 0, receivedSms));
@@ -274,7 +274,7 @@ public class WindowingChannelHandlerTest {
 			@Override
 			public void writeRequested(final ChannelHandlerContext ctx,
 			        final MessageEvent e) throws Exception {
-				final ReceivedSmsAckedEvent<Integer> ackedEvent = ReceivedSmsAckedEvent
+				final SendSmsAckEvent<Integer> ackedEvent = SendSmsAckEvent
 				        .convert(e);
 				ctx.sendDownstream(ackedEvent);
 			}
@@ -296,9 +296,9 @@ public class WindowingChannelHandlerTest {
 		final MessageEvent propagatedMessageEvent = embeddedPipeline
 		        .nextReceivedMessageEvent();
 
-		final Integer messageRef = (Integer) SmsReceivedEvent.class.cast(
+		final Integer messageRef = (Integer) ReceivedSmsEvent.class.cast(
 		        propagatedMessageEvent).getMessageReference();
-		embeddedPipeline.send(new ReceivedSmsAckedContainer<Integer>(
+		embeddedPipeline.send(new SendSmsAckContainer<Integer>(
 		        messageRef + 1, 0, smsToAcknowledge));
 
 		final ChannelEvent expectedFailedToReleaseEvent = embeddedPipeline

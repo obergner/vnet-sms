@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.wme.WindowedMessageEvent;
-import vnet.sms.common.wme.acknowledge.ReceivedMessageAcknowledgedEvent;
+import vnet.sms.common.wme.acknowledge.SendMessageAcknowledgementEvent;
 import vnet.sms.gateway.nettysupport.ChannelUtils;
 import vnet.sms.gateway.nettysupport.window.incoming.IncomingWindowStore;
 
@@ -129,8 +129,8 @@ public class WindowingChannelHandler<ID extends Serializable> extends
 	public void writeRequested(final ChannelHandlerContext ctx,
 	        final MessageEvent e) throws Exception {
 		this.log.debug("Processing {} ...", e);
-		if (e instanceof ReceivedMessageAcknowledgedEvent) {
-			final ReceivedMessageAcknowledgedEvent<ID, ? extends GsmPdu> acknowledgedEvent = (ReceivedMessageAcknowledgedEvent<ID, ? extends GsmPdu>) e;
+		if (e instanceof SendMessageAcknowledgementEvent) {
+			final SendMessageAcknowledgementEvent<ID, ? extends GsmPdu> acknowledgedEvent = (SendMessageAcknowledgementEvent<ID, ? extends GsmPdu>) e;
 			releaseAcknowledgedMessage(ctx, acknowledgedEvent);
 			ctx.sendDownstream(acknowledgedEvent);
 		} else {
@@ -141,7 +141,7 @@ public class WindowingChannelHandler<ID extends Serializable> extends
 
 	private void releaseAcknowledgedMessage(
 	        final ChannelHandlerContext ctx,
-	        final ReceivedMessageAcknowledgedEvent<ID, ? extends GsmPdu> acknowledgedEvent) {
+	        final SendMessageAcknowledgementEvent<ID, ? extends GsmPdu> acknowledgedEvent) {
 		try {
 			final GsmPdu acknowledgedMessage = acknowledgedEvent.getMessage();
 			this.log.debug(

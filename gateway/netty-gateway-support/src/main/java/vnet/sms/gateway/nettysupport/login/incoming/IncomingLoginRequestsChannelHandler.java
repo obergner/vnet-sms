@@ -26,9 +26,9 @@ import org.springframework.security.core.AuthenticationException;
 
 import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.wme.WindowedMessageEvent;
-import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestAckedEvent;
-import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestNackedEvent;
-import vnet.sms.common.wme.receive.LoginRequestReceivedEvent;
+import vnet.sms.common.wme.acknowledge.SendLoginRequestAckEvent;
+import vnet.sms.common.wme.acknowledge.SendLoginRequestNackEvent;
+import vnet.sms.common.wme.receive.ReceivedLoginRequestEvent;
 import vnet.sms.gateway.nettysupport.MessageProcessingContext;
 
 /**
@@ -67,8 +67,8 @@ public class IncomingLoginRequestsChannelHandler<ID extends Serializable>
 	@Override
 	public void messageReceived(final ChannelHandlerContext ctx,
 	        final MessageEvent e) throws Exception {
-		if (e instanceof LoginRequestReceivedEvent) {
-			loginRequestReceived(ctx, (LoginRequestReceivedEvent<ID>) e);
+		if (e instanceof ReceivedLoginRequestEvent) {
+			loginRequestReceived(ctx, (ReceivedLoginRequestEvent<ID>) e);
 		} else if (e instanceof WindowedMessageEvent) {
 			nonLoginRequestReceived(ctx,
 			        (WindowedMessageEvent<ID, ? extends GsmPdu>) e);
@@ -78,7 +78,7 @@ public class IncomingLoginRequestsChannelHandler<ID extends Serializable>
 	}
 
 	private void loginRequestReceived(final ChannelHandlerContext ctx,
-	        final LoginRequestReceivedEvent<ID> e) {
+	        final ReceivedLoginRequestEvent<ID> e) {
 		this.log.info(
 		        "Attempting to authenticate current channel {} using credentials from {} ...",
 		        ctx.getChannel(), e);
@@ -105,7 +105,7 @@ public class IncomingLoginRequestsChannelHandler<ID extends Serializable>
 
 	private void processSuccessfulAuthentication(
 	        final ChannelHandlerContext ctx,
-	        final LoginRequestReceivedEvent<ID> e,
+	        final ReceivedLoginRequestEvent<ID> e,
 	        final Authentication authentication) {
 		if (!this.authenticatedClient.compareAndSet(null, authentication)) {
 			this.log.warn(
@@ -119,7 +119,7 @@ public class IncomingLoginRequestsChannelHandler<ID extends Serializable>
 			this.log.info(
 			        "Successfully authenticated channel {} - authenticated user is {}",
 			        ctx.getChannel(), authentication.getPrincipal());
-			ctx.sendDownstream(ReceivedLoginRequestAckedEvent.accept(e));
+			ctx.sendDownstream(SendLoginRequestAckEvent.accept(e));
 			// Inform the wider community ...
 			ctx.sendUpstream(new ChannelSuccessfullyAuthenticatedEvent(ctx
 			        .getChannel(), e.getMessage()));
@@ -129,7 +129,7 @@ public class IncomingLoginRequestsChannelHandler<ID extends Serializable>
 	}
 
 	private void processFailedAuthentication(final ChannelHandlerContext ctx,
-	        final LoginRequestReceivedEvent<ID> e,
+	        final ReceivedLoginRequestEvent<ID> e,
 	        final AuthenticationException ae) {
 		this.log.warn("Authentication using credentials from " + e
 		        + " failed - will delay negative response for ["
@@ -189,10 +189,10 @@ public class IncomingLoginRequestsChannelHandler<ID extends Serializable>
 
 		private final ChannelHandlerContext		    ctx;
 
-		private final LoginRequestReceivedEvent<ID>	rejectedLogin;
+		private final ReceivedLoginRequestEvent<ID>	rejectedLogin;
 
 		DelayFailedLoginResponse(final ChannelHandlerContext ctx,
-		        final LoginRequestReceivedEvent<ID> rejectedLogin) {
+		        final ReceivedLoginRequestEvent<ID> rejectedLogin) {
 			this.ctx = ctx;
 			this.rejectedLogin = rejectedLogin;
 		}
@@ -206,7 +206,7 @@ public class IncomingLoginRequestsChannelHandler<ID extends Serializable>
 			        .warn("Sending response to failed login request {} after delay of {} milliseconds",
 			                this.rejectedLogin.getMessage(),
 			                IncomingLoginRequestsChannelHandler.this.failedLoginResponseDelayMillis);
-			this.ctx.sendDownstream(ReceivedLoginRequestNackedEvent
+			this.ctx.sendDownstream(SendLoginRequestNackEvent
 			        .reject(this.rejectedLogin));
 		}
 	}

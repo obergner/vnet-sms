@@ -21,9 +21,9 @@ import vnet.sms.common.messages.Msisdn;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.Sms;
 import vnet.sms.common.wme.WindowedMessageEvent;
-import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestAckedEvent;
-import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestNackedEvent;
-import vnet.sms.common.wme.receive.LoginRequestReceivedEvent;
+import vnet.sms.common.wme.acknowledge.SendLoginRequestAckEvent;
+import vnet.sms.common.wme.acknowledge.SendLoginRequestNackEvent;
+import vnet.sms.common.wme.receive.ReceivedLoginRequestEvent;
 import vnet.sms.common.wme.send.SendPingRequestEvent;
 import vnet.sms.common.wme.send.SendSmsContainer;
 import vnet.sms.common.wme.send.SendSmsEvent;
@@ -97,8 +97,8 @@ public class SerializationTransportProtocolAdaptingDownstreamChannelHandlerTest 
 		        "assertThatTransportProtocolAdapterCorrectlyConvertsAcceptedLoginRequestToPdu",
 		        "secret");
 		final ReferenceableMessageContainer convertedMessageContainer = this.objectUnderTest
-		        .convertLoginRequestAcceptedEventToPdu(ReceivedLoginRequestAckedEvent
-		                .accept(new LoginRequestReceivedEvent<Integer>(1,
+		        .convertLoginRequestAcceptedEventToPdu(SendLoginRequestAckEvent
+		                .accept(new ReceivedLoginRequestEvent<Integer>(1,
 		                        new UpstreamMessageEvent(embeddedPipeline
 		                                .getPipeline().getChannel(),
 		                                acceptedLoginRequest,
@@ -130,8 +130,8 @@ public class SerializationTransportProtocolAdaptingDownstreamChannelHandlerTest 
 		        "assertThatTransportProtocolAdapterCorrectlyConvertsRejectedLoginRequestToPdu",
 		        "secret");
 		final ReferenceableMessageContainer convertedMessageContainer = this.objectUnderTest
-		        .convertLoginRequestRejectedEventToPdu(ReceivedLoginRequestNackedEvent
-		                .reject(new LoginRequestReceivedEvent<Integer>(1,
+		        .convertLoginRequestRejectedEventToPdu(SendLoginRequestNackEvent
+		                .reject(new ReceivedLoginRequestEvent<Integer>(1,
 		                        new UpstreamMessageEvent(embeddedPipeline
 		                                .getPipeline().getChannel(),
 		                                rejectedLoginRequest,

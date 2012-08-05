@@ -14,14 +14,14 @@ import vnet.sms.common.messages.LoginRequest;
 import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.wme.MessageEventType;
 import vnet.sms.common.wme.WindowedMessageEvent;
-import vnet.sms.common.wme.acknowledge.DownstreamReceivedMessageAcknowledgedEvent;
+import vnet.sms.common.wme.acknowledge.DownstreamSendMessageAcknowledgementEvent;
 
 /**
  * @author obergner
  * 
  */
 public final class NonLoginMessageReceivedOnUnauthenticatedChannelEvent<ID extends Serializable, M extends GsmPdu>
-        extends DownstreamReceivedMessageAcknowledgedEvent<ID, M> {
+        extends DownstreamSendMessageAcknowledgementEvent<ID, M> {
 
 	public static final <ID extends Serializable, M extends GsmPdu> NonLoginMessageReceivedOnUnauthenticatedChannelEvent<ID, M> discardNonLoginMessage(
 	        final WindowedMessageEvent<ID, M> nonLoginRequest) {

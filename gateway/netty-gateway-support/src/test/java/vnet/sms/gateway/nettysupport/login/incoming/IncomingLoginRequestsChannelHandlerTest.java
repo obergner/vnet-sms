@@ -15,9 +15,9 @@ import org.springframework.security.core.AuthenticationException;
 
 import vnet.sms.common.messages.LoginRequest;
 import vnet.sms.common.messages.PingRequest;
-import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestAckedEvent;
-import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestNackedEvent;
-import vnet.sms.common.wme.receive.PingRequestReceivedEvent;
+import vnet.sms.common.wme.acknowledge.SendLoginRequestAckEvent;
+import vnet.sms.common.wme.acknowledge.SendLoginRequestNackEvent;
+import vnet.sms.common.wme.receive.ReceivedPingRequestEvent;
 import vnet.sms.gateway.nettysupport.MessageProcessingContext;
 import vnet.sms.gateway.nettysupport.test.ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler;
 import vnet.sms.gateway.nettytest.ChannelEventFilter;
@@ -62,7 +62,7 @@ public class IncomingLoginRequestsChannelHandlerTest {
 		        sentReply);
 		assertEquals(
 		        "IncomingLoginRequestsChannelHandler sent unexpected reply after successful login",
-		        ReceivedLoginRequestAckedEvent.class, sentReply.getClass());
+		        SendLoginRequestAckEvent.class, sentReply.getClass());
 	}
 
 	@Test
@@ -95,7 +95,7 @@ public class IncomingLoginRequestsChannelHandlerTest {
 		        sentReply);
 		assertEquals(
 		        "IncomingLoginRequestsChannelHandler sent unexpected reply after rejected login",
-		        ReceivedLoginRequestNackedEvent.class, sentReply.getClass());
+		        SendLoginRequestNackEvent.class, sentReply.getClass());
 	}
 
 	@Test
@@ -185,14 +185,14 @@ public class IncomingLoginRequestsChannelHandlerTest {
 		embeddedPipeline.receive(new PingRequest());
 		final MessageEvent propagatedMessage = embeddedPipeline
 		        .nextReceivedMessageEvent(MessageEventFilter.FILTERS
-		                .ofType(PingRequestReceivedEvent.class));
+		                .ofType(ReceivedPingRequestEvent.class));
 
 		assertNotNull(
 		        "IncomingLoginRequestsChannelHandler did not propagate non-login message received on authenticated channel",
 		        propagatedMessage);
 		assertEquals(
 		        "IncomingLoginRequestsChannelHandler propagated unexpected message after receiving non-login message on authenticated channel",
-		        PingRequestReceivedEvent.class, propagatedMessage.getClass());
+		        ReceivedPingRequestEvent.class, propagatedMessage.getClass());
 	}
 
 	@Test

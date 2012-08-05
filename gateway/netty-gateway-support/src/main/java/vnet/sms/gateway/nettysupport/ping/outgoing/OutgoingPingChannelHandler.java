@@ -17,7 +17,7 @@ import org.jboss.netty.util.Timer;
 import org.jboss.netty.util.TimerTask;
 
 import vnet.sms.common.messages.PingRequest;
-import vnet.sms.common.wme.receive.PingResponseReceivedEvent;
+import vnet.sms.common.wme.receive.ReceivedPingRequestAcknowledgementEvent;
 import vnet.sms.common.wme.send.SendPingRequestEvent;
 import vnet.sms.gateway.nettysupport.UpstreamWindowedChannelHandler;
 import vnet.sms.gateway.nettysupport.login.incoming.ChannelSuccessfullyAuthenticatedEvent;
@@ -87,7 +87,7 @@ public class OutgoingPingChannelHandler<ID extends Serializable> extends
 
 	@Override
 	public void pingResponseReceived(final ChannelHandlerContext ctx,
-	        final PingResponseReceivedEvent<ID> e) throws Exception {
+	        final ReceivedPingRequestAcknowledgementEvent<ID> e) throws Exception {
 		if (this.pingSender == null) {
 			throw new IllegalStateException(
 			        "Cannot cancel ping response timout since no PingSender has been started - have you started a PingSender in channelConnected(...)?");

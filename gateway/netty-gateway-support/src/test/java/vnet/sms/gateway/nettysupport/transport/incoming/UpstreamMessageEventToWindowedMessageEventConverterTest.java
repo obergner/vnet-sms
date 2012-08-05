@@ -19,11 +19,11 @@ import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.PingResponse;
 import vnet.sms.common.messages.Sms;
 import vnet.sms.common.wme.WindowedMessageEvent;
-import vnet.sms.common.wme.receive.LoginRequestReceivedEvent;
-import vnet.sms.common.wme.receive.LoginResponseReceivedEvent;
-import vnet.sms.common.wme.receive.PingRequestReceivedEvent;
-import vnet.sms.common.wme.receive.PingResponseReceivedEvent;
-import vnet.sms.common.wme.receive.SmsReceivedEvent;
+import vnet.sms.common.wme.receive.ReceivedLoginRequestEvent;
+import vnet.sms.common.wme.receive.ReceivedLoginRequestAcknowledgementEvent;
+import vnet.sms.common.wme.receive.ReceivedPingRequestEvent;
+import vnet.sms.common.wme.receive.ReceivedPingRequestAcknowledgementEvent;
+import vnet.sms.common.wme.receive.ReceivedSmsEvent;
 
 public class UpstreamMessageEventToWindowedMessageEventConverterTest {
 
@@ -32,7 +32,7 @@ public class UpstreamMessageEventToWindowedMessageEventConverterTest {
 		final LoginRequest inputMessage = new LoginRequest(
 		        "assertThatConvertConvertsLoginRequestToLoginRequestReceivedEvent",
 		        "secret");
-		final Class<?> expectedOutputType = LoginRequestReceivedEvent.class;
+		final Class<?> expectedOutputType = ReceivedLoginRequestEvent.class;
 
 		assertCorrectConversion(inputMessage, expectedOutputType);
 	}
@@ -68,7 +68,7 @@ public class UpstreamMessageEventToWindowedMessageEventConverterTest {
 		        .accept(new LoginRequest(
 		                "assertThatConvertConvertsLoginResponseToLoginResponseReceivedEvent",
 		                "secret"));
-		final Class<?> expectedOutputType = LoginResponseReceivedEvent.class;
+		final Class<?> expectedOutputType = ReceivedLoginRequestAcknowledgementEvent.class;
 
 		assertCorrectConversion(inputMessage, expectedOutputType);
 	}
@@ -76,7 +76,7 @@ public class UpstreamMessageEventToWindowedMessageEventConverterTest {
 	@Test
 	public final void assertThatConvertConvertsPingRequestToPingRequestReceivedEvent() {
 		final PingRequest inputMessage = new PingRequest();
-		final Class<?> expectedOutputType = PingRequestReceivedEvent.class;
+		final Class<?> expectedOutputType = ReceivedPingRequestEvent.class;
 
 		assertCorrectConversion(inputMessage, expectedOutputType);
 	}
@@ -85,7 +85,7 @@ public class UpstreamMessageEventToWindowedMessageEventConverterTest {
 	public final void assertThatConvertConvertsPingResponseToPingResponseReceivedEvent() {
 		final PingResponse inputMessage = PingResponse
 		        .accept(new PingRequest());
-		final Class<?> expectedOutputType = PingResponseReceivedEvent.class;
+		final Class<?> expectedOutputType = ReceivedPingRequestAcknowledgementEvent.class;
 
 		assertCorrectConversion(inputMessage, expectedOutputType);
 	}
@@ -95,7 +95,7 @@ public class UpstreamMessageEventToWindowedMessageEventConverterTest {
 		final Sms inputMessage = new Sms(new Msisdn("01686754432"), new Msisdn(
 		        "01686754432"),
 		        "assertThatConvertConvertsSmsToSmsReceivedEvent");
-		final Class<?> expectedOutputType = SmsReceivedEvent.class;
+		final Class<?> expectedOutputType = ReceivedSmsEvent.class;
 
 		assertCorrectConversion(inputMessage, expectedOutputType);
 	}

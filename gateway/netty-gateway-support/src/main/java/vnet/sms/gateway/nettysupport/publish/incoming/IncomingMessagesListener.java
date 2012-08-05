@@ -2,11 +2,11 @@ package vnet.sms.gateway.nettysupport.publish.incoming;
 
 import java.io.Serializable;
 
-import vnet.sms.common.wme.receive.LoginRequestReceivedEvent;
-import vnet.sms.common.wme.receive.LoginResponseReceivedEvent;
-import vnet.sms.common.wme.receive.PingRequestReceivedEvent;
-import vnet.sms.common.wme.receive.PingResponseReceivedEvent;
-import vnet.sms.common.wme.receive.SmsReceivedEvent;
+import vnet.sms.common.wme.receive.ReceivedLoginRequestEvent;
+import vnet.sms.common.wme.receive.ReceivedLoginRequestAcknowledgementEvent;
+import vnet.sms.common.wme.receive.ReceivedPingRequestEvent;
+import vnet.sms.common.wme.receive.ReceivedPingRequestAcknowledgementEvent;
+import vnet.sms.common.wme.receive.ReceivedSmsEvent;
 
 /**
  * @author obergner
@@ -15,14 +15,14 @@ import vnet.sms.common.wme.receive.SmsReceivedEvent;
  */
 public interface IncomingMessagesListener<ID extends Serializable> {
 
-	void smsReceived(SmsReceivedEvent<ID> smsReceived);
+	void smsReceived(ReceivedSmsEvent<ID> smsReceived);
 
-	void loginRequestReceived(LoginRequestReceivedEvent<ID> loginRequestReceived);
+	void loginRequestReceived(ReceivedLoginRequestEvent<ID> loginRequestReceived);
 
 	void loginResponseReceived(
-	        LoginResponseReceivedEvent<ID> loginResponseReceived);
+	        ReceivedLoginRequestAcknowledgementEvent<ID> loginResponseReceived);
 
-	void pingRequestReceived(PingRequestReceivedEvent<ID> pingRequestReceived);
+	void pingRequestReceived(ReceivedPingRequestEvent<ID> pingRequestReceived);
 
-	void pingResponseReceived(PingResponseReceivedEvent<ID> pingResponseReceived);
+	void pingResponseReceived(ReceivedPingRequestAcknowledgementEvent<ID> pingResponseReceived);
 }

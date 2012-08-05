@@ -20,28 +20,28 @@ import vnet.sms.common.wme.MessageEventType;
  * @author obergner
  * 
  */
-public class ReceivedSmsAckedEvent<ID extends Serializable> extends
-        DownstreamReceivedMessageAcknowledgedEvent<ID, Sms> {
+public class SendSmsAckEvent<ID extends Serializable> extends
+        DownstreamSendMessageAcknowledgementEvent<ID, Sms> {
 
-	public static final <I extends Serializable> ReceivedSmsAckedEvent<I> convert(
+	public static final <I extends Serializable> SendSmsAckEvent<I> convert(
 	        final MessageEvent receivedSmsAckedMessageEvent) {
 		notNull(receivedSmsAckedMessageEvent,
 		        "Argument 'receivedSmsAckedMessageEvent' must not be null");
-		isTrue(receivedSmsAckedMessageEvent.getMessage() instanceof ReceivedSmsAckedContainer,
-		        "Can only convert MessageEvents having a ReceivedSmsAckedContainer as their payload. Got: "
+		isTrue(receivedSmsAckedMessageEvent.getMessage() instanceof SendSmsAckContainer,
+		        "Can only convert MessageEvents having a SendSmsAckContainer as their payload. Got: "
 		                + receivedSmsAckedMessageEvent.getMessage());
-		final ReceivedSmsAckedContainer<I> ackContainer = ReceivedSmsAckedContainer.class
+		final SendSmsAckContainer<I> ackContainer = SendSmsAckContainer.class
 		        .cast(receivedSmsAckedMessageEvent.getMessage());
-		return new ReceivedSmsAckedEvent<I>(
+		return new SendSmsAckEvent<I>(
 		        ackContainer.getAcknowledgedMessageReference(),
 		        receivedSmsAckedMessageEvent.getChannel(),
 		        receivedSmsAckedMessageEvent.getFuture(),
 		        ackContainer.getAcknowledgedMessage());
 	}
 
-	private ReceivedSmsAckedEvent(final ID messageReference,
-	        final Channel channel, final ChannelFuture future, final Sms message) {
-		super(messageReference, MessageEventType.RECEIVED_SMS_ACKED, channel,
+	private SendSmsAckEvent(final ID messageReference, final Channel channel,
+	        final ChannelFuture future, final Sms message) {
+		super(messageReference, MessageEventType.SEND_SMS_ACK, channel,
 		        message, Acknowledgement.ack());
 	}
 }

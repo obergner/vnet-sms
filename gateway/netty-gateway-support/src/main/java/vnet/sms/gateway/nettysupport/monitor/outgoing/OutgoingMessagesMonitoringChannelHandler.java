@@ -12,8 +12,8 @@ import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ChannelStateEvent;
 
-import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestAckedEvent;
-import vnet.sms.common.wme.acknowledge.ReceivedLoginRequestNackedEvent;
+import vnet.sms.common.wme.acknowledge.SendLoginRequestAckEvent;
+import vnet.sms.common.wme.acknowledge.SendLoginRequestNackEvent;
 import vnet.sms.common.wme.send.SendPingRequestEvent;
 import vnet.sms.gateway.nettysupport.ChannelUtils;
 import vnet.sms.gateway.nettysupport.WindowedChannelHandler;
@@ -76,7 +76,7 @@ public class OutgoingMessagesMonitoringChannelHandler<ID extends Serializable>
 	@Override
 	protected void writeLoginRequestAcceptedRequested(
 	        final ChannelHandlerContext ctx,
-	        final ReceivedLoginRequestAckedEvent<ID> e) throws Exception {
+	        final SendLoginRequestAckEvent<ID> e) throws Exception {
 		this.numberOfAcceptedLoginRequests.mark();
 		super.writeLoginRequestAcceptedRequested(ctx, e);
 	}
@@ -84,7 +84,7 @@ public class OutgoingMessagesMonitoringChannelHandler<ID extends Serializable>
 	@Override
 	protected void writeLoginRequestRejectedRequested(
 	        final ChannelHandlerContext ctx,
-	        final ReceivedLoginRequestNackedEvent<ID> e) throws Exception {
+	        final SendLoginRequestNackEvent<ID> e) throws Exception {
 		this.numberOfRejectedLoginRequests.mark();
 		super.writeLoginRequestRejectedRequested(ctx, e);
 	}

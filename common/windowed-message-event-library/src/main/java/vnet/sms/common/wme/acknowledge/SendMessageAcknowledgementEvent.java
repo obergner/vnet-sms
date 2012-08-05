@@ -15,7 +15,7 @@ import vnet.sms.common.wme.MessageEventType;
  * @author obergner
  * 
  */
-public interface ReceivedMessageAcknowledgedEvent<ID extends Serializable, M extends GsmPdu>
+public interface SendMessageAcknowledgementEvent<ID extends Serializable, M extends GsmPdu>
         extends MessageEvent {
 
 	MessageEventType getAcknowledgedMessageType();

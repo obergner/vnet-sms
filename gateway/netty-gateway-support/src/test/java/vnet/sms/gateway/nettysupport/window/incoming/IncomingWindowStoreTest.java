@@ -15,7 +15,7 @@ import org.junit.Test;
 
 import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.messages.PingRequest;
-import vnet.sms.common.wme.receive.PingRequestReceivedEvent;
+import vnet.sms.common.wme.receive.ReceivedPingRequestEvent;
 
 public class IncomingWindowStoreTest {
 
@@ -31,7 +31,7 @@ public class IncomingWindowStoreTest {
 		for (int i = 1; i <= expectedNumberOfMessages; i++) {
 			final PingRequest pingRequest = new PingRequest();
 			objectUnderTest
-			        .tryAcquireWindow(new PingRequestReceivedEvent<Integer>(
+			        .tryAcquireWindow(new ReceivedPingRequestEvent<Integer>(
 			                Integer.valueOf(i), new UpstreamMessageEvent(
 			                        mockChannel, pingRequest,
 			                        new InetSocketAddress(0)), pingRequest));
@@ -55,7 +55,7 @@ public class IncomingWindowStoreTest {
 		for (int i = 1; i < windowStoreCapacity; i++) {
 			final PingRequest pingRequest = new PingRequest();
 			objectUnderTest
-			        .tryAcquireWindow(new PingRequestReceivedEvent<Integer>(
+			        .tryAcquireWindow(new ReceivedPingRequestEvent<Integer>(
 			                Integer.valueOf(i), new UpstreamMessageEvent(
 			                        mockChannel, pingRequest,
 			                        new InetSocketAddress(0)), pingRequest));
@@ -63,7 +63,7 @@ public class IncomingWindowStoreTest {
 
 		final PingRequest pingRequest = new PingRequest();
 		final boolean windowAcquired = objectUnderTest
-		        .tryAcquireWindow(new PingRequestReceivedEvent<Integer>(Integer
+		        .tryAcquireWindow(new ReceivedPingRequestEvent<Integer>(Integer
 		                .valueOf(windowStoreCapacity),
 		                new UpstreamMessageEvent(mockChannel, pingRequest,
 		                        new InetSocketAddress(0)), pingRequest));
@@ -85,7 +85,7 @@ public class IncomingWindowStoreTest {
 		for (int i = 1; i <= windowStoreCapacity; i++) {
 			final PingRequest pingRequest = new PingRequest();
 			objectUnderTest
-			        .tryAcquireWindow(new PingRequestReceivedEvent<Integer>(
+			        .tryAcquireWindow(new ReceivedPingRequestEvent<Integer>(
 			                Integer.valueOf(i), new UpstreamMessageEvent(
 			                        mockChannel, pingRequest,
 			                        new InetSocketAddress(0)), pingRequest));
@@ -93,7 +93,7 @@ public class IncomingWindowStoreTest {
 
 		final PingRequest pingRequest = new PingRequest();
 		final boolean windowAcquired = objectUnderTest
-		        .tryAcquireWindow(new PingRequestReceivedEvent<Integer>(Integer
+		        .tryAcquireWindow(new ReceivedPingRequestEvent<Integer>(Integer
 		                .valueOf(windowStoreCapacity + 1),
 		                new UpstreamMessageEvent(mockChannel, pingRequest,
 		                        new InetSocketAddress(0)), pingRequest));
@@ -116,7 +116,7 @@ public class IncomingWindowStoreTest {
 		for (int i = 1; i <= windowStoreCapacity; i++) {
 			final PingRequest pingRequest = new PingRequest();
 			objectUnderTest
-			        .tryAcquireWindow(new PingRequestReceivedEvent<Integer>(
+			        .tryAcquireWindow(new ReceivedPingRequestEvent<Integer>(
 			                Integer.valueOf(i), new UpstreamMessageEvent(
 			                        mockChannel, pingRequest,
 			                        new InetSocketAddress(0)), pingRequest));
@@ -124,7 +124,7 @@ public class IncomingWindowStoreTest {
 
 		final PingRequest pingRequest = new PingRequest();
 		final long before = System.currentTimeMillis();
-		objectUnderTest.tryAcquireWindow(new PingRequestReceivedEvent<Integer>(
+		objectUnderTest.tryAcquireWindow(new ReceivedPingRequestEvent<Integer>(
 		        Integer.valueOf(windowStoreCapacity + 1),
 		        new UpstreamMessageEvent(mockChannel, pingRequest,
 		                new InetSocketAddress(0)), pingRequest));
@@ -148,7 +148,7 @@ public class IncomingWindowStoreTest {
 		for (int i = 1; i <= windowStoreCapacity; i++) {
 			final PingRequest pingRequest = new PingRequest();
 			objectUnderTest
-			        .tryAcquireWindow(new PingRequestReceivedEvent<Integer>(
+			        .tryAcquireWindow(new ReceivedPingRequestEvent<Integer>(
 			                Integer.valueOf(i), new UpstreamMessageEvent(
 			                        mockChannel, pingRequest,
 			                        new InetSocketAddress(0)), pingRequest));
@@ -158,7 +158,7 @@ public class IncomingWindowStoreTest {
 
 		final PingRequest pingRequest = new PingRequest();
 		final boolean windowAcquired = objectUnderTest
-		        .tryAcquireWindow(new PingRequestReceivedEvent<Integer>(
+		        .tryAcquireWindow(new ReceivedPingRequestEvent<Integer>(
 		                freedWindowId, new UpstreamMessageEvent(mockChannel,
 		                        pingRequest, new InetSocketAddress(0)),
 		                pingRequest));
@@ -180,7 +180,7 @@ public class IncomingWindowStoreTest {
 		for (int i = 1; i <= windowStoreCapacity; i++) {
 			final PingRequest pingRequest = new PingRequest();
 			objectUnderTest
-			        .tryAcquireWindow(new PingRequestReceivedEvent<Integer>(
+			        .tryAcquireWindow(new ReceivedPingRequestEvent<Integer>(
 			                Integer.valueOf(i), new UpstreamMessageEvent(
 			                        mockChannel, pingRequest,
 			                        new InetSocketAddress(0)), pingRequest));

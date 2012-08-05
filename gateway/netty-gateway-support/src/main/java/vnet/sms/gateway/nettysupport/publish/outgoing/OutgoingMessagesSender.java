@@ -9,8 +9,8 @@ import org.jboss.netty.channel.ChannelFuture;
 
 import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.wme.acknowledge.MessageAcknowledgementContainer;
-import vnet.sms.common.wme.acknowledge.ReceivedSmsAckedContainer;
-import vnet.sms.common.wme.acknowledge.ReceivedSmsNackedContainer;
+import vnet.sms.common.wme.acknowledge.SendSmsAckContainer;
+import vnet.sms.common.wme.acknowledge.SendSmsNackContainer;
 import vnet.sms.common.wme.send.SendSmsContainer;
 
 /**
@@ -59,7 +59,7 @@ public interface OutgoingMessagesSender<ID extends Serializable> {
 	 * @return
 	 * @throws Exception
 	 */
-	ChannelFuture ackReceivedSms(ReceivedSmsAckedContainer<ID> ack)
+	ChannelFuture ackReceivedSms(SendSmsAckContainer<ID> ack)
 	        throws Exception;
 
 	/**
@@ -67,7 +67,7 @@ public interface OutgoingMessagesSender<ID extends Serializable> {
 	 * @return
 	 * @throws Exception
 	 */
-	ChannelFuture nackReceivedSms(ReceivedSmsNackedContainer<ID> nack)
+	ChannelFuture nackReceivedSms(SendSmsNackContainer<ID> nack)
 	        throws Exception;
 
 	// ------------------------------------------------------------------------

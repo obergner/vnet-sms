@@ -14,13 +14,13 @@ import org.springframework.jms.support.JmsUtils;
 import org.springframework.jms.support.converter.MessageConversionException;
 import org.springframework.jms.support.converter.MessageConverter;
 
-import vnet.sms.common.messages.Headers;
 import vnet.sms.common.messages.GsmPdu;
+import vnet.sms.common.messages.Headers;
 import vnet.sms.common.messages.Sms;
 import vnet.sms.common.wme.MessageEventType;
 import vnet.sms.common.wme.WindowedMessageEvent;
-import vnet.sms.common.wme.acknowledge.ReceivedSmsAckedContainer;
-import vnet.sms.common.wme.acknowledge.ReceivedSmsNackedContainer;
+import vnet.sms.common.wme.acknowledge.SendSmsAckContainer;
+import vnet.sms.common.wme.acknowledge.SendSmsNackContainer;
 import vnet.sms.common.wme.send.SendSmsContainer;
 
 /**
@@ -75,17 +75,17 @@ public class WindowedMessageEventToJmsMessageConverter implements
 
 		final Object converted;
 		switch (eventType) {
-		case RECEIVED_SMS_ACKED:
+		case SEND_SMS_ACK:
 			final Sms ackedSms = Sms.class.cast(objectMessage.getObject());
 			final Serializable messageReference = Serializable.class
 			        .cast(objectMessage
 			                .getObjectProperty(Headers.MESSAGE_REFERENCE));
 			final int receivingChannelId = objectMessage
 			        .getIntProperty(Headers.RECEIVING_CHANNEL_ID);
-			converted = new ReceivedSmsAckedContainer<Serializable>(
-			        messageReference, receivingChannelId, ackedSms);
+			converted = new SendSmsAckContainer<Serializable>(messageReference,
+			        receivingChannelId, ackedSms);
 			break;
-		case RECEIVED_SMS_NACKED:
+		case SEND_SMS_NACK:
 			final Sms nackedSms = Sms.class.cast(objectMessage.getObject());
 			final Serializable messageRef = Serializable.class
 			        .cast(objectMessage
@@ -96,7 +96,7 @@ public class WindowedMessageEventToJmsMessageConverter implements
 			        .getIntProperty(Headers.ERROR_KEY);
 			final String errorDescription = objectMessage
 			        .getStringProperty(Headers.ERROR_DESCRIPTION);
-			converted = new ReceivedSmsNackedContainer<Serializable>(errorKey,
+			converted = new SendSmsNackContainer<Serializable>(errorKey,
 			        errorDescription, messageRef, receivChannelId, nackedSms);
 			break;
 		case SEND_SMS:
@@ -134,10 +134,10 @@ public class WindowedMessageEventToJmsMessageConverter implements
 			case SEND_SMS:
 				validateSendSms(objectMessage, messagePayload);
 				break;
-			case RECEIVED_SMS_ACKED:
+			case SEND_SMS_ACK:
 				validateReceivedSmsAcked(objectMessage, messagePayload);
 				break;
-			case RECEIVED_SMS_NACKED:
+			case SEND_SMS_NACK:
 				validateReceivedSmsNacked(objectMessage, messagePayload);
 				break;
 			default:
@@ -160,7 +160,7 @@ public class WindowedMessageEventToJmsMessageConverter implements
 	private void validateReceivedSmsAcked(final ObjectMessage jmsMessage,
 	        final Serializable messagePayload) throws JMSException {
 		isTrue(Sms.class.isInstance(messagePayload), "GsmPdu '" + jmsMessage
-		        + "' is of type " + MessageEventType.RECEIVED_SMS_ACKED
+		        + "' is of type " + MessageEventType.SEND_SMS_ACK
 		        + ", yet it does not contain an SMS but rather "
 		        + messagePayload);
 		isTrue(jmsMessage.getObjectProperty(Headers.RECEIVING_CHANNEL_ID) != null,
@@ -175,7 +175,7 @@ public class WindowedMessageEventToJmsMessageConverter implements
 	private void validateReceivedSmsNacked(final ObjectMessage jmsMessage,
 	        final Serializable messagePayload) throws JMSException {
 		isTrue(Sms.class.isInstance(messagePayload), "GsmPdu '" + jmsMessage
-		        + "' is of type " + MessageEventType.RECEIVED_SMS_NACKED
+		        + "' is of type " + MessageEventType.SEND_SMS_NACK
 		        + ", yet it does not contain an SMS but rather "
 		        + messagePayload);
 		isTrue(jmsMessage.getObjectProperty(Headers.RECEIVING_CHANNEL_ID) != null,

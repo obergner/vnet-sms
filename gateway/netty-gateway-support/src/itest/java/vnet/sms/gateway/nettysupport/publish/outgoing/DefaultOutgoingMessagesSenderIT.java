@@ -14,8 +14,8 @@ import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.messages.Msisdn;
 import vnet.sms.common.messages.Sms;
 import vnet.sms.common.wme.acknowledge.MessageAcknowledgementContainer;
-import vnet.sms.common.wme.acknowledge.ReceivedSmsAckedContainer;
-import vnet.sms.common.wme.acknowledge.ReceivedSmsNackedContainer;
+import vnet.sms.common.wme.acknowledge.SendSmsAckContainer;
+import vnet.sms.common.wme.acknowledge.SendSmsNackContainer;
 import vnet.sms.common.wme.send.SendSmsContainer;
 import vnet.sms.gateway.nettysupport.test.ReceivedMessagesListener;
 import vnet.sms.gateway.nettysupport.test.ReceivedMessagesPublishingServer;
@@ -152,7 +152,7 @@ public class DefaultOutgoingMessagesSenderIT {
 		final ChannelGroup connectedChannels = this.testClient.connect(10,
 		        this.testServer.getPort());
 
-		final ReceivedSmsAckedContainer<String> ackContainer = new ReceivedSmsAckedContainer<String>(
+		final SendSmsAckContainer<String> ackContainer = new SendSmsAckContainer<String>(
 		        "1", connectedChannels.iterator().next().getId(), sms);
 
 		final DefaultOutgoingMessagesSender<String> objectUnderTest = new DefaultOutgoingMessagesSender<String>(
@@ -172,7 +172,7 @@ public class DefaultOutgoingMessagesSenderIT {
 		        new Msisdn("01686754432"),
 		        new Msisdn("01686754432"),
 		        "assertThatAckReceivedmsThrowsIllegalStateExceptionIfReceivingChannelIsNotConnectedAnymore");
-		final ReceivedSmsAckedContainer<String> ackContainer = new ReceivedSmsAckedContainer<String>(
+		final SendSmsAckContainer<String> ackContainer = new SendSmsAckContainer<String>(
 		        "1", -1, sms);
 
 		final ChannelGroup connectedChannels = this.testClient.connect(0,
@@ -189,7 +189,7 @@ public class DefaultOutgoingMessagesSenderIT {
 		final Sms sms = new Sms(new Msisdn("01686754432"), new Msisdn(
 		        "01686754432"),
 		        "assertThatAckReceivedSmsCallsListenerIfReceivingChannelIsNotConnectedAnymore");
-		final ReceivedSmsAckedContainer<String> ackContainer = new ReceivedSmsAckedContainer<String>(
+		final SendSmsAckContainer<String> ackContainer = new SendSmsAckContainer<String>(
 		        "1", -1, sms);
 
 		final CountDownLatch listenerCalled = new CountDownLatch(1);
@@ -241,7 +241,7 @@ public class DefaultOutgoingMessagesSenderIT {
 		final ChannelGroup connectedChannels = this.testClient.connect(10,
 		        this.testServer.getPort());
 
-		final ReceivedSmsNackedContainer<String> ackContainer = new ReceivedSmsNackedContainer<String>(
+		final SendSmsNackContainer<String> ackContainer = new SendSmsNackContainer<String>(
 		        1, "error", "1", connectedChannels.iterator().next().getId(),
 		        sms);
 
@@ -262,7 +262,7 @@ public class DefaultOutgoingMessagesSenderIT {
 		        new Msisdn("01686754432"),
 		        new Msisdn("01686754432"),
 		        "assertThatNackReceivedmsThrowsIllegalStateExceptionIfReceivingChannelIsNotConnectedAnymore");
-		final ReceivedSmsNackedContainer<String> ackContainer = new ReceivedSmsNackedContainer<String>(
+		final SendSmsNackContainer<String> ackContainer = new SendSmsNackContainer<String>(
 		        1, "error", "1", -1, sms);
 
 		final ChannelGroup connectedChannels = this.testClient.connect(0,
@@ -279,7 +279,7 @@ public class DefaultOutgoingMessagesSenderIT {
 		final Sms sms = new Sms(new Msisdn("01686754432"), new Msisdn(
 		        "01686754432"),
 		        "assertThatNackReceivedSmsCallsListenerIfReceivingChannelIsNotConnectedAnymore");
-		final ReceivedSmsNackedContainer<String> ackContainer = new ReceivedSmsNackedContainer<String>(
+		final SendSmsNackContainer<String> ackContainer = new SendSmsNackContainer<String>(
 		        1, "error", "1", -1, sms);
 
 		final CountDownLatch listenerCalled = new CountDownLatch(1);

@@ -12,16 +12,16 @@ import vnet.sms.common.wme.MessageEventType;
  * @author obergner
  * 
  */
-public final class ReceivedSmsNackedContainer<ID extends Serializable> extends
+public final class SendSmsNackContainer<ID extends Serializable> extends
         AbstractMessageNackContainer<ID, Sms> {
 
 	private static final long	serialVersionUID	= -6876251129317808230L;
 
-	public ReceivedSmsNackedContainer(final int errorKey,
+	public SendSmsNackContainer(final int errorKey,
 	        final String errorDescription,
 	        final ID acknowledgedMessageReference,
 	        final int receivingChannelId, final Sms acknowledgedMessage) {
-		super(errorKey, errorDescription, MessageEventType.RECEIVED_SMS_NACKED,
+		super(errorKey, errorDescription, MessageEventType.SEND_SMS_NACK,
 		        acknowledgedMessageReference, receivingChannelId,
 		        acknowledgedMessage);
 	}

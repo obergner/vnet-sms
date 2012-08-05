@@ -12,11 +12,11 @@ import vnet.sms.common.messages.Msisdn;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.PingResponse;
 import vnet.sms.common.messages.Sms;
-import vnet.sms.common.wme.receive.LoginRequestReceivedEvent;
-import vnet.sms.common.wme.receive.LoginResponseReceivedEvent;
-import vnet.sms.common.wme.receive.PingRequestReceivedEvent;
-import vnet.sms.common.wme.receive.PingResponseReceivedEvent;
-import vnet.sms.common.wme.receive.SmsReceivedEvent;
+import vnet.sms.common.wme.receive.ReceivedLoginRequestEvent;
+import vnet.sms.common.wme.receive.ReceivedLoginRequestAcknowledgementEvent;
+import vnet.sms.common.wme.receive.ReceivedPingRequestEvent;
+import vnet.sms.common.wme.receive.ReceivedPingRequestAcknowledgementEvent;
+import vnet.sms.common.wme.receive.ReceivedSmsEvent;
 import vnet.sms.gateway.nettytest.ChannelPipelineEmbedder;
 import vnet.sms.gateway.nettytest.DefaultChannelPipelineEmbedder;
 import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;
@@ -45,7 +45,7 @@ public class SerializationTransportProtocolAdaptingUpstreamChannelHandlerTest {
 		        convertedPduEvent);
 		assertEquals(
 		        "SerializationTransportProtocolAdaptingUpstreamChannelHandler converted LoginRequest to unexpected output",
-		        LoginRequestReceivedEvent.class, convertedPduEvent.getClass());
+		        ReceivedLoginRequestEvent.class, convertedPduEvent.getClass());
 	}
 
 	@Test
@@ -69,7 +69,7 @@ public class SerializationTransportProtocolAdaptingUpstreamChannelHandlerTest {
 		        convertedPduEvent);
 		assertEquals(
 		        "SerializationTransportProtocolAdaptingUpstreamChannelHandler converted LoginResponse to unexpected output",
-		        LoginResponseReceivedEvent.class, convertedPduEvent.getClass());
+		        ReceivedLoginRequestAcknowledgementEvent.class, convertedPduEvent.getClass());
 	}
 
 	@Test
@@ -88,7 +88,7 @@ public class SerializationTransportProtocolAdaptingUpstreamChannelHandlerTest {
 		        convertedPduEvent);
 		assertEquals(
 		        "SerializationTransportProtocolAdaptingUpstreamChannelHandler converted PingRequest to unexpected output",
-		        PingRequestReceivedEvent.class, convertedPduEvent.getClass());
+		        ReceivedPingRequestEvent.class, convertedPduEvent.getClass());
 	}
 
 	@Test
@@ -107,7 +107,7 @@ public class SerializationTransportProtocolAdaptingUpstreamChannelHandlerTest {
 		        convertedPduEvent);
 		assertEquals(
 		        "SerializationTransportProtocolAdaptingUpstreamChannelHandler converted PingResponse to unexpected output",
-		        PingResponseReceivedEvent.class, convertedPduEvent.getClass());
+		        ReceivedPingRequestAcknowledgementEvent.class, convertedPduEvent.getClass());
 	}
 
 	@Test
@@ -130,6 +130,6 @@ public class SerializationTransportProtocolAdaptingUpstreamChannelHandlerTest {
 		        convertedPduEvent);
 		assertEquals(
 		        "SerializationTransportProtocolAdaptingUpstreamChannelHandler converted Sms to unexpected output",
-		        SmsReceivedEvent.class, convertedPduEvent.getClass());
+		        ReceivedSmsEvent.class, convertedPduEvent.getClass());
 	}
 }

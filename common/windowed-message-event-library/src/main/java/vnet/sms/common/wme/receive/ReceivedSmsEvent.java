@@ -14,12 +14,12 @@ import vnet.sms.common.wme.MessageEventType;
  * @author obergner
  * 
  */
-public class SmsReceivedEvent<ID extends Serializable> extends
+public class ReceivedSmsEvent<ID extends Serializable> extends
         UpstreamWindowedMessageEvent<ID, Sms> {
 
-	public SmsReceivedEvent(final ID messageReference,
+	public ReceivedSmsEvent(final ID messageReference,
 	        final UpstreamMessageEvent upstreamMessageEvent, final Sms sms) {
-		super(messageReference, MessageEventType.SMS_RECEIVED,
+		super(messageReference, MessageEventType.RECEIVED_SMS,
 		        upstreamMessageEvent, sms);
 	}
 }

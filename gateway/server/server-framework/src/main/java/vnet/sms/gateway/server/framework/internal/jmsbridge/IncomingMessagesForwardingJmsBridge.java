@@ -19,11 +19,11 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 
 import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.wme.WindowedMessageEvent;
-import vnet.sms.common.wme.receive.LoginRequestReceivedEvent;
-import vnet.sms.common.wme.receive.LoginResponseReceivedEvent;
-import vnet.sms.common.wme.receive.PingRequestReceivedEvent;
-import vnet.sms.common.wme.receive.PingResponseReceivedEvent;
-import vnet.sms.common.wme.receive.SmsReceivedEvent;
+import vnet.sms.common.wme.receive.ReceivedLoginRequestEvent;
+import vnet.sms.common.wme.receive.ReceivedLoginRequestAcknowledgementEvent;
+import vnet.sms.common.wme.receive.ReceivedPingRequestEvent;
+import vnet.sms.common.wme.receive.ReceivedPingRequestAcknowledgementEvent;
+import vnet.sms.common.wme.receive.ReceivedSmsEvent;
 import vnet.sms.gateway.nettysupport.publish.incoming.IncomingMessagesListener;
 import vnet.sms.gateway.server.framework.Jmx;
 
@@ -115,10 +115,10 @@ public class IncomingMessagesForwardingJmsBridge<ID extends java.io.Serializable
 	// ------------------------------------------------------------------------
 
 	/**
-	 * @see vnet.sms.gateway.nettysupport.publish.incoming.IncomingMessagesListener#smsReceived(vnet.sms.common.wme.receive.SmsReceivedEvent)
+	 * @see vnet.sms.gateway.nettysupport.publish.incoming.IncomingMessagesListener#smsReceived(vnet.sms.common.wme.receive.ReceivedSmsEvent)
 	 */
 	@Override
-	public void smsReceived(final SmsReceivedEvent<ID> smsReceived) {
+	public void smsReceived(final ReceivedSmsEvent<ID> smsReceived) {
 		doForward(smsReceived);
 		this.numberOfForwardedSms.mark();
 	}
@@ -138,40 +138,40 @@ public class IncomingMessagesForwardingJmsBridge<ID extends java.io.Serializable
 	}
 
 	/**
-	 * @see vnet.sms.gateway.nettysupport.publish.incoming.IncomingMessagesListener#loginRequestReceived(vnet.sms.common.wme.receive.LoginRequestReceivedEvent)
+	 * @see vnet.sms.gateway.nettysupport.publish.incoming.IncomingMessagesListener#loginRequestReceived(vnet.sms.common.wme.receive.ReceivedLoginRequestEvent)
 	 */
 	@Override
 	public void loginRequestReceived(
-	        final LoginRequestReceivedEvent<ID> loginRequestReceived) {
+	        final ReceivedLoginRequestEvent<ID> loginRequestReceived) {
 		doForward(loginRequestReceived);
 		this.numberOfForwardedLoginRequests.mark();
 	}
 
 	/**
-	 * @see vnet.sms.gateway.nettysupport.publish.incoming.IncomingMessagesListener#loginResponseReceived(vnet.sms.common.wme.receive.LoginResponseReceivedEvent)
+	 * @see vnet.sms.gateway.nettysupport.publish.incoming.IncomingMessagesListener#loginResponseReceived(vnet.sms.common.wme.receive.ReceivedLoginRequestAcknowledgementEvent)
 	 */
 	@Override
 	public void loginResponseReceived(
-	        final LoginResponseReceivedEvent<ID> loginResponseReceived) {
+	        final ReceivedLoginRequestAcknowledgementEvent<ID> loginResponseReceived) {
 		doForward(loginResponseReceived);
 		this.numberOfForwardedLoginResponses.mark();
 	}
 
 	/**
-	 * @see vnet.sms.gateway.nettysupport.publish.incoming.IncomingMessagesListener#pingRequestReceived(vnet.sms.common.wme.receive.PingRequestReceivedEvent)
+	 * @see vnet.sms.gateway.nettysupport.publish.incoming.IncomingMessagesListener#pingRequestReceived(vnet.sms.common.wme.receive.ReceivedPingRequestEvent)
 	 */
 	@Override
 	public void pingRequestReceived(
-	        final PingRequestReceivedEvent<ID> pingRequestReceived) {
+	        final ReceivedPingRequestEvent<ID> pingRequestReceived) {
 		// Ignore
 	}
 
 	/**
-	 * @see vnet.sms.gateway.nettysupport.publish.incoming.IncomingMessagesListener#pingResponseReceived(vnet.sms.common.wme.receive.PingResponseReceivedEvent)
+	 * @see vnet.sms.gateway.nettysupport.publish.incoming.IncomingMessagesListener#pingResponseReceived(vnet.sms.common.wme.receive.ReceivedPingRequestAcknowledgementEvent)
 	 */
 	@Override
 	public void pingResponseReceived(
-	        final PingResponseReceivedEvent<ID> pingResponseReceived) {
+	        final ReceivedPingRequestAcknowledgementEvent<ID> pingResponseReceived) {
 		// Ignore
 	}
 

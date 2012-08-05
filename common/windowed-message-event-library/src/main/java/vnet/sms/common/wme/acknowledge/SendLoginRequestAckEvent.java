@@ -12,28 +12,28 @@ import org.jboss.netty.channel.Channel;
 import vnet.sms.common.messages.Acknowledgement;
 import vnet.sms.common.messages.LoginRequest;
 import vnet.sms.common.wme.MessageEventType;
-import vnet.sms.common.wme.receive.LoginRequestReceivedEvent;
+import vnet.sms.common.wme.receive.ReceivedLoginRequestEvent;
 
 /**
  * @author obergner
  * 
  */
-public class ReceivedLoginRequestNackedEvent<ID extends Serializable> extends
-        DownstreamReceivedMessageAcknowledgedEvent<ID, LoginRequest> {
+public class SendLoginRequestAckEvent<ID extends Serializable> extends
+        DownstreamSendMessageAcknowledgementEvent<ID, LoginRequest> {
 
-	public static final <I extends Serializable> ReceivedLoginRequestNackedEvent<I> reject(
-	        final LoginRequestReceivedEvent<I> loginRequestReceivedEvent) {
+	public static final <I extends Serializable> SendLoginRequestAckEvent<I> accept(
+	        final ReceivedLoginRequestEvent<I> loginRequestReceivedEvent) {
 		notNull(loginRequestReceivedEvent,
 		        "Argument 'loginRequestReceivedEvent' must not be null");
-		return new ReceivedLoginRequestNackedEvent<I>(
+		return new SendLoginRequestAckEvent<I>(
 		        loginRequestReceivedEvent.getMessageReference(),
 		        loginRequestReceivedEvent.getChannel(),
 		        loginRequestReceivedEvent.getMessage());
 	}
 
-	private ReceivedLoginRequestNackedEvent(final ID messageReference,
+	private SendLoginRequestAckEvent(final ID messageReference,
 	        final Channel channel, final LoginRequest message) {
-		super(messageReference, MessageEventType.RECEIVED_LOGIN_REQUEST_NACKED,
-		        channel, message, Acknowledgement.nack());
+		super(messageReference, MessageEventType.SEND_LOGIN_REQUEST_ACK,
+		        channel, message, Acknowledgement.ack());
 	}
 }

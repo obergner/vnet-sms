@@ -32,13 +32,13 @@ import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.PingResponse;
 import vnet.sms.common.messages.Sms;
 import vnet.sms.common.wme.MessageEventType;
-import vnet.sms.common.wme.acknowledge.ReceivedSmsAckedContainer;
-import vnet.sms.common.wme.acknowledge.ReceivedSmsNackedContainer;
-import vnet.sms.common.wme.receive.LoginRequestReceivedEvent;
-import vnet.sms.common.wme.receive.LoginResponseReceivedEvent;
-import vnet.sms.common.wme.receive.PingRequestReceivedEvent;
-import vnet.sms.common.wme.receive.PingResponseReceivedEvent;
-import vnet.sms.common.wme.receive.SmsReceivedEvent;
+import vnet.sms.common.wme.acknowledge.SendSmsAckContainer;
+import vnet.sms.common.wme.acknowledge.SendSmsNackContainer;
+import vnet.sms.common.wme.receive.ReceivedLoginRequestAcknowledgementEvent;
+import vnet.sms.common.wme.receive.ReceivedLoginRequestEvent;
+import vnet.sms.common.wme.receive.ReceivedPingRequestAcknowledgementEvent;
+import vnet.sms.common.wme.receive.ReceivedPingRequestEvent;
+import vnet.sms.common.wme.receive.ReceivedSmsEvent;
 import vnet.sms.common.wme.send.SendSmsContainer;
 
 import com.mockrunner.mock.jms.MockObjectMessage;
@@ -71,7 +71,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		final PingRequest message = new PingRequest();
 		final UpstreamMessageEvent upstreamMessageEvent = new UpstreamMessageEvent(
 		        receivingChannel, message, sender);
-		final PingRequestReceivedEvent<Integer> windowedMessageEvent = new PingRequestReceivedEvent<Integer>(
+		final ReceivedPingRequestEvent<Integer> windowedMessageEvent = new ReceivedPingRequestEvent<Integer>(
 		        messageReference, upstreamMessageEvent, message);
 
 		replay(jmsSession, receivingChannel);
@@ -404,7 +404,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		final PingResponse message = PingResponse.accept(pingRequest);
 		final UpstreamMessageEvent upstreamMessageEvent = new UpstreamMessageEvent(
 		        receivingChannel, message, sender);
-		final PingResponseReceivedEvent<Integer> windowedMessageEvent = new PingResponseReceivedEvent<Integer>(
+		final ReceivedPingRequestAcknowledgementEvent<Integer> windowedMessageEvent = new ReceivedPingRequestAcknowledgementEvent<Integer>(
 		        messageReference, upstreamMessageEvent, message);
 
 		replay(jmsSession, receivingChannel);
@@ -491,7 +491,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		        "assertThatToMessageCorrectlyConvertsLoginRequestReceivedEvent");
 		final UpstreamMessageEvent upstreamMessageEvent = new UpstreamMessageEvent(
 		        receivingChannel, message, sender);
-		final LoginRequestReceivedEvent<Integer> windowedMessageEvent = new LoginRequestReceivedEvent<Integer>(
+		final ReceivedLoginRequestEvent<Integer> windowedMessageEvent = new ReceivedLoginRequestEvent<Integer>(
 		        messageReference, upstreamMessageEvent, message);
 
 		replay(jmsSession, receivingChannel);
@@ -579,7 +579,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		final LoginResponse message = LoginResponse.reject(loginRequest);
 		final UpstreamMessageEvent upstreamMessageEvent = new UpstreamMessageEvent(
 		        receivingChannel, message, sender);
-		final LoginResponseReceivedEvent<Integer> windowedMessageEvent = new LoginResponseReceivedEvent<Integer>(
+		final ReceivedLoginRequestAcknowledgementEvent<Integer> windowedMessageEvent = new ReceivedLoginRequestAcknowledgementEvent<Integer>(
 		        messageReference, upstreamMessageEvent, message);
 
 		replay(jmsSession, receivingChannel);
@@ -666,7 +666,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		        "assertThatToMessageCorrectlyConvertsSmsReceivedEvent");
 		final UpstreamMessageEvent upstreamMessageEvent = new UpstreamMessageEvent(
 		        receivingChannel, message, sender);
-		final SmsReceivedEvent<Integer> windowedMessageEvent = new SmsReceivedEvent<Integer>(
+		final ReceivedSmsEvent<Integer> windowedMessageEvent = new ReceivedSmsEvent<Integer>(
 		        messageReference, upstreamMessageEvent, message);
 
 		replay(jmsSession, receivingChannel);
@@ -799,7 +799,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		final ObjectMessage receivedSmsAckedMessage = new MockObjectMessage(
 		        "assertThatFromMessageRejectsReceivedSmsAckMessageWithWrongPayload");
 		receivedSmsAckedMessage.setStringProperty(Headers.EVENT_TYPE,
-		        MessageEventType.RECEIVED_SMS_ACKED.name());
+		        MessageEventType.SEND_SMS_ACK.name());
 
 		this.objectUnderTest.fromMessage(receivedSmsAckedMessage);
 	}
@@ -813,7 +813,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		final ObjectMessage receivedSmsAckedMessage = new MockObjectMessage(
 		        ackedSms);
 		receivedSmsAckedMessage.setStringProperty(Headers.EVENT_TYPE,
-		        MessageEventType.RECEIVED_SMS_ACKED.name());
+		        MessageEventType.SEND_SMS_ACK.name());
 		receivedSmsAckedMessage.setObjectProperty(Headers.MESSAGE_REFERENCE,
 		        "1");
 
@@ -829,7 +829,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		final ObjectMessage receivedSmsAckedMessage = new MockObjectMessage(
 		        ackedSms);
 		receivedSmsAckedMessage.setStringProperty(Headers.EVENT_TYPE,
-		        MessageEventType.RECEIVED_SMS_ACKED.name());
+		        MessageEventType.SEND_SMS_ACK.name());
 		receivedSmsAckedMessage.setIntProperty(Headers.RECEIVING_CHANNEL_ID, 1);
 
 		this.objectUnderTest.fromMessage(receivedSmsAckedMessage);
@@ -847,7 +847,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		final ObjectMessage receivedSmsAckedMessage = new MockObjectMessage(
 		        ackedSms);
 		receivedSmsAckedMessage.setStringProperty(Headers.EVENT_TYPE,
-		        MessageEventType.RECEIVED_SMS_ACKED.name());
+		        MessageEventType.SEND_SMS_ACK.name());
 		receivedSmsAckedMessage.setObjectProperty(Headers.MESSAGE_REFERENCE,
 		        messageReference);
 		receivedSmsAckedMessage.setIntProperty(Headers.RECEIVING_CHANNEL_ID,
@@ -858,8 +858,8 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 
 		assertEquals("fromMessage(" + receivedSmsAckedMessage
 		        + ") did not produce converted message of expected type",
-		        ReceivedSmsAckedContainer.class, converted.getClass());
-		final ReceivedSmsAckedContainer<?> casted = ReceivedSmsAckedContainer.class
+		        SendSmsAckContainer.class, converted.getClass());
+		final SendSmsAckContainer<?> casted = SendSmsAckContainer.class
 		        .cast(converted);
 		assertEquals(
 		        "fromMessage("
@@ -887,7 +887,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		final ObjectMessage receivedSmsNAckedMessage = new MockObjectMessage(
 		        nackedSms);
 		receivedSmsNAckedMessage.setStringProperty(Headers.EVENT_TYPE,
-		        MessageEventType.RECEIVED_SMS_NACKED.name());
+		        MessageEventType.SEND_SMS_NACK.name());
 		receivedSmsNAckedMessage.setObjectProperty(Headers.MESSAGE_REFERENCE,
 		        "1");
 		receivedSmsNAckedMessage.setIntProperty(Headers.ERROR_KEY, 1);
@@ -907,7 +907,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		final ObjectMessage receivedSmsNAckedMessage = new MockObjectMessage(
 		        nackedSms);
 		receivedSmsNAckedMessage.setStringProperty(Headers.EVENT_TYPE,
-		        MessageEventType.RECEIVED_SMS_NACKED.name());
+		        MessageEventType.SEND_SMS_NACK.name());
 		receivedSmsNAckedMessage
 		        .setIntProperty(Headers.RECEIVING_CHANNEL_ID, 1);
 		receivedSmsNAckedMessage.setIntProperty(Headers.ERROR_KEY, 1);
@@ -927,7 +927,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		final ObjectMessage receivedSmsNAckedMessage = new MockObjectMessage(
 		        nackedSms);
 		receivedSmsNAckedMessage.setStringProperty(Headers.EVENT_TYPE,
-		        MessageEventType.RECEIVED_SMS_NACKED.name());
+		        MessageEventType.SEND_SMS_NACK.name());
 		receivedSmsNAckedMessage
 		        .setIntProperty(Headers.RECEIVING_CHANNEL_ID, 1);
 		receivedSmsNAckedMessage
@@ -949,7 +949,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		final ObjectMessage receivedSmsNAckedMessage = new MockObjectMessage(
 		        nackedSms);
 		receivedSmsNAckedMessage.setStringProperty(Headers.EVENT_TYPE,
-		        MessageEventType.RECEIVED_SMS_NACKED.name());
+		        MessageEventType.SEND_SMS_NACK.name());
 		receivedSmsNAckedMessage
 		        .setIntProperty(Headers.RECEIVING_CHANNEL_ID, 1);
 		receivedSmsNAckedMessage
@@ -974,7 +974,7 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 		final ObjectMessage receivedSmsNAckedMessage = new MockObjectMessage(
 		        nackedSms);
 		receivedSmsNAckedMessage.setStringProperty(Headers.EVENT_TYPE,
-		        MessageEventType.RECEIVED_SMS_NACKED.name());
+		        MessageEventType.SEND_SMS_NACK.name());
 		receivedSmsNAckedMessage.setObjectProperty(Headers.MESSAGE_REFERENCE,
 		        messageReference);
 		receivedSmsNAckedMessage.setIntProperty(Headers.RECEIVING_CHANNEL_ID,
@@ -988,8 +988,8 @@ public class WindowedMessageEventToJmsMessageConverterTest {
 
 		assertEquals("fromMessage(" + receivedSmsNAckedMessage
 		        + ") did not produce converted message of expected type",
-		        ReceivedSmsNackedContainer.class, converted.getClass());
-		final ReceivedSmsNackedContainer<?> casted = ReceivedSmsNackedContainer.class
+		        SendSmsNackContainer.class, converted.getClass());
+		final SendSmsNackContainer<?> casted = SendSmsNackContainer.class
 		        .cast(converted);
 		assertEquals(
 		        "fromMessage("

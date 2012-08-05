@@ -14,13 +14,13 @@ import vnet.sms.common.wme.MessageEventType;
  * @author obergner
  * 
  */
-public class PingRequestReceivedEvent<ID extends Serializable> extends
+public class ReceivedPingRequestEvent<ID extends Serializable> extends
         UpstreamWindowedMessageEvent<ID, PingRequest> {
 
-	public PingRequestReceivedEvent(final ID messageReference,
+	public ReceivedPingRequestEvent(final ID messageReference,
 	        final UpstreamMessageEvent upstreamMessageEvent,
 	        final PingRequest pingRequest) {
-		super(messageReference, MessageEventType.PING_REQUEST_RECEIVED,
+		super(messageReference, MessageEventType.RECEIVED_PING_REQUEST,
 		        upstreamMessageEvent, pingRequest);
 	}
 }

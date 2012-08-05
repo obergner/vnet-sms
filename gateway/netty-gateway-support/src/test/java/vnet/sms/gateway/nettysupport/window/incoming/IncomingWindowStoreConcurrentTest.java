@@ -25,7 +25,7 @@ import org.junit.Test;
 import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.messages.Msisdn;
 import vnet.sms.common.messages.Sms;
-import vnet.sms.common.wme.receive.SmsReceivedEvent;
+import vnet.sms.common.wme.receive.ReceivedSmsEvent;
 
 /**
  * @author obergner
@@ -131,7 +131,7 @@ public class IncomingWindowStoreConcurrentTest {
 					}
 
 					final boolean success = this.objectUnderTest
-					        .tryAcquireWindow(new SmsReceivedEvent<Long>(
+					        .tryAcquireWindow(new ReceivedSmsEvent<Long>(
 					                next.id, new UpstreamMessageEvent(
 					                        mockChannel, next, null),
 					                next.message));

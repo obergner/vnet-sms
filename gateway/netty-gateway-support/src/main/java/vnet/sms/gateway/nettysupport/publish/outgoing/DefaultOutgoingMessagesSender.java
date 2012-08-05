@@ -29,8 +29,8 @@ import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.messages.Msisdn;
 import vnet.sms.common.messages.Sms;
 import vnet.sms.common.wme.acknowledge.MessageAcknowledgementContainer;
-import vnet.sms.common.wme.acknowledge.ReceivedSmsAckedContainer;
-import vnet.sms.common.wme.acknowledge.ReceivedSmsNackedContainer;
+import vnet.sms.common.wme.acknowledge.SendSmsAckContainer;
+import vnet.sms.common.wme.acknowledge.SendSmsNackContainer;
 import vnet.sms.common.wme.send.SendSmsContainer;
 import vnet.sms.gateway.nettysupport.Jmx;
 
@@ -219,7 +219,7 @@ public class DefaultOutgoingMessagesSender<ID extends Serializable> implements
 	}
 
 	@Override
-	public ChannelFuture ackReceivedSms(final ReceivedSmsAckedContainer<ID> ack)
+	public ChannelFuture ackReceivedSms(final SendSmsAckContainer<ID> ack)
 	        throws Exception {
 		notNull(ack, "Argument 'ack' must not be null");
 		try {
@@ -300,7 +300,7 @@ public class DefaultOutgoingMessagesSender<ID extends Serializable> implements
 
 	@Override
 	public ChannelFuture nackReceivedSms(
-	        final ReceivedSmsNackedContainer<ID> nack) throws Exception {
+	        final SendSmsNackContainer<ID> nack) throws Exception {
 		notNull(nack, "Argument 'nack' must not be null");
 		try {
 			this.log.debug("Sending {} ...", nack);

@@ -13,8 +13,8 @@ import javax.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import vnet.sms.common.wme.acknowledge.ReceivedSmsAckedContainer;
-import vnet.sms.common.wme.acknowledge.ReceivedSmsNackedContainer;
+import vnet.sms.common.wme.acknowledge.SendSmsAckContainer;
+import vnet.sms.common.wme.acknowledge.SendSmsNackContainer;
 import vnet.sms.common.wme.send.SendSmsContainer;
 import vnet.sms.gateway.nettysupport.publish.outgoing.OutgoingMessagesSender;
 import vnet.sms.gateway.server.framework.Jmx;
@@ -71,13 +71,13 @@ public class OutgoingMessagesSendingJmsMessageListener<ID extends Serializable> 
 			if (outgoingMessage instanceof SendSmsContainer) {
 				this.outgoingMessagesSender.sendSms(SendSmsContainer.class
 				        .cast(outgoingMessage));
-			} else if (outgoingMessage instanceof ReceivedSmsAckedContainer) {
+			} else if (outgoingMessage instanceof SendSmsAckContainer) {
 				this.outgoingMessagesSender
-				        .ackReceivedSms(ReceivedSmsAckedContainer.class
+				        .ackReceivedSms(SendSmsAckContainer.class
 				                .cast(outgoingMessage));
-			} else if (outgoingMessage instanceof ReceivedSmsNackedContainer) {
+			} else if (outgoingMessage instanceof SendSmsNackContainer) {
 				this.outgoingMessagesSender
-				        .nackReceivedSms(ReceivedSmsNackedContainer.class
+				        .nackReceivedSms(SendSmsNackContainer.class
 				                .cast(outgoingMessage));
 			} else {
 				throw new IllegalArgumentException("Unsupported message type ["
