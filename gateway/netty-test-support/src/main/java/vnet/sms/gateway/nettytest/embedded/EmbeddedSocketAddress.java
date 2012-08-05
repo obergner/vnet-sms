@@ -13,28 +13,11 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-package vnet.sms.gateway.nettytest;
+package vnet.sms.gateway.nettytest.embedded;
 
-import org.jboss.netty.channel.Channel;
-import org.jboss.netty.channel.ChannelFactory;
-import org.jboss.netty.channel.ChannelPipeline;
+import java.net.SocketAddress;
 
-/**
- */
-class NullChannelFactory implements ChannelFactory {
+class EmbeddedSocketAddress extends SocketAddress {
 
-	static final ChannelFactory	INSTANCE	= new NullChannelFactory();
-
-	private NullChannelFactory() {
-	}
-
-	@Override
-	public Channel newChannel(final ChannelPipeline pipeline) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public void releaseExternalResources() {
-		// No external resources
-	}
+	private static final long	serialVersionUID	= 1400788804624980619L;
 }

@@ -7,8 +7,8 @@ import org.slf4j.MDC;
 
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.gateway.nettysupport.test.ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler;
-import vnet.sms.gateway.nettytest.ChannelPipelineEmbedder;
-import vnet.sms.gateway.nettytest.DefaultChannelPipelineEmbedder;
+import vnet.sms.gateway.nettytest.embedded.ChannelPipelineEmbedder;
+import vnet.sms.gateway.nettytest.embedded.DefaultChannelPipelineEmbedder;
 
 public class ChannelContextLoggingUpstreamChannelHandlerTest {
 

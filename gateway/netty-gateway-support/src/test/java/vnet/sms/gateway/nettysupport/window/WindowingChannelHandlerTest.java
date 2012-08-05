@@ -20,9 +20,9 @@ import vnet.sms.common.wme.acknowledge.SendSmsNackEvent;
 import vnet.sms.common.wme.receive.ReceivedSmsEvent;
 import vnet.sms.gateway.nettysupport.test.ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler;
 import vnet.sms.gateway.nettysupport.window.incoming.IncomingWindowStore;
-import vnet.sms.gateway.nettytest.ChannelEventFilter;
-import vnet.sms.gateway.nettytest.ChannelPipelineEmbedder;
-import vnet.sms.gateway.nettytest.DefaultChannelPipelineEmbedder;
+import vnet.sms.gateway.nettytest.embedded.ChannelEventFilter;
+import vnet.sms.gateway.nettytest.embedded.ChannelPipelineEmbedder;
+import vnet.sms.gateway.nettytest.embedded.DefaultChannelPipelineEmbedder;
 
 import com.yammer.metrics.Metrics;
 

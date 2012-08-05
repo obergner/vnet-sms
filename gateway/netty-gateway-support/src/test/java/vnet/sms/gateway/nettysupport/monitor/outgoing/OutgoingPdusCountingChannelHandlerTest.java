@@ -6,8 +6,8 @@ import org.junit.Test;
 
 import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.messages.PingRequest;
-import vnet.sms.gateway.nettytest.ChannelPipelineEmbedder;
-import vnet.sms.gateway.nettytest.DefaultChannelPipelineEmbedder;
+import vnet.sms.gateway.nettytest.embedded.ChannelPipelineEmbedder;
+import vnet.sms.gateway.nettytest.embedded.DefaultChannelPipelineEmbedder;
 
 import com.yammer.metrics.Metrics;
 

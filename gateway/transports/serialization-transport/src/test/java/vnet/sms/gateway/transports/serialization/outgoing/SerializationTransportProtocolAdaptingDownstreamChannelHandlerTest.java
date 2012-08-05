@@ -27,8 +27,8 @@ import vnet.sms.common.wme.receive.ReceivedLoginRequestEvent;
 import vnet.sms.common.wme.send.SendPingRequestEvent;
 import vnet.sms.common.wme.send.SendSmsContainer;
 import vnet.sms.common.wme.send.SendSmsEvent;
-import vnet.sms.gateway.nettytest.ChannelPipelineEmbedder;
-import vnet.sms.gateway.nettytest.DefaultChannelPipelineEmbedder;
+import vnet.sms.gateway.nettytest.embedded.ChannelPipelineEmbedder;
+import vnet.sms.gateway.nettytest.embedded.DefaultChannelPipelineEmbedder;
 import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;
 
 public class SerializationTransportProtocolAdaptingDownstreamChannelHandlerTest {

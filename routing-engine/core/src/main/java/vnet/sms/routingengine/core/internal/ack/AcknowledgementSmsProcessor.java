@@ -61,7 +61,7 @@ public class AcknowledgementSmsProcessor implements Processor {
 			                throws Exception {
 				        newExchange.getIn().copyFrom(exchange.getIn());
 				        newExchange.getIn().setHeader(Headers.EVENT_TYPE,
-				                MessageEventType.RECEIVED_SMS_ACKED.name());
+				                MessageEventType.SEND_SMS_ACK.name());
 				        AcknowledgementSmsProcessor.this.log
 				                .debug("Asynchronously sent ACK [{}] to endpoint [{}]",
 				                        newExchange.getIn(),

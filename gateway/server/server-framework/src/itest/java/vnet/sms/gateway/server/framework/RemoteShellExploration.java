@@ -1,5 +1,6 @@
 package vnet.sms.gateway.server.framework;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +13,7 @@ import vnet.sms.common.messages.Msisdn;
 import vnet.sms.common.messages.Sms;
 import vnet.sms.gateway.server.framework.test.IntegrationTestClient;
 
+@Ignore("To be executed manually")
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles("itest")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)

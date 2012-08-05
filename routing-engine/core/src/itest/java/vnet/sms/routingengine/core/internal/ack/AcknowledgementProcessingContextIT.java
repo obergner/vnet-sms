@@ -32,7 +32,7 @@ public class AcknowledgementProcessingContextIT extends
 		assertEquals(
 		        "Expected AcknowledgementSmsProcessor to wrap the received SMS in an Ack message "
 		                + "and send it back, yet the exchange received does not carry the appropriate event type header",
-		        MessageEventType.RECEIVED_SMS_ACKED,
+		        MessageEventType.SEND_SMS_ACK,
 		        MessageEventType.valueOf(eventTypeHeader));
 
 		final Sms actualReceivedSms = receivedAck.getIn().getBody(Sms.class);

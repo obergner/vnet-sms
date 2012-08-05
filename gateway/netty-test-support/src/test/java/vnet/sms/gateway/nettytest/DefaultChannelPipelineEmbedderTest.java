@@ -18,6 +18,10 @@ import org.jboss.netty.logging.InternalLoggerFactory;
 import org.jboss.netty.logging.Slf4JLoggerFactory;
 import org.junit.Test;
 
+import vnet.sms.gateway.nettytest.embedded.ChannelEventFilter;
+import vnet.sms.gateway.nettytest.embedded.DefaultChannelPipelineEmbedder;
+import vnet.sms.gateway.nettytest.embedded.MessageEventFilter;
+
 public class DefaultChannelPipelineEmbedderTest {
 
 	static {

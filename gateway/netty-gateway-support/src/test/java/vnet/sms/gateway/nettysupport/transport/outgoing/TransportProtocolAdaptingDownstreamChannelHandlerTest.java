@@ -14,8 +14,8 @@ import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.wme.WindowedMessageEvent;
 import vnet.sms.common.wme.send.SendPingRequestEvent;
 import vnet.sms.gateway.nettysupport.test.ObjectSerializationTransportProtocolAdaptingDownstreamChannelHandler;
-import vnet.sms.gateway.nettytest.ChannelPipelineEmbedder;
-import vnet.sms.gateway.nettytest.DefaultChannelPipelineEmbedder;
+import vnet.sms.gateway.nettytest.embedded.ChannelPipelineEmbedder;
+import vnet.sms.gateway.nettytest.embedded.DefaultChannelPipelineEmbedder;
 
 public class TransportProtocolAdaptingDownstreamChannelHandlerTest {
 

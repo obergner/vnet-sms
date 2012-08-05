@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-package vnet.sms.gateway.nettytest;
+package vnet.sms.gateway.nettytest.embedded;
 
 import static org.jboss.netty.channel.Channels.close;
 import static org.jboss.netty.channel.Channels.fireChannelBound;
@@ -142,7 +142,7 @@ public class DefaultChannelPipelineEmbedder implements ChannelPipelineEmbedder {
 			this.pipeline.addLast("EXCEPTIONS-RECORDER",
 			        new ExceptionRecordingUpstreamChannelHandler());
 			this.pipeline.addLast("SENT-MESSAGES-RECORDER",
-			        new ReceivedMessagesRecordingUpstreamChannelHandler());
+			        new UpstreamChannelEventsRecordingChannelHandler());
 		} catch (final Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -152,7 +152,7 @@ public class DefaultChannelPipelineEmbedder implements ChannelPipelineEmbedder {
 		pipe.addLast("EXCEPTIONS-RECORDER",
 		        new ExceptionRecordingUpstreamChannelHandler());
 		pipe.addLast("SENT-MESSAGES-RECORDER",
-		        new ReceivedMessagesRecordingUpstreamChannelHandler());
+		        new UpstreamChannelEventsRecordingChannelHandler());
 	}
 
 	/**
@@ -423,10 +423,10 @@ public class DefaultChannelPipelineEmbedder implements ChannelPipelineEmbedder {
 		}
 	}
 
-	private final class ReceivedMessagesRecordingUpstreamChannelHandler
-	        implements ChannelUpstreamHandler {
+	private final class UpstreamChannelEventsRecordingChannelHandler implements
+	        ChannelUpstreamHandler {
 
-		ReceivedMessagesRecordingUpstreamChannelHandler() {
+		UpstreamChannelEventsRecordingChannelHandler() {
 		}
 
 		@Override

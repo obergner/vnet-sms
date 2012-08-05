@@ -1,7 +1,7 @@
 /**
  * 
  */
-package vnet.sms.gateway.nettytest;
+package vnet.sms.gateway.nettytest.embedded;
 
 import org.jboss.netty.channel.ChannelEvent;
 

@@ -20,10 +20,10 @@ import vnet.sms.common.wme.acknowledge.SendLoginRequestNackEvent;
 import vnet.sms.common.wme.receive.ReceivedPingRequestEvent;
 import vnet.sms.gateway.nettysupport.MessageProcessingContext;
 import vnet.sms.gateway.nettysupport.test.ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler;
-import vnet.sms.gateway.nettytest.ChannelEventFilter;
-import vnet.sms.gateway.nettytest.ChannelPipelineEmbedder;
-import vnet.sms.gateway.nettytest.DefaultChannelPipelineEmbedder;
-import vnet.sms.gateway.nettytest.MessageEventFilter;
+import vnet.sms.gateway.nettytest.embedded.ChannelEventFilter;
+import vnet.sms.gateway.nettytest.embedded.ChannelPipelineEmbedder;
+import vnet.sms.gateway.nettytest.embedded.DefaultChannelPipelineEmbedder;
+import vnet.sms.gateway.nettytest.embedded.MessageEventFilter;
 
 public class IncomingLoginRequestsChannelHandlerTest {
 

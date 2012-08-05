@@ -5,8 +5,8 @@ import static org.junit.Assert.assertEquals;
 import org.jboss.netty.buffer.ChannelBuffers;
 import org.junit.Test;
 
-import vnet.sms.gateway.nettytest.ChannelPipelineEmbedder;
-import vnet.sms.gateway.nettytest.DefaultChannelPipelineEmbedder;
+import vnet.sms.gateway.nettytest.embedded.ChannelPipelineEmbedder;
+import vnet.sms.gateway.nettytest.embedded.DefaultChannelPipelineEmbedder;
 
 import com.yammer.metrics.Metrics;
 
