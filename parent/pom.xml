@@ -129,6 +129,7 @@
         <plugins.buildnumber.version>1.0</plugins.buildnumber.version>
         <plugins.exec.version>1.2.1</plugins.exec.version>
         <plugins.karaf.version>2.2.5</plugins.karaf.version>
+        <plugins.incremental-build.version>1.6</plugins.incremental-build.version>
 		<!-- ######################################################### -->
 		<!-- Reporting plugin versions -->
 		<!-- ######################################################### -->
@@ -1161,6 +1162,18 @@
                     <version>${plugins.resources.version}</version>
                 </plugin>
                 <plugin>
+                    <groupId>net.java.maven-incremental-build</groupId>
+                    <artifactId>incremental-build-plugin</artifactId>
+                    <version>${plugins.incremental-build.version}</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>incremental-build</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>${plugins.compiler.version}</version>
@@ -1181,26 +1194,6 @@
                     </configuration>
                 </plugin>
                 <plugin>
-					<!-- | Because of a bug that sometimes causes wrong classpath ordering, 
-						| we have to use a maven-surefire-plugin version >= 2.3.1. | See | SUREFIRE-61 -->
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>${plugins.surefire.version}</version>
-                    <inherited>true</inherited>
-                    <configuration>
-						<!-- Don't fork VM in order to be able to debug test cases -->
-						<!-- forkMode>never</forkMode -->
-                        <forkMode>once</forkMode>
-						<!-- We need maven to properly set the "java.class.path" system property 
-							since ApacheDS' ResourceMap.getResources( pattern ) inspects this system 
-							property to extract the list of schema files to extract out of the various 
-							ApacheDS jars. See: http://maven.apache.org/plugins/maven-surefire-plugin/examples/class-loading.html 
-							<useManifestOnlyJar>false</useManifestOnlyJar> <systemPropertyVariables> 
-							<workingDirectory>${project.build.directory}/apacheds-work</workingDirectory> 
-							</systemPropertyVariables> -->
-                    </configuration>
-                </plugin>
-                <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
                     <version>${plugins.build-helper.version}</version>
@@ -1217,7 +1210,7 @@
                             </configuration>
                         </execution>
                         <execution>
-                            <id>add-test-source</id>
+                            <id>add-itest-source</id>
                             <phase>validate</phase>
                             <goals>
                                 <goal>add-test-source</goal>
@@ -1229,7 +1222,7 @@
                             </configuration>
                         </execution>
                         <execution>
-                            <id>add-test-resource</id>
+                            <id>add-itest-resource</id>
                             <phase>validate</phase>
                             <goals>
                                 <goal>add-test-resource</goal>
@@ -1241,75 +1234,6 @@
                                     </resource>
                                 </resources>
                             </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>${plugins.failsafe.version}</version>
-                    <inherited>true</inherited>
-                    <configuration>
-                        <testSourceDirectory>${basedir}/src/itest/java</testSourceDirectory>
-                        <forkMode>once</forkMode>
-						<!-- We need maven to properly set the "java.class.path" system property 
-							since ApacheDS' ResourceMap.getResources( pattern ) inspects this system 
-							property to extract the list of schema files to extract out of the various 
-							ApacheDS jars. See: http://maven.apache.org/plugins/maven-surefire-plugin/examples/class-loading.html 
-							<useManifestOnlyJar>false</useManifestOnlyJar> <systemPropertyVariables> 
-							<workingDirectory>${project.build.directory}/apacheds-work</workingDirectory> 
-							</systemPropertyVariables> -->
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <id>run-integration-tests</id>
-                            <phase>integration-test</phase>
-                            <goals>
-                                <goal>integration-test</goal>
-                            </goals>
-                        </execution>
-                        <execution>
-                            <id>verify</id>
-                            <phase>verify</phase>
-                            <goals>
-                                <goal>verify</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>cobertura-maven-plugin</artifactId>
-                    <version>${plugins.cobertura.version}</version>
-                    <configuration>
-                        <aggregate>true</aggregate>
-                        <formats>
-                            <format>html</format>
-                            <format>xml</format>
-                        </formats>
-                        <instrumentation>
-                            <includes>
-                                <include>**/*.class</include>
-                            </includes>
-                            <excludes>
-                                <exclude>**/*Test.class</exclude>
-                            </excludes>
-                        </instrumentation>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <id>cobertura-clean</id>
-                            <phase>pre-site</phase>
-                            <goals>
-                                <goal>clean</goal>
-                            </goals>
-                        </execution>
-                        <execution>
-                            <id>cobertura-cobertura</id>
-                            <phase>site</phase>
-                            <goals>
-                                <goal>cobertura</goal>
-                            </goals>
                         </execution>
                     </executions>
                 </plugin>
@@ -1341,52 +1265,6 @@
                     </configuration>
                 </plugin>
                 <plugin>
-                    <groupId>org.apache.felix</groupId>
-                    <artifactId>maven-bundle-plugin</artifactId>
-                    <version>${plugins.bundle.version}</version>
-                    <extensions>true</extensions>
-                    <inherited>true</inherited>
-                    <configuration>
-                        <archive>
-                            <index>true</index>
-                            <manifest>
-                                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                            </manifest>
-                            <manifestEntries>
-								<!-- FIXME: These properties do not get substituted in the generated 
-									MANIFEST.MF. They used to when still using maven-jar-plugin. -->
-                                <Implementation-MajorVersion>${parsedVersion.majorVersion}</Implementation-MajorVersion>
-                                <Implementation-MinorVersion>${parsedVersion.minorVersion}</Implementation-MinorVersion>
-                                <Implementation-IncrementalVersion>${parsedVersion.incrementalVersion}</Implementation-IncrementalVersion>
-                                <Implementation-Qualifier>${parsedVersion.qualifier}</Implementation-Qualifier>
-                                <Implementation-BuildNumber>${buildNumber}</Implementation-BuildNumber>
-                            </manifestEntries>
-                        </archive>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>${plugins.source.version}</version>
-                    <executions>
-                        <execution>
-                            <id>create-source-jar</id>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>jar</goal>
-                            </goals>
-                        </execution>
-                        <execution>
-                            <id>create-test-source-jar</id>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>test-jar</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
                     <version>${plugins.dependency.version}</version>
@@ -1400,16 +1278,6 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
                     <version>${plugins.assembly.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-install-plugin</artifactId>
-                    <version>${plugins.install.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-deploy-plugin</artifactId>
-                    <version>${plugins.deploy.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -1438,20 +1306,16 @@
                 <artifactId>maven-resources-plugin</artifactId>
             </plugin>
             <plugin>
+                <groupId>net.java.maven-incremental-build</groupId>
+                <artifactId>incremental-build-plugin</artifactId>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-            </plugin>
-            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -1462,24 +1326,8 @@
                 <artifactId>buildnumber-maven-plugin</artifactId>
             </plugin>
             <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-install-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -1487,96 +1335,339 @@
             </plugin>
         </plugins>
     </build>
+    
+    <!-- =================================================== -->
+    <!-- Profiles -->
+    <!-- =================================================== -->
 
-	<!-- =================================================== -->
-	<!-- Project Reporting -->
-	<!-- =================================================== -->
+    <profiles>
+        <profile>
+            <id>committest-stage</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
 
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>${plugins.surefire-reports.version}</version>
-                <configuration>
-                    <aggregate>true</aggregate>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>cobertura-maven-plugin</artifactId>
-                <version>${plugins.cobertura.version}</version>
-                <configuration>
-                    <aggregate>true</aggregate>
-                    <formats>
-                        <format>html</format>
-                        <format>xml</format>
-                    </formats>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>${plugins.javadoc.version}</version>
-                <configuration>
-                    <linksource>true</linksource>
-                    <show>package</show>
-                </configuration>
-                <reportSets>
-                    <reportSet>
-                        <id>per-module</id>
-                        <reports>
-                            <report>javadoc</report>
-                        </reports>
-                    </reportSet>
-                    <reportSet>
-                        <id>aggregate</id>
-                        <reports>
-                            <report>aggregate</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jxr-plugin</artifactId>
-                <version>${plugins.jxr.version}</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-pmd-plugin</artifactId>
-                <version>${plugins.pmd.version}</version>
-                <configuration>
-                    <aggregate>true</aggregate>
-                    <targetJdk>${compiler.source}</targetJdk>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>${plugins.project-info-reports.version}</version>
-                <configuration>
-					<!-- Speeds up generation of 'dependencies' report IMMENSELY -->
-                    <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
-                </configuration>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <report>index</report>
-                            <report>dependencies</report>
-                            <report>project-team</report>
-                            <report>cim</report>
-                            <report>license</report>
-                            <report>scm</report>
-                            <report>plugin-management</report>
-                            <report>plugins</report>
-                            <report>summary</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-        </plugins>
-    </reporting>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-source-plugin</artifactId>
+                            <version>${plugins.source.version}</version>
+                            <executions>
+                                <execution>
+                                    <id>create-source-jar</id>
+                                    <phase>package</phase>
+                                    <goals>
+                                        <goal>jar</goal>
+                                    </goals>
+                                </execution>
+                                <execution>
+                                    <id>create-test-source-jar</id>
+                                    <phase>package</phase>
+                                    <goals>
+                                        <goal>test-jar</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                        <plugin>
+                            <!-- | Because of a bug that sometimes causes wrong classpath ordering, 
+                                | we have to use a maven-surefire-plugin version >= 2.3.1. | See | SUREFIRE-61 -->
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-surefire-plugin</artifactId>
+                            <version>${plugins.surefire.version}</version>
+                            <inherited>true</inherited>
+                            <configuration>
+                                <!-- Don't fork VM in order to be able to debug test cases -->
+                                <!-- forkMode>never</forkMode -->
+                                <forkMode>once</forkMode>
+                                <!-- We need maven to properly set the "java.class.path" system property 
+                                    since ApacheDS' ResourceMap.getResources( pattern ) inspects this system 
+                                    property to extract the list of schema files to extract out of the various 
+                                    ApacheDS jars. See: http://maven.apache.org/plugins/maven-surefire-plugin/examples/class-loading.html 
+                                    <useManifestOnlyJar>false</useManifestOnlyJar> <systemPropertyVariables> 
+                                    <workingDirectory>${project.build.directory}/apacheds-work</workingDirectory> 
+                                    </systemPropertyVariables> -->
+                            </configuration>
+                        </plugin>
+                        <plugin>
+                            <groupId>org.apache.felix</groupId>
+                            <artifactId>maven-bundle-plugin</artifactId>
+                            <version>${plugins.bundle.version}</version>
+                            <extensions>true</extensions>
+                            <inherited>true</inherited>
+                            <configuration>
+                                <archive>
+                                    <index>true</index>
+                                    <manifest>
+                                        <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                                        <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                    </manifest>
+                                    <manifestEntries>
+                                        <!-- FIXME: These properties do not get substituted in the generated 
+                                            MANIFEST.MF. They used to when still using maven-jar-plugin. -->
+                                        <Implementation-MajorVersion>${parsedVersion.majorVersion}</Implementation-MajorVersion>
+                                        <Implementation-MinorVersion>${parsedVersion.minorVersion}</Implementation-MinorVersion>
+                                        <Implementation-IncrementalVersion>${parsedVersion.incrementalVersion}</Implementation-IncrementalVersion>
+                                        <Implementation-Qualifier>${parsedVersion.qualifier}</Implementation-Qualifier>
+                                        <Implementation-BuildNumber>${buildNumber}</Implementation-BuildNumber>
+                                    </manifestEntries>
+                                </archive>
+                            </configuration>
+                        </plugin>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-install-plugin</artifactId>
+                            <version>${plugins.install.version}</version>
+                        </plugin>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-deploy-plugin</artifactId>
+                            <version>${plugins.deploy.version}</version>
+                        </plugin>
+                        <!-- REPORTING PLUGINS -->
+                        <plugin>
+                            <!-- TODO: Find out if configuring a report plugin's executions in pluginManagement has any effect -->
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-surefire-report-plugin</artifactId>
+                            <version>${plugins.surefire-reports.version}</version>
+                            <executions>
+                                <execution>
+                                    <id>generate-surefire-reports</id>
+                                    <phase>surefire</phase>
+                                    <goals>
+                                        <goal>report-only</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                        <plugin>
+                            <groupId>org.codehaus.mojo</groupId>
+                            <artifactId>cobertura-maven-plugin</artifactId>
+                            <version>${plugins.cobertura.version}</version>
+                            <executions>
+                                <execution>
+                                    <id>cobertura-clean</id>
+                                    <phase>pre-site</phase>
+                                    <goals>
+                                        <goal>clean</goal>
+                                    </goals>
+                                </execution>
+                                <execution>
+                                    <id>cobertura-cobertura</id>
+                                    <phase>site</phase>
+                                    <goals>
+                                        <goal>cobertura</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>cobertura-maven-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.felix</groupId>
+                        <artifactId>maven-bundle-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-install-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-deploy-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+
+            <reporting>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-report-plugin</artifactId>
+                        <version>${plugins.surefire-reports.version}</version>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>${plugins.javadoc.version}</version>
+                        <configuration>
+                            <linksource>true</linksource>
+                            <show>package</show>
+                        </configuration>
+                        <reportSets>
+                            <reportSet>
+                                <id>per-module</id>
+                                <reports>
+                                    <report>javadoc</report>
+                                </reports>
+                            </reportSet>
+                        </reportSets>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>cobertura-maven-plugin</artifactId>
+                        <version>${plugins.cobertura.version}</version>
+                        <configuration>
+                            <aggregate>false</aggregate>
+                            <formats>
+                                <format>html</format>
+                                <format>xml</format>
+                            </formats>
+                            <instrumentation>
+                                <includes>
+                                    <include>**/*.class</include>
+                                </includes>
+                                <excludes>
+                                    <exclude>**/*Test.class</exclude>
+                                </excludes>
+                            </instrumentation>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jxr-plugin</artifactId>
+                        <version>${plugins.jxr.version}</version>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-pmd-plugin</artifactId>
+                        <version>${plugins.pmd.version}</version>
+                        <configuration>
+                            <aggregate>true</aggregate>
+                            <targetJdk>${compiler.source}</targetJdk>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-project-info-reports-plugin</artifactId>
+                        <version>${plugins.project-info-reports.version}</version>
+                        <configuration>
+                            <!-- Speeds up generation of 'dependencies' report IMMENSELY -->
+                            <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+                        </configuration>
+                        <reportSets>
+                            <reportSet>
+                                <reports>
+                                    <report>index</report>
+                                    <report>dependencies</report>
+                                    <report>project-team</report>
+                                    <report>cim</report>
+                                    <report>license</report>
+                                    <report>scm</report>
+                                    <report>plugin-management</report>
+                                    <report>plugins</report>
+                                    <report>summary</report>
+                                </reports>
+                            </reportSet>
+                        </reportSets>
+                    </plugin>
+                </plugins>
+            </reporting>
+        </profile>
+
+        <profile>
+            <id>integrationtest-stage</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <!-- Do not run unit test during integrationtest stage -->
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-surefire-plugin</artifactId>
+                            <version>${plugins.surefire.version}</version>
+                            <inherited>true</inherited>
+                            <configuration>
+                                <skip>true</skip>
+                            </configuration>
+                        </plugin>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-failsafe-plugin</artifactId>
+                            <version>${plugins.failsafe.version}</version>
+                            <inherited>true</inherited>
+                            <configuration>
+                                <testSourceDirectory>${basedir}/src/itest/java</testSourceDirectory>
+                                <forkMode>once</forkMode>
+                                <!-- We need maven to properly set the "java.class.path" system property 
+                                    since ApacheDS' ResourceMap.getResources( pattern ) inspects this system 
+                                    property to extract the list of schema files to extract out of the various 
+                                    ApacheDS jars. See: http://maven.apache.org/plugins/maven-surefire-plugin/examples/class-loading.html 
+                                    <useManifestOnlyJar>false</useManifestOnlyJar> <systemPropertyVariables> 
+                                    <workingDirectory>${project.build.directory}/apacheds-work</workingDirectory> 
+                                    </systemPropertyVariables> -->
+                            </configuration>
+                            <executions>
+                                <execution>
+                                    <id>run-integration-tests</id>
+                                    <phase>integration-test</phase>
+                                    <goals>
+                                        <goal>integration-test</goal>
+                                    </goals>
+                                </execution>
+                                <execution>
+                                    <id>verify</id>
+                                    <phase>verify</phase>
+                                    <goals>
+                                        <goal>verify</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                        <plugin>
+                            <groupId>org.apache.felix</groupId>
+                            <artifactId>maven-bundle-plugin</artifactId>
+                            <version>${plugins.bundle.version}</version>
+                            <extensions>true</extensions>
+                            <!-- HACK: We want to skip packaging during integrationtest stage -->
+                            <executions>
+                                <execution>
+                                    <id>skip-packaging</id>
+                                    <phase>DOES-NOT-EXIST</phase>
+                                    <goals>
+                                        <goal>bundle</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+                <plugins>
+                    <plugin>
+                        <!-- Do not run unit test during integrationtest stage: see above -->
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.felix</groupId>
+                        <artifactId>maven-bundle-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+
+        </profile>
+    </profiles>
 
 	<!-- =================================================== -->
 	<!-- Project modules -->
