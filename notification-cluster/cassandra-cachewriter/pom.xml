@@ -48,6 +48,16 @@
             <artifactId>astyanax</artifactId>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.cassandra</groupId>
+            <artifactId>cassandra-all</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cassandra</groupId>
+            <artifactId>cassandra-thrift</artifactId>
+            <scope>compile</scope>
+        </dependency>
 		<!-- *************************************************************** -->
 		<!-- Runtime -->
 		<!-- *************************************************************** -->

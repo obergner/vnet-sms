@@ -2,9 +2,9 @@ package vnet.sms.gateway.nettysupport.test;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.messages.LoginRequest;
 import vnet.sms.common.messages.LoginResponse;
-import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.PingResponse;
 import vnet.sms.common.messages.Sms;
@@ -42,8 +42,7 @@ public class ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler
 	}
 
 	@Override
-	protected LoginRequest convertPduToLoginRequest(
-	        final GsmPdu loginRequestPdu) {
+	protected LoginRequest convertPduToLoginRequest(final GsmPdu loginRequestPdu) {
 		return (LoginRequest) loginRequestPdu;
 	}
 
@@ -59,8 +58,7 @@ public class ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler
 	}
 
 	@Override
-	protected PingResponse convertPduToPingResponse(
-	        final GsmPdu pingResponsePdu) {
+	protected PingResponse convertPduToPingResponse(final GsmPdu pingResponsePdu) {
 		return (PingResponse) pingResponsePdu;
 	}
 

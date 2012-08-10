@@ -1,4 +1,4 @@
-package vnet.sms.gateway.nettytest;
+package vnet.sms.gateway.nettytest.embedded;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -18,9 +18,7 @@ import org.jboss.netty.logging.InternalLoggerFactory;
 import org.jboss.netty.logging.Slf4JLoggerFactory;
 import org.junit.Test;
 
-import vnet.sms.gateway.nettytest.embedded.ChannelEventFilter;
-import vnet.sms.gateway.nettytest.embedded.DefaultChannelPipelineEmbedder;
-import vnet.sms.gateway.nettytest.embedded.MessageEventFilter;
+import com.google.common.base.Predicate;
 
 public class DefaultChannelPipelineEmbedderTest {
 
@@ -36,8 +34,10 @@ public class DefaultChannelPipelineEmbedderTest {
 
 		final DefaultChannelPipelineEmbedder objectUnderTest = new DefaultChannelPipelineEmbedder(
 		        passThroughHandler);
+		objectUnderTest.connectChannel();
 		objectUnderTest.receive(message);
-		final MessageEvent result = objectUnderTest.nextReceivedMessageEvent();
+		final MessageEvent result = objectUnderTest.upstreamMessageEvents()
+		        .nextMessageEvent();
 
 		assertNotNull("receive(" + message
 		        + ") did not propagate received message event to output queue",
@@ -56,12 +56,13 @@ public class DefaultChannelPipelineEmbedderTest {
 
 		final DefaultChannelPipelineEmbedder objectUnderTest = new DefaultChannelPipelineEmbedder(
 		        passThroughHandler);
+		objectUnderTest.connectChannel();
 		objectUnderTest.receive(firstMessage);
 		objectUnderTest.receive(secondMessage);
-		final MessageEventFilter matchSecondMessage = MessageEventFilter.FILTERS
+		final Predicate<MessageEvent> matchSecondMessage = MessageEventFilters
 		        .payloadEquals(secondMessage);
-		final MessageEvent result = objectUnderTest
-		        .nextReceivedMessageEvent(matchSecondMessage);
+		final MessageEvent result = objectUnderTest.upstreamMessageEvents()
+		        .nextMatchingMessageEvent(matchSecondMessage);
 
 		assertNotNull("nextReceivedMessageEvent(" + matchSecondMessage
 		        + ") returned null instead of expected second message", result);
@@ -89,6 +90,7 @@ public class DefaultChannelPipelineEmbedderTest {
 
 		final DefaultChannelPipelineEmbedder objectUnderTest = new DefaultChannelPipelineEmbedder(
 		        exceptionThrowingHandler);
+		objectUnderTest.connectChannel();
 		objectUnderTest.receive(message);
 	}
 
@@ -107,10 +109,11 @@ public class DefaultChannelPipelineEmbedderTest {
 
 		final DefaultChannelPipelineEmbedder objectUnderTest = new DefaultChannelPipelineEmbedder(
 		        channelEventGeneratingHandler);
+		objectUnderTest.connectChannel();
 		objectUnderTest.receive(message);
-		final ChannelEvent result = objectUnderTest
-		        .nextUpstreamChannelEvent(ChannelEventFilter.FILTERS
-		                .ofType(IdleStateEvent.class));
+		final ChannelEvent result = objectUnderTest.upstreamChannelEvents()
+		        .nextMatchingChannelEvent(
+		                ChannelEventFilters.ofType(IdleStateEvent.class));
 
 		assertNotNull(
 		        "receive("
@@ -137,15 +140,16 @@ public class DefaultChannelPipelineEmbedderTest {
 
 		final DefaultChannelPipelineEmbedder objectUnderTest = new DefaultChannelPipelineEmbedder(
 		        channelEventGeneratingHandler);
+		objectUnderTest.connectChannel();
 		objectUnderTest.receive(message);
-		final int numberOfPropagatedNonMessageEvents = objectUnderTest
-		        .numberOfUpstreamChannelEvents();
+		final int numberOfPropagatedChannelEvents = objectUnderTest
+		        .upstreamChannelEvents().allChannelEvents().length;
 
 		assertEquals(
 		        "receive("
 		                + message
 		                + ") should have propagated OPEN, BOUND, CONNECTED and IdleStateEvent to upstream channel event queue",
-		        4, numberOfPropagatedNonMessageEvents);
+		        4, numberOfPropagatedChannelEvents);
 	}
 
 	@Test
@@ -156,8 +160,10 @@ public class DefaultChannelPipelineEmbedderTest {
 
 		final DefaultChannelPipelineEmbedder objectUnderTest = new DefaultChannelPipelineEmbedder(
 		        passThroughHandler);
+		objectUnderTest.connectChannel();
 		objectUnderTest.send(message);
-		final MessageEvent result = objectUnderTest.nextSentMessageEvent();
+		final MessageEvent result = objectUnderTest.downstreamMessageEvents()
+		        .nextMessageEvent();
 
 		assertNotNull("send(" + message
 		        + ") did not propagate sent message event to output queue",
@@ -176,12 +182,13 @@ public class DefaultChannelPipelineEmbedderTest {
 
 		final DefaultChannelPipelineEmbedder objectUnderTest = new DefaultChannelPipelineEmbedder(
 		        passThroughHandler);
+		objectUnderTest.connectChannel();
 		objectUnderTest.send(firstMessage);
 		objectUnderTest.send(secondMessage);
-		final MessageEventFilter matchSecondMessage = MessageEventFilter.FILTERS
+		final Predicate<MessageEvent> matchSecondMessage = MessageEventFilters
 		        .payloadEquals(secondMessage);
-		final MessageEvent result = objectUnderTest
-		        .nextSentMessageEvent(matchSecondMessage);
+		final MessageEvent result = objectUnderTest.downstreamMessageEvents()
+		        .nextMatchingMessageEvent(matchSecondMessage);
 
 		assertNotNull("nextSentMessageEvent(" + matchSecondMessage
 		        + ") returned null instead of expected second message", result);
@@ -209,6 +216,7 @@ public class DefaultChannelPipelineEmbedderTest {
 
 		final DefaultChannelPipelineEmbedder objectUnderTest = new DefaultChannelPipelineEmbedder(
 		        exceptionThrowingHandler);
+		objectUnderTest.connectChannel();
 		objectUnderTest.send(message);
 	}
 
@@ -227,10 +235,11 @@ public class DefaultChannelPipelineEmbedderTest {
 
 		final DefaultChannelPipelineEmbedder objectUnderTest = new DefaultChannelPipelineEmbedder(
 		        channelEventGeneratingHandler);
+		objectUnderTest.connectChannel();
 		objectUnderTest.send(message);
-		final ChannelEvent result = objectUnderTest
-		        .nextDownstreamChannelEvent(ChannelEventFilter.FILTERS
-		                .ofType(IdleStateEvent.class));
+		final ChannelEvent result = objectUnderTest.downstreamChannelEvents()
+		        .nextMatchingChannelEvent(
+		                ChannelEventFilters.ofType(IdleStateEvent.class));
 
 		assertNotNull(
 		        "send("

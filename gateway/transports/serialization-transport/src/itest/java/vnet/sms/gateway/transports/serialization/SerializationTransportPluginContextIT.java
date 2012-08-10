@@ -23,7 +23,7 @@ import vnet.sms.gateway.transports.serialization.outgoing.SerializationTransport
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath*:META-INF/module/module-context.xml")
-public class SerializationTransportPluginContextTest {
+public class SerializationTransportPluginContextIT {
 
 	@Autowired
 	private TransportProtocolPlugin<Integer, ReferenceableMessageContainer>	objectUnderTest;

@@ -12,10 +12,10 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import org.jboss.netty.channel.ChannelHandler;
 import org.jboss.netty.channel.ChannelHandlerContext;
 
-import vnet.sms.common.wme.receive.ReceivedLoginRequestEvent;
 import vnet.sms.common.wme.receive.ReceivedLoginRequestAcknowledgementEvent;
-import vnet.sms.common.wme.receive.ReceivedPingRequestEvent;
+import vnet.sms.common.wme.receive.ReceivedLoginRequestEvent;
 import vnet.sms.common.wme.receive.ReceivedPingRequestAcknowledgementEvent;
+import vnet.sms.common.wme.receive.ReceivedPingRequestEvent;
 import vnet.sms.common.wme.receive.ReceivedSmsEvent;
 import vnet.sms.gateway.nettysupport.UpstreamWindowedChannelHandler;
 
@@ -71,7 +71,8 @@ public class IncomingMessagesPublishingChannelHandler<ID extends Serializable>
 	 */
 	@Override
 	protected void loginResponseReceived(final ChannelHandlerContext ctx,
-	        final ReceivedLoginRequestAcknowledgementEvent<ID> e) throws Exception {
+	        final ReceivedLoginRequestAcknowledgementEvent<ID> e)
+	        throws Exception {
 		getLog().debug("Received {} - will notify [{}] listeners", e,
 		        this.listeners.size());
 		for (final IncomingMessagesListener<ID> listener : this.listeners) {
@@ -103,7 +104,8 @@ public class IncomingMessagesPublishingChannelHandler<ID extends Serializable>
 	 */
 	@Override
 	protected void pingResponseReceived(final ChannelHandlerContext ctx,
-	        final ReceivedPingRequestAcknowledgementEvent<ID> e) throws Exception {
+	        final ReceivedPingRequestAcknowledgementEvent<ID> e)
+	        throws Exception {
 		getLog().debug("Received {} - will notify [{}] listeners", e,
 		        this.listeners.size());
 		for (final IncomingMessagesListener<ID> listener : this.listeners) {

@@ -27,6 +27,7 @@ public class IncomingMessagesMonitoringChannelHandlerTest {
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        this.objectUnderTest);
+		embeddedPipeline.connectChannel();
 
 		embeddedPipeline
 		        .receive(new LoginRequest(
@@ -45,6 +46,7 @@ public class IncomingMessagesMonitoringChannelHandlerTest {
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        this.objectUnderTest);
+		embeddedPipeline.connectChannel();
 
 		embeddedPipeline
 		        .receive(LoginResponse
@@ -64,6 +66,7 @@ public class IncomingMessagesMonitoringChannelHandlerTest {
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        this.objectUnderTest);
+		embeddedPipeline.connectChannel();
 
 		embeddedPipeline.receive(new PingRequest());
 
@@ -80,6 +83,7 @@ public class IncomingMessagesMonitoringChannelHandlerTest {
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        this.objectUnderTest);
+		embeddedPipeline.connectChannel();
 
 		embeddedPipeline.receive(PingResponse.accept(new PingRequest()));
 
@@ -95,6 +99,7 @@ public class IncomingMessagesMonitoringChannelHandlerTest {
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        this.objectUnderTest);
+		embeddedPipeline.connectChannel();
 
 		embeddedPipeline.receive(new Sms(new Msisdn("01686754432"), new Msisdn(
 		        "01686754432"),

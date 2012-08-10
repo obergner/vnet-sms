@@ -41,10 +41,11 @@ public class SerializationTransportProtocolAdaptingDownstreamChannelHandlerTest 
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        this.objectUnderTest,
 		        new MessageEventWrappingDownstreamChannelHandler());
+		embeddedPipeline.connectChannel();
 
 		embeddedPipeline.send(new PingRequest());
 		final MessageEvent convertedMessageEvent = embeddedPipeline
-		        .nextSentMessageEvent();
+		        .downstreamMessageEvents().nextMessageEvent();
 
 		assertNotNull(
 		        "OutgoingMessagesMonitoringChannelHandler converted PingRequest to null output",
@@ -92,6 +93,7 @@ public class SerializationTransportProtocolAdaptingDownstreamChannelHandlerTest 
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        this.objectUnderTest,
 		        new MessageEventWrappingDownstreamChannelHandler());
+		embeddedPipeline.connectChannel();
 
 		final LoginRequest acceptedLoginRequest = new LoginRequest(
 		        "assertThatTransportProtocolAdapterCorrectlyConvertsAcceptedLoginRequestToPdu",
@@ -125,6 +127,7 @@ public class SerializationTransportProtocolAdaptingDownstreamChannelHandlerTest 
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        this.objectUnderTest,
 		        new MessageEventWrappingDownstreamChannelHandler());
+		embeddedPipeline.connectChannel();
 
 		final LoginRequest rejectedLoginRequest = new LoginRequest(
 		        "assertThatTransportProtocolAdapterCorrectlyConvertsRejectedLoginRequestToPdu",
@@ -158,6 +161,7 @@ public class SerializationTransportProtocolAdaptingDownstreamChannelHandlerTest 
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        this.objectUnderTest,
 		        new MessageEventWrappingDownstreamChannelHandler());
+		embeddedPipeline.connectChannel();
 
 		final Sms moSms = new Sms(new Msisdn("01686754432"), new Msisdn(
 		        "01686754432"),

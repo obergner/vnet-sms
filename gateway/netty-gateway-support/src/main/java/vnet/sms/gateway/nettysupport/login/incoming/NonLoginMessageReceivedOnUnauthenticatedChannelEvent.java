@@ -10,8 +10,8 @@ import java.io.Serializable;
 import org.jboss.netty.channel.Channel;
 
 import vnet.sms.common.messages.Acknowledgement;
-import vnet.sms.common.messages.LoginRequest;
 import vnet.sms.common.messages.GsmPdu;
+import vnet.sms.common.messages.LoginRequest;
 import vnet.sms.common.wme.MessageEventType;
 import vnet.sms.common.wme.WindowedMessageEvent;
 import vnet.sms.common.wme.acknowledge.DownstreamSendMessageAcknowledgementEvent;

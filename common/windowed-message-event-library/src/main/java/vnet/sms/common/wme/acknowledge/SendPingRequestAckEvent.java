@@ -33,8 +33,7 @@ public class SendPingRequestAckEvent<ID extends Serializable> extends
 
 	private SendPingRequestAckEvent(final ID messageReference,
 	        final Channel channel, final PingRequest message) {
-		super(messageReference,
-		        MessageEventType.SEND_PING_REQUEST_ACK, channel,
-		        message, Acknowledgement.ack());
+		super(messageReference, MessageEventType.SEND_PING_REQUEST_ACK,
+		        channel, message, Acknowledgement.ack());
 	}
 }

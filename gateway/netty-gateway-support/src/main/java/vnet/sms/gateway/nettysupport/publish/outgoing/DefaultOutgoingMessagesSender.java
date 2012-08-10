@@ -299,8 +299,8 @@ public class DefaultOutgoingMessagesSender<ID extends Serializable> implements
 	}
 
 	@Override
-	public ChannelFuture nackReceivedSms(
-	        final SendSmsNackContainer<ID> nack) throws Exception {
+	public ChannelFuture nackReceivedSms(final SendSmsNackContainer<ID> nack)
+	        throws Exception {
 		notNull(nack, "Argument 'nack' must not be null");
 		try {
 			this.log.debug("Sending {} ...", nack);

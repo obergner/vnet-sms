@@ -19,7 +19,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
@@ -53,7 +53,7 @@ public class SendOutgoingMoSmsIT {
 	private IntegrationTestClient	testClient;
 
 	@Autowired
-	private JmsTemplate	          jmsClient;
+	private JmsOperations	      jmsClient;
 
 	@Resource(name = "vnet.sms.gateway.server.server-framework.allConnectedChannels")
 	private ChannelGroup	      allConnectedChannels;

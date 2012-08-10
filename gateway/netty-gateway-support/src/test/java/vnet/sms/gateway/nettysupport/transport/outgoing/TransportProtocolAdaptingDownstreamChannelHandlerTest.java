@@ -27,10 +27,11 @@ public class TransportProtocolAdaptingDownstreamChannelHandlerTest {
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        this.objectUnderTest,
 		        new MessageEventWrappingDownstreamChannelHandler());
+		embeddedPipeline.connectChannel();
 
 		embeddedPipeline.send(new PingRequest());
 		final MessageEvent convertedMessageEvent = embeddedPipeline
-		        .nextSentMessageEvent();
+		        .downstreamMessageEvents().nextMessageEvent();
 
 		assertNotNull(
 		        "OutgoingMessagesMonitoringChannelHandler converted PingRequest to null output",

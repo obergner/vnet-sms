@@ -18,49 +18,54 @@ package vnet.sms.gateway.nettytest.embedded;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelEvent;
 import org.jboss.netty.channel.ChannelPipeline;
-import org.jboss.netty.channel.MessageEvent;
 
 public interface ChannelPipelineEmbedder {
 
+	// ------------------------------------------------------------------------
+	// Open, bind, connect
+	// ------------------------------------------------------------------------
+
+	void openChannel() throws Throwable;
+
+	void bindChannel() throws Throwable;
+
+	void connectChannel() throws Throwable;
+
+	// ------------------------------------------------------------------------
+	// Receiving messages
+	// ------------------------------------------------------------------------
+
 	boolean receive(Object input) throws Throwable;
 
-	void injectUpstreamChannelEvent(ChannelEvent e);
+	void injectUpstreamChannelEvent(ChannelEvent e) throws Throwable;
 
-	boolean finishReceive() throws Throwable;
+	ChannelEvents upstreamChannelEvents();
 
-	MessageEvent nextReceivedMessageEvent();
+	MessageEvents upstreamMessageEvents();
 
-	MessageEvent nextReceivedMessageEvent(MessageEventFilter predicate);
-
-	MessageEvent[] allReceivedMessageEvents();
-
-	ChannelEvent nextUpstreamChannelEvent();
-
-	ChannelEvent nextUpstreamChannelEvent(ChannelEventFilter predicate);
-
-	ChannelEvent[] allUpstreamChannelEvents();
-
-	int numberOfUpstreamChannelEvents();
-
-	int numberOfReceivedMessageEvents();
+	// ------------------------------------------------------------------------
+	// Sending messages
+	// ------------------------------------------------------------------------
 
 	boolean send(Object input) throws Throwable;
 
-	MessageEvent nextSentMessageEvent();
+	ChannelEvents downstreamChannelEvents();
 
-	MessageEvent nextSentMessageEvent(MessageEventFilter predicate);
+	MessageEvents downstreamMessageEvents();
 
-	MessageEvent[] allSentMessageEvents();
+	// ------------------------------------------------------------------------
+	// Disconnect, unbind, close
+	// ------------------------------------------------------------------------
 
-	int numberOfSentMessageEvents();
+	void disconnectChannel() throws Throwable;
 
-	ChannelEvent nextDownstreamChannelEvent();
+	void unbindChannel() throws Throwable;
 
-	ChannelEvent nextDownstreamChannelEvent(ChannelEventFilter predicate);
+	void closeChannel() throws Throwable;
 
-	ChannelEvent[] allDownstreamChannelEvents();
-
-	int numberOfDownstreamChannelEvents();
+	// ------------------------------------------------------------------------
+	// Misc
+	// ------------------------------------------------------------------------
 
 	ChannelPipeline getPipeline();
 

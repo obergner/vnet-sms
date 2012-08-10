@@ -21,9 +21,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.BadCredentialsException;
 
+import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.messages.LoginRequest;
 import vnet.sms.common.messages.LoginResponse;
-import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;
 
 public class LocalClient {

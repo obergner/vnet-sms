@@ -46,9 +46,9 @@ public class SendSmsNackEvent<ID extends java.io.Serializable> extends
 
 	private final String	errorDescription;
 
-	private SendSmsNackEvent(final ID messageReference,
-	        final Channel channel, final ChannelFuture future,
-	        final Sms message, final int errorKey, final String errorDescription) {
+	private SendSmsNackEvent(final ID messageReference, final Channel channel,
+	        final ChannelFuture future, final Sms message, final int errorKey,
+	        final String errorDescription) {
 		super(messageReference, MessageEventType.SEND_SMS_NACK, channel,
 		        future, message, Acknowledgement.nack());
 		notEmpty(errorDescription,
@@ -73,9 +73,8 @@ public class SendSmsNackEvent<ID extends java.io.Serializable> extends
 
 	@Override
 	public String toString() {
-		return "SendSmsNackEvent@" + this.hashCode()
-		        + "[acknowledgement: " + this.getAcknowledgement()
-		        + "|messageReference: "
+		return "SendSmsNackEvent@" + this.hashCode() + "[acknowledgement: "
+		        + this.getAcknowledgement() + "|messageReference: "
 		        + this.getAcknowledgedMessageReference() + "|message: "
 		        + this.getMessage() + "|channel: " + this.getChannel()
 		        + "|errorKey: " + this.errorKey + "|errorDescription: "

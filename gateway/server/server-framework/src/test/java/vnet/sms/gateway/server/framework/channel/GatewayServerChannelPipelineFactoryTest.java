@@ -38,7 +38,7 @@ import vnet.sms.common.messages.PingResponse;
 import vnet.sms.gateway.nettysupport.login.incoming.ChannelSuccessfullyAuthenticatedEvent;
 import vnet.sms.gateway.nettysupport.monitor.incoming.InitialChannelEventsMonitor;
 import vnet.sms.gateway.nettysupport.window.NoWindowForIncomingMessageAvailableEvent;
-import vnet.sms.gateway.nettytest.embedded.ChannelEventFilter;
+import vnet.sms.gateway.nettytest.embedded.ChannelEventFilters;
 import vnet.sms.gateway.nettytest.embedded.ChannelPipelineEmbedder;
 import vnet.sms.gateway.nettytest.embedded.DefaultChannelPipelineEmbedder;
 import vnet.sms.gateway.server.framework.internal.channel.GatewayServerChannelPipelineFactory;
@@ -251,6 +251,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        pingResponseTimeoutMillis, authenticationManager);
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        objectUnderTest);
+		embeddedPipeline.connectChannel();
 
 		final LoginRequest successfulLoginRequest = new LoginRequest(
 		        "assertThatTheProducedPipelineRespondsWithASuccessfulLoginResponseToASuccessfulLoginRequest",
@@ -258,7 +259,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		embeddedPipeline.receive(SerializationUtils.serialize(1,
 		        successfulLoginRequest));
 		final MessageEvent encodedLoginResponse = embeddedPipeline
-		        .nextSentMessageEvent();
+		        .downstreamMessageEvents().nextMessageEvent();
 
 		assertNotNull(
 		        "Expected channel pipeline to send SendLoginRequestAckEvent to client after successful login, yet it sent NO message in reply",
@@ -330,6 +331,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        pingResponseTimeoutMillis, authenticationManager);
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        objectUnderTest);
+		embeddedPipeline.connectChannel();
 
 		final LoginRequest failedLoginRequest = new LoginRequest(
 		        "assertThatTheProducedPipelineRespondsWithAFailedLoginResponseToAFailedLoginRequest",
@@ -338,7 +340,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        failedLoginRequest));
 		Thread.sleep(failedLoginResponseMillis + 100);
 		final MessageEvent encodedLoginResponse = embeddedPipeline
-		        .nextSentMessageEvent();
+		        .downstreamMessageEvents().nextMessageEvent();
 
 		assertNotNull(
 		        "Expected channel pipeline to send SendLoginRequestNackEvent to client after failed login, yet it sent NO message in reply",
@@ -369,6 +371,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        pingResponseTimeoutMillis, authenticationManager);
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        objectUnderTest);
+		embeddedPipeline.connectChannel();
 
 		final LoginRequest failedLoginRequest = new LoginRequest(
 		        "assertThatTheProducedPipelineRespondsWithAFailedLoginResponseToAFailedLoginRequest",
@@ -377,7 +380,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        failedLoginRequest));
 
 		final MessageEvent noLoginResponseExpectedYet = embeddedPipeline
-		        .nextSentMessageEvent();
+		        .downstreamMessageEvents().nextMessageEvent();
 		assertNull(
 		        "Expected channel pipeline to delay response to failed login request for "
 		                + failedLoginResponseMillis
@@ -386,7 +389,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 
 		Thread.sleep(failedLoginResponseMillis + 100);
 		final MessageEvent expectedLoginResponse = embeddedPipeline
-		        .nextSentMessageEvent();
+		        .downstreamMessageEvents().nextMessageEvent();
 		assertNotNull(
 		        "Expected channel pipeline to send SendLoginRequestNackEvent to client after "
 		                + failedLoginResponseMillis
@@ -410,12 +413,13 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        pingResponseTimeoutMillis, authenticationManager);
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        objectUnderTest);
+		embeddedPipeline.connectChannel();
 
 		final PingRequest nonLoginRequest = new PingRequest();
 		embeddedPipeline.receive(SerializationUtils.serialize(1,
 		        nonLoginRequest));
 		final MessageEvent encodedPingResponse = embeddedPipeline
-		        .nextSentMessageEvent();
+		        .downstreamMessageEvents().nextMessageEvent();
 
 		assertNotNull(
 		        "Expected channel pipeline to send (failed) PingResponse to client when receiving a PingRequest on an unauthenticated channel, yet it sent NO message in reply",
@@ -446,6 +450,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        pingResponseTimeoutMillis, authenticationManager);
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        objectUnderTest);
+		embeddedPipeline.connectChannel();
 		// Simulate successful channel authentication => we start to ping after
 		// pingIntervalSeconds
 		embeddedPipeline
@@ -458,7 +463,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		Thread.sleep(pingIntervalSeconds * 1000L + 100L);
 
 		final MessageEvent expectedEncodedPingRequst = embeddedPipeline
-		        .nextSentMessageEvent();
+		        .downstreamMessageEvents().nextMessageEvent();
 		assertNotNull(
 		        "Expected channel pipeline to send PingRequest to client "
 		                + pingIntervalSeconds
@@ -488,6 +493,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		// Will fire "channel connected" and thus start ping interval
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        objectUnderTest);
+		embeddedPipeline.connectChannel();
 
 		// First, authenticate channel since otherwise we won't accept a
 		// PingResponse
@@ -497,11 +503,11 @@ public class GatewayServerChannelPipelineFactoryTest {
 		embeddedPipeline.receive(SerializationUtils.serialize(1,
 		        successfulLoginRequest));
 		// Consume LoginResponse - we don't care about it
-		embeddedPipeline.nextSentMessageEvent();
+		embeddedPipeline.downstreamMessageEvents().nextMessageEvent();
 
 		Thread.sleep(pingIntervalSeconds * 1000L + 100L);
 		final MessageEvent expectedInitialPingRequest = embeddedPipeline
-		        .nextSentMessageEvent();
+		        .downstreamMessageEvents().nextMessageEvent();
 		assertNotNull(
 		        "Expected channel pipeline to send PingRequest to client "
 		                + pingIntervalSeconds
@@ -519,7 +525,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 
 		Thread.sleep(pingIntervalSeconds * 1000L + 100L);
 		final MessageEvent expectedSecondPingRequest = embeddedPipeline
-		        .nextSentMessageEvent();
+		        .downstreamMessageEvents().nextMessageEvent();
 		assertNotNull(
 		        "Expected channel pipeline to send PingRequest to client "
 		                + pingIntervalSeconds
@@ -545,6 +551,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		// IncomingWindowStore
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        objectUnderTest);
+		embeddedPipeline.connectChannel();
 
 		// First, authenticate channel since otherwise we won't accept any
 		// incoming messages
@@ -554,7 +561,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		embeddedPipeline.receive(SerializationUtils.serialize(1,
 		        successfulLoginRequest));
 		// Discard LoginResponse - we don't care
-		embeddedPipeline.nextSentMessageEvent();
+		embeddedPipeline.downstreamMessageEvents().nextMessageEvent();
 
 		for (int i = 0; i < availableIncomingWindows; i++) {
 			embeddedPipeline.receive(SerializationUtils.serialize((i + 2),
@@ -565,8 +572,10 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new PingRequest()));
 
 		final ChannelEvent propagatedMessageEvent = embeddedPipeline
-		        .nextUpstreamChannelEvent(ChannelEventFilter.FILTERS
-		                .ofType(NoWindowForIncomingMessageAvailableEvent.class));
+		        .upstreamChannelEvents()
+		        .nextMatchingChannelEvent(
+		                ChannelEventFilters
+		                        .ofType(NoWindowForIncomingMessageAvailableEvent.class));
 
 		assertNotNull(
 		        "Expected channel pipeline to propagate error event when rejecting incoming message due to no window available",

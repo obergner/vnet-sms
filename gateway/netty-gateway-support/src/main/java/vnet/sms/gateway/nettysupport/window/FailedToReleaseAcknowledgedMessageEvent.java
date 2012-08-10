@@ -19,8 +19,7 @@ public class FailedToReleaseAcknowledgedMessageEvent<ID extends Serializable, M 
         extends AbstractMessageProcessingEvent<M> {
 
 	public static final <I extends Serializable, N extends GsmPdu> FailedToReleaseAcknowledgedMessageEvent<I, N> fail(
-	        final SendMessageAcknowledgementEvent<I, N> e,
-	        final Exception error) {
+	        final SendMessageAcknowledgementEvent<I, N> e, final Exception error) {
 		notNull(e, "Argument 'e' must not be null");
 		notNull(error, "Argument 'error' must not be null");
 		return new FailedToReleaseAcknowledgedMessageEvent<I, N>(e, error);

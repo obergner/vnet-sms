@@ -3,9 +3,9 @@
  */
 package vnet.sms.gateway.transports.serialization.incoming;
 
+import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.messages.LoginRequest;
 import vnet.sms.common.messages.LoginResponse;
-import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.PingResponse;
 import vnet.sms.common.messages.Sms;

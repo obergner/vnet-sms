@@ -21,6 +21,7 @@ public class OutgoingBytesCountingChannelHandlerTest {
 		final byte[] sentBytes = new byte[] { 1, 2, 3, 4, 5, 6, 7 };
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        this.objectUnderTest);
+		embeddedPipeline.connectChannel();
 
 		embeddedPipeline.send(ChannelBuffers.copiedBuffer(sentBytes));
 

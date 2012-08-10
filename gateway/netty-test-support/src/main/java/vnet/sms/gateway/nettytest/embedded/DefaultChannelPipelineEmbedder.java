@@ -16,6 +16,7 @@
 package vnet.sms.gateway.nettytest.embedded;
 
 import static org.jboss.netty.channel.Channels.close;
+import static org.jboss.netty.channel.Channels.disconnect;
 import static org.jboss.netty.channel.Channels.fireChannelBound;
 import static org.jboss.netty.channel.Channels.fireChannelClosed;
 import static org.jboss.netty.channel.Channels.fireChannelConnected;
@@ -23,11 +24,9 @@ import static org.jboss.netty.channel.Channels.fireChannelDisconnected;
 import static org.jboss.netty.channel.Channels.fireChannelOpen;
 import static org.jboss.netty.channel.Channels.fireChannelUnbound;
 import static org.jboss.netty.channel.Channels.fireMessageReceived;
+import static org.jboss.netty.channel.Channels.unbind;
 import static org.jboss.netty.channel.Channels.write;
 
-import java.util.ConcurrentModificationException;
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.jboss.netty.buffer.ChannelBufferFactory;
@@ -40,9 +39,12 @@ import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.ChannelPipelineException;
 import org.jboss.netty.channel.ChannelPipelineFactory;
 import org.jboss.netty.channel.ChannelSink;
+import org.jboss.netty.channel.ChannelState;
+import org.jboss.netty.channel.ChannelStateEvent;
 import org.jboss.netty.channel.ChannelUpstreamHandler;
 import org.jboss.netty.channel.Channels;
 import org.jboss.netty.channel.DefaultChannelPipeline;
+import org.jboss.netty.channel.DefaultExceptionEvent;
 import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.channel.LifeCycleAwareChannelHandler;
 import org.jboss.netty.channel.MessageEvent;
@@ -56,13 +58,13 @@ public class DefaultChannelPipelineEmbedder implements ChannelPipelineEmbedder {
 
 	private final ChannelEventRecordingChannelSink	sink	               = new ChannelEventRecordingChannelSink();
 
-	private final Queue<MessageEvent>	           receivedMessageEvents	= new LinkedList<MessageEvent>();
+	private final DefaultChannelEvents	           downstreamChannelEvents	= new DefaultChannelEvents();
 
-	private final Queue<ChannelEvent>	           downstreamChannelEvents	= new LinkedList<ChannelEvent>();
+	private final DefaultMessageEvents	           downstreamMessageEvents	= new DefaultMessageEvents();
 
-	private final Queue<MessageEvent>	           sentMessageEvents	   = new LinkedList<MessageEvent>();
+	private final DefaultChannelEvents	           upstreamChannelEvents	= new DefaultChannelEvents();
 
-	private final Queue<ChannelEvent>	           upstreamChannelEvents	= new LinkedList<ChannelEvent>();
+	private final DefaultMessageEvents	           upstreamMessageEvents	= new DefaultMessageEvents();
 
 	private final AtomicReference<Throwable>	   thrownException	       = new AtomicReference<Throwable>();
 
@@ -74,7 +76,6 @@ public class DefaultChannelPipelineEmbedder implements ChannelPipelineEmbedder {
 		this.pipeline = new DefaultChannelPipeline();
 		this.channel = new EmbeddedChannel(this.pipeline, this.sink);
 		configurePipeline(handlers);
-		fireInitialEvents();
 	}
 
 	public DefaultChannelPipelineEmbedder(
@@ -83,7 +84,6 @@ public class DefaultChannelPipelineEmbedder implements ChannelPipelineEmbedder {
 		this.pipeline = channelPipelineFactory.getPipeline();
 		this.channel = new EmbeddedChannel(this.pipeline, this.sink);
 		configurePipeline(this.pipeline);
-		fireInitialEvents();
 	}
 
 	public DefaultChannelPipelineEmbedder(
@@ -104,13 +104,6 @@ public class DefaultChannelPipelineEmbedder implements ChannelPipelineEmbedder {
 	// ------------------------------------------------------------------------
 	// Internal
 	// ------------------------------------------------------------------------
-
-	private void fireInitialEvents() {
-		// Fire the typical initial events.
-		fireChannelOpen(this.channel);
-		fireChannelBound(this.channel, this.channel.getLocalAddress());
-		fireChannelConnected(this.channel, this.channel.getRemoteAddress());
-	}
 
 	private void configurePipeline(final ChannelHandler... handlers) {
 		if (handlers == null) {
@@ -155,13 +148,41 @@ public class DefaultChannelPipelineEmbedder implements ChannelPipelineEmbedder {
 		        new UpstreamChannelEventsRecordingChannelHandler());
 	}
 
-	/**
-	 * Returns the virtual {@link Channel} which will be used as a mock during
-	 * encoding and decoding.
-	 */
+	// ------------------------------------------------------------------------
+	// Open, bind, connect
+	// ------------------------------------------------------------------------
+
 	@Override
-	public final Channel getChannel() {
-		return this.channel;
+	public void openChannel() throws Throwable {
+		if (!this.channel.isOpen()) {
+			fireChannelOpen(this.channel);
+		}
+		if (this.thrownException.get() != null) {
+			throw this.thrownException.getAndSet(null);
+		}
+	}
+
+	@Override
+	public void bindChannel() throws Throwable {
+		openChannel();
+		if (!this.channel.isBound()) {
+			fireChannelBound(this.channel, this.channel.getLocalAddress());
+		}
+		if (this.thrownException.get() != null) {
+			throw this.thrownException.getAndSet(null);
+		}
+	}
+
+	@Override
+	public void connectChannel() throws Throwable {
+		openChannel();
+		bindChannel();
+		if (!this.channel.isConnected()) {
+			fireChannelConnected(this.channel, this.channel.getRemoteAddress());
+		}
+		if (this.thrownException.get() != null) {
+			throw this.thrownException.getAndSet(null);
+		}
 	}
 
 	// ------------------------------------------------------------------------
@@ -174,20 +195,7 @@ public class DefaultChannelPipelineEmbedder implements ChannelPipelineEmbedder {
 		if (this.thrownException.get() != null) {
 			throw this.thrownException.getAndSet(null);
 		}
-		return !this.receivedMessageEvents.isEmpty();
-	}
-
-	@Override
-	public boolean finishReceive() throws Throwable {
-		close(this.channel);
-		fireChannelDisconnected(this.channel);
-		fireChannelUnbound(this.channel);
-		fireChannelClosed(this.channel);
-		if (this.thrownException.get() != null) {
-			throw this.thrownException.getAndSet(null);
-		}
-
-		return !this.receivedMessageEvents.isEmpty();
+		return !this.upstreamChannelEvents.isEmpty();
 	}
 
 	@Override
@@ -197,75 +205,13 @@ public class DefaultChannelPipelineEmbedder implements ChannelPipelineEmbedder {
 	}
 
 	@Override
-	public final MessageEvent nextReceivedMessageEvent() {
-		return this.receivedMessageEvents.poll();
+	public ChannelEvents upstreamChannelEvents() {
+		return this.upstreamChannelEvents;
 	}
 
 	@Override
-	public final MessageEvent nextReceivedMessageEvent(
-	        final MessageEventFilter predicate) {
-		for (final MessageEvent candidate : this.receivedMessageEvents) {
-			if (predicate.matches(candidate)) {
-				this.receivedMessageEvents.remove(candidate);
-				return candidate;
-			}
-		}
-		return null;
-	}
-
-	@Override
-	public final MessageEvent[] allReceivedMessageEvents() {
-		final int size = numberOfReceivedMessageEvents();
-		final MessageEvent[] a = new MessageEvent[size];
-		for (int i = 0; i < size; i++) {
-			final MessageEvent product = nextReceivedMessageEvent();
-			if (product == null) {
-				throw new ConcurrentModificationException();
-			}
-			a[i] = product;
-		}
-		return a;
-	}
-
-	@Override
-	public final int numberOfReceivedMessageEvents() {
-		return this.receivedMessageEvents.size();
-	}
-
-	@Override
-	public ChannelEvent nextUpstreamChannelEvent() {
-		return this.upstreamChannelEvents.poll();
-	}
-
-	@Override
-	public ChannelEvent nextUpstreamChannelEvent(
-	        final ChannelEventFilter predicate) {
-		for (final ChannelEvent candidate : this.upstreamChannelEvents) {
-			if (predicate.matches(candidate)) {
-				this.upstreamChannelEvents.remove(candidate);
-				return candidate;
-			}
-		}
-		return null;
-	}
-
-	@Override
-	public ChannelEvent[] allUpstreamChannelEvents() {
-		final int size = numberOfUpstreamChannelEvents();
-		final ChannelEvent[] a = new ChannelEvent[size];
-		for (int i = 0; i < size; i++) {
-			final ChannelEvent product = nextUpstreamChannelEvent();
-			if (product == null) {
-				throw new ConcurrentModificationException();
-			}
-			a[i] = product;
-		}
-		return a;
-	}
-
-	@Override
-	public int numberOfUpstreamChannelEvents() {
-		return this.upstreamChannelEvents.size();
+	public MessageEvents upstreamMessageEvents() {
+		return this.upstreamMessageEvents;
 	}
 
 	// ------------------------------------------------------------------------
@@ -278,79 +224,57 @@ public class DefaultChannelPipelineEmbedder implements ChannelPipelineEmbedder {
 		if (this.thrownException.get() != null) {
 			throw this.thrownException.getAndSet(null);
 		}
-		return !this.sentMessageEvents.isEmpty();
+		return !this.downstreamChannelEvents.isEmpty();
 	}
 
 	@Override
-	public MessageEvent nextSentMessageEvent() {
-		return this.sentMessageEvents.poll();
+	public ChannelEvents downstreamChannelEvents() {
+		return this.downstreamChannelEvents;
 	}
 
 	@Override
-	public final MessageEvent nextSentMessageEvent(
-	        final MessageEventFilter predicate) {
-		for (final MessageEvent candidate : this.sentMessageEvents) {
-			if (predicate.matches(candidate)) {
-				this.sentMessageEvents.remove(candidate);
-				return candidate;
-			}
+	public MessageEvents downstreamMessageEvents() {
+		return this.downstreamMessageEvents;
+	}
+
+	// ------------------------------------------------------------------------
+	// Disconnect, unbind, close
+	// ------------------------------------------------------------------------
+
+	@Override
+	public void disconnectChannel() throws Throwable {
+		disconnect(this.channel);
+		if (this.channel.isConnected()) {
+			fireChannelDisconnected(this.channel);
 		}
-		return null;
-	}
-
-	@Override
-	public MessageEvent[] allSentMessageEvents() {
-		final int size = numberOfSentMessageEvents();
-		final MessageEvent[] a = new MessageEvent[size];
-		for (int i = 0; i < size; i++) {
-			final MessageEvent product = nextSentMessageEvent();
-			if (product == null) {
-				throw new ConcurrentModificationException();
-			}
-			a[i] = product;
+		if (this.thrownException.get() != null) {
+			throw this.thrownException.getAndSet(null);
 		}
-		return a;
 	}
 
 	@Override
-	public int numberOfSentMessageEvents() {
-		return this.sentMessageEvents.size();
-	}
-
-	@Override
-	public ChannelEvent nextDownstreamChannelEvent() {
-		return this.downstreamChannelEvents.poll();
-	}
-
-	@Override
-	public ChannelEvent nextDownstreamChannelEvent(
-	        final ChannelEventFilter predicate) {
-		for (final ChannelEvent candidate : this.downstreamChannelEvents) {
-			if (predicate.matches(candidate)) {
-				this.downstreamChannelEvents.remove(candidate);
-				return candidate;
-			}
+	public void unbindChannel() throws Throwable {
+		disconnectChannel();
+		unbind(this.channel);
+		if (this.channel.isBound()) {
+			fireChannelUnbound(this.channel);
 		}
-		return null;
-	}
-
-	@Override
-	public ChannelEvent[] allDownstreamChannelEvents() {
-		final int size = numberOfDownstreamChannelEvents();
-		final ChannelEvent[] a = new ChannelEvent[size];
-		for (int i = 0; i < size; i++) {
-			final ChannelEvent product = nextDownstreamChannelEvent();
-			if (product == null) {
-				throw new ConcurrentModificationException();
-			}
-			a[i] = product;
+		if (this.thrownException.get() != null) {
+			throw this.thrownException.getAndSet(null);
 		}
-		return a;
 	}
 
 	@Override
-	public int numberOfDownstreamChannelEvents() {
-		return this.downstreamChannelEvents.size();
+	public void closeChannel() throws Throwable {
+		disconnectChannel();
+		unbindChannel();
+		close(this.channel);
+		if (this.channel.isOpen()) {
+			fireChannelClosed(this.channel);
+		}
+		if (this.thrownException.get() != null) {
+			throw this.thrownException.getAndSet(null);
+		}
 	}
 
 	// ------------------------------------------------------------------------
@@ -360,6 +284,15 @@ public class DefaultChannelPipelineEmbedder implements ChannelPipelineEmbedder {
 	@Override
 	public ChannelPipeline getPipeline() {
 		return this.pipeline;
+	}
+
+	/**
+	 * Returns the virtual {@link Channel} which will be used as a mock during
+	 * encoding and decoding.
+	 */
+	@Override
+	public final Channel getChannel() {
+		return this.channel;
 	}
 
 	// ------------------------------------------------------------------------
@@ -432,18 +365,48 @@ public class DefaultChannelPipelineEmbedder implements ChannelPipelineEmbedder {
 		@Override
 		public void handleUpstream(final ChannelHandlerContext ctx,
 		        final ChannelEvent e) throws Exception {
-			final boolean accepted;
-			if (e instanceof MessageEvent) {
-				accepted = DefaultChannelPipelineEmbedder.this.receivedMessageEvents
-				        .offer((MessageEvent) e);
+			if (e instanceof ChannelStateEvent) {
+				final ChannelStateEvent event = (ChannelStateEvent) e;
+				final EmbeddedChannel channel = (EmbeddedChannel) event
+				        .getChannel();
+				final ChannelState state = event.getState();
+				final Object value = event.getValue();
+
+				switch (state) {
+				case OPEN:
+					if (Boolean.FALSE.equals(value)) {
+						channel.close();
+					} else {
+						channel.setOpen();
+					}
+					break;
+				case BOUND:
+					if (value != null) {
+						channel.setBound();
+					} else {
+						channel.unbind();
+					}
+					break;
+				case CONNECTED:
+					if (value != null) {
+						channel.setConnected();
+					} else {
+						channel.disconnect();
+					}
+					break;
+				}
+				DefaultChannelPipelineEmbedder.this.upstreamChannelEvents
+				        .onEvent(e);
 			} else if (e instanceof ExceptionEvent) {
-				accepted = true;
-				ctx.sendUpstream(e);
+				// Noop
+			} else if (e instanceof MessageEvent) {
+				DefaultChannelPipelineEmbedder.this.upstreamMessageEvents
+				        .onEvent((MessageEvent) e);
 			} else {
-				accepted = DefaultChannelPipelineEmbedder.this.upstreamChannelEvents
-				        .offer(e);
+				DefaultChannelPipelineEmbedder.this.upstreamChannelEvents
+				        .onEvent(e);
 			}
-			assert accepted;
+			ctx.sendUpstream(e);
 		}
 	}
 
@@ -458,6 +421,10 @@ public class DefaultChannelPipelineEmbedder implements ChannelPipelineEmbedder {
 		        final ExceptionEvent e) throws Exception {
 			DefaultChannelPipelineEmbedder.this.thrownException.set(e
 			        .getCause());
+			DefaultChannelPipelineEmbedder.this.upstreamChannelEvents
+			        .onExceptionEvent(e);
+			DefaultChannelPipelineEmbedder.this.upstreamMessageEvents
+			        .onExceptionEvent(e);
 		}
 	}
 
@@ -473,17 +440,19 @@ public class DefaultChannelPipelineEmbedder implements ChannelPipelineEmbedder {
 		}
 
 		private void handleEvent(final ChannelEvent e) {
-			if (e instanceof MessageEvent) {
-				final boolean offered = DefaultChannelPipelineEmbedder.this.sentMessageEvents
-				        .offer((MessageEvent) e);
-				assert offered;
-			} else if (e instanceof ExceptionEvent) {
+			if (e instanceof ExceptionEvent) {
 				DefaultChannelPipelineEmbedder.this.thrownException
 				        .set(((ExceptionEvent) e).getCause());
+				DefaultChannelPipelineEmbedder.this.downstreamChannelEvents
+				        .onExceptionEvent((ExceptionEvent) e);
+				DefaultChannelPipelineEmbedder.this.downstreamMessageEvents
+				        .onExceptionEvent((ExceptionEvent) e);
+			} else if (e instanceof MessageEvent) {
+				DefaultChannelPipelineEmbedder.this.downstreamMessageEvents
+				        .onEvent((MessageEvent) e);
 			} else {
-				final boolean offered = DefaultChannelPipelineEmbedder.this.downstreamChannelEvents
-				        .offer(e);
-				assert offered;
+				DefaultChannelPipelineEmbedder.this.downstreamChannelEvents
+				        .onEvent(e);
 			}
 		}
 
@@ -495,6 +464,9 @@ public class DefaultChannelPipelineEmbedder implements ChannelPipelineEmbedder {
 			        .getCause() : cause;
 			DefaultChannelPipelineEmbedder.this.thrownException
 			        .set(actualCause);
+			DefaultChannelPipelineEmbedder.this.downstreamChannelEvents
+			        .onExceptionEvent(new DefaultExceptionEvent(e.getChannel(),
+			                actualCause));
 		}
 
 		@Override

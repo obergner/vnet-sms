@@ -87,7 +87,8 @@ public class OutgoingPingChannelHandler<ID extends Serializable> extends
 
 	@Override
 	public void pingResponseReceived(final ChannelHandlerContext ctx,
-	        final ReceivedPingRequestAcknowledgementEvent<ID> e) throws Exception {
+	        final ReceivedPingRequestAcknowledgementEvent<ID> e)
+	        throws Exception {
 		if (this.pingSender == null) {
 			throw new IllegalStateException(
 			        "Cannot cancel ping response timout since no PingSender has been started - have you started a PingSender in channelConnected(...)?");

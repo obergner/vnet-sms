@@ -20,7 +20,7 @@ import vnet.sms.common.wme.acknowledge.SendSmsNackEvent;
 import vnet.sms.common.wme.receive.ReceivedSmsEvent;
 import vnet.sms.gateway.nettysupport.test.ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler;
 import vnet.sms.gateway.nettysupport.window.incoming.IncomingWindowStore;
-import vnet.sms.gateway.nettytest.embedded.ChannelEventFilter;
+import vnet.sms.gateway.nettytest.embedded.ChannelEventFilters;
 import vnet.sms.gateway.nettytest.embedded.ChannelPipelineEmbedder;
 import vnet.sms.gateway.nettytest.embedded.DefaultChannelPipelineEmbedder;
 
@@ -38,13 +38,14 @@ public class WindowingChannelHandlerTest {
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        objectUnderTest);
+		embeddedPipeline.connectChannel();
 
 		embeddedPipeline
 		        .receive(new LoginRequest(
 		                "assertThatWindowedChannelHandlerCorrectlyPropagatesLoginRequest",
 		                "secret"));
 		final MessageEvent propagatedMessageEvent = embeddedPipeline
-		        .nextReceivedMessageEvent();
+		        .upstreamMessageEvents().nextMessageEvent();
 
 		assertNotNull("WindowingChannelHandler did not propagate LoginRequest",
 		        propagatedMessageEvent);
@@ -68,14 +69,17 @@ public class WindowingChannelHandlerTest {
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        objectUnderTest);
+		embeddedPipeline.connectChannel();
 
 		embeddedPipeline.receive(loginRequest);
-		embeddedPipeline.nextReceivedMessageEvent();
+		embeddedPipeline.upstreamMessageEvents().nextMessageEvent();
 		embeddedPipeline.receive(loginRequest);
 
 		final ChannelEvent propagatedMessageEvent = embeddedPipeline
-		        .nextUpstreamChannelEvent(ChannelEventFilter.FILTERS
-		                .ofType(NoWindowForIncomingMessageAvailableEvent.class));
+		        .upstreamChannelEvents()
+		        .nextMatchingChannelEvent(
+		                ChannelEventFilters
+		                        .ofType(NoWindowForIncomingMessageAvailableEvent.class));
 
 		assertNotNull(
 		        "WindowingChannelHandler did not propagate error event when rejecting incoming message due to no window available",
@@ -97,13 +101,14 @@ public class WindowingChannelHandlerTest {
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        objectUnderTest);
+		embeddedPipeline.connectChannel();
 
 		final Sms receivedSms = new Sms(new Msisdn("01686754432"), new Msisdn(
 		        "01686754432"),
 		        "assertThatWindowedChannelHandlerStoresReceivedSmsInIncomingWindowingStore");
 		embeddedPipeline.receive(receivedSms);
 		final MessageEvent propagatedMessageEvent = embeddedPipeline
-		        .nextReceivedMessageEvent();
+		        .upstreamMessageEvents().nextMessageEvent();
 
 		assertNotNull("WindowingChannelHandler did not propagate Sms",
 		        propagatedMessageEvent);
@@ -140,6 +145,7 @@ public class WindowingChannelHandlerTest {
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        objectUnderTest, converterHandler);
+		embeddedPipeline.connectChannel();
 
 		final Sms receivedSms = new Sms(
 		        new Msisdn("01686754432"),
@@ -152,11 +158,11 @@ public class WindowingChannelHandlerTest {
 		        1, incomingWindowStore.getCurrentMessageCount());
 
 		final MessageEvent propagatedMessageEvent = embeddedPipeline
-		        .nextReceivedMessageEvent();
+		        .upstreamMessageEvents().nextMessageEvent();
 		final Integer messageRef = (Integer) ReceivedSmsEvent.class.cast(
 		        propagatedMessageEvent).getMessageReference();
-		embeddedPipeline.send(new SendSmsAckContainer<Integer>(
-		        messageRef, 0, receivedSms));
+		embeddedPipeline.send(new SendSmsAckContainer<Integer>(messageRef, 0,
+		        receivedSms));
 
 		assertEquals(
 		        "WindowingChannelHandler should have released received SMS when processing an Ack for that SMS",
@@ -183,6 +189,7 @@ public class WindowingChannelHandlerTest {
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        objectUnderTest, converterHandler);
+		embeddedPipeline.connectChannel();
 
 		final Sms smsToAcknowledge = new Sms(
 		        new Msisdn("01686754432"),
@@ -195,18 +202,20 @@ public class WindowingChannelHandlerTest {
 		        1, incomingWindowStore.getCurrentMessageCount());
 
 		final MessageEvent propagatedMessageEvent = embeddedPipeline
-		        .nextReceivedMessageEvent();
+		        .upstreamMessageEvents().nextMessageEvent();
 
 		final Sms actuallyAcknowledgedSms = new Sms(new Msisdn("01686754432"),
 		        new Msisdn("01686754432"), "actually");
 		final Integer messageRef = (Integer) ReceivedSmsEvent.class.cast(
 		        propagatedMessageEvent).getMessageReference();
-		embeddedPipeline.send(new SendSmsAckContainer<Integer>(
-		        messageRef, 0, actuallyAcknowledgedSms));
+		embeddedPipeline.send(new SendSmsAckContainer<Integer>(messageRef, 0,
+		        actuallyAcknowledgedSms));
 
 		final ChannelEvent expectedFailedToReleaseEvent = embeddedPipeline
-		        .nextUpstreamChannelEvent(ChannelEventFilter.FILTERS
-		                .ofType(FailedToReleaseAcknowledgedMessageEvent.class));
+		        .upstreamChannelEvents()
+		        .nextMatchingChannelEvent(
+		                ChannelEventFilters
+		                        .ofType(FailedToReleaseAcknowledgedMessageEvent.class));
 
 		assertNotNull(
 		        "WindowingChannelHandler should have sent a "
@@ -236,6 +245,7 @@ public class WindowingChannelHandlerTest {
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        objectUnderTest, converterHandler);
+		embeddedPipeline.connectChannel();
 
 		final Sms receivedSms = new Sms(
 		        new Msisdn("01686754432"),
@@ -248,7 +258,7 @@ public class WindowingChannelHandlerTest {
 		        1, incomingWindowStore.getCurrentMessageCount());
 
 		final MessageEvent propagatedMessageEvent = embeddedPipeline
-		        .nextReceivedMessageEvent();
+		        .upstreamMessageEvents().nextMessageEvent();
 		final Integer messageRef = (Integer) ReceivedSmsEvent.class.cast(
 		        propagatedMessageEvent).getMessageReference();
 		embeddedPipeline
@@ -282,6 +292,7 @@ public class WindowingChannelHandlerTest {
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        objectUnderTest, converterHandler);
+		embeddedPipeline.connectChannel();
 
 		final Sms smsToAcknowledge = new Sms(
 		        new Msisdn("01686754432"),
@@ -294,16 +305,18 @@ public class WindowingChannelHandlerTest {
 		        1, incomingWindowStore.getCurrentMessageCount());
 
 		final MessageEvent propagatedMessageEvent = embeddedPipeline
-		        .nextReceivedMessageEvent();
+		        .upstreamMessageEvents().nextMessageEvent();
 
 		final Integer messageRef = (Integer) ReceivedSmsEvent.class.cast(
 		        propagatedMessageEvent).getMessageReference();
-		embeddedPipeline.send(new SendSmsAckContainer<Integer>(
-		        messageRef + 1, 0, smsToAcknowledge));
+		embeddedPipeline.send(new SendSmsAckContainer<Integer>(messageRef + 1,
+		        0, smsToAcknowledge));
 
 		final ChannelEvent expectedFailedToReleaseEvent = embeddedPipeline
-		        .nextUpstreamChannelEvent(ChannelEventFilter.FILTERS
-		                .ofType(FailedToReleaseAcknowledgedMessageEvent.class));
+		        .upstreamChannelEvents()
+		        .nextMatchingChannelEvent(
+		                ChannelEventFilters
+		                        .ofType(FailedToReleaseAcknowledgedMessageEvent.class));
 
 		assertNotNull(
 		        "WindowingChannelHandler should have sent a "

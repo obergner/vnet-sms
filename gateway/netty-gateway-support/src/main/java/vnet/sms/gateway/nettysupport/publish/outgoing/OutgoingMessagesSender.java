@@ -59,8 +59,7 @@ public interface OutgoingMessagesSender<ID extends Serializable> {
 	 * @return
 	 * @throws Exception
 	 */
-	ChannelFuture ackReceivedSms(SendSmsAckContainer<ID> ack)
-	        throws Exception;
+	ChannelFuture ackReceivedSms(SendSmsAckContainer<ID> ack) throws Exception;
 
 	/**
 	 * @param nack

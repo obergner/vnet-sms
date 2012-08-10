@@ -20,10 +20,11 @@ import vnet.sms.common.wme.acknowledge.SendLoginRequestNackEvent;
 import vnet.sms.common.wme.receive.ReceivedPingRequestEvent;
 import vnet.sms.gateway.nettysupport.MessageProcessingContext;
 import vnet.sms.gateway.nettysupport.test.ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler;
-import vnet.sms.gateway.nettytest.embedded.ChannelEventFilter;
 import vnet.sms.gateway.nettytest.embedded.ChannelPipelineEmbedder;
 import vnet.sms.gateway.nettytest.embedded.DefaultChannelPipelineEmbedder;
-import vnet.sms.gateway.nettytest.embedded.MessageEventFilter;
+import vnet.sms.gateway.nettytest.embedded.MessageEventFilters;
+
+import com.google.common.base.Predicate;
 
 public class IncomingLoginRequestsChannelHandlerTest {
 
@@ -51,11 +52,13 @@ public class IncomingLoginRequestsChannelHandlerTest {
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        objectUnderTest);
+		embeddedPipeline.connectChannel();
 		embeddedPipeline
 		        .receive(new LoginRequest(
 		                "assertThatLoginChannelHandlerSendsLoginRequestAcceptedEventDownstreamIfLoginSucceeds",
 		                "secret"));
-		final MessageEvent sentReply = embeddedPipeline.nextSentMessageEvent();
+		final MessageEvent sentReply = embeddedPipeline
+		        .downstreamMessageEvents().nextMessageEvent();
 
 		assertNotNull(
 		        "IncomingLoginRequestsChannelHandler did not send a reply after successful login",
@@ -83,12 +86,14 @@ public class IncomingLoginRequestsChannelHandlerTest {
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        objectUnderTest);
+		embeddedPipeline.connectChannel();
 		embeddedPipeline
 		        .receive(new LoginRequest(
 		                "assertThatLoginChannelHandlerSendsLoginRequestRejectedEventDownstreamIfLoginThrowsBadCredentialsException",
 		                "secret"));
 		Thread.sleep(negativeResponseDelayMillis + 100);
-		final MessageEvent sentReply = embeddedPipeline.nextSentMessageEvent();
+		final MessageEvent sentReply = embeddedPipeline
+		        .downstreamMessageEvents().nextMessageEvent();
 
 		assertNotNull(
 		        "IncomingLoginRequestsChannelHandler did not send a reply after rejected login",
@@ -116,6 +121,7 @@ public class IncomingLoginRequestsChannelHandlerTest {
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        objectUnderTest);
+		embeddedPipeline.connectChannel();
 		embeddedPipeline
 		        .receive(new LoginRequest(
 		                "assertThatLoginChannelHandlerDelaysResponseForConfiguredNumberOfMillisecondsIfLoginRequestFails",
@@ -123,11 +129,11 @@ public class IncomingLoginRequestsChannelHandlerTest {
 
 		assertNull(
 		        "IncomingLoginRequestsChannelHandler did NOT delay response to failed login attempt",
-		        embeddedPipeline.nextSentMessageEvent());
+		        embeddedPipeline.downstreamMessageEvents().nextMessageEvent());
 		Thread.sleep(negativeResponseDelayMillis + 200);
 		assertNotNull(
 		        "IncomingLoginRequestsChannelHandler did not send a response to failed login attempt after delay period has elapsed",
-		        embeddedPipeline.nextSentMessageEvent());
+		        embeddedPipeline.downstreamMessageEvents().nextMessageEvent());
 	}
 
 	@Test
@@ -147,8 +153,10 @@ public class IncomingLoginRequestsChannelHandlerTest {
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        objectUnderTest);
+		embeddedPipeline.connectChannel();
 		embeddedPipeline.receive(new PingRequest());
-		final MessageEvent sentReply = embeddedPipeline.nextSentMessageEvent();
+		final MessageEvent sentReply = embeddedPipeline
+		        .downstreamMessageEvents().nextMessageEvent();
 
 		assertNotNull(
 		        "IncomingLoginRequestsChannelHandler did not send a reply after receiving non-login message on unauthenticated channel",
@@ -178,14 +186,16 @@ public class IncomingLoginRequestsChannelHandlerTest {
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        objectUnderTest);
+		embeddedPipeline.connectChannel();
 		embeddedPipeline
 		        .receive(new LoginRequest(
 		                "assertThatLoginChannelHandlerSendsLoginRequestAcceptedEventDownstreamIfLoginSucceeds",
 		                "secret"));
 		embeddedPipeline.receive(new PingRequest());
 		final MessageEvent propagatedMessage = embeddedPipeline
-		        .nextReceivedMessageEvent(MessageEventFilter.FILTERS
-		                .ofType(ReceivedPingRequestEvent.class));
+		        .upstreamMessageEvents().nextMatchingMessageEvent(
+		                MessageEventFilters
+		                        .ofType(ReceivedPingRequestEvent.class));
 
 		assertNotNull(
 		        "IncomingLoginRequestsChannelHandler did not propagate non-login message received on authenticated channel",
@@ -214,17 +224,19 @@ public class IncomingLoginRequestsChannelHandlerTest {
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        objectUnderTest);
+		embeddedPipeline.connectChannel();
 		embeddedPipeline
 		        .receive(new LoginRequest(
 		                "assertThatLoginChannelHandlerSendsChannelSuccessfullyAuthenticatedEventUpstreamIfLoginSucceeds",
 		                "secret"));
 		final ChannelEvent upstreamChannelEvent = embeddedPipeline
-		        .nextUpstreamChannelEvent(new ChannelEventFilter() {
-			        @Override
-			        public boolean matches(final ChannelEvent event) {
-				        return event instanceof ChannelSuccessfullyAuthenticatedEvent;
-			        }
-		        });
+		        .upstreamChannelEvents().nextMatchingChannelEvent(
+		                new Predicate<ChannelEvent>() {
+			                @Override
+			                public boolean apply(final ChannelEvent event) {
+				                return event instanceof ChannelSuccessfullyAuthenticatedEvent;
+			                }
+		                });
 
 		assertNotNull(
 		        "IncomingLoginRequestsChannelHandler did not send expected "
@@ -250,17 +262,19 @@ public class IncomingLoginRequestsChannelHandlerTest {
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        objectUnderTest);
+		embeddedPipeline.connectChannel();
 		embeddedPipeline
 		        .receive(new LoginRequest(
 		                "assertThatLoginChannelHandlerSendsChannelAuthenticationFailedEventUpstreamIfLoginFailes",
 		                "secret"));
 		final ChannelEvent upstreamChannelEvent = embeddedPipeline
-		        .nextUpstreamChannelEvent(new ChannelEventFilter() {
-			        @Override
-			        public boolean matches(final ChannelEvent event) {
-				        return event instanceof ChannelAuthenticationFailedEvent;
-			        }
-		        });
+		        .upstreamChannelEvents().nextMatchingChannelEvent(
+		                new Predicate<ChannelEvent>() {
+			                @Override
+			                public boolean apply(final ChannelEvent event) {
+				                return event instanceof ChannelAuthenticationFailedEvent;
+			                }
+		                });
 
 		assertNotNull(
 		        "IncomingLoginRequestsChannelHandler did not send expected "
@@ -287,6 +301,7 @@ public class IncomingLoginRequestsChannelHandlerTest {
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        objectUnderTest);
+		embeddedPipeline.connectChannel();
 		final LoginRequest loginRequest = new LoginRequest(
 		        "assertThatLoginChannelHandlerRemovesAuthenticatedUserFromMDCAfterReturning",
 		        "secret");

@@ -23,6 +23,7 @@ public class OutgoingPdusCountingChannelHandlerTest {
 		final int numberOfSentPdus = 32;
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        this.objectUnderTest);
+		embeddedPipeline.connectChannel();
 
 		for (int i = 0; i < numberOfSentPdus; i++) {
 			embeddedPipeline.send(new PingRequest());

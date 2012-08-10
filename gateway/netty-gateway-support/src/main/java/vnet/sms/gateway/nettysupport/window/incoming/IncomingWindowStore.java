@@ -70,7 +70,7 @@ public class IncomingWindowStore<ID extends Serializable> {
 	// ------------------------------------------------------------------------
 
 	/**
-	 * @param messageEvent
+	 * @param channelEvent
 	 * @return
 	 * @throws IllegalArgumentException
 	 * @throws IllegalStateException

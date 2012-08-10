@@ -19,10 +19,10 @@ import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.PingResponse;
 import vnet.sms.common.messages.Sms;
 import vnet.sms.common.wme.WindowedMessageEvent;
-import vnet.sms.common.wme.receive.ReceivedLoginRequestEvent;
 import vnet.sms.common.wme.receive.ReceivedLoginRequestAcknowledgementEvent;
-import vnet.sms.common.wme.receive.ReceivedPingRequestEvent;
+import vnet.sms.common.wme.receive.ReceivedLoginRequestEvent;
 import vnet.sms.common.wme.receive.ReceivedPingRequestAcknowledgementEvent;
+import vnet.sms.common.wme.receive.ReceivedPingRequestEvent;
 import vnet.sms.common.wme.receive.ReceivedSmsEvent;
 
 public class UpstreamMessageEventToWindowedMessageEventConverterTest {

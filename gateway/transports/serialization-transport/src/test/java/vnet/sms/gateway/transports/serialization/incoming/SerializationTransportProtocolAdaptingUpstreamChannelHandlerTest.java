@@ -12,10 +12,10 @@ import vnet.sms.common.messages.Msisdn;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.PingResponse;
 import vnet.sms.common.messages.Sms;
-import vnet.sms.common.wme.receive.ReceivedLoginRequestEvent;
 import vnet.sms.common.wme.receive.ReceivedLoginRequestAcknowledgementEvent;
-import vnet.sms.common.wme.receive.ReceivedPingRequestEvent;
+import vnet.sms.common.wme.receive.ReceivedLoginRequestEvent;
 import vnet.sms.common.wme.receive.ReceivedPingRequestAcknowledgementEvent;
+import vnet.sms.common.wme.receive.ReceivedPingRequestEvent;
 import vnet.sms.common.wme.receive.ReceivedSmsEvent;
 import vnet.sms.gateway.nettytest.embedded.ChannelPipelineEmbedder;
 import vnet.sms.gateway.nettytest.embedded.DefaultChannelPipelineEmbedder;
@@ -30,6 +30,7 @@ public class SerializationTransportProtocolAdaptingUpstreamChannelHandlerTest {
 	        throws Throwable {
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        this.objectUnderTest);
+		embeddedPipeline.connectChannel();
 
 		embeddedPipeline
 		        .receive(ReferenceableMessageContainer
@@ -38,7 +39,7 @@ public class SerializationTransportProtocolAdaptingUpstreamChannelHandlerTest {
 		                                "assertThatTransportProtocolAdapterCorrectlyConvertsPduToLoginRequest",
 		                                "secret")));
 		final MessageEvent convertedPduEvent = embeddedPipeline
-		        .nextReceivedMessageEvent();
+		        .upstreamMessageEvents().nextMessageEvent();
 
 		assertNotNull(
 		        "SerializationTransportProtocolAdaptingUpstreamChannelHandler converted LoginRequest to null output",
@@ -53,6 +54,7 @@ public class SerializationTransportProtocolAdaptingUpstreamChannelHandlerTest {
 	        throws Throwable {
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        this.objectUnderTest);
+		embeddedPipeline.connectChannel();
 
 		embeddedPipeline
 		        .receive(ReferenceableMessageContainer.wrap(
@@ -62,14 +64,15 @@ public class SerializationTransportProtocolAdaptingUpstreamChannelHandlerTest {
 		                                "assertThatTransportProtocolAdapterCorrectlyConvertsPduToLoginRequest",
 		                                "secret"))));
 		final MessageEvent convertedPduEvent = embeddedPipeline
-		        .nextReceivedMessageEvent();
+		        .upstreamMessageEvents().nextMessageEvent();
 
 		assertNotNull(
 		        "SerializationTransportProtocolAdaptingUpstreamChannelHandler converted LoginResponse to null output",
 		        convertedPduEvent);
 		assertEquals(
 		        "SerializationTransportProtocolAdaptingUpstreamChannelHandler converted LoginResponse to unexpected output",
-		        ReceivedLoginRequestAcknowledgementEvent.class, convertedPduEvent.getClass());
+		        ReceivedLoginRequestAcknowledgementEvent.class,
+		        convertedPduEvent.getClass());
 	}
 
 	@Test
@@ -77,11 +80,12 @@ public class SerializationTransportProtocolAdaptingUpstreamChannelHandlerTest {
 	        throws Throwable {
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        this.objectUnderTest);
+		embeddedPipeline.connectChannel();
 
 		embeddedPipeline.receive(ReferenceableMessageContainer.wrap(1,
 		        new PingRequest()));
 		final MessageEvent convertedPduEvent = embeddedPipeline
-		        .nextReceivedMessageEvent();
+		        .upstreamMessageEvents().nextMessageEvent();
 
 		assertNotNull(
 		        "SerializationTransportProtocolAdaptingUpstreamChannelHandler converted PingRequest to null output",
@@ -96,18 +100,20 @@ public class SerializationTransportProtocolAdaptingUpstreamChannelHandlerTest {
 	        throws Throwable {
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        this.objectUnderTest);
+		embeddedPipeline.connectChannel();
 
 		embeddedPipeline.receive(ReferenceableMessageContainer.wrap(1,
 		        PingResponse.accept(new PingRequest())));
 		final MessageEvent convertedPduEvent = embeddedPipeline
-		        .nextReceivedMessageEvent();
+		        .upstreamMessageEvents().nextMessageEvent();
 
 		assertNotNull(
 		        "SerializationTransportProtocolAdaptingUpstreamChannelHandler converted PingResponse to null output",
 		        convertedPduEvent);
 		assertEquals(
 		        "SerializationTransportProtocolAdaptingUpstreamChannelHandler converted PingResponse to unexpected output",
-		        ReceivedPingRequestAcknowledgementEvent.class, convertedPduEvent.getClass());
+		        ReceivedPingRequestAcknowledgementEvent.class,
+		        convertedPduEvent.getClass());
 	}
 
 	@Test
@@ -115,6 +121,7 @@ public class SerializationTransportProtocolAdaptingUpstreamChannelHandlerTest {
 	        throws Throwable {
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        this.objectUnderTest);
+		embeddedPipeline.connectChannel();
 
 		embeddedPipeline
 		        .receive(ReferenceableMessageContainer
@@ -123,7 +130,7 @@ public class SerializationTransportProtocolAdaptingUpstreamChannelHandlerTest {
 		                                "01686754432"),
 		                                "assertThatTransportProtocolAdapterCorrectlyConvertsPduToSms")));
 		final MessageEvent convertedPduEvent = embeddedPipeline
-		        .nextReceivedMessageEvent();
+		        .upstreamMessageEvents().nextMessageEvent();
 
 		assertNotNull(
 		        "SerializationTransportProtocolAdaptingUpstreamChannelHandler converted Sms to null output",

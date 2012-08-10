@@ -27,10 +27,10 @@ import vnet.sms.common.wme.acknowledge.SendSmsAckContainer;
 import vnet.sms.common.wme.acknowledge.SendSmsAckEvent;
 import vnet.sms.common.wme.acknowledge.SendSmsNackContainer;
 import vnet.sms.common.wme.acknowledge.SendSmsNackEvent;
-import vnet.sms.common.wme.receive.ReceivedLoginRequestEvent;
 import vnet.sms.common.wme.receive.ReceivedLoginRequestAcknowledgementEvent;
-import vnet.sms.common.wme.receive.ReceivedPingRequestEvent;
+import vnet.sms.common.wme.receive.ReceivedLoginRequestEvent;
 import vnet.sms.common.wme.receive.ReceivedPingRequestAcknowledgementEvent;
+import vnet.sms.common.wme.receive.ReceivedPingRequestEvent;
 import vnet.sms.common.wme.receive.ReceivedSmsEvent;
 import vnet.sms.common.wme.send.SendPingRequestEvent;
 import vnet.sms.common.wme.send.SendSmsContainer;
@@ -69,11 +69,13 @@ public class WindowedChannelHandler<ID extends Serializable> implements
 		if (e instanceof ReceivedLoginRequestEvent) {
 			loginRequestReceived(ctx, (ReceivedLoginRequestEvent<ID>) e);
 		} else if (e instanceof ReceivedLoginRequestAcknowledgementEvent) {
-			loginResponseReceived(ctx, (ReceivedLoginRequestAcknowledgementEvent<ID>) e);
+			loginResponseReceived(ctx,
+			        (ReceivedLoginRequestAcknowledgementEvent<ID>) e);
 		} else if (e instanceof ReceivedPingRequestEvent) {
 			pingRequestReceived(ctx, (ReceivedPingRequestEvent<ID>) e);
 		} else if (e instanceof ReceivedPingRequestAcknowledgementEvent) {
-			pingResponseReceived(ctx, (ReceivedPingRequestAcknowledgementEvent<ID>) e);
+			pingResponseReceived(ctx,
+			        (ReceivedPingRequestAcknowledgementEvent<ID>) e);
 		} else if (e instanceof ReceivedSmsEvent) {
 			smsReceived(ctx, (ReceivedSmsEvent<ID>) e);
 		} else if (e instanceof ChannelAuthenticationFailedEvent) {
@@ -161,7 +163,8 @@ public class WindowedChannelHandler<ID extends Serializable> implements
 	 * @param e
 	 */
 	protected void loginResponseReceived(final ChannelHandlerContext ctx,
-	        final ReceivedLoginRequestAcknowledgementEvent<ID> e) throws Exception {
+	        final ReceivedLoginRequestAcknowledgementEvent<ID> e)
+	        throws Exception {
 		ctx.sendUpstream(e);
 	}
 
@@ -179,7 +182,8 @@ public class WindowedChannelHandler<ID extends Serializable> implements
 	 * @param e
 	 */
 	protected void pingResponseReceived(final ChannelHandlerContext ctx,
-	        final ReceivedPingRequestAcknowledgementEvent<ID> e) throws Exception {
+	        final ReceivedPingRequestAcknowledgementEvent<ID> e)
+	        throws Exception {
 		ctx.sendUpstream(e);
 	}
 

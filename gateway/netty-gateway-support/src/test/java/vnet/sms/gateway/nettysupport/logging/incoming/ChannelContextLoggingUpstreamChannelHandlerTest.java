@@ -20,6 +20,7 @@ public class ChannelContextLoggingUpstreamChannelHandlerTest {
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        objectUnderTest);
+		embeddedPipeline.connectChannel();
 		final PingRequest pingRequest = new PingRequest();
 		embeddedPipeline.receive(pingRequest);
 		final String currentChannelInMdc = MDC

@@ -23,9 +23,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.BadCredentialsException;
 
+import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.messages.LoginRequest;
 import vnet.sms.common.messages.LoginResponse;
-import vnet.sms.common.messages.GsmPdu;
 import vnet.sms.common.messages.PingRequest;
 import vnet.sms.common.messages.PingResponse;
 import vnet.sms.gateway.transports.serialization.ReferenceableMessageContainer;
@@ -140,8 +140,8 @@ public class IntegrationTestClient {
 		};
 
 		sendMessage(messageReference, gsmPdu, responseListener);
-		this.log.debug("Waiting for response to message {} sent to {}",
-		        gsmPdu, this.serverAddress);
+		this.log.debug("Waiting for response to message {} sent to {}", gsmPdu,
+		        this.serverAddress);
 		responseReceived.await();
 		this.log.debug("Received response {} to message {}",
 		        receivedResponse.get(), gsmPdu);
@@ -166,8 +166,8 @@ public class IntegrationTestClient {
 		};
 
 		sendMessage(messageReference, gsmPdu, responseListener);
-		this.log.debug("Waiting for response to message {} sent to {}",
-		        gsmPdu, this.serverAddress);
+		this.log.debug("Waiting for response to message {} sent to {}", gsmPdu,
+		        this.serverAddress);
 		responseReceived.await();
 		this.log.debug("Received response {} to message {}",
 		        receivedResponse.get(), gsmPdu);

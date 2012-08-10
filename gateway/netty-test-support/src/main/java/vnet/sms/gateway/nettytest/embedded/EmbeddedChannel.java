@@ -24,9 +24,21 @@ import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.ChannelSink;
 import org.jboss.netty.channel.DefaultChannelConfig;
 
-class EmbeddedChannel extends AbstractChannel {
+final class EmbeddedChannel extends AbstractChannel {
 
 	private static final AtomicInteger	UNIQUE_ID	 = new AtomicInteger(0);
+
+	private static final int	       ST_INITIAL	 = Integer.MIN_VALUE;
+
+	private static final int	       ST_OPEN	     = 0;
+
+	private static final int	       ST_BOUND	     = 1;
+
+	private static final int	       ST_CONNECTED	 = 2;
+
+	private static final int	       ST_CLOSED	 = -1;
+
+	private volatile int	           state	     = ST_INITIAL;
 
 	private final ChannelConfig	       config;
 
@@ -56,12 +68,39 @@ class EmbeddedChannel extends AbstractChannel {
 	}
 
 	@Override
+	public boolean isOpen() {
+		return this.state >= ST_OPEN;
+	}
+
+	void setOpen() {
+		assert this.state == ST_INITIAL : "Invalid state: " + this.state;
+		this.state = ST_OPEN;
+	}
+
+	@Override
 	public boolean isBound() {
-		return true;
+		return this.state >= ST_BOUND;
+	}
+
+	void setBound() {
+		assert this.state == ST_OPEN : "Invalid state: " + this.state;
+		this.state = ST_BOUND;
 	}
 
 	@Override
 	public boolean isConnected() {
-		return true;
+		return this.state == ST_CONNECTED;
+	}
+
+	void setConnected() {
+		if (this.state != ST_CLOSED) {
+			this.state = ST_CONNECTED;
+		}
+	}
+
+	@Override
+	protected boolean setClosed() {
+		this.state = ST_CLOSED;
+		return super.setClosed();
 	}
 }

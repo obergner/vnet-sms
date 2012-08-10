@@ -5,7 +5,15 @@ package vnet.sms.gateway.transports.serialization;
 
 import static org.apache.commons.lang.Validate.notNull;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.Serializable;
+
+import org.jboss.netty.buffer.ChannelBuffer;
+import org.jboss.netty.buffer.ChannelBuffers;
+import org.jboss.netty.handler.codec.serialization.ObjectDecoderInputStream;
+import org.jboss.netty.handler.codec.serialization.ObjectEncoderOutputStream;
 
 import vnet.sms.common.messages.GsmPdu;
 
@@ -22,7 +30,26 @@ public final class ReferenceableMessageContainer implements Serializable {
 		return new ReferenceableMessageContainer(messageReference, gsmPdu);
 	}
 
-	private final int	  messageReference;
+	public static final ReferenceableMessageContainer decode(
+	        final ChannelBuffer channelBuffer) {
+		try {
+			notNull(channelBuffer, "Argument 'channelBuffer' must not be null");
+			final byte[] serializedForm = new byte[channelBuffer
+			        .readableBytes()];
+			channelBuffer.getBytes(0, serializedForm);
+			final Object message = new ObjectDecoderInputStream(
+			        new ByteArrayInputStream(serializedForm)).readObject();
+			if (!ReferenceableMessageContainer.class.isInstance(message)) {
+				return null;
+			}
+			return ReferenceableMessageContainer.class.cast(message);
+		} catch (final Exception e) {
+			throw new RuntimeException("Failed to decode [" + channelBuffer
+			        + "]: " + e.getMessage(), e);
+		}
+	}
+
+	private final int	 messageReference;
 
 	private final GsmPdu	gsmPdu;
 
@@ -50,6 +77,28 @@ public final class ReferenceableMessageContainer implements Serializable {
 			                + this.gsmPdu.getClass().getName());
 		}
 		return expectedType.cast(this.gsmPdu);
+	}
+
+	public ChannelBuffer encode() {
+		ObjectEncoderOutputStream oos = null;
+		try {
+			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			oos = new ObjectEncoderOutputStream(baos);
+			oos.writeObject(this);
+			oos.flush();
+			return ChannelBuffers.copiedBuffer(baos.toByteArray());
+		} catch (final IOException e) {
+			throw new RuntimeException("Failed to serialize [" + this + "]: "
+			        + e.getMessage(), e);
+		} finally {
+			if (oos != null) {
+				try {
+					oos.close();
+				} catch (final IOException e) {
+					// Ignore
+				}
+			}
+		}
 	}
 
 	@Override

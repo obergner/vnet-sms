@@ -38,6 +38,7 @@
         <module.infrastructure.rpm-logstash.version>1.0.0-SNAPSHOT</module.infrastructure.rpm-logstash.version>
         <module.infrastructure.rpm-graylog2-server.version>1.0.0-SNAPSHOT</module.infrastructure.rpm-graylog2-server.version>
         <module.common.version>1.0.0-SNAPSHOT</module.common.version>
+        <module.common.base-library.version>1.0.0-SNAPSHOT</module.common.base-library.version>
         <module.common.message-library.version>1.0.0-SNAPSHOT</module.common.message-library.version>
         <module.common.windowed-message-event-library.version>1.0.0-SNAPSHOT</module.common.windowed-message-event-library.version>
         <module.common.spring-extensions.version>1.0.0-SNAPSHOT</module.common.spring-extensions.version>
@@ -74,21 +75,20 @@
         <deps.javax-inject.version>1</deps.javax-inject.version>
 		<!-- Proprietary -->
         <deps.slf4j.version>1.6.6</deps.slf4j.version>
-        <deps.logback.version>1.0.5</deps.logback.version>
-        <deps.spring.version>3.1.1.RELEASE</deps.spring.version>
+        <deps.logback.version>1.0.6</deps.logback.version>
+        <deps.spring.version>3.1.2.RELEASE</deps.spring.version>
         <deps.camel.version>2.9.0</deps.camel.version>
-        <deps.netty.version>3.5.0.Final</deps.netty.version>
+        <deps.netty.version>3.5.3.Final</deps.netty.version>
         <deps.osgi-core.version>4.3.0</deps.osgi-core.version>
         <deps.osgi-compendium.version>4.2.0</deps.osgi-compendium.version>
-        <deps.google-guava.version>11.0.2</deps.google-guava.version>
-        <deps.spring-security.version>3.1.0.RELEASE</deps.spring-security.version>
+        <deps.google-guava.version>13.0</deps.google-guava.version>
+        <deps.spring-security.version>3.1.1.RELEASE</deps.spring-security.version>
         <deps.yammer-metrics.version>2.1.2</deps.yammer-metrics.version>
         <deps.activemq.version>5.5.1</deps.activemq.version>
         <deps.xbean.version>2.8</deps.xbean.version>
         <deps.xbean-spring.version>3.5</deps.xbean-spring.version>
         <deps.logback-gelf.version>0.9.6</deps.logback-gelf.version>
         <deps.karaf.version>2.2.5</deps.karaf.version>
-        <deps.activemq.version>5.5.1</deps.activemq.version>
         <deps.groovy.version>1.7.8</deps.groovy.version>
         <deps.aries.version>0.3</deps.aries.version>
         <deps.pax-swissbox-tinybundles.version>1.3.1</deps.pax-swissbox-tinybundles.version>
@@ -96,14 +96,15 @@
         <deps.felix-configadmin.version>1.2.8</deps.felix-configadmin.version>
         <deps.sshd.version>0.6.0</deps.sshd.version>
         <deps.spring-shell.version>1.0.0.BUILD-SNAPSHOT</deps.spring-shell.version>
-        <deps.ehcache.version>2.5.2</deps.ehcache.version>
-        <deps.astyanax.version>1.0.3</deps.astyanax.version>
+        <deps.ehcache.version>2.6.0</deps.ehcache.version>
+        <deps.astyanax.version>1.0.6</deps.astyanax.version>
+        <deps.cassandra.version>1.1.3</deps.cassandra.version>
 		<!-- Testing -->
         <deps.junit.version>4.10</deps.junit.version>
         <deps.arquillian.version>1.0.0.CR7</deps.arquillian.version>
         <deps.easymock.version>3.1</deps.easymock.version>
         <deps.mockrunner.version>0.3.1</deps.mockrunner.version>
-        <deps.cassandra-unit.version>1.0.3.1</deps.cassandra-unit.version>
+        <deps.cassandra-unit.version>1.1.0.1</deps.cassandra-unit.version>
 		<!-- ######################################################### -->
 		<!-- Build plugin versions -->
 		<!-- ######################################################### -->
@@ -293,6 +294,12 @@
                 <artifactId>common</artifactId>
                 <version>${module.common.version}</version>
                 <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>vnet.sms.common</groupId>
+                <artifactId>base-library</artifactId>
+                <version>${module.common.base-library.version}</version>
+                <type>jar</type>
             </dependency>
             <dependency>
                 <groupId>vnet.sms.common</groupId>
@@ -964,6 +971,30 @@
                         <artifactId>log4j</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <!-- Explicitly define Cassandra's version: it's a fast moving target -->
+            <dependency>
+                <groupId>org.apache.cassandra</groupId>
+                <artifactId>cassandra-all</artifactId>
+                <version>${deps.cassandra.version}</version>
+                <type>jar</type>
+                <exclusions>
+                    <!-- We use logback instead of log4j -->
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-log4j12</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cassandra</groupId>
+                <artifactId>cassandra-thrift</artifactId>
+                <version>${deps.cassandra.version}</version>
+                <type>jar</type>
             </dependency>
 			<!-- =========================================== -->
 			<!-- Test dependencies -->
