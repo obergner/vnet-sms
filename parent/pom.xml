@@ -1483,10 +1483,6 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                     </plugin>
                     <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>cobertura-maven-plugin</artifactId>
-                    </plugin>
-                    <plugin>
                         <groupId>org.apache.felix</groupId>
                         <artifactId>maven-bundle-plugin</artifactId>
                     </plugin>
@@ -1529,6 +1525,7 @@
                             </reportSet>
                         </reportSets>
                     </plugin>
+                    <!-- Needs to be deactivated due to https://issues.jenkins-ci.org/browse/JENKINS-9757
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>cobertura-maven-plugin</artifactId>
@@ -1549,6 +1546,7 @@
                             </instrumentation>
                         </configuration>
                     </plugin>
+                     -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-jxr-plugin</artifactId>
