@@ -117,7 +117,7 @@
         <plugins.build-helper.version>1.7</plugins.build-helper.version>
         <plugins.failsafe.version>2.12</plugins.failsafe.version>
         <plugins.bundle.version>2.3.7</plugins.bundle.version>
-        <plugins.dependency.version>2.4</plugins.dependency.version>
+        <plugins.dependency.version>2.5</plugins.dependency.version>
         <plugins.plugin.version>2.9</plugins.plugin.version>
         <plugins.source.version>2.1.2</plugins.source.version>
         <plugins.jxr.version>2.3</plugins.jxr.version>
@@ -1265,11 +1265,6 @@
                     </configuration>
                 </plugin>
                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <version>${plugins.dependency.version}</version>
-                </plugin>
-                <plugin>
                     <groupId>org.codehaus.gmaven</groupId>
                     <artifactId>gmaven-plugin</artifactId>
                     <version>${plugins.gmaven.version}</version>
@@ -1283,11 +1278,6 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
                     <version>${plugins.site.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.karaf.tooling</groupId>
-                    <artifactId>features-maven-plugin</artifactId>
-                    <version>${plugins.karaf.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -1324,10 +1314,6 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>buildnumber-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -1392,6 +1378,11 @@
                             </configuration>
                         </plugin>
                         <plugin>
+                            <groupId>org.apache.karaf.tooling</groupId>
+                            <artifactId>features-maven-plugin</artifactId>
+                            <version>${plugins.karaf.version}</version>
+                        </plugin>
+                        <plugin>
                             <groupId>org.apache.felix</groupId>
                             <artifactId>maven-bundle-plugin</artifactId>
                             <version>${plugins.bundle.version}</version>
@@ -1415,6 +1406,23 @@
                                     </manifestEntries>
                                 </archive>
                             </configuration>
+                        </plugin>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-dependency-plugin</artifactId>
+                            <version>${plugins.dependency.version}</version>
+                            <executions>
+                                <execution>
+                                    <id>analyze-dependencies</id>
+                                    <phase>verify</phase>
+                                    <goals>
+                                        <goal>analyze-only</goal>
+                                    </goals>
+                                    <configuration>
+                                        <!-- configure the plugin here -->
+                                    </configuration>
+                                </execution>
+                            </executions>
                         </plugin>
                         <plugin>
                             <groupId>org.apache.maven.plugins</groupId>
@@ -1481,6 +1489,10 @@
                     <plugin>
                         <groupId>org.apache.felix</groupId>
                         <artifactId>maven-bundle-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -1665,7 +1677,17 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
 
+        <profile>
+            <id>infrastructure</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+
+            <modules>
+                <module>infrastructure</module>
+            </modules>
         </profile>
     </profiles>
 
@@ -1674,7 +1696,6 @@
 	<!-- =================================================== -->
 
     <modules>
-        <!--  <module>../infrastructure</module> -->
         <module>../common</module>
         <module>../gateway</module>
         <module>../routing-engine</module>
