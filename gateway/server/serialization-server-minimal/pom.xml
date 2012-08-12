@@ -11,104 +11,112 @@
 	OF ANY KIND, either express or implied. See the License for the specific 
 	language governing permissions and limitations under the License. -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>vnet.sms.gateway</groupId>
-		<artifactId>server</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
-		<relativePath>../</relativePath>
-	</parent>
+    <parent>
+        <groupId>vnet.sms.gateway</groupId>
+        <artifactId>server</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../</relativePath>
+    </parent>
 
-	<groupId>vnet.sms.gateway.server</groupId>
-	<artifactId>serialization-server-minimal</artifactId>
-	<packaging>bundle</packaging>
-	<name>SMS :: Gateway :: Server :: Minimal Serialization Server</name>
-	<description>A minimal server implementation using the serialization pseudo transport</description>
+    <groupId>vnet.sms.gateway.server</groupId>
+    <artifactId>serialization-server-minimal</artifactId>
+    <packaging>bundle</packaging>
+    <name>SMS :: Gateway :: Server :: Minimal Serialization Server</name>
+    <description>A minimal server implementation using the serialization pseudo transport</description>
 
-	<properties>
-		<classpath.outfile>${project.build.directory}/classpath.txt</classpath.outfile>
-		<src.assembly.dir>${project.basedir}/src/main/assembly</src.assembly.dir>
-		<src.assembly.conf.dir>${src.assembly.dir}/conf</src.assembly.conf.dir>
-		<build.assembly.dir>${project.build.directory}/assembly</build.assembly.dir>
-		<build.assembly.conf.dir>${build.assembly.dir}/conf</build.assembly.conf.dir>
-	</properties>
+    <properties>
+        <classpath.outfile>${project.build.directory}/classpath.txt</classpath.outfile>
+        <src.assembly.dir>${project.basedir}/src/main/assembly</src.assembly.dir>
+        <src.assembly.conf.dir>${src.assembly.dir}/conf</src.assembly.conf.dir>
+        <build.assembly.dir>${project.build.directory}/assembly</build.assembly.dir>
+        <build.assembly.conf.dir>${build.assembly.dir}/conf</build.assembly.conf.dir>
+    </properties>
 
-	<dependencies>
+    <dependencies>
 		<!-- *************************************************************** -->
 		<!-- Compile -->
 		<!-- *************************************************************** -->
-		<dependency>
-			<groupId>vnet.sms.gateway.server</groupId>
-			<artifactId>server-framework</artifactId>
-			<scope>compile</scope>
-		</dependency>
+        <dependency>
+            <groupId>vnet.sms.gateway.server</groupId>
+            <artifactId>server-framework</artifactId>
+            <scope>compile</scope>
+        </dependency>
 		<!-- *************************************************************** -->
 		<!-- Runtime -->
 		<!-- *************************************************************** -->
-		<dependency>
-			<groupId>vnet.sms.gateway.transports</groupId>
-			<artifactId>serialization-transport</artifactId>
-			<scope>runtime</scope>
-		</dependency>
+        <dependency>
+            <groupId>vnet.sms.gateway.transports</groupId>
+            <artifactId>serialization-transport</artifactId>
+            <scope>runtime</scope>
+        </dependency>
 		<!-- *************************************************************** -->
 		<!-- Test -->
 		<!-- *************************************************************** -->
-		<dependency>
-			<groupId>vnet.sms.gateway</groupId>
-			<artifactId>netty-test-support</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.mockrunner</groupId>
-			<artifactId>mockrunner</artifactId>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>vnet.sms.gateway</groupId>
+            <artifactId>netty-test-support</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.mockrunner</groupId>
+            <artifactId>mockrunner</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>build-classpath</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>build-classpath</goal>
-						</goals>
-						<configuration>
-							<pathSeparator>;</pathSeparator>
-							<includeScope>runtime</includeScope>
-							<prefix>../lib</prefix>
-							<outputFile>${classpath.outfile}</outputFile>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+    <profiles>
+        <profile>
+            <id>committest-stage</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>build-classpath</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>build-classpath</goal>
+                                </goals>
+                                <configuration>
+                                    <pathSeparator>;</pathSeparator>
+                                    <includeScope>runtime</includeScope>
+                                    <prefix>../lib</prefix>
+                                    <outputFile>${classpath.outfile}</outputFile>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
 
-			<plugin>
-				<groupId>org.codehaus.gmaven</groupId>
-				<artifactId>gmaven-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>generate-wrapper-script</id>
-						<phase>generate-resources</phase>
-						<goals>
-							<goal>execute</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<defaults>
-						<server.url>${appserver}</server.url>
-						<templateDir>build-templates</templateDir>
-					</defaults>
-					<source>
+                    <plugin>
+                        <groupId>org.codehaus.gmaven</groupId>
+                        <artifactId>gmaven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>generate-wrapper-script</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>execute</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <defaults>
+                                <server.url>${appserver}</server.url>
+                                <templateDir>build-templates</templateDir>
+                            </defaults>
+                            <source>
 					    <![CDATA[
 						// import the simpleTemplateEngine class
 						import groovy.text.SimpleTemplateEngine
@@ -137,41 +145,43 @@
 						    toFile.write( template.toString() )
 						}
 						]]>
-					</source>
-				</configuration>
-			</plugin>
+                            </source>
+                        </configuration>
+                    </plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>package-osx-distribution</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<descriptors>
-								<descriptor>src/main/assembly/macosx-universal-64.xml</descriptor>
-							</descriptors>
-						</configuration>
-					</execution>
-					<execution>
-						<id>package-linux-distribution</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<descriptors>
-								<descriptor>src/main/assembly/linux-x86-64.xml</descriptor>
-							</descriptors>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>package-osx-distribution</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                                <configuration>
+                                    <descriptors>
+                                        <descriptor>src/main/assembly/macosx-universal-64.xml</descriptor>
+                                    </descriptors>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>package-linux-distribution</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                                <configuration>
+                                    <descriptors>
+                                        <descriptor>src/main/assembly/linux-x86-64.xml</descriptor>
+                                    </descriptors>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

@@ -11,43 +11,45 @@
 	OF ANY KIND, either express or implied. See the License for the specific 
 	language governing permissions and limitations under the License. -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>vnet.sms</groupId>
-		<artifactId>routing-engine</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
-		<relativePath>../</relativePath>
-	</parent>
+    <parent>
+        <groupId>vnet.sms</groupId>
+        <artifactId>routing-engine</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../</relativePath>
+    </parent>
 
-	<groupId>vnet.sms.routing-engine</groupId>
-	<artifactId>log4j-gelf-appender-fragment</artifactId>
-	<packaging>bundle</packaging>
-	<name>SMS :: Routing Engine :: Core</name>
-	<description>
+    <groupId>vnet.sms.routing-engine</groupId>
+    <artifactId>log4j-gelf-appender-fragment</artifactId>
+    <packaging>bundle</packaging>
+    <name>SMS :: Routing Engine :: Core</name>
+    <description>
 	   <![CDATA[
 	   Log4J's GELF (Graylog Extended Log Format) appender repackaged as an OSGi bundle fragment to be used from pax logging
 	   See: http://nierbeck.de/cgi-bin/weblog_basic/index.php?p=201
 	   ]]>
 	</description>
 
-	<properties>
-	</properties>
+    <properties>
+    </properties>
 
-	<dependencies>
+    <dependencies>
 		<!-- *************************************************************** -->
 		<!-- Provided -->
 		<!-- *************************************************************** -->
-		<dependency>
-			<groupId>org.codehaus.groovy</groupId>
-			<artifactId>groovy-all</artifactId>
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
 			<!-- Just a trick: in maven-bundle-plugin's Embed-Dependency instruction 
 				below we have to decide on which scopes to include in the final bundle -->
-			<scope>provided</scope>
-		</dependency>
+            <scope>provided</scope>
+        </dependency>
 		<!-- *************************************************************** -->
 		<!-- Compile -->
 		<!-- *************************************************************** -->
@@ -57,35 +59,44 @@
 		<!-- *************************************************************** -->
 		<!-- System -->
 		<!-- *************************************************************** -->
-		<dependency>
-			<groupId>com.pstehlik.groovy</groupId>
-			<artifactId>gelf4j</artifactId>
-			<version>0.9.6</version>
-			<type>jar</type>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/gelf4j-0.9.6.jar</systemPath>
-		</dependency>
+        <dependency>
+            <groupId>com.pstehlik.groovy</groupId>
+            <artifactId>gelf4j</artifactId>
+            <version>0.9.6</version>
+            <type>jar</type>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/gelf4j-0.9.6.jar</systemPath>
+        </dependency>
 		<!-- *************************************************************** -->
 		<!-- Test -->
 		<!-- *************************************************************** -->
-	</dependencies>
+    </dependencies>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-				<configuration>
-					<instructions>
-						<Import-Package>!*</Import-Package>
+    <profiles>
+        <profile>
+            <id>committest-stage</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.felix</groupId>
+                        <artifactId>maven-bundle-plugin</artifactId>
+                        <configuration>
+                            <instructions>
+                                <Import-Package>!*</Import-Package>
 						<!-- embed all compile and runtime scope dependencies -->
-						<Embed-Dependency>*;scope=provided|system;inline=true</Embed-Dependency>
+                                <Embed-Dependency>*;scope=provided|system;inline=true</Embed-Dependency>
 						<!-- the host for this fragment bundle -->
-						<Fragment-Host>org.ops4j.pax.logging.pax-logging-service</Fragment-Host>
-					</instructions>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+                                <Fragment-Host>org.ops4j.pax.logging.pax-logging-service</Fragment-Host>
+                            </instructions>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>
