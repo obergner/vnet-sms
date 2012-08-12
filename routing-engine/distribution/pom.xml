@@ -218,11 +218,7 @@
         <profile>
             <id>rpm</id>
             <activation>
-                <os>
-                    <name>linux</name>
-                    <arch>amd64</arch>
-                    <family>unix</family>
-                </os>
+                <activeByDefault>false</activeByDefault>
             </activation>
 
             <properties>
