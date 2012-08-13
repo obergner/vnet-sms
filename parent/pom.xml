@@ -209,17 +209,6 @@
 	<!-- =================================================== -->
 
     <repositories>
-        <repository>
-            <id>me.moocar.logbackGelfRepository</id>
-            <name>Moocar Logback Gelf Repository</name>
-            <url>http://moocar.me/maven2</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </repository>
         <!-- The following two are needed for spring-shell -->
         <repository>
             <id>org.springframework.springMavenSnapshots</id>
