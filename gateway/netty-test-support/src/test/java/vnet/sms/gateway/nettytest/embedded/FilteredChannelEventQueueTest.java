@@ -54,6 +54,26 @@ public class FilteredChannelEventQueueTest {
 	}
 
 	@Test
+	public final void assertThatAddTimedFilterReturnsDoneFutureIfFilteredChannelEventQueueContainsAMatchingChannelEvent() {
+		final MessageEvent matchingEvent = new UpstreamMessageEvent(
+		        createNiceMock(Channel.class), new Object(), null);
+		final FilteredChannelEventQueue<ChannelEvent> objectUnderTest = newObjectUnderTest(matchingEvent);
+
+		final TimedFilteringChannelEventFuture<ChannelEvent> channelEventFuture = objectUnderTest
+		        .addTimedFilter(new Predicate<ChannelEvent>() {
+			        @Override
+			        public boolean apply(final ChannelEvent input) {
+				        return input == matchingEvent;
+			        }
+		        });
+
+		assertTrue(
+		        "addTimedFilter(...) should have returned a done Future since the FilteredChannelEventQueue that Predicate has been "
+		                + "added to contains a matching ChannelEvent",
+		        channelEventFuture.isDone());
+	}
+
+	@Test
 	public final void assertThatAddFilterReturnsIncompleteFutureIfFilteredChannelEventQueueDoesNOTContainAMatchingChannelEvent() {
 		final FilteredChannelEventQueue<ChannelEvent> objectUnderTest = newObjectUnderTest();
 
@@ -67,6 +87,24 @@ public class FilteredChannelEventQueueTest {
 
 		assertFalse(
 		        "addFilter(...) should have returned an incomplete Future since the FilteredChannelEventQueue that Predicate has been "
+		                + "added to does NOT contain a matching ChannelEvent",
+		        channelEventFuture.isDone());
+	}
+
+	@Test
+	public final void assertThatAddTimedFilterReturnsIncompleteFutureIfFilteredChannelEventQueueDoesNOTContainAMatchingChannelEvent() {
+		final FilteredChannelEventQueue<ChannelEvent> objectUnderTest = newObjectUnderTest();
+
+		final TimedFilteringChannelEventFuture<ChannelEvent> channelEventFuture = objectUnderTest
+		        .addTimedFilter(new Predicate<ChannelEvent>() {
+			        @Override
+			        public boolean apply(final ChannelEvent input) {
+				        return false;
+			        }
+		        });
+
+		assertFalse(
+		        "addTimedFilter(...) should have returned an incomplete Future since the FilteredChannelEventQueue that Predicate has been "
 		                + "added to does NOT contain a matching ChannelEvent",
 		        channelEventFuture.isDone());
 	}

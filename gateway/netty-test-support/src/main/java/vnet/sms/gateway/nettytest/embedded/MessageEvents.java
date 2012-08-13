@@ -25,4 +25,7 @@ public interface MessageEvents extends Iterable<MessageEvent> {
 
 	Future<MessageEvent> waitForMatchingMessageEvent(
 	        Predicate<MessageEvent> predicate);
+
+	TimedFuture<MessageEvent> timedWaitForMatchingMessageEvent(
+	        Predicate<MessageEvent> predicate);
 }

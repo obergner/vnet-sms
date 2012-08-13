@@ -14,7 +14,8 @@ import org.jboss.netty.channel.ExceptionEvent;
 
 import com.google.common.base.Predicate;
 
-class FilteringChannelEventFuture<T extends ChannelEvent> implements Future<T> {
+class FilteringChannelEventFuture<T extends ChannelEvent> implements Future<T>,
+        ChannelEventSink<T> {
 
 	private final Predicate<T>	            filter;
 
@@ -59,7 +60,8 @@ class FilteringChannelEventFuture<T extends ChannelEvent> implements Future<T> {
 		return this.done.getCount() == 0;
 	}
 
-	boolean acceptsChannelEvent(final T candidate) {
+	@Override
+	public boolean acceptsChannelEvent(final T candidate) {
 		if (this.filter.apply(candidate)
 		        && this.value.compareAndSet(null,
 		                Value.fromChannelEvent(candidate))) {
@@ -69,7 +71,8 @@ class FilteringChannelEventFuture<T extends ChannelEvent> implements Future<T> {
 		return false;
 	}
 
-	boolean acceptsExceptionEvent(final ExceptionEvent e) {
+	@Override
+	public boolean acceptsExceptionEvent(final ExceptionEvent e) {
 		if (this.value.compareAndSet(null,
 		        Value.<T> fromException(e.getCause()))) {
 			this.done.countDown();

@@ -217,4 +217,30 @@ public class DefaultMessageEventsTest {
 		        "waitForMatchingMessageEvent(...) should have returned the first matching MessageEvent, wrapped in a Future",
 		        secondMessageEvent, matchingMessageEvent.get());
 	}
+
+	@Test
+	public final void assertThatTimedWaitForMatchingMessageEventReturnsFirstMatchingMessageEventFuture()
+	        throws InterruptedException, ExecutionException {
+		final MessageEvent firstMessageEvent = new UpstreamMessageEvent(
+		        createNiceMock(Channel.class), new Object(), null);
+		final MessageEvent secondMessageEvent = new UpstreamMessageEvent(
+		        createNiceMock(Channel.class), new Object(), null);
+
+		final Predicate<MessageEvent> matchSecondEvent = new Predicate<MessageEvent>() {
+			@Override
+			public boolean apply(final MessageEvent input) {
+				return input == secondMessageEvent;
+			}
+		};
+		final DefaultMessageEvents objectUnderTest = new DefaultMessageEvents();
+		final TimedFuture<MessageEvent> matchingMessageEvent = objectUnderTest
+		        .timedWaitForMatchingMessageEvent(matchSecondEvent);
+
+		objectUnderTest.onEvent(firstMessageEvent);
+		objectUnderTest.onEvent(secondMessageEvent);
+
+		assertSame(
+		        "waitForMatchingMessageEvent(...) should have returned the first matching MessageEvent, wrapped in a Future",
+		        secondMessageEvent, matchingMessageEvent.get().get());
+	}
 }

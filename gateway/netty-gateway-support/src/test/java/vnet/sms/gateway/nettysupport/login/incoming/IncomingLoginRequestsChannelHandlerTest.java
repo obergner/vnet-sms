@@ -1,8 +1,10 @@
 package vnet.sms.gateway.nettysupport.login.incoming;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import org.jboss.netty.channel.ChannelEvent;
 import org.jboss.netty.channel.MessageEvent;
@@ -23,6 +25,7 @@ import vnet.sms.gateway.nettysupport.test.ObjectSerializationTransportProtocolAd
 import vnet.sms.gateway.nettytest.embedded.ChannelPipelineEmbedder;
 import vnet.sms.gateway.nettytest.embedded.DefaultChannelPipelineEmbedder;
 import vnet.sms.gateway.nettytest.embedded.MessageEventFilters;
+import vnet.sms.gateway.nettytest.embedded.TimedFuture;
 
 import com.google.common.base.Predicate;
 
@@ -71,7 +74,8 @@ public class IncomingLoginRequestsChannelHandlerTest {
 	@Test
 	public final void assertThatLoginChannelHandlerSendsLoginRequestRejectedEventDownstreamIfLoginThrowsBadCredentialsException()
 	        throws Throwable {
-		final int negativeResponseDelayMillis = 5;
+		final int negativeResponseDelayMillis = 200;
+		final long confidenceIntervalMillis = 100L;
 		final AuthenticationManager rejectAll = new AuthenticationManager() {
 			@Override
 			public Authentication authenticate(
@@ -87,17 +91,33 @@ public class IncomingLoginRequestsChannelHandlerTest {
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
 		        objectUnderTest);
 		embeddedPipeline.connectChannel();
+
+		final TimedFuture<MessageEvent> loginRequestNack = embeddedPipeline
+		        .downstreamMessageEvents().timedWaitForMatchingMessageEvent(
+		                new Predicate<MessageEvent>() {
+			                @Override
+			                public boolean apply(final MessageEvent input) {
+				                return SendLoginRequestNackEvent.class
+				                        .isInstance(input);
+			                }
+		                });
+
 		embeddedPipeline
 		        .receive(new LoginRequest(
 		                "assertThatLoginChannelHandlerSendsLoginRequestRejectedEventDownstreamIfLoginThrowsBadCredentialsException",
 		                "secret"));
-		Thread.sleep(negativeResponseDelayMillis + 100);
-		final MessageEvent sentReply = embeddedPipeline
-		        .downstreamMessageEvents().nextMessageEvent();
+		final TimedFuture.Value<MessageEvent> sentReplyValue = loginRequestNack
+		        .get(negativeResponseDelayMillis + 100L, MILLISECONDS);
+		final MessageEvent sentReply = sentReplyValue.get();
+		final long elapsedDurationMillis = sentReplyValue
+		        .elapsedDurationMillis();
 
-		assertNotNull(
+		assertTrue(
 		        "IncomingLoginRequestsChannelHandler did not send a reply after rejected login",
-		        sentReply);
+		        (elapsedDurationMillis > negativeResponseDelayMillis
+		                - confidenceIntervalMillis)
+		                && (elapsedDurationMillis < negativeResponseDelayMillis
+		                        + confidenceIntervalMillis));
 		assertEquals(
 		        "IncomingLoginRequestsChannelHandler sent unexpected reply after rejected login",
 		        SendLoginRequestNackEvent.class, sentReply.getClass());

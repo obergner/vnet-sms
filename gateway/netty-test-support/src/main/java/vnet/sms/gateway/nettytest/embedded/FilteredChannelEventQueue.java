@@ -26,9 +26,9 @@ class FilteredChannelEventQueue<T extends ChannelEvent> implements
 	// Fields
 	// ------------------------------------------------------------------------
 
-	private final Queue<T>	                           channelEvents;
+	private final Queue<T>	                channelEvents;
 
-	private final List<FilteringChannelEventFuture<T>>	filters	= new CopyOnWriteArrayList<FilteringChannelEventFuture<T>>();
+	private final List<ChannelEventSink<T>>	filters	= new CopyOnWriteArrayList<ChannelEventSink<T>>();
 
 	// ------------------------------------------------------------------------
 	// Constructors
@@ -62,13 +62,26 @@ class FilteredChannelEventQueue<T extends ChannelEvent> implements
 		return filterFuture;
 	}
 
+	TimedFilteringChannelEventFuture<T> addTimedFilter(final Predicate<T> filter) {
+		final TimedFilteringChannelEventFuture<T> filterFuture = new TimedFilteringChannelEventFuture<T>(
+		        filter);
+		for (final T e : this.channelEvents) {
+			if (filterFuture.acceptsChannelEvent(e)) {
+				this.channelEvents.remove(e);
+				return filterFuture;
+			}
+		}
+		this.filters.add(filterFuture);
+		return filterFuture;
+	}
+
 	// ------------------------------------------------------------------------
 	// ChannelListener
 	// ------------------------------------------------------------------------
 
 	@Override
 	public void onEvent(final T e) {
-		for (final FilteringChannelEventFuture<T> filterFuture : this.filters) {
+		for (final ChannelEventSink<T> filterFuture : this.filters) {
 			if (filterFuture.acceptsChannelEvent(e)) {
 				this.channelEvents.remove(e);
 				this.filters.remove(filterFuture);
@@ -80,7 +93,7 @@ class FilteredChannelEventQueue<T extends ChannelEvent> implements
 
 	@Override
 	public void onExceptionEvent(final ExceptionEvent e) {
-		for (final FilteringChannelEventFuture<T> filterFuture : this.filters) {
+		for (final ChannelEventSink<T> filterFuture : this.filters) {
 			if (filterFuture.acceptsExceptionEvent(e)) {
 				this.filters.remove(filterFuture);
 			}

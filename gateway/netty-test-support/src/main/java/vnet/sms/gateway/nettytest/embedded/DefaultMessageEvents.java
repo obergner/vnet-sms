@@ -67,6 +67,18 @@ class DefaultMessageEvents implements MessageEvents,
 		});
 	}
 
+	@Override
+	public TimedFuture<MessageEvent> timedWaitForMatchingMessageEvent(
+	        final Predicate<MessageEvent> predicate) {
+		return this.channelEvents.addTimedFilter(new Predicate<MessageEvent>() {
+			@Override
+			public boolean apply(final MessageEvent input) {
+				return MessageEvent.class.isInstance(input)
+				        && predicate.apply(MessageEvent.class.cast(input));
+			}
+		});
+	}
+
 	/**
 	 * @see vnet.sms.gateway.nettytest.embedded.MessageEvents#nextMessageEvent()
 	 */
