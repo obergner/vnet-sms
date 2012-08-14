@@ -228,7 +228,7 @@
                                             <directory>${rpm.var-lib.dir}</directory>
                                             <filemode>755</filemode>
                                             <username>${rpm.user}</username>
-                                            <groupname>routing</groupname>
+                                            <groupname>${rpm.group}</groupname>
                                         </mapping>
                                         <mapping>
                                             <directory>${rpm.var-lib.dir}/data</directory>
