@@ -461,7 +461,20 @@
                                                         <exclude>camel-*.jar</exclude>
                                                         <exclude>activemq-web-*.jar</exclude>
                                                         <exclude>web/*</exclude>
-                                                        <exclude>optional/spring-*.jar</exclude>
+                                                        <exclude>optional/jetty-6.1.26.jar</exclude>
+                                                        <exclude>optional/jetty-util-6.1.26.jar</exclude>
+                                                        <exclude>optional/servlet-api-2.5-20081211.jar</exclude>
+                                                        <exclude>optional/guava-*.jar</exclude>
+                                                        <exclude>optional/commons-logging-*.jar</exclude>
+                                                        <exclude>optional/spring-core-*.jar</exclude>
+                                                        <exclude>optional/spring-aop-*.jar</exclude>
+                                                        <exclude>optional/spring-asm-*.jar</exclude>
+                                                        <exclude>optional/spring-beans-*.jar</exclude>
+                                                        <exclude>optional/spring-context-*.jar</exclude>
+                                                        <exclude>optional/spring-expression-*.jar</exclude>
+                                                        <exclude>optional/spring-jms-*.jar</exclude>
+                                                        <exclude>optional/spring-test-*.jar</exclude>
+                                                        <exclude>optional/spring-tx-*.jar</exclude>
                                                     </excludes>
                                                 </source>
                                             </sources>
