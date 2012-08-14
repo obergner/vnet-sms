@@ -257,7 +257,7 @@
                                         </mapping>
                                         <mapping>
                                             <directory>${rpm.etc.dir}</directory>
-                                            <directoryIncluded>false</directoryIncluded>
+                                            <directoryIncluded>true</directoryIncluded>
                                             <configuration>true</configuration>
                                             <filemode>755</filemode>
                                             <username>root</username>
@@ -265,7 +265,7 @@
                                         </mapping>
                                         <mapping>
                                             <directory>${rpm.etc.dir}</directory>
-                                            <directoryIncluded>true</directoryIncluded>
+                                            <directoryIncluded>false</directoryIncluded>
                                             <configuration>true</configuration>
                                             <filemode>664</filemode>
                                             <username>root</username>
@@ -301,12 +301,14 @@
                                         </mapping>
                                         <mapping>
                                             <directory>${rpm.usr-share.dir}</directory>
+                                            <directoryIncluded>true</directoryIncluded>
                                             <filemode>755</filemode>
                                             <username>${rpm.user}</username>
                                             <groupname>${rpm.group}</groupname>
                                         </mapping>
                                         <mapping>
                                             <directory>${rpm.usr-share.dir}</directory>
+                                            <directoryIncluded>false</directoryIncluded>
                                             <filemode>664</filemode>
                                             <username>${rpm.user}</username>
                                             <groupname>${rpm.group}</groupname>
@@ -403,7 +405,7 @@
                                         </mapping>
                                         <mapping>
                                             <directory>${rpm.usr-share.dir}/lib</directory>
-                                            <directoryIncluded>true</directoryIncluded>
+                                            <directoryIncluded>false</directoryIncluded>
                                             <filemode>664</filemode>
                                             <username>${rpm.user}</username>
                                             <groupname>${rpm.group}</groupname>
@@ -441,7 +443,7 @@
                                         </mapping>
                                         <mapping>
                                             <directory>${rpm.usr-share.dir}/lib/optional</directory>
-                                            <directoryIncluded>true</directoryIncluded>
+                                            <directoryIncluded>false</directoryIncluded>
                                             <filemode>664</filemode>
                                             <username>${rpm.user}</username>
                                             <groupname>${rpm.group}</groupname>
@@ -457,7 +459,7 @@
                                         </mapping>
                                         <mapping>
                                             <directory>${rpm.modules-etc.dir}</directory>
-                                            <directoryIncluded>false</directoryIncluded>
+                                            <directoryIncluded>true</directoryIncluded>
                                             <configuration>true</configuration>
                                             <filemode>755</filemode>
                                             <username>root</username>
