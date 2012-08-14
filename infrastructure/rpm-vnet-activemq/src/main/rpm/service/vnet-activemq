@@ -284,7 +284,8 @@ modules_classpath=""
 getModulesClasspath() {
     modules_classpath="${ACTIVEMQ_MODULES_DEPLOY}/*.jar"
     
-    if [ -d ${ACTIVEMQ_MODULES_ETC} ]
+    modules_etc_subdirs=$(find ${ACTIVEMQ_MODULES_ETC}/ -maxdepth 1 -type d -print| wc -l)
+    if [ -d ${ACTIVEMQ_MODULES_ETC} -a ${modules_etc_subdirs} -gt 1 ]
     then
         for confdir in "${ACTIVEMQ_MODULES_ETC}/*/" ; do
             modules_classpath="${modules_classpath};${confdir}"
