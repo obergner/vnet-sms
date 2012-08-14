@@ -39,7 +39,7 @@
 		<!-- *************************************************************** -->
 		<!-- Provided -->
 		<!-- *************************************************************** -->
-		<!-- Apache Karaf -->
+		<!-- Apache ActiveMQ -->
         <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>apache-activemq</artifactId>
@@ -108,6 +108,47 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jetty</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <!-- Replace Spring libraries with up-to-date versions -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-asm</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-expression</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jms</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
             <scope>runtime</scope>
         </dependency>
 		<!-- *************************************************************** -->
@@ -420,6 +461,7 @@
                                                         <exclude>camel-*.jar</exclude>
                                                         <exclude>activemq-web-*.jar</exclude>
                                                         <exclude>web/*</exclude>
+                                                        <exclude>optional/spring-*.jar</exclude>
                                                     </excludes>
                                                 </source>
                                             </sources>
@@ -452,8 +494,18 @@
                                                     <include>ch.qos.logback:logback-classic</include>
                                                     <include>ch.qos.logback:logback-core</include>
                                                     <include>me.moocar:logback-gelf</include>
+                                                    <include>com.google.guava:guava</include>
+                                                    <include>com.google.code.gson:gson</include>
                                                     <include>org.slf4j:log4j-over-slf4j</include>
                                                     <include>org.slf4j:jul-to-slf4j</include>
+                                                    <include>org.springframework:spring-core</include>
+                                                    <include>org.springframework:spring-aop</include>
+                                                    <include>org.springframework:spring-asm</include>
+                                                    <include>org.springframework:spring-beans</include>
+                                                    <include>org.springframework:spring-context</include>
+                                                    <include>org.springframework:spring-jms</include>
+                                                    <include>org.springframework:spring-expression</include>
+                                                    <include>org.springframework:spring-tx</include>
                                                 </includes>
                                             </dependency>
                                         </mapping>
