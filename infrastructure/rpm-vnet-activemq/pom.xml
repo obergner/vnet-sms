@@ -139,6 +139,7 @@
                 <rpm.var-log.dir>/var/log/vnet-activemq</rpm.var-log.dir>
                 <rpm.usr-share.dir>/usr/share/vnet-activemq-${deps.activemq.version}</rpm.usr-share.dir>
                 <rpm.etc.dir>/etc/vnet-activemq</rpm.etc.dir>
+                <rpm.modules-etc.dir>/etc/vnet-activemq-modules</rpm.modules-etc.dir>
                 <java.min.mem>128</java.min.mem>
                 <java.max.mem>512</java.max.mem>
                 <java.min.perm>64</java.min.perm>
@@ -453,6 +454,14 @@
                                                     <include>org.slf4j:jul-to-slf4j</include>
                                                 </includes>
                                             </dependency>
+                                        </mapping>
+                                        <mapping>
+                                            <directory>${rpm.modules-etc.dir}</directory>
+                                            <directoryIncluded>false</directoryIncluded>
+                                            <configuration>true</configuration>
+                                            <filemode>755</filemode>
+                                            <username>root</username>
+                                            <groupname>root</groupname>
                                         </mapping>
                                     </mappings>
                                     <preinstallScriptlet>

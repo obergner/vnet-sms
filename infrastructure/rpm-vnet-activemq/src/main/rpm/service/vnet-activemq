@@ -284,9 +284,12 @@ modules_classpath=""
 getModulesClasspath() {
     modules_classpath="${ACTIVEMQ_MODULES_DEPLOY}/*.jar"
     
-    for confdir in "${ACTIVEMQ_MODULES_ETC}/*/" ; do
-        modules_classpath="${modules_classpath};${confdir}"
-    done
+    if [ -d ${ACTIVEMQ_MODULES_ETC} ]
+    then
+        for confdir in "${ACTIVEMQ_MODULES_ETC}/*/" ; do
+            modules_classpath="${modules_classpath};${confdir}"
+        done
+    fi
 }
 
 checkUser() {
