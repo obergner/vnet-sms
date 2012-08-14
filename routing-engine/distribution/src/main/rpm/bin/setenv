@@ -1,8 +1,0 @@
-#!/bin/bash
-
-export JAVA_MIN_MEM=${java.min.mem}
-export JAVA_MAX_MEM=${java.max.mem}
-export JAVA_PERM_MEM=${java.min.perm}
-export JAVA_MAX_PERM_MEM=${java.max.perm}
-
-export KARAF_DATA=/var/lib/routing-engine-${project.version}/data

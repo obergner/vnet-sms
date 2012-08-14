@@ -60,11 +60,6 @@
 		<!-- Runtime -->
 		<!-- *************************************************************** -->
         <dependency>
-            <groupId>vnet.sms.routing-engine</groupId>
-            <artifactId>jms-broker</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-spring</artifactId>
             <scope>runtime</scope>
@@ -73,17 +68,6 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jms</artifactId>
             <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-blueprint</artifactId>
-            <scope>runtime</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.xml.bind</groupId>
-                    <artifactId>jaxb-api</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 		<!-- *************************************************************** -->
 		<!-- Test -->
@@ -111,115 +95,14 @@
         </dependency>
         <dependency>
             <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-blueprint</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.configadmin</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.aries.blueprint</groupId>
-            <artifactId>org.apache.aries.blueprint</artifactId>
+            <artifactId>activemq-camel</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.aries</groupId>
-            <artifactId>org.apache.aries.util</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.aries.proxy</groupId>
-            <artifactId>org.apache.aries.proxy.impl</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.aries.proxy</groupId>
-            <artifactId>org.apache.aries.proxy.api</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.aries.transaction</groupId>
-            <artifactId>org.apache.aries.transaction.manager</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.googlecode.pojosr</groupId>
-            <artifactId>de.kalpatec.pojosr.framework</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ops4j.pax.swissbox</groupId>
-            <artifactId>pax-swissbox-tinybundles</artifactId>
+            <groupId>org.apache.xbean</groupId>
+            <artifactId>xbean-spring-v2c</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <profiles>
-        <profile>
-            <id>committest-stage</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>build-helper-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>add-config-resources</id>
-                                <phase>validate</phase>
-                                <goals>
-                                    <goal>add-resource</goal>
-                                </goals>
-                                <configuration>
-                                    <resources>
-                                        <resource>
-                                            <directory>${basedir}/src/main/etc</directory>
-                                            <filtering>true</filtering>
-                                            <targetPath>${project.build.directory}/etc</targetPath>
-                                        </resource>
-                                        <resource>
-                                            <directory>${basedir}/src/main/features</directory>
-                                            <filtering>true</filtering>
-                                            <targetPath>${project.build.directory}/features</targetPath>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>attach-config-file</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>attach-artifact</goal>
-                                </goals>
-                                <configuration>
-                                    <artifacts>
-                                        <artifact>
-                                            <file>${project.build.directory}/features/features.xml</file>
-                                            <type>xml</type>
-                                            <classifier>features</classifier>
-                                        </artifact>
-                                        <artifact>
-                                            <file>${project.build.directory}/etc/${project.groupId}.${project.artifactId}.cfg</file>
-                                            <type>cfg</type>
-                                        </artifact>
-                                    </artifacts>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 
 </project>

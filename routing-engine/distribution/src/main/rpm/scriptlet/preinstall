@@ -1,2 +1,0 @@
-/usr/sbin/groupadd -r routing &>/dev/null || :
-/usr/sbin/useradd -g routing -s /bin/false -r -c "VNET/SMS routing engine" -d "%{workdir}" routing &>/dev/null || :

@@ -31,7 +31,12 @@
 
     <!-- Allows us to use system properties as variables in this configuration file -->
     <bean
-        class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" />
+        id="vnet.sms.routing-engine.commonPropertyPlaceholderConfigurer"
+        class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property
+            name="ignoreUnresolvablePlaceholders"
+            value="true" />
+    </bean>
 
     <broker
         xmlns="http://activemq.apache.org/schema/core"
