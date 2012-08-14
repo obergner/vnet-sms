@@ -21,6 +21,8 @@
 APP_NAME="VNETActiveMQ"
 APP_LONG_NAME="VNET ActiveMQ Broker"
 ACTIVEMQ_HOME="${rpm.usr-share.dir}"
+ACTIVEMQ_MODULES_DEPLOY="${rpm.var-lib.dir}/deploy"
+ACTIVEMQ_MODULES_ETC="/etc/vnet-activemq-modules"
 
 # Wrapper
 WRAPPER_CMD="${rpm.usr-share.dir}/bin/linux-x86-64/wrapper"
@@ -276,6 +278,17 @@ else
     LOCKPROP=
 fi
 
+# Generate extra classpath entries allowing modules to be deployed in /var/lib/vnet-activemq and
+# configured in /etc/vnet-activemq-modules
+modules_classpath=""
+getModulesClasspath() {
+    modules_classpath="${ACTIVEMQ_MODULES_DEPLOY}/*.jar"
+    
+    for confdir in "${ACTIVEMQ_MODULES_ETC}/*/" ; do
+        modules_classpath="${modules_classpath};${confdir}"
+    done
+}
+
 checkUser() {
     # Check the configured user.  If necessary rerun this script as the desired user.
     if [ "X$RUN_AS_USER" != "X" ]
@@ -396,6 +409,10 @@ console() {
  
 start() {
     echo "Starting $APP_LONG_NAME..."
+    
+    getModulesClasspath
+    export ACTIVEMQ_EXTRA_CLASSPATH=${modules_classpath}
+    
     getpid
     if [ "X$pid" = "X" ]
     then

@@ -134,11 +134,11 @@
                 <rpm.repository>vnet</rpm.repository>
                 <rpm.user>vnet-activemq</rpm.user>
                 <rpm.group>vnet-activemq</rpm.group>
-                <rpm.var-run.dir>/var/run/vnet-activemq-${deps.activemq.version}</rpm.var-run.dir>
-                <rpm.var-lib.dir>/var/lib/vnet-activemq-${deps.activemq.version}</rpm.var-lib.dir>
-                <rpm.var-log.dir>/var/log/vnet-activemq-${deps.activemq.version}</rpm.var-log.dir>
+                <rpm.var-run.dir>/var/run/vnet-activemq</rpm.var-run.dir>
+                <rpm.var-lib.dir>/var/lib/vnet-activemq</rpm.var-lib.dir>
+                <rpm.var-log.dir>/var/log/vnet-activemq</rpm.var-log.dir>
                 <rpm.usr-share.dir>/usr/share/vnet-activemq-${deps.activemq.version}</rpm.usr-share.dir>
-                <rpm.etc.dir>/etc/vnet-activemq-${deps.activemq.version}</rpm.etc.dir>
+                <rpm.etc.dir>/etc/vnet-activemq</rpm.etc.dir>
                 <java.min.mem>128</java.min.mem>
                 <java.max.mem>512</java.max.mem>
                 <java.min.perm>64</java.min.perm>
@@ -229,17 +229,6 @@
                                             <groupname>routing</groupname>
                                         </mapping>
                                         <mapping>
-                                            <directory>/var/lib/vnet-activemq</directory>
-                                            <filemode>664</filemode>
-                                            <username>${rpm.user}</username>
-                                            <groupname>${rpm.group}</groupname>
-                                            <sources>
-                                                <softlinkSource>
-                                                    <location>${rpm.var-lib.dir}</location>
-                                                </softlinkSource>
-                                            </sources>
-                                        </mapping>
-                                        <mapping>
                                             <directory>${rpm.var-lib.dir}/data</directory>
                                             <filemode>664</filemode>
                                             <username>${rpm.user}</username>
@@ -258,32 +247,10 @@
                                             <groupname>${rpm.group}</groupname>
                                         </mapping>
                                         <mapping>
-                                            <directory>/var/log/vnet-activemq</directory>
-                                            <filemode>664</filemode>
-                                            <username>${rpm.user}</username>
-                                            <groupname>${rpm.group}</groupname>
-                                            <sources>
-                                                <softlinkSource>
-                                                    <location>${rpm.var-log.dir}</location>
-                                                </softlinkSource>
-                                            </sources>
-                                        </mapping>
-                                        <mapping>
                                             <directory>${rpm.var-run.dir}</directory>
                                             <filemode>664</filemode>
                                             <username>${rpm.user}</username>
                                             <groupname>${rpm.group}</groupname>
-                                        </mapping>
-                                        <mapping>
-                                            <directory>/var/run/vnet-activemq</directory>
-                                            <filemode>664</filemode>
-                                            <username>${rpm.user}</username>
-                                            <groupname>${rpm.group}</groupname>
-                                            <sources>
-                                                <softlinkSource>
-                                                    <location>${rpm.var-run.dir}</location>
-                                                </softlinkSource>
-                                            </sources>
                                         </mapping>
                                         <mapping>
                                             <directory>${rpm.etc.dir}</directory>
@@ -304,17 +271,6 @@
                                                 <source>
                                                     <location>${rpm.filtered.dir}/etc</location>
                                                 </source>
-                                            </sources>
-                                        </mapping>
-                                        <mapping>
-                                            <directory>/etc/vnet-activemq</directory>
-                                            <filemode>664</filemode>
-                                            <username>root</username>
-                                            <groupname>root</groupname>
-                                            <sources>
-                                                <softlinkSource>
-                                                    <location>${rpm.etc.dir}</location>
-                                                </softlinkSource>
                                             </sources>
                                         </mapping>
                                         <mapping>
