@@ -215,6 +215,8 @@
                                     <release>${buildNumber}.${rpm.dist}</release>
                                     <distribution>${rpm.dist}</distribution>
                                     <group>Applications/Communications</group>
+                                    <defaultDirmode>755</defaultDirmode>
+                                    <defaultFilemode>644</defaultFilemode>
                                     <defineStatements>
                                         <defineStatement><![CDATA[workdir /var/lib/vnet-activemq-${project.version}]]></defineStatement>
 										<!-- Do not run /usr/lib/rpm/redhat/brp-java-repack-jars as this 
@@ -224,33 +226,41 @@
                                     <mappings>
                                         <mapping>
                                             <directory>${rpm.var-lib.dir}</directory>
-                                            <filemode>664</filemode>
+                                            <filemode>755</filemode>
                                             <username>${rpm.user}</username>
                                             <groupname>routing</groupname>
                                         </mapping>
                                         <mapping>
                                             <directory>${rpm.var-lib.dir}/data</directory>
-                                            <filemode>664</filemode>
+                                            <filemode>755</filemode>
                                             <username>${rpm.user}</username>
                                             <groupname>${rpm.group}</groupname>
                                         </mapping>
                                         <mapping>
                                             <directory>${rpm.var-lib.dir}/deploy</directory>
-                                            <filemode>664</filemode>
+                                            <filemode>755</filemode>
                                             <username>${rpm.user}</username>
                                             <groupname>${rpm.group}</groupname>
                                         </mapping>
                                         <mapping>
                                             <directory>${rpm.var-log.dir}</directory>
-                                            <filemode>664</filemode>
+                                            <filemode>755</filemode>
                                             <username>${rpm.user}</username>
                                             <groupname>${rpm.group}</groupname>
                                         </mapping>
                                         <mapping>
                                             <directory>${rpm.var-run.dir}</directory>
-                                            <filemode>664</filemode>
+                                            <filemode>755</filemode>
                                             <username>${rpm.user}</username>
                                             <groupname>${rpm.group}</groupname>
+                                        </mapping>
+                                        <mapping>
+                                            <directory>${rpm.etc.dir}</directory>
+                                            <directoryIncluded>false</directoryIncluded>
+                                            <configuration>true</configuration>
+                                            <filemode>755</filemode>
+                                            <username>root</username>
+                                            <groupname>root</groupname>
                                         </mapping>
                                         <mapping>
                                             <directory>${rpm.etc.dir}</directory>
@@ -290,6 +300,12 @@
                                         </mapping>
                                         <mapping>
                                             <directory>${rpm.usr-share.dir}</directory>
+                                            <filemode>755</filemode>
+                                            <username>${rpm.user}</username>
+                                            <groupname>${rpm.group}</groupname>
+                                        </mapping>
+                                        <mapping>
+                                            <directory>${rpm.usr-share.dir}</directory>
                                             <filemode>664</filemode>
                                             <username>${rpm.user}</username>
                                             <groupname>${rpm.group}</groupname>
@@ -315,7 +331,7 @@
                                         </mapping>
                                         <mapping>
                                             <directory>${rpm.usr-share.dir}/conf</directory>
-                                            <filemode>664</filemode>
+                                            <filemode>755</filemode>
                                             <username>${rpm.user}</username>
                                             <groupname>${rpm.group}</groupname>
                                             <sources>
@@ -326,7 +342,7 @@
                                         </mapping>
                                         <mapping>
                                             <directory>${rpm.usr-share.dir}/log</directory>
-                                            <filemode>664</filemode>
+                                            <filemode>755</filemode>
                                             <username>${rpm.user}</username>
                                             <groupname>${rpm.group}</groupname>
                                             <sources>
@@ -337,7 +353,7 @@
                                         </mapping>
                                         <mapping>
                                             <directory>${rpm.usr-share.dir}/data</directory>
-                                            <filemode>664</filemode>
+                                            <filemode>755</filemode>
                                             <username>${rpm.user}</username>
                                             <groupname>${rpm.group}</groupname>
                                             <sources>
@@ -348,7 +364,7 @@
                                         </mapping>
                                         <mapping>
                                             <directory>${rpm.usr-share.dir}/deploy</directory>
-                                            <filemode>664</filemode>
+                                            <filemode>755</filemode>
                                             <username>${rpm.user}</username>
                                             <groupname>${rpm.group}</groupname>
                                             <sources>
@@ -380,6 +396,13 @@
                                         <mapping>
                                             <directory>${rpm.usr-share.dir}/lib</directory>
                                             <directoryIncluded>true</directoryIncluded>
+                                            <filemode>755</filemode>
+                                            <username>${rpm.user}</username>
+                                            <groupname>${rpm.group}</groupname>
+                                        </mapping>
+                                        <mapping>
+                                            <directory>${rpm.usr-share.dir}/lib</directory>
+                                            <directoryIncluded>true</directoryIncluded>
                                             <filemode>664</filemode>
                                             <username>${rpm.user}</username>
                                             <groupname>${rpm.group}</groupname>
@@ -407,6 +430,13 @@
                                                     <include>org.apache.camel:camel-jetty</include>
                                                 </includes>
                                             </dependency>
+                                        </mapping>
+                                        <mapping>
+                                            <directory>${rpm.usr-share.dir}/lib/optional</directory>
+                                            <directoryIncluded>true</directoryIncluded>
+                                            <filemode>755</filemode>
+                                            <username>${rpm.user}</username>
+                                            <groupname>${rpm.group}</groupname>
                                         </mapping>
                                         <mapping>
                                             <directory>${rpm.usr-share.dir}/lib/optional</directory>
