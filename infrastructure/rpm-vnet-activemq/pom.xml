@@ -1,0 +1,522 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor 
+	license agreements. See the NOTICE file distributed with this work for additional 
+	information regarding copyright ownership. The ASF licenses this file to 
+	You under the Apache License, Version 2.0 (the "License"); you may not use 
+	this file except in compliance with the License. You may obtain a copy of 
+	the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required 
+	by applicable law or agreed to in writing, software distributed under the 
+	License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS 
+	OF ANY KIND, either express or implied. See the License for the specific 
+	language governing permissions and limitations under the License. -->
+
+<project
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>vnet.sms</groupId>
+        <artifactId>infrastructure</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../</relativePath>
+    </parent>
+
+    <groupId>vnet.sms.infrastructure</groupId>
+    <artifactId>rpm-vnet-activemq</artifactId>
+    <version>${deps.activemq.version}</version>
+    <packaging>pom</packaging>
+    <name>SMS :: Infrastructure :: ActiveMQ RPM</name>
+    <description>A custom ActiveMQ RPM, specifically tailor-made for VNET::SMS</description>
+
+    <properties>
+    </properties>
+
+    <dependencies>
+		<!-- *************************************************************** -->
+		<!-- Provided -->
+		<!-- *************************************************************** -->
+		<!-- Apache Karaf -->
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>apache-activemq</artifactId>
+            <scope>provided</scope>
+            <type>tar.gz</type>
+            <classifier>bin</classifier>
+        </dependency>
+		<!-- *************************************************************** -->
+		<!-- Compile -->
+		<!-- *************************************************************** -->
+		<!-- *************************************************************** -->
+		<!-- Runtime -->
+		<!-- *************************************************************** -->
+        <!-- Replace logging libraries with up-to-date versions -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>log4j-over-slf4j</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jul-to-slf4j</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>me.moocar</groupId>
+            <artifactId>logback-gelf</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <!-- Replace Camel libraries with up-to-date versions -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jms</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-spring</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jetty</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+		<!-- *************************************************************** -->
+		<!-- Test -->
+		<!-- *************************************************************** -->
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>rpm</id>
+            <activation>
+                <os>
+                    <name>linux</name>
+                    <arch>amd64</arch>
+                    <family>unix</family>
+                </os>
+            </activation>
+
+            <properties>
+                <rpm.filtered.dir>${project.build.directory}/rpm-filtered</rpm.filtered.dir>
+                <rpm.dist>el6</rpm.dist>
+                <rpm.arch>x86_64</rpm.arch>
+                <rpm.version>0.19.8</rpm.version>
+                <rpm.repository>vnet</rpm.repository>
+                <rpm.user>vnet-activemq</rpm.user>
+                <rpm.group>vnet-activemq</rpm.group>
+                <rpm.var-run.dir>/var/run/vnet-activemq-${deps.activemq.version}</rpm.var-run.dir>
+                <rpm.var-lib.dir>/var/lib/vnet-activemq-${deps.activemq.version}</rpm.var-lib.dir>
+                <rpm.var-log.dir>/var/log/vnet-activemq-${deps.activemq.version}</rpm.var-log.dir>
+                <rpm.usr-share.dir>/usr/share/vnet-activemq-${deps.activemq.version}</rpm.usr-share.dir>
+                <rpm.etc.dir>/etc/vnet-activemq-${deps.activemq.version}</rpm.etc.dir>
+                <java.min.mem>128</java.min.mem>
+                <java.max.mem>512</java.max.mem>
+                <java.min.perm>64</java.min.perm>
+                <java.max.perm>128</java.max.perm>
+            </properties>
+
+            <build>
+                <resources>
+                    <resource>
+                        <directory>${project.basedir}/src/main/rpm</directory>
+                        <filtering>true</filtering>
+                        <targetPath>${rpm.filtered.dir}</targetPath>
+                    </resource>
+                </resources>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>copy-filtered-rpm-resources</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>resources</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <!-- Uncompress the standard ActiveMQ distribution -->
+                                <id>unpack-standard-activemq-distribution</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>org.apache.activemq</groupId>
+                                            <artifactId>apache-activemq</artifactId>
+                                            <type>tar.gz</type>
+                                            <classifier>bin</classifier>
+                                            <outputDirectory>${project.basedir}/target/dependencies</outputDirectory>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>rpm-maven-plugin</artifactId>
+                        <version>2.1-alpha-1</version>
+                        <executions>
+                            <execution>
+                                <id>package-activemq-rpm</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>attached-rpm</goal>
+                                </goals>
+                                <configuration>
+                                    <group>VNET SMS/Servers</group>
+                                    <name>vnet-activemq</name>
+                                    <copyright>2012, Olaf Bergner</copyright>
+                                    <packager>Olaf Bergner</packager>
+                                    <targetVendor>CentOS</targetVendor>
+                                    <needarch>${rpm.arch}</needarch>
+                                    <release>${buildNumber}.${rpm.dist}</release>
+                                    <distribution>${rpm.dist}</distribution>
+                                    <group>Applications/Communications</group>
+                                    <defineStatements>
+                                        <defineStatement><![CDATA[workdir /var/lib/vnet-activemq-${project.version}]]></defineStatement>
+										<!-- Do not run /usr/lib/rpm/redhat/brp-java-repack-jars as this 
+											will corrupt karaf-wrapper-main.jar -->
+                                        <defineStatement><![CDATA[__jar_repack 0]]></defineStatement>
+                                    </defineStatements>
+                                    <mappings>
+                                        <mapping>
+                                            <directory>${rpm.var-lib.dir}</directory>
+                                            <filemode>664</filemode>
+                                            <username>${rpm.user}</username>
+                                            <groupname>routing</groupname>
+                                        </mapping>
+                                        <mapping>
+                                            <directory>/var/lib/vnet-activemq</directory>
+                                            <filemode>664</filemode>
+                                            <username>${rpm.user}</username>
+                                            <groupname>${rpm.group}</groupname>
+                                            <sources>
+                                                <softlinkSource>
+                                                    <location>${rpm.var-lib.dir}</location>
+                                                </softlinkSource>
+                                            </sources>
+                                        </mapping>
+                                        <mapping>
+                                            <directory>${rpm.var-lib.dir}/data</directory>
+                                            <filemode>664</filemode>
+                                            <username>${rpm.user}</username>
+                                            <groupname>${rpm.group}</groupname>
+                                        </mapping>
+                                        <mapping>
+                                            <directory>${rpm.var-lib.dir}/deploy</directory>
+                                            <filemode>664</filemode>
+                                            <username>${rpm.user}</username>
+                                            <groupname>${rpm.group}</groupname>
+                                        </mapping>
+                                        <mapping>
+                                            <directory>${rpm.var-log.dir}</directory>
+                                            <filemode>664</filemode>
+                                            <username>${rpm.user}</username>
+                                            <groupname>${rpm.group}</groupname>
+                                        </mapping>
+                                        <mapping>
+                                            <directory>/var/log/vnet-activemq</directory>
+                                            <filemode>664</filemode>
+                                            <username>${rpm.user}</username>
+                                            <groupname>${rpm.group}</groupname>
+                                            <sources>
+                                                <softlinkSource>
+                                                    <location>${rpm.var-log.dir}</location>
+                                                </softlinkSource>
+                                            </sources>
+                                        </mapping>
+                                        <mapping>
+                                            <directory>${rpm.var-run.dir}</directory>
+                                            <filemode>664</filemode>
+                                            <username>${rpm.user}</username>
+                                            <groupname>${rpm.group}</groupname>
+                                        </mapping>
+                                        <mapping>
+                                            <directory>/var/run/vnet-activemq</directory>
+                                            <filemode>664</filemode>
+                                            <username>${rpm.user}</username>
+                                            <groupname>${rpm.group}</groupname>
+                                            <sources>
+                                                <softlinkSource>
+                                                    <location>${rpm.var-run.dir}</location>
+                                                </softlinkSource>
+                                            </sources>
+                                        </mapping>
+                                        <mapping>
+                                            <directory>${rpm.etc.dir}</directory>
+                                            <directoryIncluded>true</directoryIncluded>
+                                            <configuration>true</configuration>
+                                            <filemode>664</filemode>
+                                            <username>root</username>
+                                            <groupname>root</groupname>
+                                            <sources>
+                                                <source>
+                                                    <location>${project.build.directory}/dependencies/apache-activemq-${deps.activemq.version}/conf</location>
+                                                    <includes>
+                                                        <include>*.ks</include>
+                                                        <include>*.ts</include>
+                                                        <include>*.cert</include>
+                                                    </includes>
+                                                </source>
+                                                <source>
+                                                    <location>${rpm.filtered.dir}/etc</location>
+                                                </source>
+                                            </sources>
+                                        </mapping>
+                                        <mapping>
+                                            <directory>/etc/vnet-activemq</directory>
+                                            <filemode>664</filemode>
+                                            <username>root</username>
+                                            <groupname>root</groupname>
+                                            <sources>
+                                                <softlinkSource>
+                                                    <location>${rpm.etc.dir}</location>
+                                                </softlinkSource>
+                                            </sources>
+                                        </mapping>
+                                        <mapping>
+                                            <directory>/etc/init.d</directory>
+                                            <directoryIncluded>false</directoryIncluded>
+                                            <filemode>755</filemode>
+                                            <username>root</username>
+                                            <groupname>root</groupname>
+                                            <sources>
+                                                <source>
+                                                    <location>${rpm.filtered.dir}/service</location>
+                                                    <includes>
+                                                        <include>vnet-activemq</include>
+                                                    </includes>
+                                                </source>
+                                            </sources>
+                                        </mapping>
+                                        <mapping>
+                                            <directory>${rpm.usr-share.dir}</directory>
+                                            <filemode>664</filemode>
+                                            <username>${rpm.user}</username>
+                                            <groupname>${rpm.group}</groupname>
+                                            <sources>
+                                                <source>
+                                                    <location>${project.build.directory}/dependencies/apache-activemq-${deps.activemq.version}</location>
+                                                    <includes>
+                                                        <include>activemq-all-*.jar</include>
+                                                    </includes>
+                                                </source>
+                                            </sources>
+                                        </mapping>
+                                        <mapping>
+                                            <directory>/usr/share/vnet-activemq</directory>
+                                            <filemode>664</filemode>
+                                            <username>${rpm.user}</username>
+                                            <groupname>${rpm.group}</groupname>
+                                            <sources>
+                                                <softlinkSource>
+                                                    <location>${rpm.usr-share.dir}</location>
+                                                </softlinkSource>
+                                            </sources>
+                                        </mapping>
+                                        <mapping>
+                                            <directory>${rpm.usr-share.dir}/conf</directory>
+                                            <filemode>664</filemode>
+                                            <username>${rpm.user}</username>
+                                            <groupname>${rpm.group}</groupname>
+                                            <sources>
+                                                <softlinkSource>
+                                                    <location>${rpm.etc.dir}</location>
+                                                </softlinkSource>
+                                            </sources>
+                                        </mapping>
+                                        <mapping>
+                                            <directory>${rpm.usr-share.dir}/log</directory>
+                                            <filemode>664</filemode>
+                                            <username>${rpm.user}</username>
+                                            <groupname>${rpm.group}</groupname>
+                                            <sources>
+                                                <softlinkSource>
+                                                    <location>${rpm.var-log.dir}</location>
+                                                </softlinkSource>
+                                            </sources>
+                                        </mapping>
+                                        <mapping>
+                                            <directory>${rpm.usr-share.dir}/data</directory>
+                                            <filemode>664</filemode>
+                                            <username>${rpm.user}</username>
+                                            <groupname>${rpm.group}</groupname>
+                                            <sources>
+                                                <softlinkSource>
+                                                    <location>${rpm.var-lib.dir}/data</location>
+                                                </softlinkSource>
+                                            </sources>
+                                        </mapping>
+                                        <mapping>
+                                            <directory>${rpm.usr-share.dir}/deploy</directory>
+                                            <filemode>664</filemode>
+                                            <username>${rpm.user}</username>
+                                            <groupname>${rpm.group}</groupname>
+                                            <sources>
+                                                <softlinkSource>
+                                                    <location>${rpm.var-lib.dir}/deploy</location>
+                                                </softlinkSource>
+                                            </sources>
+                                        </mapping>
+                                        <mapping>
+                                            <directory>${rpm.usr-share.dir}/bin</directory>
+                                            <directoryIncluded>true</directoryIncluded>
+                                            <filemode>755</filemode>
+                                            <username>${rpm.user}</username>
+                                            <groupname>${rpm.group}</groupname>
+                                            <sources>
+                                                <source>
+                                                    <location>${project.build.directory}/dependencies/apache-activemq-${deps.activemq.version}/bin</location>
+                                                    <includes>
+                                                        <include>run.jar</include>
+                                                        <include>wrapper.jar</include>
+                                                        <include>activemq</include>
+                                                        <include>activemq-admin</include>
+                                                        <include>linux-x86-64/libwrapper.so</include>
+                                                        <include>linux-x86-64/wrapper</include>
+                                                    </includes>
+                                                </source>
+                                            </sources>
+                                        </mapping>
+                                        <mapping>
+                                            <directory>${rpm.usr-share.dir}/lib</directory>
+                                            <directoryIncluded>true</directoryIncluded>
+                                            <filemode>664</filemode>
+                                            <username>${rpm.user}</username>
+                                            <groupname>${rpm.group}</groupname>
+                                            <sources>
+                                                <source>
+                                                    <location>${project.build.directory}/dependencies/apache-activemq-${deps.activemq.version}/lib</location>
+                                                    <excludes>
+                                                        <exclude>slf4j-api-*.jar</exclude>
+                                                        <exclude>jcl-over-slf4j-*.jar</exclude>
+                                                        <exclude>optional/log4j-*.jar</exclude>
+                                                        <exclude>optional/slf4j-log4j12-*.jar</exclude>
+                                                        <exclude>camel-*.jar</exclude>
+                                                        <exclude>activemq-web-*.jar</exclude>
+                                                        <exclude>web/*</exclude>
+                                                    </excludes>
+                                                </source>
+                                            </sources>
+                                            <dependency>
+                                                <includes>
+                                                    <include>org.slf4j:slf4j-api</include>
+                                                    <include>org.slf4j:jcl-over-slf4j</include>
+                                                    <include>org.apache.camel:camel-core</include>
+                                                    <include>org.apache.camel:camel-spring</include>
+                                                    <include>org.apache.camel:camel-jms</include>
+                                                    <include>org.apache.camel:camel-jetty</include>
+                                                </includes>
+                                            </dependency>
+                                        </mapping>
+                                        <mapping>
+                                            <directory>${rpm.usr-share.dir}/lib/optional</directory>
+                                            <directoryIncluded>true</directoryIncluded>
+                                            <filemode>664</filemode>
+                                            <username>${rpm.user}</username>
+                                            <groupname>${rpm.group}</groupname>
+                                            <dependency>
+                                                <includes>
+                                                    <include>ch.qos.logback:logback-classic</include>
+                                                    <include>ch.qos.logback:logback-core</include>
+                                                    <include>me.moocar:logback-gelf</include>
+                                                    <include>org.slf4j:log4j-over-slf4j</include>
+                                                    <include>org.slf4j:jul-to-slf4j</include>
+                                                </includes>
+                                            </dependency>
+                                        </mapping>
+                                    </mappings>
+                                    <preinstallScriptlet>
+                                        <scriptFile>${rpm.filtered.dir}/scriptlet/preinstall</scriptFile>
+                                        <fileEncoding>utf-8</fileEncoding>
+                                    </preinstallScriptlet>
+                                    <postinstallScriptlet>
+                                        <scriptFile>${rpm.filtered.dir}/scriptlet/postinstall</scriptFile>
+                                        <fileEncoding>utf-8</fileEncoding>
+                                    </postinstallScriptlet>
+                                    <preremoveScriptlet>
+                                        <scriptFile>${rpm.filtered.dir}/scriptlet/preuninstall</scriptFile>
+                                        <fileEncoding>utf-8</fileEncoding>
+                                    </preremoveScriptlet>
+                                    <postremoveScriptlet>
+                                        <scriptFile>${rpm.filtered.dir}/scriptlet/postuninstall</scriptFile>
+                                        <fileEncoding>utf-8</fileEncoding>
+                                    </postremoveScriptlet>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.2.1</version>
+                        <executions>
+                            <execution>
+                                <id>upload-rpm</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <executable>${basedir}/src/main/rpm/upload-rpm.sh</executable>
+                            <workingDirectory>${basedir}</workingDirectory>
+                            <arguments>
+                                <argument>${rpm.version}</argument>
+                                <argument>${buildNumber}</argument>
+                                <argument>${rpm.dist}</argument>
+                                <argument>${rpm.arch}</argument>
+                                <argument>${rpm.repository}</argument>
+                            </arguments>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>

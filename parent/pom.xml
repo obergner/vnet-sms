@@ -598,6 +598,12 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
+                <artifactId>camel-jetty</artifactId>
+                <version>${deps.camel.version}</version>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-netty</artifactId>
                 <version>${deps.camel.version}</version>
                 <type>jar</type>
@@ -692,6 +698,13 @@
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>log4j-over-slf4j</artifactId>
+                <version>${deps.slf4j.version}</version>
+                <type>jar</type>
+                <optional>true</optional>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>jul-to-slf4j</artifactId>
                 <version>${deps.slf4j.version}</version>
                 <type>jar</type>
                 <optional>true</optional>
@@ -837,6 +850,13 @@
                         <artifactId>spring-osgi-core</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.activemq</groupId>
+                <artifactId>apache-activemq</artifactId>
+                <version>${deps.activemq.version}</version>
+                <type>tar.gz</type>
+                <classifier>bin</classifier>
             </dependency>
             <dependency>
                 <groupId>org.apache.activemq</groupId>

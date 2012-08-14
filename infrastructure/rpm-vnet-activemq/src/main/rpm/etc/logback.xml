@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration
+    scan="true"
+    scanPeriod="30 seconds">
+
+    <appender
+        name="STDOUT"
+        class="ch.qos.logback.core.ConsoleAppender">
+		<!-- encoders are assigned by default the type ch.qos.logback.classic.encoder.PatternLayoutEncoder -->
+        <encoder>
+            <pattern><![CDATA[%5p | %m%n]]></pattern>
+        </encoder>
+    </appender>
+
+    <appender
+        name="FILE"
+        class="ch.qos.logback.core.FileAppender">
+        <file>${rpm.var-log.dir}/activemq.log</file>
+        <append>true</append>
+		<!-- encoders are assigned the type ch.qos.logback.classic.encoder.PatternLayoutEncoder 
+			by default -->
+        <encoder>
+            <pattern><![CDATA[%d | %-5p | %m | %c | %t%n]]></pattern>
+        </encoder>
+    </appender>
+
+    <appender
+        name="GELF"
+        class="me.moocar.logbackgelf.GelfAppender">
+        <facility>routing-engine</facility>
+        <graylog2ServerHost>dev.vhost.net</graylog2ServerHost>
+        <graylog2ServerPort>12201</graylog2ServerPort>
+        <useLoggerName>true</useLoggerName>
+		<!-- useThreadName currently leads to a Joran configuration error -->
+		<!-- <useThreadName>true</useThreadName> -->
+        <graylog2ServerVersion>0.9.6</graylog2ServerVersion>
+        <chunkThreshold>2000</chunkThreshold>
+    </appender>
+
+    <logger
+        name="org.apache.activemq.spring"
+        level="WARN" />
+
+    <logger
+        name="org.apache.activemq.web.handler"
+        level="WARN" />
+
+    <logger
+        name="org.springframework"
+        level="WARN" />
+
+    <logger
+        name="org.apache.xbean"
+        level="WARN" />
+
+    <logger
+        name="org.apache.camel"
+        level="INFO" />
+
+    <logger
+        name="vnet.sms"
+        level="TRACE" />
+
+	<!-- Strictly speaking, the level attribute is not necessary since -->
+	<!-- the level of the root level is set to DEBUG by default. -->
+    <root
+        level="INFO">
+        <appender-ref
+            ref="STDOUT" />
+        <appender-ref
+            ref="FILE" />
+        <appender-ref
+            ref="GELF" />
+    </root>
+
+    <appender
+        name="AUDIT"
+        class="ch.qos.logback.core.FileAppender">
+        <file>${rpm.var-log.dir}/activemq-audit.log</file>
+        <append>true</append>
+        <!-- encoders are assigned the type ch.qos.logback.classic.encoder.PatternLayoutEncoder 
+            by default -->
+        <encoder>
+            <pattern><![CDATA[%-5p | %m | %t%n]]></pattern>
+        </encoder>
+    </appender>
+
+    <logger
+        name="audit"
+        level="INFO"
+        additivity="false">
+        <appender-ref
+            ref="AUDIT" />
+    </logger>
+
+</configuration>
