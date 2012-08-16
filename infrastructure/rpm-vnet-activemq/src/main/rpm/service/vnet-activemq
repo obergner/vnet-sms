@@ -22,7 +22,7 @@ APP_NAME="VNETActiveMQ"
 APP_LONG_NAME="VNET ActiveMQ Broker"
 ACTIVEMQ_HOME="${rpm.usr-share.dir}"
 ACTIVEMQ_MODULES_DEPLOY="${rpm.var-lib.dir}/deploy"
-ACTIVEMQ_MODULES_ETC="/etc/vnet-activemq-modules"
+ACTIVEMQ_MODULES_ETC=${rpm.modules-etc.dir}"
 
 # Wrapper
 WRAPPER_CMD="${rpm.usr-share.dir}/bin/linux-x86-64/wrapper"
@@ -282,13 +282,31 @@ fi
 # configured in /etc/vnet-activemq-modules
 modules_classpath=""
 getModulesClasspath() {
-    modules_classpath="${ACTIVEMQ_MODULES_DEPLOY}/*.jar"
-    
-    modules_etc_subdirs=$(find ${ACTIVEMQ_MODULES_ETC}/ -maxdepth 1 -type d -print| wc -l)
-    if [ -d ${ACTIVEMQ_MODULES_ETC} -a ${modules_etc_subdirs} -gt 1 ]
+    module_jars=(${ACTIVEMQ_MODULES_DEPLOY}/*.jar)
+    if [ -d ${ACTIVEMQ_MODULES_DEPLOY} -a ${#module_jars[@]} -gt 0 ]
     then
-        for confdir in "${ACTIVEMQ_MODULES_ETC}/*/" ; do
-            modules_classpath="${modules_classpath};${confdir}"
+        for jar in ${module_jars}
+        do
+            if [ -z $modules_classpath ]
+            then
+                    modules_classpath="${jar}"
+            else
+                    modules_classpath="${modules_classpath};${jar}"
+            fi
+        done
+    fi
+    
+    module_confdirs=(${ACTIVEMQ_MODULES_ETC}/*/)
+    if [ -d ${ACTIVEMQ_MODULES_ETC} -a ${#module_confdirs[@]} -gt 0 ]
+    then
+        for cfg in ${module_confdirs}
+        do
+            if [ -z $modules_classpath ]
+            then
+                    modules_classpath=${cfg}
+            else
+                    modules_classpath="${modules_classpath};${cfg}"
+            fi
         done
     fi
 }
