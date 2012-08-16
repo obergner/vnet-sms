@@ -105,11 +105,6 @@
             <artifactId>camel-spring</artifactId>
             <scope>runtime</scope>
         </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-jetty</artifactId>
-            <scope>runtime</scope>
-        </dependency>
         <!-- Replace Spring libraries with up-to-date versions -->
         <dependency>
             <groupId>org.springframework</groupId>
@@ -495,7 +490,6 @@
                                                     <include>org.apache.camel:camel-core</include>
                                                     <include>org.apache.camel:camel-spring</include>
                                                     <include>org.apache.camel:camel-jms</include>
-                                                    <include>org.apache.camel:camel-jetty</include>
                                                 </includes>
                                             </dependency>
                                         </mapping>
