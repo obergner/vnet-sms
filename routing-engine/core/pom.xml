@@ -173,6 +173,7 @@
                 <rpm.filtered.dir>${project.build.directory}/rpm-filtered</rpm.filtered.dir>
                 <rpm.dist>el6</rpm.dist>
                 <rpm.arch>noarch</rpm.arch>
+                <rpm.version>1.0.0-${buildNumber}</rpm.version>
                 <rpm.repository>vnet</rpm.repository>
                 <rpm.user>vnet-activemq</rpm.user>
                 <rpm.group>vnet-activemq</rpm.group>
