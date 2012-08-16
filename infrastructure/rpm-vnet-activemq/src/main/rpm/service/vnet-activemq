@@ -278,7 +278,7 @@ else
     LOCKPROP=
 fi
 
-# Generate extra classpath entries allowing modules to be deployed in /var/lib/vnet-activemq and
+# Generate extra classpath entries allowing modules to be deployed in /var/lib/vnet-activemq/deploy and
 # configured in /etc/vnet-activemq-modules
 modules_classpath=""
 getModulesClasspath() {
