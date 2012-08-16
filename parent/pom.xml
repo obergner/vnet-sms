@@ -114,10 +114,11 @@
         <plugins.cobertura.version>2.5</plugins.cobertura.version>
         <plugins.license.version>1.8.0</plugins.license.version>
         <plugins.assembly.version>2.3</plugins.assembly.version>
+        <plugins.rpm.version>2.1-alpha-1</plugins.rpm.version>
         <plugins.gmaven.version>1.4</plugins.gmaven.version>
         <plugins.buildnumber.version>1.0</plugins.buildnumber.version>
         <plugins.exec.version>1.2.1</plugins.exec.version>
-        <plugins.karaf.version>2.2.5</plugins.karaf.version>
+        <plugins.shade.version>1.7.1</plugins.shade.version>
         <plugins.incremental-build.version>1.6</plugins.incremental-build.version>
 		<!-- ######################################################### -->
 		<!-- Reporting plugin versions -->
@@ -1229,11 +1230,6 @@
                             </configuration>
                         </plugin>
                         <plugin>
-                            <groupId>org.apache.karaf.tooling</groupId>
-                            <artifactId>features-maven-plugin</artifactId>
-                            <version>${plugins.karaf.version}</version>
-                        </plugin>
-                        <plugin>
                             <groupId>org.apache.felix</groupId>
                             <artifactId>maven-bundle-plugin</artifactId>
                             <version>${plugins.bundle.version}</version>
@@ -1257,6 +1253,16 @@
                                     </manifestEntries>
                                 </archive>
                             </configuration>
+                        </plugin>
+                        <plugin>
+                            <groupId>org.codehaus.mojo</groupId>
+                            <artifactId>rpm-maven-plugin</artifactId>
+                            <version>${plugins.rpm.version}</version>
+                        </plugin>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-shade-plugin</artifactId>
+                            <version>${plugins.shade.version}</version>
                         </plugin>
                         <plugin>
                             <groupId>org.apache.maven.plugins</groupId>
