@@ -22,7 +22,7 @@ APP_NAME="VNETActiveMQ"
 APP_LONG_NAME="VNET ActiveMQ Broker"
 ACTIVEMQ_HOME="${rpm.usr-share.dir}"
 ACTIVEMQ_MODULES_DEPLOY="${rpm.var-lib.dir}/deploy"
-ACTIVEMQ_MODULES_ETC=${rpm.modules-etc.dir}"
+ACTIVEMQ_MODULES_ETC="${rpm.modules-etc.dir}"
 
 # Wrapper
 WRAPPER_CMD="${rpm.usr-share.dir}/bin/linux-x86-64/wrapper"
@@ -303,7 +303,7 @@ getModulesClasspath() {
         do
             if [ -z $modules_classpath ]
             then
-                    modules_classpath=${cfg}
+                    modules_classpath="${cfg}"
             else
                     modules_classpath="${modules_classpath};${cfg}"
             fi
