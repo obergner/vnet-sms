@@ -101,18 +101,34 @@
             </properties>
 
             <build>
-                <resources>
-                    <resource>
-                        <directory>${project.basedir}/src/main/rpm</directory>
-                        <filtering>true</filtering>
-                        <targetPath>${rpm.filtered.dir}</targetPath>
-                        <!-- DO NOT FILTER BINARIES - It breaks the bundle-plugin -->
-                        <excludes>
-                            <exclude>bin/**/*</exclude>
-                        </excludes>
-                    </resource>
-                </resources>
                 <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>add-rpm-resources</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>add-resource</goal>
+                                </goals>
+                                <configuration>
+                                    <resources>
+                                        <resource>
+                                            <directory>${project.basedir}/src/main/rpm</directory>
+                                            <filtering>true</filtering>
+                                            <targetPath>${rpm.filtered.dir}</targetPath>
+                                            <!-- DO NOT FILTER BINARIES - It breaks the bundle-plugin -->
+                                            <excludes>
+                                                <exclude>bin/**/*</exclude>
+                                            </excludes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-resources-plugin</artifactId>
