@@ -150,7 +150,7 @@
                                     <defaultDirmode>755</defaultDirmode>
                                     <defaultFilemode>644</defaultFilemode>
                                     <requires>
-                                        <require>vnet-routing-engine-core &gt; 1.0.0</require>
+                                        <require>vnet-routing-engine-core &gt; 0.9.9</require>
                                     </requires>
                                     <defineStatements>
                                         <defineStatement><![CDATA[workdir ${rpm.usr-share.dir}]]></defineStatement>
