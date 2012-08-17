@@ -88,12 +88,12 @@
                 <rpm.arch>x86_64</rpm.arch>
                 <rpm.version>1.0.0-${buildNumber}</rpm.version>
                 <rpm.repository>vnet</rpm.repository>
-                <rpm.user>vnet-gateway-serialization-server</rpm.user>
-                <rpm.group>vnet-gateway-serialization-server</rpm.group>
-                <rpm.var-run.dir>/var/run/vnet-gateway-serialization-server</rpm.var-run.dir>
-                <rpm.var-log.dir>/var/log/vnet-gateway-serialization-server</rpm.var-log.dir>
-                <rpm.usr-share.dir>/usr/share/vnet-gateway-serialization-server-${project.version}</rpm.usr-share.dir>
-                <rpm.etc.dir>/etc/vnet-gateway-serialization-server</rpm.etc.dir>
+                <rpm.user>vnet-serialization-server</rpm.user>
+                <rpm.group>vnet-serialization-server</rpm.group>
+                <rpm.var-run.dir>/var/run/vnet-serialization-server</rpm.var-run.dir>
+                <rpm.var-log.dir>/var/log/vnet-serialization-server</rpm.var-log.dir>
+                <rpm.usr-share.dir>/usr/share/vnet-serialization-server-${project.version}</rpm.usr-share.dir>
+                <rpm.etc.dir>/etc/vnet-serialization-server</rpm.etc.dir>
                 <java.min.mem>128</java.min.mem>
                 <java.max.mem>512</java.max.mem>
                 <java.min.perm>64</java.min.perm>
@@ -139,7 +139,7 @@
                                 </goals>
                                 <configuration>
                                     <group>VNET SMS/Servers</group>
-                                    <name>vnet-gateway-serialization-server</name>
+                                    <name>vnet-serialization-server</name>
                                     <copyright>2012, Olaf Bergner</copyright>
                                     <packager>Olaf Bergner</packager>
                                     <targetVendor>CentOS</targetVendor>
@@ -202,7 +202,7 @@
                                                 <source>
                                                     <location>${rpm.filtered.dir}/service</location>
                                                     <includes>
-                                                        <include>vnet-gateway-serialization-server</include>
+                                                        <include>vnet-serialization-server</include>
                                                     </includes>
                                                 </source>
                                             </sources>
@@ -215,7 +215,7 @@
                                             <groupname>${rpm.group}</groupname>
                                         </mapping>
                                         <mapping>
-                                            <directory>/usr/share/vnet-gateway-serialization-server</directory>
+                                            <directory>/usr/share/vnet-serialization-server</directory>
                                             <filemode>664</filemode>
                                             <username>${rpm.user}</username>
                                             <groupname>${rpm.group}</groupname>

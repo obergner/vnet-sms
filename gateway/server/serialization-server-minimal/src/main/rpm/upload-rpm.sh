@@ -10,7 +10,7 @@ ARCH="$4"
 REPO="$5"
 
 MODULEDIR=$( cd "$( dirname "$0" )/../../../" && pwd )
-RPMBUILD=${MODULEDIR}/target/rpm/vnet-gateway-serialization-server
+RPMBUILD=${MODULEDIR}/target/rpm/vnet-serialization-server
 
 echo ""
 echo "------------------------------------------------------------------------"
