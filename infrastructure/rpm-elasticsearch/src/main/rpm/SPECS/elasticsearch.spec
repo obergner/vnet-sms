@@ -1,5 +1,6 @@
 %define debug_package %{nil}
 %define base_install_dir %{_javadir}{%name}
+%define gelfj_version ${rpm.gelfj.version}
 
 Name:           elasticsearch
 Version:        ${rpm.version}
@@ -14,6 +15,8 @@ Source1:        init.d-elasticsearch
 Source2:        logrotate.d-elasticsearch
 Source3:        config-logging.yml
 Source4:        sysconfig-elasticsearch
+Source5:        config-elasticsearch
+Source6:        https://github.com/downloads/t0xa/gelfj/gelfj-%{gelfj_version}.jar
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 Requires:       jpackage-utils
@@ -43,6 +46,7 @@ rm -rf $RPM_BUILD_ROOT
 #libs
 %{__mkdir} -p %{buildroot}%{_javadir}/%{name}/lib/sigar
 %{__install} -p -m 644 lib/*.jar %{buildroot}%{_javadir}/%{name}/lib
+%{__install} -p -m 644 gelfj-*.jar %{buildroot}%{_javadir}/%{name}/lib
 %{__install} -p -m 644 lib/sigar/*.jar %{buildroot}%{_javadir}/%{name}/lib/sigar
 %ifarch i386
 %{__install} -p -m 644 lib/sigar/libsigar-x86-linux.so %{buildroot}%{_javadir}/%{name}/lib/sigar
@@ -53,7 +57,7 @@ rm -rf $RPM_BUILD_ROOT
 
 # config
 %{__mkdir} -p %{buildroot}%{_sysconfdir}/elasticsearch
-%{__install} -m 644 config/elasticsearch.yml %{buildroot}%{_sysconfdir}/%{name}
+%{__install} -m 644 %{SOURCE5} %{buildroot}%{_sysconfdir}/%{name}
 %{__install} -m 644 %{SOURCE3} %{buildroot}%{_sysconfdir}/%{name}/logging.yml
 
 # data

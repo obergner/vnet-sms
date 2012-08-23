@@ -36,6 +36,7 @@
         <rpm.arch>x86_64</rpm.arch>
         <rpm.version>0.19.8</rpm.version>
         <rpm.repository>vnet</rpm.repository>
+        <rpm.gelfj.version>0.9.1</rpm.gelfj.version>
     </properties>
 
     <dependencies>
