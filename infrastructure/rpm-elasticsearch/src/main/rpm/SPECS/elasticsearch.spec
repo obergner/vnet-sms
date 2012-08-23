@@ -54,7 +54,7 @@ rm -rf $RPM_BUILD_ROOT
 
 # config
 %{__mkdir} -p %{buildroot}%{_sysconfdir}/elasticsearch
-%{__install} -m 644 %{SOURCE5} %{buildroot}%{_sysconfdir}/%{name}
+%{__install} -m 644 %{SOURCE5} %{buildroot}%{_sysconfdir}/%{name}/elasticsearch.yml
 %{__install} -m 644 %{SOURCE3} %{buildroot}%{_sysconfdir}/%{name}/logging.yml
 
 # data
