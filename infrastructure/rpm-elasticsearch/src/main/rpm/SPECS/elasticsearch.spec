@@ -46,7 +46,7 @@ rm -rf $RPM_BUILD_ROOT
 #libs
 %{__mkdir} -p %{buildroot}%{_javadir}/%{name}/lib/sigar
 %{__install} -p -m 644 lib/*.jar %{buildroot}%{_javadir}/%{name}/lib
-%{__install} -p -m 644 gelfj-*.jar %{buildroot}%{_javadir}/%{name}/lib
+%{__install} -p -m 644 gelfj-%{gelfj_version}.jar %{buildroot}%{_javadir}/%{name}/lib
 %{__install} -p -m 644 lib/sigar/*.jar %{buildroot}%{_javadir}/%{name}/lib/sigar
 %ifarch i386
 %{__install} -p -m 644 lib/sigar/libsigar-x86-linux.so %{buildroot}%{_javadir}/%{name}/lib/sigar
