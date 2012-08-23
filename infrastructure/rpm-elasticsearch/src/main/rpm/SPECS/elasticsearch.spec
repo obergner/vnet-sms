@@ -14,7 +14,7 @@ Source1:        init.d-elasticsearch
 Source2:        logrotate.d-elasticsearch
 Source3:        config-logging.yml
 Source4:        sysconfig-elasticsearch
-Source5:        config-elasticsearch
+Source5:        config-elasticsearch.yml
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 Requires:       jpackage-utils
