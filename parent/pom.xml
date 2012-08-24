@@ -37,6 +37,7 @@
         <module.infrastructure.rpm-grok.version>1.0.0-SNAPSHOT</module.infrastructure.rpm-grok.version>
         <module.infrastructure.rpm-logstash.version>1.0.0-SNAPSHOT</module.infrastructure.rpm-logstash.version>
         <module.infrastructure.rpm-graylog2-server.version>1.0.0-SNAPSHOT</module.infrastructure.rpm-graylog2-server.version>
+        <module.infrastructure.rpm-graylog2-web-interface.version>1.0.0-SNAPSHOT</module.infrastructure.rpm-graylog2-web-interface.version>
         <module.common.version>1.0.0-SNAPSHOT</module.common.version>
         <module.common.base-library.version>1.0.0-SNAPSHOT</module.common.base-library.version>
         <module.common.message-library.version>1.0.0-SNAPSHOT</module.common.message-library.version>
@@ -272,6 +273,12 @@
                 <groupId>vnet.sms.infrastructure</groupId>
                 <artifactId>rpm-graylog2-server</artifactId>
                 <version>${module.infrastructure.rpm-graylog2-server.version}</version>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>vnet.sms.infrastructure</groupId>
+                <artifactId>rpm-graylog2-web-interface</artifactId>
+                <version>${module.infrastructure.rpm-graylog2-web-interface.version}</version>
                 <type>pom</type>
             </dependency>
             <dependency>

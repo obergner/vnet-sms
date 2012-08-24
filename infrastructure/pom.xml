@@ -48,6 +48,7 @@
         <module>rpm-grok</module>
         <module>rpm-logstash</module>
         <module>rpm-graylog2-server</module>
+        <module>rpm-graylog2-web-interface</module>
     </modules>
 
 </project>
