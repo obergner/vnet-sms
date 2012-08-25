@@ -50,7 +50,7 @@ Some description of the application
 
 %prep
 %setup -q -n %{name}-%{version}
-gem install bundler
+sudo gem install bundler
 rm -rf ./%{name}
 
 %build
@@ -179,7 +179,7 @@ popd
 
 %clean
 rm -rf $RPM_BUILD_ROOT
-gem uninstall bundler
+sudo gem uninstall bundler
 
 %files
 %defattr(-,root,root,-)
