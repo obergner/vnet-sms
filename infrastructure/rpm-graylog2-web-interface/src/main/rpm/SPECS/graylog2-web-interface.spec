@@ -26,6 +26,7 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 # From https://github.com/bernd/fpm-recipes/blob/master/graylog2-web/recipe.rb
 BuildRequires: rubygems
 
+Requires: graylog2-server
 # XXX Remove if not using apache/passenger
 # Assuming will run via passenger + apache
 Requires: mod_passenger, httpd
