@@ -172,11 +172,12 @@ fi
 %{cachedir}
 # %dir allows an empty directory, which this will be at an initial install
 %dir %{datadir}
+%dir %{configdir}/%{name}
 %config %{configdir}/email.yml
 %config %{configdir}/general.yml
 %config %{configdir}/indexer.yml
 %config %{configdir}/mongoid.yml
-%dir %{_sysconfdir}/%{name}
+%config %{configdir}/%{name}
 %{_initrddir}/%{name}
 %{logrotatedir}/%{name}
 
