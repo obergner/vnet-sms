@@ -37,8 +37,7 @@ Requires: logrotate
 # DIRS
 # - Trying to follow Linux file system hierarchy
 #
-%define appdir %{_sharedir}/%{name}
-%define docdir %{_docdir}/%{name}
+%define appdir %{_datarootdir}/%{name}
 %define libdir %{_libdir}/%{name}
 %define logdir /var/log/%{name}
 %define configdir /etc/%{name}
@@ -85,7 +84,6 @@ done
 %install
 # Create all the defined directories
 mkdir -p $RPM_BUILD_ROOT/%{appdir}
-mkdir -p $RPM_BUILD_ROOT/%{docdir}
 mkdir -p $RPM_BUILD_ROOT/%{libdir}
 mkdir -p $RPM_BUILD_ROOT/%{logdir}
 mkdir -p $RPM_BUILD_ROOT/%{configdir}
@@ -95,12 +93,6 @@ mkdir -p $RPM_BUILD_ROOT/%{logrotatedir}
 
 
 # Start moving files into the proper place in the build root
-
-#
-# Doc
-#
-
-mv ./doc $RPM_BUILD_ROOT/%{docdir}
 
 # 
 # Config
@@ -157,7 +149,6 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %{appdir}
 %{libdir}
-%{docdir}
 %config %{configdir}/email.yml
 %config %{configdir}/general.yml
 %config %{configdir}/indexer.yml
