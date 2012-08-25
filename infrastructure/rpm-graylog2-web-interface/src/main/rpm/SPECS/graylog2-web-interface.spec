@@ -143,7 +143,7 @@ cp %{SOURCE1} $RPM_BUILD_ROOT/%{logrotatedir}/%{name}
 #
 # Install /etc/sysconfig/graylog2-web-interface
 #
-%{__install} -p -D -m 0644 %{SOURCE6} %{buildroot}%{_sysconfdir}/%{name}/%{name}.conf
+%{__install} -p -D -m 0644 %{SOURCE6} %{buildroot}%{_sysconfdir}/sysconfig/%{name}
 
 #
 # Install service script
