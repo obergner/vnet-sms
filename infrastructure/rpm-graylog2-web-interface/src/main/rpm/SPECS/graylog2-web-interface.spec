@@ -121,7 +121,6 @@ ln -s %{libdir}/vendor ./vendor
 # tmp/cache
 #
 
-mv ./tmp $RPM_BUILD_ROOT/%{cachedir}
 ln -s %{cachedir}/tmp ./tmp
 
 #
@@ -129,7 +128,6 @@ ln -s %{cachedir}/tmp ./tmp
 #
 
 # Only do logdir not logdir/log
-rm -rf ./log
 ln -s %{logdir} ./log
 
 #
