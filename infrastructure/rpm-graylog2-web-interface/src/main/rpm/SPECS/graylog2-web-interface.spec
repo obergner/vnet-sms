@@ -13,7 +13,7 @@ Source1:        %{name}-logrotate.conf
 Source2:        %{name}-email.yml
 Source3:        %{name}-general.yml
 Source4:        %{name}-indexer.yml
-Source5:        %{name}-monogid.yml
+Source5:        %{name}-mongoid.yml
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 # XXX Building this rpm requires that bundle is available on the path of the user
