@@ -96,76 +96,73 @@ mkdir -p $RPM_BUILD_ROOT/%{logrotatedir}
 
 
 # Start moving files into the proper place in the build root
-pushd %{name}-%{version}
 
-    # 
-    # ./public/assets
-    #
+# 
+# ./public/assets
+#
 
-    # Again rake assets:precompile creates public/assets which
-    # shouldn't be in /usr/share/%{name} prob cache
-    #rm -rf ./public/assets/*
-    mv ./public/assets $RPM_BUILD_ROOT/%{cachedir}
-    ln -s %{cachedir}/assets ./public/assets
+# Again rake assets:precompile creates public/assets which
+# shouldn't be in /usr/share/%{name} prob cache
+#rm -rf ./public/assets/*
+mv ./public/assets $RPM_BUILD_ROOT/%{cachedir}
+ln -s %{cachedir}/assets ./public/assets
 
-    #
-    # Doc
-    #
+#
+# Doc
+#
 
-    mv ./doc $RPM_BUILD_ROOT/%{docdir}
+mv ./doc $RPM_BUILD_ROOT/%{docdir}
 
-    # 
-    # Config
-    #
+# 
+# Config
+#
 
-    cp %{SOURCE2} $RPM_BUILD_ROOT/%{configdir}/email.yml
-    cp %{SOURCE3} $RPM_BUILD_ROOT/%{configdir}/general.yml
-    cp %{SOURCE4} $RPM_BUILD_ROOT/%{configdir}/indexer.yml
-    cp %{SOURCE5} $RPM_BUILD_ROOT/%{configdir}/mongoid.yml
-    pushd config
-        ln -s %{configdir}/email.yml ./email.yml
-        ln -s %{configdir}/general.yml ./general.yml
-        ln -s %{configdir}/indexer.yml ./indexer.yml
-        ln -s %{configdir}/mongoid.yml ./mongoid.yml
-    popd
-
-    #
-    # lib
-    # 
-
-    mv ./vendor $RPM_BUILD_ROOT/%{libdir}
-    ln -s %{libdir}/vendor ./vendor
-
-    #
-    # tmp/cache
-    #
-
-    mv ./tmp $RPM_BUILD_ROOT/%{cachedir}
-    ln -s %{cachedir}/tmp ./tmp
-
-    #
-    # log
-    #
-
-    # Only do logdir not logdir/log
-    rm -rf ./log
-    #rm ./log/development.log
-    #rm ./log/test.log
-    #mv ./log $RPM_BUILD_ROOT/%{logdir}
-    ln -s %{logdir} ./log
-
-    #
-    # Everything left goes in appdir
-    #
-
-    mv ./* $RPM_BUILD_ROOT/%{appdir} 
-
-    #
-    # logrotate
-    #
-    cp %{SOURCE1} $RPM_BUILD_ROOT/%{logrotatedir}/%{name}
-
+cp %{SOURCE2} $RPM_BUILD_ROOT/%{configdir}/email.yml
+cp %{SOURCE3} $RPM_BUILD_ROOT/%{configdir}/general.yml
+cp %{SOURCE4} $RPM_BUILD_ROOT/%{configdir}/indexer.yml
+cp %{SOURCE5} $RPM_BUILD_ROOT/%{configdir}/mongoid.yml
+pushd config
+    ln -s %{configdir}/email.yml ./email.yml
+    ln -s %{configdir}/general.yml ./general.yml
+    ln -s %{configdir}/indexer.yml ./indexer.yml
+    ln -s %{configdir}/mongoid.yml ./mongoid.yml
 popd
+
+#
+# lib
+# 
+
+mv ./vendor $RPM_BUILD_ROOT/%{libdir}
+ln -s %{libdir}/vendor ./vendor
+
+#
+# tmp/cache
+#
+
+mv ./tmp $RPM_BUILD_ROOT/%{cachedir}
+ln -s %{cachedir}/tmp ./tmp
+
+#
+# log
+#
+
+# Only do logdir not logdir/log
+rm -rf ./log
+#rm ./log/development.log
+#rm ./log/test.log
+#mv ./log $RPM_BUILD_ROOT/%{logdir}
+ln -s %{logdir} ./log
+
+#
+# Everything left goes in appdir
+#
+
+mv ./* $RPM_BUILD_ROOT/%{appdir} 
+
+#
+# logrotate
+#
+cp %{SOURCE1} $RPM_BUILD_ROOT/%{logrotatedir}/%{name}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
