@@ -55,10 +55,6 @@ Some description of the application
 # Install all required gems into ./vendor/bundle using the handy bundle commmand
 bundle install --deployment
 
-# Compile assets, this only has to be done once AFAIK, so in the RPM is fine
-rm -rf ./public/assets/*
-bundle exec rake assets:precompile
-
 # For some reason bundler doesn't install itself, this is probably right,
 # but I guess it expects bundler to be on the server being deployed to 
 # already. But the rails-helloworld app crashes on passenger looking for
