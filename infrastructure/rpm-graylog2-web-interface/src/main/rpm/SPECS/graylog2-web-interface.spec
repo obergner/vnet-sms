@@ -29,9 +29,6 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: rubygems
 
 Requires: graylog2-server
-# XXX Remove if not using apache/passenger
-# Assuming will run via passenger + apache
-Requires: mod_passenger, httpd
 # In order to rotate the logs
 Requires: logrotate
 
@@ -156,21 +153,30 @@ cp %{SOURCE1} $RPM_BUILD_ROOT/%{logrotatedir}/%{name}
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%post 
+/sbin/chkconfig --add %{name}
+
+
+%preun
+if [[ $1 -ge 1 ]]
+then
+    /sbin/service %{name} stop > /dev/null 2>&1
+    /sbin/chkconfig --del %{name}
+fi
+
 %files
 %defattr(-,root,root,-)
 %{appdir}
 %{libdir}
+%{logdir}
+%{cachedir}
+# %dir allows an empty directory, which this will be at an initial install
+%dir %{datadir}
 %config %{configdir}/email.yml
 %config %{configdir}/general.yml
 %config %{configdir}/indexer.yml
 %config %{configdir}/mongoid.yml
+%dir %{_sysconfdir}/%{name}
 %{_initrddir}/%{name}
-# passenger runs as nobody apparently and then http as apache, and I'm not sure which
-# needs which...so for now do nobody:apache...wonder if it should be set to run as apache?
-%attr(770,nobody,apache) %{logdir}
-%attr(770,nobody,apache) %{cachedir}
-# %dir allows an empty directory, which this will be at an initial install
-%attr(770,nobody,apache) %dir %{datadir}
 %{logrotatedir}/%{name}
-%doc
 
