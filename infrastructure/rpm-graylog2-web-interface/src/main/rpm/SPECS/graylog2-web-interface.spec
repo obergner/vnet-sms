@@ -12,7 +12,7 @@ Source0:        https://github.com/downloads/Graylog2/graylog2-web-interface/%{n
 Source1:        %{name}-logrotate.conf
 Source2:        %{name}-email.yml
 Source3:        %{name}-general.yml
-Source3:        %{name}-indexer.yml
+Source4:        %{name}-indexer.yml
 Source5:        %{name}-monogid.yml
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
