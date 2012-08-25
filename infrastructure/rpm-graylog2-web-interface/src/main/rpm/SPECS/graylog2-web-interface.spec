@@ -67,7 +67,6 @@ gemhome: $PWD/vendor/bundle/ruby/1.8
 gempath:
 - $PWD/vendor/bundle/ruby/1.8
 EOGEMRC
-#gem --source %{gem_source} --config-file ./gemrc install bundler
 gem --config-file ./gemrc install bundler
 # Don't need the gemrc any more...
 rm ./gemrc
@@ -96,16 +95,6 @@ mkdir -p $RPM_BUILD_ROOT/%{logrotatedir}
 
 
 # Start moving files into the proper place in the build root
-
-# 
-# ./public/assets
-#
-
-# Again rake assets:precompile creates public/assets which
-# shouldn't be in /usr/share/%{name} prob cache
-#rm -rf ./public/assets/*
-mv ./public/assets $RPM_BUILD_ROOT/%{cachedir}
-ln -s %{cachedir}/assets ./public/assets
 
 #
 # Doc
@@ -148,9 +137,6 @@ ln -s %{cachedir}/tmp ./tmp
 
 # Only do logdir not logdir/log
 rm -rf ./log
-#rm ./log/development.log
-#rm ./log/test.log
-#mv ./log $RPM_BUILD_ROOT/%{logdir}
 ln -s %{logdir} ./log
 
 #
