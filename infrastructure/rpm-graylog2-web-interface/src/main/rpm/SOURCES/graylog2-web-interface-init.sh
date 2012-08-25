@@ -22,7 +22,7 @@ GRAYLOG2_WEB_PID=${GRAYLOG2_WEB_PID:-${GRAYLOG2_WEB_HOME}/tmp/pids/server.pid}
 
 start() {
     echo -n $"Starting $prog: "
-    daemon --user ${GRAYLOG2_WEB_USER} /usr/bin/ruby ${GRAYLOG2_WEB_HOME}/script/server -p ${GRAYLOG2_WEB_PORT} -e ${GRAYLOG2_WEB_ENV} -d > /dev/null
+    daemon --user ${GRAYLOG2_WEB_USER} /usr/bin/ruby ${GRAYLOG2_WEB_HOME}/script/rails server -p ${GRAYLOG2_WEB_PORT} -e ${GRAYLOG2_WEB_ENV} -d > /dev/null
     RETVAL=$?
     if [ $RETVAL = 0 ]
     then
@@ -40,8 +40,8 @@ stop() {
         killproc -p ${GRAYLOG2_WEB_PID}
         RETVAL=$?
     else
-        echo -n $"Foreman was not running.";
-        failure $"Foreman was not running.";
+        echo -n $"Graylog2 Web Interface was not running.";
+        failure $"Graylog2 Web Interface was not running.";
         echo
         return 1
     fi
@@ -58,7 +58,7 @@ case "$1" in
         stop
     ;;
     status)
-        echo -n "Foreman"
+        echo -n "Graylog2 Web Interface"
         status -p $GRAYLOG2_WEB_PID
         RETVAL=$?
     ;;

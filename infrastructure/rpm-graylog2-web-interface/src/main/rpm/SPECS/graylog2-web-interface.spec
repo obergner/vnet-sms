@@ -87,6 +87,7 @@ mkdir -p $RPM_BUILD_ROOT/%{libdir}
 mkdir -p $RPM_BUILD_ROOT/%{logdir}
 mkdir -p $RPM_BUILD_ROOT/%{configdir}
 mkdir -p $RPM_BUILD_ROOT/%{cachedir}
+mkdir -p $RPM_BUILD_ROOT/%{cachedir}/tmp
 mkdir -p $RPM_BUILD_ROOT/%{datadir}
 mkdir -p $RPM_BUILD_ROOT/%{logrotatedir}
 
