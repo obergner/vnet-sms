@@ -50,8 +50,7 @@ Some description of the application
 
 %prep
 %setup -q -n %{name}-%{version}
-sudo gem install bundler
-rm -rf ./%{name}
+rm -rf ./%{name}-%{version}
 
 %build
 pushd %{name}-%{version}
@@ -179,7 +178,6 @@ popd
 
 %clean
 rm -rf $RPM_BUILD_ROOT
-sudo gem uninstall bundler
 
 %files
 %defattr(-,root,root,-)
