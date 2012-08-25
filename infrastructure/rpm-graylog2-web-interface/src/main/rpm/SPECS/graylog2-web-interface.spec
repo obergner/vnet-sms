@@ -103,6 +103,7 @@ cp %{SOURCE3} $RPM_BUILD_ROOT/%{configdir}/general.yml
 cp %{SOURCE4} $RPM_BUILD_ROOT/%{configdir}/indexer.yml
 cp %{SOURCE5} $RPM_BUILD_ROOT/%{configdir}/mongoid.yml
 pushd config
+    rm email.yml general.yml indexer.yml mongoid.yml
     ln -s %{configdir}/email.yml ./email.yml
     ln -s %{configdir}/general.yml ./general.yml
     ln -s %{configdir}/indexer.yml ./indexer.yml
