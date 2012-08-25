@@ -14,6 +14,8 @@ Source2:        %{name}-email.yml
 Source3:        %{name}-general.yml
 Source4:        %{name}-indexer.yml
 Source5:        %{name}-mongoid.yml
+Source6:        %{name}-sysconfig.conf
+Source7:        %{name}-init.sh
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 # XXX Building this rpm requires that bundle is available on the path of the user
@@ -141,6 +143,16 @@ mv ./* $RPM_BUILD_ROOT/%{appdir}
 #
 cp %{SOURCE1} $RPM_BUILD_ROOT/%{logrotatedir}/%{name}
 
+#
+# Install /etc/sysconfig/graylog2-web-interface
+#
+%{__install} -p -D -m 0644 %{SOURCE6} %{buildroot}%{_sysconfdir}/%{name}/%{name}.conf
+
+#
+# Install service script
+#
+%{__install} -p -D -m 0755 %{SOURCE7} %{buildroot}%{_initrddir}/%{name}
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -152,6 +164,7 @@ rm -rf $RPM_BUILD_ROOT
 %config %{configdir}/general.yml
 %config %{configdir}/indexer.yml
 %config %{configdir}/mongoid.yml
+%{_initrddir}/%{name}
 # passenger runs as nobody apparently and then http as apache, and I'm not sure which
 # needs which...so for now do nobody:apache...wonder if it should be set to run as apache?
 %attr(770,nobody,apache) %{logdir}
