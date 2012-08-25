@@ -177,6 +177,7 @@ fi
 %config %{configdir}/general.yml
 %config %{configdir}/indexer.yml
 %config %{configdir}/mongoid.yml
+%config %{_sysconfdir}/sysconfig/%{name}
 %{_initrddir}/%{name}
 %{logrotatedir}/%{name}
 
