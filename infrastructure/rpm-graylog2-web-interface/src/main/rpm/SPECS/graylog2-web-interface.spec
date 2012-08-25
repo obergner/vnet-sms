@@ -50,7 +50,6 @@ Some description of the application
 
 %prep
 %setup -q -n %{name}-%{version}
-rm -rf ./%{name}-%{version}
 
 %build
 pushd %{name}-%{version}
