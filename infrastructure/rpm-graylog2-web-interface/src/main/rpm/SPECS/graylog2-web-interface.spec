@@ -37,7 +37,7 @@ Requires: logrotate
 # DIRS
 # - Trying to follow Linux file system hierarchy
 #
-%define appdir %{rails_home}/%{name}
+%define appdir %{_sharedir}/%{name}
 %define docdir %{_docdir}/%{name}
 %define libdir %{_libdir}/%{name}
 %define logdir /var/log/%{name}
@@ -84,7 +84,6 @@ done
 
 %install
 # Create all the defined directories
-rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/%{appdir}
 mkdir -p $RPM_BUILD_ROOT/%{docdir}
 mkdir -p $RPM_BUILD_ROOT/%{libdir}
