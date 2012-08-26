@@ -54,32 +54,6 @@ Some description of the application
 # Install all required gems into ./vendor/bundle using the handy bundle commmand
 bundle install --deployment
 
-# For some reason bundler doesn't install itself, this is probably right,
-# but I guess it expects bundler to be on the server being deployed to 
-# already. But the rails-helloworld app crashes on passenger looking for
-# bundler, so it would seem to me to be required. So, I used gem to install
-# bundler after bundle deployment. :) And the app then works under passenger.
-
-PWD=`pwd`
-cat > gemrc <<EOGEMRC
-gemhome: $PWD/vendor/bundle/ruby/1.8
-gempath:
-- $PWD/vendor/bundle/ruby/1.8
-EOGEMRC
-gem --config-file ./gemrc install bundler
-# Don't need the gemrc any more...
-rm ./gemrc
-
-# Some of the files in here have /usr/local/bin/ruby set as the bang
-# but that won't work, and makes the rpmbuild process add /usr/local/bin/ruby
-# to the dependencies. So I'm changing that here. Either way it prob won't
-# work. But at least this rids us of the dependencie that we can never meet.
-for f in `grep -ril "\/usr\/local\/bin\/ruby" ./vendor`; do
-        sed -i "s|/usr/local/bin/ruby|/usr/bin/ruby|g" $f
-        head -1 $f
-done
-
-
 %install
 # Create all the defined directories
 mkdir -p $RPM_BUILD_ROOT/%{appdir}
