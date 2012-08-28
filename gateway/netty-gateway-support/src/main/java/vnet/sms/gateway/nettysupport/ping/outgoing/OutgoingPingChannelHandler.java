@@ -9,9 +9,6 @@ import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 
 import org.jboss.netty.channel.ChannelHandlerContext;
-import org.jboss.netty.channel.ChannelStateEvent;
-import org.jboss.netty.channel.ExceptionEvent;
-import org.jboss.netty.util.HashedWheelTimer;
 import org.jboss.netty.util.Timeout;
 import org.jboss.netty.util.Timer;
 import org.jboss.netty.util.TimerTask;
@@ -30,7 +27,7 @@ import vnet.sms.gateway.nettysupport.window.spi.MessageReferenceGenerator;
 public class OutgoingPingChannelHandler<ID extends Serializable> extends
         UpstreamWindowedChannelHandler<ID> {
 
-	public static final String	                NAME	                 = "vnet.sms.gateway:outgoing-ping-handler";
+	public static final String	                NAME	= "vnet.sms.gateway:outgoing-ping-handler";
 
 	private final int	                        pingIntervalSeconds;
 
@@ -38,20 +35,27 @@ public class OutgoingPingChannelHandler<ID extends Serializable> extends
 
 	private final MessageReferenceGenerator<ID>	windowIdGenerator;
 
-	private final Timer	                        pingIntervalTimer	     = new HashedWheelTimer();
+	private final Timer	                        pingIntervalTimer;
 
-	private final Timer	                        pingResponseTimeoutTimer	= new HashedWheelTimer();
+	private final Timer	                        pingResponseTimeoutTimer;
 
 	private volatile PingSender	                pingSender;
 
 	public OutgoingPingChannelHandler(final int pingIntervalSeconds,
 	        final long pingResponseTimeoutMillis,
-	        final MessageReferenceGenerator<ID> windowIdGenerator) {
+	        final MessageReferenceGenerator<ID> windowIdGenerator,
+	        final Timer pingIntervalTimer, final Timer pingResponseTimeoutTimer) {
 		notNull(windowIdGenerator,
 		        "Argument 'windowIdGenerator' must not be null");
+		notNull(pingIntervalTimer,
+		        "Argument 'pingIntervalTimer' must not be null");
+		notNull(pingResponseTimeoutTimer,
+		        "Argument 'pingResponseTimeoutTimer' must not be null");
 		this.pingIntervalSeconds = pingIntervalSeconds;
 		this.pingResponseTimeoutMillis = pingResponseTimeoutMillis;
 		this.windowIdGenerator = windowIdGenerator;
+		this.pingIntervalTimer = pingIntervalTimer;
+		this.pingResponseTimeoutTimer = pingResponseTimeoutTimer;
 	}
 
 	public int getPingIntervalSeconds() {
@@ -110,32 +114,6 @@ public class OutgoingPingChannelHandler<ID extends Serializable> extends
 		}
 		this.pingIntervalTimer.newTimeout(this.pingSender,
 		        this.pingIntervalSeconds, TimeUnit.SECONDS);
-	}
-
-	@Override
-	public void channelDisconnected(final ChannelHandlerContext ctx,
-	        final ChannelStateEvent e) throws Exception {
-		getLog().info(
-		        "Channel {} has been disconnected - will stop ping sender task",
-		        e.getChannel());
-		shutdownTimers();
-		super.channelDisconnected(ctx, e);
-	}
-
-	private void shutdownTimers() {
-		this.pingResponseTimeoutTimer.stop();
-		this.pingIntervalTimer.stop();
-		getLog().debug("All timers have been shut down");
-	}
-
-	@Override
-	public void exceptionCaught(final ChannelHandlerContext ctx,
-	        final ExceptionEvent e) throws Exception {
-		getLog().error(
-		        "Received exception ['{}'] on channel {} - will stop ping sender task. This channel handler needs to be shut down as soon as possible.",
-		        e.getCause().getMessage(), e.getChannel());
-		shutdownTimers();
-		super.exceptionCaught(ctx, e);
 	}
 
 	private final class PingSender implements TimerTask {

@@ -23,6 +23,7 @@ import org.jboss.netty.handler.codec.frame.DelimiterBasedFrameDecoder;
 import org.jboss.netty.handler.codec.serialization.ClassResolvers;
 import org.jboss.netty.handler.codec.serialization.ObjectDecoder;
 import org.jboss.netty.handler.codec.serialization.ObjectEncoder;
+import org.jboss.netty.util.HashedWheelTimer;
 import org.junit.Test;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jmx.export.MBeanExporter;
@@ -70,7 +71,8 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        10, 1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
 		        new MBeanExporter(), new InitialChannelEventsMonitor(), Metrics
-		                .defaultRegistry(), new DefaultChannelGroup());
+		                .defaultRegistry(), new HashedWheelTimer(),
+		        new DefaultChannelGroup());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -88,7 +90,8 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        10, 1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
 		        new MBeanExporter(), new InitialChannelEventsMonitor(), Metrics
-		                .defaultRegistry(), new DefaultChannelGroup());
+		                .defaultRegistry(), new HashedWheelTimer(),
+		        new DefaultChannelGroup());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -106,7 +109,8 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        10, 1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
 		        new MBeanExporter(), new InitialChannelEventsMonitor(), Metrics
-		                .defaultRegistry(), new DefaultChannelGroup());
+		                .defaultRegistry(), new HashedWheelTimer(),
+		        new DefaultChannelGroup());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -124,7 +128,8 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        10, 1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
 		        new MBeanExporter(), new InitialChannelEventsMonitor(), Metrics
-		                .defaultRegistry(), new DefaultChannelGroup());
+		                .defaultRegistry(), new HashedWheelTimer(),
+		        new DefaultChannelGroup());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -142,7 +147,8 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
 		        new MBeanExporter(), new InitialChannelEventsMonitor(), Metrics
-		                .defaultRegistry(), new DefaultChannelGroup());
+		                .defaultRegistry(), new HashedWheelTimer(),
+		        new DefaultChannelGroup());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -160,7 +166,8 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        10, 1000L, null, 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
 		        new MBeanExporter(), new InitialChannelEventsMonitor(), Metrics
-		                .defaultRegistry(), new DefaultChannelGroup());
+		                .defaultRegistry(), new HashedWheelTimer(),
+		        new DefaultChannelGroup());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -178,7 +185,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        10, 1000L, new AcceptAllAuthenticationManager(), 1000L, null,
 		        2, 2000L, new MBeanExporter(),
 		        new InitialChannelEventsMonitor(), Metrics.defaultRegistry(),
-		        new DefaultChannelGroup());
+		        new HashedWheelTimer(), new DefaultChannelGroup());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -196,7 +203,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        10, 1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L, null,
 		        new InitialChannelEventsMonitor(), Metrics.defaultRegistry(),
-		        new DefaultChannelGroup());
+		        new HashedWheelTimer(), new DefaultChannelGroup());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -214,7 +221,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        10, 1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
 		        new MBeanExporter(), new InitialChannelEventsMonitor(), Metrics
-		                .defaultRegistry(), null);
+		                .defaultRegistry(), new HashedWheelTimer(), null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -232,7 +239,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        10, 1000L, new AcceptAllAuthenticationManager(), 1000L,
 		        new SerialIntegersMessageReferenceGenerator(), 2, 2000L,
 		        new MBeanExporter(), null, Metrics.defaultRegistry(),
-		        new DefaultChannelGroup());
+		        new HashedWheelTimer(), new DefaultChannelGroup());
 	}
 
 	@Test
@@ -312,7 +319,7 @@ public class GatewayServerChannelPipelineFactoryTest {
 		        new SerialIntegersMessageReferenceGenerator(),
 		        pingIntervalSeconds, pingResponseTimeoutMillis, mbeanExporter,
 		        initialChannelEventsMonitor, Metrics.defaultRegistry(),
-		        new DefaultChannelGroup());
+		        new HashedWheelTimer(), new DefaultChannelGroup());
 	}
 
 	@Test

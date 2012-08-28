@@ -15,6 +15,7 @@ import org.jboss.netty.channel.group.ChannelGroup;
 import org.jboss.netty.handler.codec.frame.FrameDecoder;
 import org.jboss.netty.handler.codec.oneone.OneToOneDecoder;
 import org.jboss.netty.handler.codec.oneone.OneToOneEncoder;
+import org.jboss.netty.util.Timer;
 import org.springframework.jmx.export.MBeanExportOperations;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
@@ -97,6 +98,8 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 
 	private final MetricsRegistry	                                        metricsRegistry;
 
+	private final Timer	                                                    timer;
+
 	private final IncomingMessagesPublishingChannelHandler<ID>	            incomingMessagesPublisher	         = new IncomingMessagesPublishingChannelHandler<ID>();
 
 	private final ChannelContextLoggingUpstreamChannelHandler	            channelContextLoggingUpstreamHandler	= new ChannelContextLoggingUpstreamChannelHandler();
@@ -119,7 +122,7 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 	        final long pingResponseTimeoutMillis,
 	        final MBeanExportOperations mbeanExporter,
 	        final InitialChannelEventsMonitor initialChannelEventsMonitor,
-	        final MetricsRegistry metricsRegistry,
+	        final MetricsRegistry metricsRegistry, final Timer timer,
 	        final ChannelGroup allConnectedChannels) {
 		notEmpty(gatewayServerInstanceId,
 		        "Argument 'gatewayServerInstanceId' must neither be null nor empty");
@@ -140,6 +143,7 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 		notNull(initialChannelEventsMonitor,
 		        "Argument 'intialChannelEventsMonitor' must not be null");
 		notNull(metricsRegistry, "Argument 'metricsRegistry' must not be null");
+		notNull(timer, "Argument 'timer' must not be null");
 		notNull(allConnectedChannels,
 		        "Argument 'allConnectedChannels' must not be null");
 		this.pduType = pduType;
@@ -157,6 +161,7 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 		this.pingResponseTimeoutMillis = pingResponseTimeoutMillis;
 		this.mbeanExporter = mbeanExporter;
 		this.metricsRegistry = metricsRegistry;
+		this.timer = timer;
 		this.initialChannelEventsHandler = new InitialChannelEventsPublishingUpstreamChannelHandler(
 		        initialChannelEventsMonitor);
 		this.connectedChannelsTracker = new ConnectedChannelsTrackingChannelHandler(
@@ -239,12 +244,13 @@ public class GatewayServerChannelPipelineFactory<ID extends Serializable, TP>
 		pipeline.addLast(IncomingLoginRequestsChannelHandler.NAME,
 		        new IncomingLoginRequestsChannelHandler<ID>(
 		                this.authenticationManager,
-		                this.failedLoginResponseDelayMillis));
+		                this.failedLoginResponseDelayMillis, this.timer));
 
 		// Ping channel handler
 		pipeline.addLast(OutgoingPingChannelHandler.NAME,
 		        new OutgoingPingChannelHandler<ID>(this.pingIntervalSeconds,
-		                this.pingResponseTimeoutMillis, this.windowIdGenerator));
+		                this.pingResponseTimeoutMillis, this.windowIdGenerator,
+		                this.timer, this.timer));
 
 		// Publish incoming messages to interested parties
 		pipeline.addLast(IncomingMessagesPublishingChannelHandler.NAME,

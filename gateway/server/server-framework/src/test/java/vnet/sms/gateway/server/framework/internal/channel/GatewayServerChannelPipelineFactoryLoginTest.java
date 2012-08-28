@@ -9,6 +9,7 @@ import org.jboss.netty.channel.group.DefaultChannelGroup;
 import org.jboss.netty.handler.codec.serialization.ClassResolvers;
 import org.jboss.netty.handler.codec.serialization.ObjectDecoder;
 import org.jboss.netty.handler.codec.serialization.ObjectEncoder;
+import org.jboss.netty.util.HashedWheelTimer;
 import org.junit.Test;
 import org.springframework.jmx.export.MBeanExporter;
 import org.springframework.jmx.export.notification.NotificationPublisher;
@@ -84,6 +85,7 @@ public class GatewayServerChannelPipelineFactoryLoginTest {
 		        new AcceptAllAuthenticationManager(), 10000,
 		        new SerialIntegersMessageReferenceGenerator(), 100, 20000,
 		        new MBeanExporter(), initialChannelEventsMonitor, Metrics
-		                .defaultRegistry(), new DefaultChannelGroup());
+		                .defaultRegistry(), new HashedWheelTimer(),
+		        new DefaultChannelGroup());
 	}
 }

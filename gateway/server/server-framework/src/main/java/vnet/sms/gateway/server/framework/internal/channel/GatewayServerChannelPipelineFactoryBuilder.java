@@ -8,6 +8,7 @@ import static org.apache.commons.lang.Validate.notNull;
 import java.io.Serializable;
 
 import org.jboss.netty.channel.group.ChannelGroup;
+import org.jboss.netty.util.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
@@ -62,6 +63,8 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 	private InitialChannelEventsMonitor	                initialChannelEventsMonitor;
 
 	private MetricsRegistry	                            metricsRegistry;
+
+	private Timer	                                    timer;
 
 	private GatewayServerChannelPipelineFactory<ID, TP>	producedPipelineFactory;
 
@@ -119,7 +122,7 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 		        this.transportProtocolPlugin.getMessageReferenceGenerator(),
 		        this.pingIntervalSeconds, this.pingResponseTimeoutMillis,
 		        this.mbeanExporter, this.initialChannelEventsMonitor,
-		        this.metricsRegistry, this.allConnectedChannels);
+		        this.metricsRegistry, this.timer, this.allConnectedChannels);
 
 		this.log.info(
 		        "Finished building GatewayServerChannelPipelineFactory instance {}",
@@ -161,6 +164,15 @@ public class GatewayServerChannelPipelineFactoryBuilder<ID extends Serializable,
 	@Required
 	public void setMetricsRegistry(final MetricsRegistry metricsRegistry) {
 		this.metricsRegistry = metricsRegistry;
+	}
+
+	/**
+	 * @param timer
+	 *            The timer to set
+	 */
+	@Required
+	public final void setTimer(final Timer timer) {
+		this.timer = timer;
 	}
 
 	/**

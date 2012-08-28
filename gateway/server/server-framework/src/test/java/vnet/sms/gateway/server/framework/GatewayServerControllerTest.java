@@ -8,6 +8,7 @@ import org.jboss.netty.channel.local.LocalAddress;
 import org.jboss.netty.handler.codec.serialization.ClassResolvers;
 import org.jboss.netty.handler.codec.serialization.ObjectDecoder;
 import org.jboss.netty.handler.codec.serialization.ObjectEncoder;
+import org.jboss.netty.util.HashedWheelTimer;
 import org.junit.Test;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jmx.export.MBeanExporter;
@@ -111,7 +112,8 @@ public class GatewayServerControllerTest {
 		        new SerialIntegersMessageReferenceGenerator(),
 		        pingIntervalSeconds, pingResponseTimeoutMillis,
 		        new MBeanExporter(), new InitialChannelEventsMonitor(), Metrics
-		                .defaultRegistry(), new DefaultChannelGroup());
+		                .defaultRegistry(), new HashedWheelTimer(),
+		        new DefaultChannelGroup());
 	}
 
 	@Test

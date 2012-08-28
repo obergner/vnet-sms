@@ -8,6 +8,7 @@ import org.jboss.netty.channel.group.DefaultChannelGroup;
 import org.jboss.netty.handler.codec.serialization.ClassResolvers;
 import org.jboss.netty.handler.codec.serialization.ObjectDecoder;
 import org.jboss.netty.handler.codec.serialization.ObjectEncoder;
+import org.jboss.netty.util.HashedWheelTimer;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jmx.export.MBeanExporter;
 import org.springframework.jmx.export.notification.NotificationPublisher;
@@ -83,6 +84,6 @@ public class AbstractGatewayServerTest {
 		        new SerialIntegersMessageReferenceGenerator(),
 		        pingIntervalSeconds, pingResponseTimeoutMillis, mbeanExporter,
 		        initialChannelEventsMonitor, Metrics.defaultRegistry(),
-		        new DefaultChannelGroup());
+		        new HashedWheelTimer(), new DefaultChannelGroup());
 	}
 }

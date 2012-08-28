@@ -10,10 +10,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.jboss.netty.channel.ChannelHandlerContext;
-import org.jboss.netty.channel.ChannelStateEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
-import org.jboss.netty.util.HashedWheelTimer;
 import org.jboss.netty.util.Timeout;
 import org.jboss.netty.util.Timer;
 import org.jboss.netty.util.TimerTask;
@@ -38,26 +36,30 @@ import vnet.sms.gateway.nettysupport.MessageProcessingContext;
 public class IncomingLoginRequestsChannelHandler<ID extends Serializable>
         extends SimpleChannelUpstreamHandler {
 
-	public static final String	                  NAME	                   = "vnet.sms.gateway:incoming-login-handler";
+	public static final String	                  NAME	                = "vnet.sms.gateway:incoming-login-handler";
 
-	private final Logger	                      log	                   = LoggerFactory
-	                                                                               .getLogger(getClass());
+	private final Logger	                      log	                = LoggerFactory
+	                                                                            .getLogger(getClass());
 
 	private final AuthenticationManager	          authenticationManager;
 
-	private final AtomicReference<Authentication>	authenticatedClient	   = new AtomicReference<Authentication>();
+	private final AtomicReference<Authentication>	authenticatedClient	= new AtomicReference<Authentication>();
 
 	private final long	                          failedLoginResponseDelayMillis;
 
-	private final Timer	                          failedLoginResponseTimer	= new HashedWheelTimer();
+	private final Timer	                          failedLoginResponseTimer;
 
 	public IncomingLoginRequestsChannelHandler(
 	        final AuthenticationManager authenticationManager,
-	        final long failedLoginResponseDelayMillis) {
+	        final long failedLoginResponseDelayMillis,
+	        final Timer failedLoginResponseTimer) {
 		notNull(authenticationManager,
 		        "Argument 'authenticationManager' must not be null");
+		notNull(failedLoginResponseTimer,
+		        "Argument 'failedLoginResponseTimer' must not be null");
 		this.authenticationManager = authenticationManager;
 		this.failedLoginResponseDelayMillis = failedLoginResponseDelayMillis;
+		this.failedLoginResponseTimer = failedLoginResponseTimer;
 	}
 
 	/**
@@ -209,15 +211,5 @@ public class IncomingLoginRequestsChannelHandler<ID extends Serializable>
 			this.ctx.sendDownstream(SendLoginRequestNackEvent
 			        .reject(this.rejectedLogin));
 		}
-	}
-
-	@Override
-	public void channelDisconnected(final ChannelHandlerContext ctx,
-	        final ChannelStateEvent e) throws Exception {
-		this.log.info(
-		        "Channel {} has been disconnected - stopping timer for delaying failed login responses",
-		        e.getChannel());
-		this.failedLoginResponseTimer.stop();
-		super.channelDisconnected(ctx, e);
 	}
 }

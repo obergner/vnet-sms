@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.jboss.netty.channel.ChannelEvent;
 import org.jboss.netty.channel.MessageEvent;
+import org.jboss.netty.util.HashedWheelTimer;
 import org.junit.Test;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -33,7 +34,8 @@ public class IncomingLoginRequestsChannelHandlerTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public final void assertThatConstructorRejectsNullAuthenticationManager() {
-		new IncomingLoginRequestsChannelHandler<Long>(null, 10);
+		new IncomingLoginRequestsChannelHandler<Long>(null, 10,
+		        new HashedWheelTimer());
 	}
 
 	@Test
@@ -50,7 +52,7 @@ public class IncomingLoginRequestsChannelHandlerTest {
 			}
 		};
 		final IncomingLoginRequestsChannelHandler<Integer> objectUnderTest = new IncomingLoginRequestsChannelHandler<Integer>(
-		        acceptAll, 10);
+		        acceptAll, 10, new HashedWheelTimer());
 
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
@@ -85,7 +87,7 @@ public class IncomingLoginRequestsChannelHandlerTest {
 			}
 		};
 		final IncomingLoginRequestsChannelHandler<Integer> objectUnderTest = new IncomingLoginRequestsChannelHandler<Integer>(
-		        rejectAll, negativeResponseDelayMillis);
+		        rejectAll, negativeResponseDelayMillis, new HashedWheelTimer());
 
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
@@ -136,7 +138,7 @@ public class IncomingLoginRequestsChannelHandlerTest {
 			}
 		};
 		final IncomingLoginRequestsChannelHandler<Integer> objectUnderTest = new IncomingLoginRequestsChannelHandler<Integer>(
-		        rejectAll, negativeResponseDelayMillis);
+		        rejectAll, negativeResponseDelayMillis, new HashedWheelTimer());
 
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
@@ -168,7 +170,7 @@ public class IncomingLoginRequestsChannelHandlerTest {
 			}
 		};
 		final IncomingLoginRequestsChannelHandler<Integer> objectUnderTest = new IncomingLoginRequestsChannelHandler<Integer>(
-		        rejectAll, 10);
+		        rejectAll, 10, new HashedWheelTimer());
 
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
@@ -201,7 +203,7 @@ public class IncomingLoginRequestsChannelHandlerTest {
 			}
 		};
 		final IncomingLoginRequestsChannelHandler<Integer> objectUnderTest = new IncomingLoginRequestsChannelHandler<Integer>(
-		        acceptAll, 10);
+		        acceptAll, 10, new HashedWheelTimer());
 
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
@@ -239,7 +241,7 @@ public class IncomingLoginRequestsChannelHandlerTest {
 			}
 		};
 		final IncomingLoginRequestsChannelHandler<Integer> objectUnderTest = new IncomingLoginRequestsChannelHandler<Integer>(
-		        acceptAll, 10);
+		        acceptAll, 10, new HashedWheelTimer());
 
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
@@ -277,7 +279,7 @@ public class IncomingLoginRequestsChannelHandlerTest {
 			}
 		};
 		final IncomingLoginRequestsChannelHandler<Integer> objectUnderTest = new IncomingLoginRequestsChannelHandler<Integer>(
-		        rejectAll, 10);
+		        rejectAll, 10, new HashedWheelTimer());
 
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
@@ -316,7 +318,7 @@ public class IncomingLoginRequestsChannelHandlerTest {
 			}
 		};
 		final IncomingLoginRequestsChannelHandler<Integer> objectUnderTest = new IncomingLoginRequestsChannelHandler<Integer>(
-		        acceptAll, 10);
+		        acceptAll, 10, new HashedWheelTimer());
 
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),

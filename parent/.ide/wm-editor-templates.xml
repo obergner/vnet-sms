@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><templates><template autoinsert="true" context="java" deleted="false" description="Introduces a Constructor comment section" enabled="true" name="csect">	// ------------------------------------------------------------------------
+	// Constructors
+	// ------------------------------------------------------------------------
+
+    ${cursor}</template><template autoinsert="true" context="java" deleted="false" description="Introduces a new Properties comment section" enabled="true" name="psect">	// ------------------------------------------------------------------------
+	// Properties
+	// ------------------------------------------------------------------------
+
+    ${cursor}</template><template autoinsert="true" context="java" deleted="false" description="Introduces a generic comment section" enabled="true" name="sect">	// ------------------------------------------------------------------------
+	// ${cursor}
+	// ------------------------------------------------------------------------</template></templates>

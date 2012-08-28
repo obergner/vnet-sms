@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jboss.netty.channel.ChannelEvent;
 import org.jboss.netty.channel.MessageEvent;
+import org.jboss.netty.util.HashedWheelTimer;
 import org.junit.Test;
 
 import vnet.sms.common.messages.LoginRequest;
@@ -27,7 +28,8 @@ public class OutgoingPingChannelHandlerTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public final void assertThatConstructorRejectsNullWindowIdGenerator() {
-		new OutgoingPingChannelHandler<Integer>(10, 10, null);
+		new OutgoingPingChannelHandler<Integer>(10, 10, null,
+		        new HashedWheelTimer(), new HashedWheelTimer());
 	}
 
 	@Test
@@ -37,7 +39,8 @@ public class OutgoingPingChannelHandlerTest {
 		final int pingTimeoutMillis = 20000;
 		final OutgoingPingChannelHandler<Integer> objectUnderTest = new OutgoingPingChannelHandler<Integer>(
 		        pingIntervalSeconds, pingTimeoutMillis,
-		        new TestWindowIdGenerator());
+		        new TestWindowIdGenerator(), new HashedWheelTimer(),
+		        new HashedWheelTimer());
 
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
@@ -70,7 +73,8 @@ public class OutgoingPingChannelHandlerTest {
 		final int pingTimeoutMillis = 20000;
 		final OutgoingPingChannelHandler<Integer> objectUnderTest = new OutgoingPingChannelHandler<Integer>(
 		        pingIntervalSeconds, pingTimeoutMillis,
-		        new TestWindowIdGenerator());
+		        new TestWindowIdGenerator(), new HashedWheelTimer(),
+		        new HashedWheelTimer());
 
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
@@ -108,7 +112,8 @@ public class OutgoingPingChannelHandlerTest {
 		final int pingTimeoutMillis = 1000;
 		final OutgoingPingChannelHandler<Integer> objectUnderTest = new OutgoingPingChannelHandler<Integer>(
 		        pingIntervalSeconds, pingTimeoutMillis,
-		        new TestWindowIdGenerator());
+		        new TestWindowIdGenerator(), new HashedWheelTimer(),
+		        new HashedWheelTimer());
 
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),
@@ -146,7 +151,8 @@ public class OutgoingPingChannelHandlerTest {
 		final int pingTimeoutMillis = 1000;
 		final OutgoingPingChannelHandler<Integer> objectUnderTest = new OutgoingPingChannelHandler<Integer>(
 		        pingIntervalSeconds, pingTimeoutMillis,
-		        new TestWindowIdGenerator());
+		        new TestWindowIdGenerator(), new HashedWheelTimer(),
+		        new HashedWheelTimer());
 
 		final ChannelPipelineEmbedder embeddedPipeline = new DefaultChannelPipelineEmbedder(
 		        new ObjectSerializationTransportProtocolAdaptingUpstreamChannelHandler(),

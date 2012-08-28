@@ -106,6 +106,7 @@
         p:initialChannelEventsMonitor-ref="vnet.sms.gateway.server.server-framework.initialChannelEventsMonitor"
         p:allConnectedChannels-ref="vnet.sms.gateway.server.server-framework.allConnectedChannels"
         p:metricsRegistry-ref="vnet.sms.gateway.server.server-framework.metricsRegistry"
+        p:timer-ref="vnet.sms.gateway.server.server-framework.hashedWheelTimer"
         p:availableIncomingWindows="${gateway.server.availableIncomingWindows}"
         p:failedLoginResponseDelayMillis="${gateway.server.failedLoginResponseDelayMillis}"
         p:incomingWindowWaitTimeMillis="${gateway.server.incomingWindowWaitTimeMillis}"
@@ -141,5 +142,11 @@
         class="vnet.sms.gateway.nettysupport.ChannelStatisticsGroup"
         c:channels-ref="vnet.sms.gateway.server.server-framework.allConnectedChannels" />
 	<!-- END-SNIPPET: ChannelGroup storing all connected channels -->
+    
+    <!-- START-SNIPPET: HashedWheelTimer -->
+    <bean
+        id="vnet.sms.gateway.server.server-framework.hashedWheelTimer"
+        class="vnet.sms.gateway.nettysupport.hashedwheel.HashedWheelTimerFactoryBean" />
+    <!-- END-SNIPPET: HashedWheelTimer -->
 
 </beans>
