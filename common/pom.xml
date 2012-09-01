@@ -48,6 +48,7 @@
         <module>windowed-message-event-library</module>
         <module>executor-support</module>
         <module>spring-extensions</module>
+        <module>cassandra-cachewriter</module>
         <module>shell</module>
     </modules>
 

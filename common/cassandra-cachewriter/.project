@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>vnet.sms.notification-cluster.cassandra-cachewriter</name>
+	<name>vnet.sms.common.cassandra-cachewriter</name>
 	<comment></comment>
 	<projects>
 	</projects>

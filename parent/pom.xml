@@ -44,6 +44,7 @@
         <module.common.windowed-message-event-library.version>1.0.0-SNAPSHOT</module.common.windowed-message-event-library.version>
         <module.common.spring-extensions.version>1.0.0-SNAPSHOT</module.common.spring-extensions.version>
         <module.common.executor-support.version>1.0.0-SNAPSHOT</module.common.executor-support.version>
+        <module.common.cassandra-cachewriter.version>1.0.0-SNAPSHOT</module.common.cassandra-cachewriter.version>
         <module.common.shell.version>1.0.0-SNAPSHOT</module.common.shell.version>
         <module.common.shell.clamshell-spring.version>1.0.0-SNAPSHOT</module.common.shell.clamshell-spring.version>
         <module.common.shell.clamshell-ssh-server.version>1.0.0-SNAPSHOT</module.common.shell.clamshell-ssh-server.version>
@@ -62,7 +63,6 @@
         <module.routing-engine.version>1.0.0-SNAPSHOT</module.routing-engine.version>
         <module.routing-engine.core.version>1.0.0-SNAPSHOT</module.routing-engine.core.version>
         <module.notification-cluster.version>1.0.0-SNAPSHOT</module.notification-cluster.version>
-        <module.notification-cluster.cassandra-cachewriter.version>1.0.0-SNAPSHOT</module.notification-cluster.cassandra-cachewriter.version>
 		<!-- Standard javax apis -->
         <deps.jta.version>1.1</deps.jta.version>
         <deps.jms.version>1.1</deps.jms.version>
@@ -318,6 +318,12 @@
                 <type>jar</type>
             </dependency>
             <dependency>
+                <groupId>vnet.sms.notification-cluster</groupId>
+                <artifactId>cassandra-cachewriter</artifactId>
+                <version>${module.common.cassandra-cachewriter.version}</version>
+                <type>jar</type>
+            </dependency>
+            <dependency>
                 <groupId>vnet.sms.common</groupId>
                 <artifactId>shell</artifactId>
                 <version>${module.common.shell.version}</version>
@@ -412,12 +418,6 @@
                 <artifactId>notification-cluster</artifactId>
                 <version>${module.notification-cluster.version}</version>
                 <type>pom</type>
-            </dependency>
-            <dependency>
-                <groupId>vnet.sms.notification-cluster</groupId>
-                <artifactId>cassandra-cachewriter</artifactId>
-                <version>${module.notification-cluster.cassandra-cachewriter.version}</version>
-                <type>jar</type>
             </dependency>
 			<!-- =========================================== -->
 			<!-- Standard Javax APIs -->
