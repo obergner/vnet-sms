@@ -27,7 +27,7 @@ public abstract class AbstractShellStatusPublisher implements
 	public final void addShellStatusListener(
 	        final ShellStatusListener shellStatusListener) {
 		Assert.notNull(shellStatusListener, "Status listener required");
-		synchronized (this.shellStatus) {
+		synchronized (this) {
 			this.shellStatusListeners.add(shellStatusListener);
 		}
 	}
@@ -36,14 +36,14 @@ public abstract class AbstractShellStatusPublisher implements
 	public final void removeShellStatusListener(
 	        final ShellStatusListener shellStatusListener) {
 		Assert.notNull(shellStatusListener, "Status listener required");
-		synchronized (this.shellStatus) {
+		synchronized (this) {
 			this.shellStatusListeners.remove(shellStatusListener);
 		}
 	}
 
 	@Override
 	public final ShellStatus getShellStatus() {
-		synchronized (this.shellStatus) {
+		synchronized (this) {
 			return this.shellStatus;
 		}
 	}
@@ -56,7 +56,7 @@ public abstract class AbstractShellStatusPublisher implements
 	        final ParseResult parseResult) {
 		Assert.notNull(shellStatus, "Shell status required");
 
-		synchronized (this.shellStatus) {
+		synchronized (this) {
 			ShellStatus st;
 			if ((msg == null) || (msg.length() == 0)) {
 				st = new ShellStatus(shellStatus);
