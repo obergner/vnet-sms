@@ -1,7 +1,7 @@
 /**
  * 
  */
-package vnet.sms.notcluster.cachewriter.cassandra;
+package vnet.sms.common.cachewriter.cassandra;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -10,13 +10,18 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This is a marker annotation for the field that should act as the ID column
- * 
  * @author obergner
  * 
  */
 @Documented
 @Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Id {
+public @interface Column {
+	/**
+	 * The name by which this particular field should be persisted as. By
+	 * default, the name of the field is used
+	 * 
+	 * @return column name
+	 */
+	String value() default "";
 }

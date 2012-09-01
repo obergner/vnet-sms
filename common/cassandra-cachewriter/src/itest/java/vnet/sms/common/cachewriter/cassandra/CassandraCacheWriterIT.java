@@ -1,7 +1,7 @@
 /**
  * 
  */
-package vnet.sms.notcluster.cachewriter.cassandra;
+package vnet.sms.common.cachewriter.cassandra;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -17,6 +17,11 @@ import org.cassandraunit.dataset.json.ClassPathJsonDataSet;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+
+import vnet.sms.common.cachewriter.cassandra.CassandraCacheWriter;
+import vnet.sms.common.cachewriter.cassandra.Column;
+import vnet.sms.common.cachewriter.cassandra.ColumnFamily;
+import vnet.sms.common.cachewriter.cassandra.Id;
 
 import com.netflix.astyanax.AstyanaxContext;
 import com.netflix.astyanax.Keyspace;
@@ -82,7 +87,7 @@ public class CassandraCacheWriterIT {
 
 	/**
 	 * Test method for
-	 * {@link vnet.sms.notcluster.cachewriter.cassandra.CassandraCacheWriter#clone(net.sf.ehcache.Ehcache)}
+	 * {@link vnet.sms.common.cachewriter.cassandra.CassandraCacheWriter#clone(net.sf.ehcache.Ehcache)}
 	 * .
 	 * 
 	 * @throws CloneNotSupportedException
@@ -95,7 +100,7 @@ public class CassandraCacheWriterIT {
 
 	/**
 	 * Test method for
-	 * {@link vnet.sms.notcluster.cachewriter.cassandra.CassandraCacheWriter#write(net.sf.ehcache.Element)}
+	 * {@link vnet.sms.common.cachewriter.cassandra.CassandraCacheWriter#write(net.sf.ehcache.Element)}
 	 * .
 	 * 
 	 * @throws ConnectionException
@@ -143,7 +148,7 @@ public class CassandraCacheWriterIT {
 
 	/**
 	 * Test method for
-	 * {@link vnet.sms.notcluster.cachewriter.cassandra.CassandraCacheWriter#write(net.sf.ehcache.Element)}
+	 * {@link vnet.sms.common.cachewriter.cassandra.CassandraCacheWriter#write(net.sf.ehcache.Element)}
 	 * .
 	 * 
 	 * @throws ConnectionException
@@ -176,7 +181,7 @@ public class CassandraCacheWriterIT {
 
 	/**
 	 * Test method for
-	 * {@link vnet.sms.notcluster.cachewriter.cassandra.CassandraCacheWriter#write(net.sf.ehcache.Element)}
+	 * {@link vnet.sms.common.cachewriter.cassandra.CassandraCacheWriter#write(net.sf.ehcache.Element)}
 	 * .
 	 * 
 	 * @throws ConnectionException
@@ -241,7 +246,7 @@ public class CassandraCacheWriterIT {
 
 	/**
 	 * Test method for
-	 * {@link vnet.sms.notcluster.cachewriter.cassandra.CassandraCacheWriter#write(net.sf.ehcache.Element)}
+	 * {@link vnet.sms.common.cachewriter.cassandra.CassandraCacheWriter#write(net.sf.ehcache.Element)}
 	 * .
 	 * 
 	 * @throws ConnectionException
@@ -274,7 +279,7 @@ public class CassandraCacheWriterIT {
 
 	/**
 	 * Test method for
-	 * {@link vnet.sms.notcluster.cachewriter.cassandra.CassandraCacheWriter#delete(net.sf.ehcache.CacheEntry)}
+	 * {@link vnet.sms.common.cachewriter.cassandra.CassandraCacheWriter#delete(net.sf.ehcache.CacheEntry)}
 	 * .
 	 * 
 	 * @throws ConnectionException

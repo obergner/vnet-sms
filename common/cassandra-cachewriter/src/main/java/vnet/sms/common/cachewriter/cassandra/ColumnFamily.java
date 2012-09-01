@@ -1,7 +1,7 @@
 /**
  * 
  */
-package vnet.sms.notcluster.cachewriter.cassandra;
+package vnet.sms.common.cachewriter.cassandra;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

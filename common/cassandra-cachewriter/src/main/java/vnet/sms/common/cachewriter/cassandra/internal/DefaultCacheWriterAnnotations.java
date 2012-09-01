@@ -1,14 +1,14 @@
 /**
  * 
  */
-package vnet.sms.notcluster.cachewriter.cassandra.internal;
+package vnet.sms.common.cachewriter.cassandra.internal;
 
 import java.lang.reflect.Field;
 
-import vnet.sms.notcluster.cachewriter.cassandra.CacheWriterAnnotations;
-import vnet.sms.notcluster.cachewriter.cassandra.Column;
-import vnet.sms.notcluster.cachewriter.cassandra.ColumnFamily;
-import vnet.sms.notcluster.cachewriter.cassandra.Id;
+import vnet.sms.common.cachewriter.cassandra.CacheWriterAnnotations;
+import vnet.sms.common.cachewriter.cassandra.Column;
+import vnet.sms.common.cachewriter.cassandra.ColumnFamily;
+import vnet.sms.common.cachewriter.cassandra.Id;
 
 /**
  * @author obergner
@@ -58,7 +58,7 @@ public class DefaultCacheWriterAnnotations implements
 	}
 
 	/**
-	 * @see vnet.sms.notcluster.cachewriter.cassandra.CacheWriterAnnotations#getColumnFamilyName(java.lang.Class,
+	 * @see vnet.sms.common.cachewriter.cassandra.CacheWriterAnnotations#getColumnFamilyName(java.lang.Class,
 	 *      java.lang.annotation.Annotation)
 	 */
 	@Override

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package vnet.sms.notcluster.cachewriter.cassandra;
+package vnet.sms.common.cachewriter.cassandra;
 
 import java.util.Properties;
 
@@ -44,19 +44,19 @@ public class CassandraCacheWriterFactory extends CacheWriterFactory {
 
 	// ------------------------------------------------------------------------------------------------------------------------------
 
-	public static final String	CLUSTER_NAME_PROP	            = "vnet.sms.notcluster.cachewriter.cassandra.clusterName";
+	public static final String	CLUSTER_NAME_PROP	            = "vnet.sms.common.cachewriter.cassandra.clusterName";
 
-	public static final String	KEYSPACE_NAME_PROP	            = "vnet.sms.notcluster.cachewriter.cassandra.keyspaceName";
+	public static final String	KEYSPACE_NAME_PROP	            = "vnet.sms.common.cachewriter.cassandra.keyspaceName";
 
-	public static final String	CASSANDRA_HOST_PROP	            = "vnet.sms.notcluster.cachewriter.cassandra.cassandraHost";
+	public static final String	CASSANDRA_HOST_PROP	            = "vnet.sms.common.cachewriter.cassandra.cassandraHost";
 
-	public static final String	CASSANDRA_PORT_PROP	            = "vnet.sms.notcluster.cachewriter.cassandra.cassandraPort";
+	public static final String	CASSANDRA_PORT_PROP	            = "vnet.sms.common.cachewriter.cassandra.cassandraPort";
 
-	public static final String	CASSANDRA_SEEDS_PROP	        = "vnet.sms.notcluster.cachewriter.cassandra.cassandraSeeds";
+	public static final String	CASSANDRA_SEEDS_PROP	        = "vnet.sms.common.cachewriter.cassandra.cassandraSeeds";
 
-	public static final String	MAX_CONNECTIONS_PER_HOST_PROP	= "vnet.sms.notcluster.cachewriter.cassandra.maxConnectionsPerHost";
+	public static final String	MAX_CONNECTIONS_PER_HOST_PROP	= "vnet.sms.common.cachewriter.cassandra.maxConnectionsPerHost";
 
-	public static final String	CONNECTION_POOL_NAME_PROP	    = "vnet.sms.notcluster.cachewriter.cassandra.connectionPoolName";
+	public static final String	CONNECTION_POOL_NAME_PROP	    = "vnet.sms.common.cachewriter.cassandra.connectionPoolName";
 
 	private final Logger	   log	                            = LoggerFactory
 	                                                                    .getLogger(getClass());

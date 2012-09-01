@@ -1,7 +1,7 @@
 /**
  * 
  */
-package vnet.sms.notcluster.cachewriter.cassandra;
+package vnet.sms.common.cachewriter.cassandra;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -10,6 +10,8 @@ import java.util.Properties;
 import net.sf.ehcache.writer.CacheWriter;
 
 import org.junit.Test;
+
+import vnet.sms.common.cachewriter.cassandra.CassandraCacheWriterFactory;
 
 /**
  * @author obergner
@@ -21,7 +23,7 @@ public class CassandraCacheWriterFactoryIT {
 
 	/**
 	 * Test method for
-	 * {@link vnet.sms.notcluster.cachewriter.cassandra.CassandraCacheWriterFactory#createCacheWriter(net.sf.ehcache.Ehcache, java.util.Properties)}
+	 * {@link vnet.sms.common.cachewriter.cassandra.CassandraCacheWriterFactory#createCacheWriter(net.sf.ehcache.Ehcache, java.util.Properties)}
 	 * .
 	 */
 	@Test

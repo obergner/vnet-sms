@@ -1,7 +1,7 @@
 /**
  * 
  */
-package vnet.sms.notcluster.cachewriter.cassandra;
+package vnet.sms.common.cachewriter.cassandra;
 
 import static org.apache.commons.lang.Validate.isTrue;
 import static org.apache.commons.lang.Validate.notNull;
@@ -19,7 +19,7 @@ import net.sf.ehcache.writer.writebehind.operations.SingleOperationType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import vnet.sms.notcluster.cachewriter.cassandra.internal.DefaultCacheWriterAnnotations;
+import vnet.sms.common.cachewriter.cassandra.internal.DefaultCacheWriterAnnotations;
 
 import com.netflix.astyanax.AstyanaxContext;
 import com.netflix.astyanax.Keyspace;
@@ -223,11 +223,11 @@ public class CassandraCacheWriter implements CacheWriter {
 			isTrue(value
 			        .getClass()
 			        .isAnnotationPresent(
-			                vnet.sms.notcluster.cachewriter.cassandra.ColumnFamily.class),
+			                vnet.sms.common.cachewriter.cassandra.ColumnFamily.class),
 			        "Value ["
 			                + value
 			                + "] is missing mandatory annotation ["
-			                + vnet.sms.notcluster.cachewriter.cassandra.ColumnFamily.class
+			                + vnet.sms.common.cachewriter.cassandra.ColumnFamily.class
 			                        .getName() + "]");
 
 			final Mapping<T> valueMapping = (Mapping<T>) Mapping.make(
@@ -247,11 +247,11 @@ public class CassandraCacheWriter implements CacheWriter {
 			        .getObjectValue()
 			        .getClass()
 			        .isAnnotationPresent(
-			                vnet.sms.notcluster.cachewriter.cassandra.ColumnFamily.class),
+			                vnet.sms.common.cachewriter.cassandra.ColumnFamily.class),
 			        "Value ["
 			                + element.getObjectValue()
 			                + "] is missing mandatory annotation ["
-			                + vnet.sms.notcluster.cachewriter.cassandra.ColumnFamily.class
+			                + vnet.sms.common.cachewriter.cassandra.ColumnFamily.class
 			                        .getName() + "]");
 			final Object value = element.getObjectValue();
 			final COLUMNFAMILY columnFamilyAnnotation = value.getClass()
