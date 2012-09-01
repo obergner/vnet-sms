@@ -280,14 +280,15 @@ public abstract class JLineShell extends AbstractShell implements
 		if (this.reader.getTerminal().isANSISupported()) {
 			final ANSIBuffer ansi = JLineLogHandler.getANSIBuffer();
 			if ((path == null) || "".equals(path)) {
-				shellPrompt = ansi.yellow(this.promptText).toString();
+				this.shellPrompt = ansi.yellow(this.promptText).toString();
 			} else {
 				if (overrideStyle) {
 					ansi.append(path);
 				} else {
 					ansi.cyan(path);
 				}
-				shellPrompt = ansi.yellow(" " + this.promptText).toString();
+				this.shellPrompt = ansi.yellow(" " + this.promptText)
+				        .toString();
 			}
 		} else {
 			// The superclass will do for this non-ANSI terminal
@@ -295,7 +296,7 @@ public abstract class JLineShell extends AbstractShell implements
 		}
 
 		// The shellPrompt is now correct; let's ensure it now gets used
-		this.reader.setDefaultPrompt(AbstractShell.shellPrompt);
+		this.reader.setDefaultPrompt(this.shellPrompt);
 	}
 
 	protected ConsoleReader createAnsiWindowsReader() throws Exception {
@@ -502,7 +503,7 @@ public abstract class JLineShell extends AbstractShell implements
 				return; // ROO-1599
 			}
 			// They want some message displayed
-			int startFrom = this.reader.getTermwidth() - message.length() + 1;
+			int startFrom = (this.reader.getTermwidth() - message.length()) + 1;
 			if (startFrom < 1) {
 				startFrom = 1;
 			}

@@ -120,7 +120,11 @@ public class ForwardingJmsMessageListener implements MessageListener {
 		public Message get(final long arg0, final TimeUnit arg1)
 		        throws InterruptedException, ExecutionException,
 		        TimeoutException {
-			this.matchingMessageReceived.await(arg0, arg1);
+			if (!this.matchingMessageReceived.await(arg0, arg1)) {
+				throw new TimeoutException(
+				        "Failed to retrieve Message after waiting for [" + arg0
+				                + "] " + arg1);
+			}
 			return this.receivedMatchingMessage.get();
 		}
 

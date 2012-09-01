@@ -65,53 +65,35 @@
         Configure converters 
     -->
 
-    <bean
-        class="vnet.sms.common.shell.springshell.internal.converters.StringConverter" />
+    <bean class="vnet.sms.common.shell.springshell.internal.converters.StringConverter" />
 
-    <bean
-        class="vnet.sms.common.shell.springshell.internal.converters.AvailableCommandsConverter" />
+    <bean class="vnet.sms.common.shell.springshell.internal.converters.AvailableCommandsConverter" />
 
-    <bean
-        class="vnet.sms.common.shell.springshell.internal.converters.BigDecimalConverter" />
+    <bean class="vnet.sms.common.shell.springshell.internal.converters.BigDecimalConverter" />
 
-    <bean
-        class="vnet.sms.common.shell.springshell.internal.converters.BigIntegerConverter" />
+    <bean class="vnet.sms.common.shell.springshell.internal.converters.BigIntegerConverter" />
 
-    <bean
-        class="vnet.sms.common.shell.springshell.internal.converters.BooleanConverter" />
+    <bean class="vnet.sms.common.shell.springshell.internal.converters.BooleanConverter" />
 
-    <bean
-        class="vnet.sms.common.shell.springshell.internal.converters.CharacterConverter" />
+    <bean class="vnet.sms.common.shell.springshell.internal.converters.CharacterConverter" />
 
-    <bean
-        class="vnet.sms.common.shell.springshell.internal.converters.DateConverter" />
+    <bean class="vnet.sms.common.shell.springshell.internal.converters.DateConverter" />
 
-    <bean
-        class="vnet.sms.common.shell.springshell.internal.converters.DoubleConverter" />
+    <bean class="vnet.sms.common.shell.springshell.internal.converters.DoubleConverter" />
 
-    <bean
-        class="vnet.sms.common.shell.springshell.internal.converters.EnumConverter" />
+    <bean class="vnet.sms.common.shell.springshell.internal.converters.EnumConverter" />
 
-    <bean
-        class="vnet.sms.common.shell.springshell.internal.converters.FloatConverter" />
+    <bean class="vnet.sms.common.shell.springshell.internal.converters.FloatConverter" />
 
-    <bean
-        class="vnet.sms.common.shell.springshell.internal.converters.IntegerConverter" />
+    <bean class="vnet.sms.common.shell.springshell.internal.converters.IntegerConverter" />
 
-    <bean
-        class="vnet.sms.common.shell.springshell.internal.converters.LocaleConverter" />
+    <bean class="vnet.sms.common.shell.springshell.internal.converters.LocaleConverter" />
 
-    <bean
-        class="vnet.sms.common.shell.springshell.internal.converters.LongConverter" />
+    <bean class="vnet.sms.common.shell.springshell.internal.converters.LongConverter" />
 
-    <bean
-        class="vnet.sms.common.shell.springshell.internal.converters.ShortConverter" />
+    <bean class="vnet.sms.common.shell.springshell.internal.converters.ShortConverter" />
 
-    <bean
-        class="vnet.sms.common.shell.springshell.internal.converters.StaticFieldConverterImpl" />
-
-    <bean
-        class="vnet.sms.common.shell.springshell.internal.converters.SimpleFileConverter" />
+    <bean class="vnet.sms.common.shell.springshell.internal.converters.StaticFieldConverterImpl" />
 
     <!--
         Standard plugins

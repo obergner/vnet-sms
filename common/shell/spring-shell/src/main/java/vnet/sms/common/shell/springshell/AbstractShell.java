@@ -45,18 +45,15 @@ public abstract class AbstractShell extends AbstractShellStatusPublisher
 	private static final String	  MY_SLOT	       = AbstractShell.class
 	                                                       .getName();
 
-	// TODO Abstract out to make configurable.
 	protected static final String	DEFAULT_PROMPT	= "vnet-sms> ";
 
-	// Public static fields; don't rename, make final, or make non-public, as
-	// they are part of the public API, e.g. are changed by STS.
 	public static String	      completionKeys	= "TAB";
-
-	public static String	      shellPrompt	   = DEFAULT_PROMPT;
 
 	// Instance fields
 	protected final Logger	      logger	       = HandlerUtils
 	                                                       .getLogger(getClass());
+
+	protected String	          shellPrompt	   = DEFAULT_PROMPT;
 
 	protected boolean	          inBlockComment;
 
@@ -323,9 +320,9 @@ public abstract class AbstractShell extends AbstractShellStatusPublisher
 	@Override
 	public void setPromptPath(final String path) {
 		if ((path == null) || "".equals(path)) {
-			shellPrompt = DEFAULT_PROMPT;
+			this.shellPrompt = DEFAULT_PROMPT;
 		} else {
-			shellPrompt = path + " " + DEFAULT_PROMPT;
+			this.shellPrompt = path + " " + DEFAULT_PROMPT;
 		}
 	}
 
@@ -407,7 +404,7 @@ public abstract class AbstractShell extends AbstractShellStatusPublisher
 
 	@Override
 	public String getShellPrompt() {
-		return shellPrompt;
+		return this.shellPrompt;
 	}
 
 	/**
