@@ -253,7 +253,7 @@
                                     <goal>attached-rpm</goal>
                                 </goals>
                                 <configuration>
-                                    <group>VNET SMS/Servers</group>
+                                    <group>Applications/Communications</group>
                                     <name>vnet-activemq</name>
                                     <copyright>2012, Olaf Bergner</copyright>
                                     <packager>Olaf Bergner</packager>
@@ -261,7 +261,6 @@
                                     <needarch>${rpm.arch}</needarch>
                                     <release>${buildNumber}.${rpm.dist}</release>
                                     <distribution>${rpm.dist}</distribution>
-                                    <group>Applications/Communications</group>
                                     <defaultDirmode>755</defaultDirmode>
                                     <defaultFilemode>644</defaultFilemode>
                                     <defineStatements>
