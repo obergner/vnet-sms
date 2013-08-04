@@ -16,8 +16,8 @@ PACKAGE=zookeeper-${VERSION}-${RELEASE}.${DIST}.${ARCH}.rpm
 
 echo ""
 echo "------------------------------------------------------------------------"
-echo "Building RPM for elasticsearch ${VERSION} ..."
-echo "Name:           elasticsearch"
+echo "Building RPM for zookeeper ${VERSION} ..."
+echo "Name:           zookeeper"
 echo "Version:        ${VERSION}"
 echo "Release:        ${RELEASE}"
 echo "Distribution:   ${DIST}"
@@ -29,16 +29,16 @@ pushd ${RPMBUILD}
 
 echo ""
 echo "------------------------------------------------------------------------"
-echo "Downloading elasticsearch sources ..."
-/usr/bin/spectool --directory ${RPMBUILD}/SOURCES --get-files ${RPMBUILD}/SPECS/elasticsearch.spec
-echo "Finished downloading elasticsearch sources"
+echo "Downloading zookeeper sources ..."
+/usr/bin/spectool --directory ${RPMBUILD}/SOURCES --get-files ${RPMBUILD}/SPECS/zookeeper.spec
+echo "Finished downloading zookeeper sources"
 echo "------------------------------------------------------------------------"
 
 echo ""
 echo "------------------------------------------------------------------------"
-echo "Building elasticsearch binary rpm ..."
-/usr/bin/rpmbuild --define "dist .${DIST}" --define "_topdir ${RPMBUILD}" --define "_tmppath ${TMPPATH}" -bb ${RPMBUILD}/SPECS/elasticsearch.spec
-echo "Finished building elasticsearch binary rpm ..."
+echo "Building zookeeper binary rpm ..."
+/usr/bin/rpmbuild --define "dist .${DIST}" --define "_topdir ${RPMBUILD}" --define "_tmppath ${TMPPATH}" -bb ${RPMBUILD}/SPECS/zookeeper.spec
+echo "Finished building zookeeper binary rpm ..."
 echo "------------------------------------------------------------------------"
 
 echo ""
@@ -52,6 +52,6 @@ popd
 
 echo ""
 echo "------------------------------------------------------------------------"
-echo "Finished building RPM for elasticsearch ${VERSION}"
+echo "Finished building RPM for zookeeper ${VERSION}"
 echo "------------------------------------------------------------------------"
 echo ""
