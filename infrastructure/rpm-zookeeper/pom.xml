@@ -26,7 +26,7 @@
     </parent>
 
     <groupId>vnet.sms.infrastructure</groupId>
-    <artifactId>rpm-zookeeper</artifactId>
+    <artifactId>rpm-vnet-zookeeper</artifactId>
     <packaging>pom</packaging>
     <name>SMS :: Infrastructure :: Zookeeper RPM</name>
     <description>Zookeeper repackaged as an RPM</description>
@@ -119,7 +119,7 @@
                                 <configuration>
                                     <artifacts>
                                         <artifact>
-                                            <file>${project.build.directory}/rpmbuild/RPMS/zookeeper-${rpm.version}-${buildNumber}.${rpm.dist}.${rpm.arch}.rpm</file>
+                                            <file>${project.build.directory}/rpmbuild/RPMS/vnet-zookeeper-${rpm.version}-${buildNumber}.${rpm.dist}.${rpm.arch}.rpm</file>
                                             <type>rpm</type>
                                             <classifier>${rpm.dist}.${rpm.arch}</classifier>
                                         </artifact>

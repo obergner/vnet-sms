@@ -7,7 +7,7 @@
 %define rel_ver ${rpm.version}
 
 Summary: High-performance coordination service for distributed applications.
-Name: zookeeper
+Name: vnet-zookeeper
 Version: %{rel_ver}
 Release: ${buildNumber}%{?dist}
 License: Apache License v2.0

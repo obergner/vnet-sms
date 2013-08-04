@@ -12,12 +12,12 @@ REPO="$5"
 MODULEDIR=$( cd "$( dirname "$0" )" && pwd )
 RPMBUILD=${MODULEDIR}/target/rpmbuild
 TMPPATH=${MODULEDIR}/target/tmp
-PACKAGE=zookeeper-${VERSION}-${RELEASE}.${DIST}.${ARCH}.rpm
+PACKAGE=vnet-zookeeper-${VERSION}-${RELEASE}.${DIST}.${ARCH}.rpm
 
 echo ""
 echo "------------------------------------------------------------------------"
 echo "Building RPM for zookeeper ${VERSION} ..."
-echo "Name:           zookeeper"
+echo "Name:           vnet-zookeeper"
 echo "Version:        ${VERSION}"
 echo "Release:        ${RELEASE}"
 echo "Distribution:   ${DIST}"
@@ -30,14 +30,14 @@ pushd ${RPMBUILD}
 echo ""
 echo "------------------------------------------------------------------------"
 echo "Downloading zookeeper sources ..."
-/usr/bin/spectool --directory ${RPMBUILD}/SOURCES --get-files ${RPMBUILD}/SPECS/zookeeper.spec
+/usr/bin/spectool --directory ${RPMBUILD}/SOURCES --get-files ${RPMBUILD}/SPECS/vnet-zookeeper.spec
 echo "Finished downloading zookeeper sources"
 echo "------------------------------------------------------------------------"
 
 echo ""
 echo "------------------------------------------------------------------------"
 echo "Building zookeeper binary rpm ..."
-/usr/bin/rpmbuild --define "dist .${DIST}" --define "_topdir ${RPMBUILD}" --define "_tmppath ${TMPPATH}" -bb ${RPMBUILD}/SPECS/zookeeper.spec
+/usr/bin/rpmbuild --define "dist .${DIST}" --define "_topdir ${RPMBUILD}" --define "_tmppath ${TMPPATH}" -bb ${RPMBUILD}/SPECS/vnet-zookeeper.spec
 echo "Finished building zookeeper binary rpm ..."
 echo "------------------------------------------------------------------------"
 
