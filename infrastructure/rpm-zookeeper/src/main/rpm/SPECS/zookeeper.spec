@@ -44,7 +44,7 @@ implementing coordination services from scratch.
 %define _maindir %{buildroot}%{_zookeeper_noarch_libdir}
 
 %prep
-%setup -q -n zookeeper-%{rel_ver}
+%setup -q -n vnet-zookeeper-%{rel_ver}
 
 %build
 pushd src/c
